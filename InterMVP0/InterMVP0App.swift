@@ -6,9 +6,21 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct InterMVP0App: App {
+    var sharedModelContainer: ModelContainer = {
+        let schema = Schema([
+            Shuttle.self
+        ])
+        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+
+        let container = try! ModelContainer(for: schema, configurations: modelConfiguration)
+    
+        return container
+    }()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()

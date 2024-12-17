@@ -10,17 +10,19 @@ import SwiftUI
 struct ShuttleInfoContentView: View {
     @Binding var isShowing: Bool
     
+    var shuttle: Shuttle
+    
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
-                    Text("Red Shuttle")
+                    Text(shuttle.label)
                         .font(.title2)
                         .bold()
                     Text("Jacaranda St.")
                         .font(.callout)
                         .foregroundStyle(.secondary)
-                    Text("5 min away")
+                    Text(shuttle.estimatedTimeAwayDisplay)
                         .font(.callout)
                         .foregroundStyle(.secondary)
                     Text("Last updated now")
@@ -49,6 +51,8 @@ struct ShuttleInfoContentView: View {
     }
 }
 
+let shuttle = Shuttle(currentLatitude: 33.79964, currentLongitude: -117.89328, label: "Red Shuttle 17", estimatedTimeAwayDisplay: "5 min away")
+
 #Preview {
-    ShuttleInfoContentView(isShowing: .constant(true))
+    ShuttleInfoContentView(isShowing: .constant(true), shuttle: shuttle)
 }
