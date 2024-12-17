@@ -69,9 +69,10 @@ struct ShuttleListContentView: View {
         .sheet(isPresented: $isShowingNestedSheet) {
             ShuttleInfoContentView(isShowing: $isShowingNestedSheet)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                .presentationDetents([.height(110), .height(360), .large])
+                .presentationDetents([.height(210), .height(360), .large])
                 .presentationBackground(.regularMaterial)
                 .presentationBackgroundInteraction(.enabled)
+                .interactiveDismissDisabled()
         }
     }
 }
