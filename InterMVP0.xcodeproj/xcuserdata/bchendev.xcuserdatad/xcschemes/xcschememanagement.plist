@@ -4,10 +4,28 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>InterMVP1.xcscheme_^#shared#^_</key>
+		<key>InterMVP0.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>20FA7B732D10E11E00D4EAD1</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>20FA7B832D10E11F00D4EAD1</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>20FA7B8D2D10E11F00D4EAD1</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>
