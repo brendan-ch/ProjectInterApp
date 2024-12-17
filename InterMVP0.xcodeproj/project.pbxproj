@@ -186,7 +186,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 20FA7B6F2D10E11E00D4EAD1 /* Build configuration list for PBXProject "InterMVP1" */;
+			buildConfigurationList = 20FA7B6F2D10E11E00D4EAD1 /* Build configuration list for PBXProject "InterMVP0" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -399,6 +399,7 @@
 				DEVELOPMENT_TEAM = 4A9XHUS87Q;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Inter;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -428,6 +429,7 @@
 				DEVELOPMENT_TEAM = 4A9XHUS87Q;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Inter;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -521,7 +523,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		20FA7B6F2D10E11E00D4EAD1 /* Build configuration list for PBXProject "InterMVP1" */ = {
+		20FA7B6F2D10E11E00D4EAD1 /* Build configuration list for PBXProject "InterMVP0" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				20FA7B962D10E11F00D4EAD1 /* Debug */,
