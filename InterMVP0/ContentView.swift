@@ -17,10 +17,27 @@ struct ContentView: View {
     @State var showSheet = false
     @State var showingNestedSheet = false
     
+    @State private var position: MapCameraPosition = .automatic
+    @State private var selectedResult: MKMapItem?
+    
     let shuttles = [
         Shuttle(currentLatitude: 33.79964, currentLongitude: -117.89328, label: "Red Shuttle 17", estimatedTimeAwayDisplay: "5 min away"),
         Shuttle(currentLatitude: 33.78788, currentLongitude: -117.85921, label: "Teal Shuttle 12", estimatedTimeAwayDisplay: "5 min away")
     ]
+    
+    var shuttleMapItems: [MKMapItem] {
+        var mapItems: [MKMapItem] = []
+        for shuttle in shuttles {
+            let newMapItem = MKMapItem(
+                placemark: .init(
+                    coordinate: .init(latitude: shuttle.currentLatitude, longitude: shuttle.currentLongitude)
+                )
+            )
+            newMapItem.name = shuttle.label
+            mapItems.append(newMapItem)
+        }
+        return mapItems
+    }
     
     // The list of shuttles should be sorted by distance from user
     // TODO: Account for drawer when adjusting camera using GeometryReader
@@ -28,12 +45,16 @@ struct ContentView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             Group {
-                Map {
+                Map(position: $position, selection: $selectedResult) {
                     UserAnnotation()
                     
-                    ForEach(shuttles) { shuttle in
-                        Marker(shuttle.label, systemImage: "bus", coordinate: CLLocationCoordinate2D(latitude: shuttle.currentLatitude, longitude: shuttle.currentLongitude))
-                            .tint(.blue)
+//                    ForEach(shuttles) { shuttle in
+//                        Marker(shuttle.label, systemImage: "bus", coordinate: CLLocationCoordinate2D(latitude: shuttle.currentLatitude, longitude: shuttle.currentLongitude))
+//                            .tint(.blue)
+//                    }
+                    
+                    ForEach(shuttleMapItems, id: \.self) { mapItem in
+                        Marker(item: mapItem)
                     }
                 }
             }
