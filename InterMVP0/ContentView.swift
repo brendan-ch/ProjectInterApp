@@ -25,6 +25,16 @@ struct ContentView: View {
         Shuttle(currentLatitude: 33.78788, currentLongitude: -117.85921, label: "Teal Shuttle 12", estimatedTimeAwayDisplay: "5 min away")
     ]
     
+    var routes: [MockRoute] = [
+        MockRoute(label: "Red Route", callout: "towards Chapman Grand", colorHex: "#db2316", timeEstimates: "5, 15 min"),
+        MockRoute(label: "Teal Route", callout: "towards Panther Village", colorHex: "#21bdd1", timeEstimates: "8, 12 min"),
+        MockRoute(label: "Teal Route", callout: "towards Panther Village", colorHex: "#21bdd1", timeEstimates: "8, 12 min"),
+        MockRoute(label: "Teal Route", callout: "towards Panther Village", colorHex: "#21bdd1", timeEstimates: "8, 12 min"),
+        MockRoute(label: "Teal Route", callout: "towards Panther Village", colorHex: "#21bdd1", timeEstimates: "8, 12 min"),
+        MockRoute(label: "Teal Route", callout: "towards Panther Village", colorHex: "#21bdd1", timeEstimates: "8, 12 min"),
+        MockRoute(label: "Teal Route", callout: "towards Panther Village", colorHex: "#21bdd1", timeEstimates: "8, 12 min"),
+    ]
+
     var shuttleMapItems: [MKMapItem] {
         var mapItems: [MKMapItem] = []
         for shuttle in shuttles {
@@ -48,11 +58,6 @@ struct ContentView: View {
                 Map(position: $position, selection: $selectedResult) {
                     UserAnnotation()
                     
-//                    ForEach(shuttles) { shuttle in
-//                        Marker(shuttle.label, systemImage: "bus", coordinate: CLLocationCoordinate2D(latitude: shuttle.currentLatitude, longitude: shuttle.currentLongitude))
-//                            .tint(.blue)
-//                    }
-                    
                     ForEach(shuttleMapItems, id: \.self) { mapItem in
                         Marker(item: mapItem)
                     }
@@ -64,7 +69,7 @@ struct ContentView: View {
             showSheet = true
         }
         .sheet(isPresented: $showSheet) {
-            ShuttleListContentView(isPresented: $showSheet, isShowingNestedSheet: $showingNestedSheet, shuttles: shuttles)
+            RouteListContentView(routes: routes, isPresented: $showSheet, isShowingNestedSheet: $showingNestedSheet)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                 .presentationDetents([.height(110), .height(360), .large], selection: showingNestedSheet ? .constant(.height(110)) : .constant(.height(360)))
                 .presentationBackground(.regularMaterial)
