@@ -88,6 +88,26 @@ struct ContentView: View {
                 .presentationBackground(.regularMaterial)
                 .presentationBackgroundInteraction(.enabled)
                 .interactiveDismissDisabled()
+                .sheet(isPresented: $showingNestedSheet) {
+                    if mapSelectionState.selectedRoute != nil {
+                        RouteInfoContentView(isShowing: $showingNestedSheet)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                            .presentationDetents([.height(210), .height(360), .large])
+                            .presentationBackground(.regularMaterial)
+                            .presentationBackgroundInteraction(.enabled)
+                            .interactiveDismissDisabled()
+                    }
+                }
+                .sheet(isPresented: $showingShuttleInfoSheet) {
+                    if mapSelectionState.selectedShuttle != nil {
+                        ShuttleInfoContentView(isShowing: $showingShuttleInfoSheet)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                            .presentationDetents([.height(210), .height(360), .large])
+                            .presentationBackground(.regularMaterial)
+                            .presentationBackgroundInteraction(.enabled)
+                            .interactiveDismissDisabled()
+                    }
+                }
         }
         .environmentObject(mapSelectionState)
     }

@@ -44,26 +44,6 @@ struct RouteListContentView: View {
                 Divider()
             }
         }
-        .sheet(isPresented: $isShowingNestedSheet) {
-            if mapSelectionState.selectedRoute != nil {
-                RouteInfoContentView(isShowing: $isShowingNestedSheet)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                    .presentationDetents([.height(210), .height(360), .large])
-                    .presentationBackground(.regularMaterial)
-                    .presentationBackgroundInteraction(.enabled)
-                    .interactiveDismissDisabled()
-            }
-        }
-        .sheet(isPresented: $showingShuttleInfoSheet) {
-            if mapSelectionState.selectedShuttle != nil {
-                ShuttleInfoContentView(isShowing: $showingShuttleInfoSheet)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                    .presentationDetents([.height(210), .height(360), .large])
-                    .presentationBackground(.regularMaterial)
-                    .presentationBackgroundInteraction(.enabled)
-                    .interactiveDismissDisabled()
-            }
-        }
 
     }
 }
