@@ -35,8 +35,6 @@ extension View {
 struct ContentView: View {
     @State private var region: MKCoordinateRegion = .anaheim
     @State var showSheet = false
-    @State var showingNestedSheet = false
-    @State var showingShuttleInfoSheet = false
     
     @State private var position: MapCameraPosition = .automatic
     
@@ -44,6 +42,10 @@ struct ContentView: View {
     
     @Query var shuttles: [Shuttle]
     @Query var routes: [MockRoute]
+    
+    var showingNestedSheet: Bool {
+        mapSelectionState.selectedRoute != nil || mapSelectionState.selectedShuttle != nil
+    }
 
     let sampleRoute: [CLLocationCoordinate2D] = [
         // 33.79326° N, 117.85298° W
@@ -92,13 +94,6 @@ struct ContentView: View {
         }
         .task {
             showSheet = true
-        }
-        .onChange(of: mapSelectionState.selectedShuttle) {
-            guard mapSelectionState.selectedShuttle != nil else { return }
-            
-            if !showingNestedSheet {
-                showingShuttleInfoSheet = true
-            }
         }
         .sheet(isPresented: $showSheet) {
             sheetContent
