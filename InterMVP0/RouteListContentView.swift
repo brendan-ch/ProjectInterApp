@@ -14,7 +14,10 @@ struct RouteListContentView: View {
     @Binding var isShowingNestedSheet: Bool
     
     @State private var selectedRoute: MockRoute?
-
+    
+    @Binding var selectedShuttle: Shuttle?
+    @Binding var showingShuttleInfoSheet: Bool
+    
     var body: some View {
         ScrollView {
             HStack(alignment: .top) {
@@ -52,7 +55,17 @@ struct RouteListContentView: View {
                     .interactiveDismissDisabled()
             }
         }
-        
+        .sheet(isPresented: $showingShuttleInfoSheet) {
+            if let selectedShuttle {
+                ShuttleInfoContentView(isShowing: $showingShuttleInfoSheet, shuttle: selectedShuttle)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    .presentationDetents([.height(210), .height(360), .large])
+                    .presentationBackground(.regularMaterial)
+                    .presentationBackgroundInteraction(.enabled)
+                    .interactiveDismissDisabled()
+            }
+        }
+
     }
 }
 
@@ -91,5 +104,5 @@ struct RouteListItem: View {
         MockRoute(label: "Teal Route", callout: "towards Panther Village", colorHex: "#21bdd1", timeEstimates: "8, 12 min")
     ]
     
-    RouteListContentView(routes: routes, isPresented: .constant(true), isShowingNestedSheet: .constant(false))
+    RouteListContentView(routes: routes, isPresented: .constant(true), isShowingNestedSheet: .constant(false), selectedShuttle: .constant(nil), showingShuttleInfoSheet: .constant(false))
 }

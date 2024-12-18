@@ -17,8 +17,10 @@ struct ContentView: View {
     @State private var region: MKCoordinateRegion = .anaheim
     @State var showSheet = false
     @State var showingNestedSheet = false
+    @State var showingShuttleInfoSheet = false
     
     @State private var position: MapCameraPosition = .automatic
+    
     @State private var selectedShuttle: Shuttle?
     
     @Query var shuttles: [Shuttle]
@@ -73,10 +75,14 @@ struct ContentView: View {
             showSheet = true
         }
         .onChange(of: selectedShuttle) {
-            print(selectedShuttle)
+            guard selectedShuttle != nil else { return }
+            
+            if !showingNestedSheet {
+                showingShuttleInfoSheet = true
+            }
         }
         .sheet(isPresented: $showSheet) {
-            RouteListContentView(routes: routes, isPresented: $showSheet, isShowingNestedSheet: $showingNestedSheet)
+            RouteListContentView(routes: routes, isPresented: $showSheet, isShowingNestedSheet: $showingNestedSheet, selectedShuttle: $selectedShuttle, showingShuttleInfoSheet: $showingShuttleInfoSheet)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                 .presentationDetents([.height(110), .height(360), .large], selection: showingNestedSheet ? .constant(.height(110)) : .constant(.height(360)))
                 .presentationBackground(.regularMaterial)
