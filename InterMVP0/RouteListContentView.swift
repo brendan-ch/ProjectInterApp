@@ -10,11 +10,6 @@ import SwiftUI
 struct RouteListContentView: View {
     var routes: [MockRoute]
     
-    @Binding var isPresented: Bool
-    @Binding var isShowingNestedSheet: Bool
-    
-    @Binding var showingShuttleInfoSheet: Bool
-    
     @EnvironmentObject var mapSelectionState: MapSelectionState
     
     var body: some View {
@@ -35,7 +30,6 @@ struct RouteListContentView: View {
             
             ForEach(routes) { route in
                 RouteListItem(route: route) { selectedRoute in
-                    isShowingNestedSheet = true
                     mapSelectionState.selectedRoute = selectedRoute
                 }
                 .padding(.horizontal)
@@ -85,6 +79,6 @@ struct RouteListItem: View {
     
     let environmentObject = MapSelectionState()
     
-    RouteListContentView(routes: routes, isPresented: .constant(true), isShowingNestedSheet: .constant(false), showingShuttleInfoSheet: .constant(false))
+    RouteListContentView(routes: routes)
         .environmentObject(environmentObject)
 }

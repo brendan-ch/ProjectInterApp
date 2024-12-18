@@ -10,8 +10,6 @@ import SwiftUI
 struct RouteInfoContentView: View {
     @EnvironmentObject var mapSelectionState: MapSelectionState
     
-    @Binding var isShowing: Bool
-    
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             HStack(alignment: .top) {
@@ -25,7 +23,7 @@ struct RouteInfoContentView: View {
                 }
                 Spacer()
                 Button("Close") {
-                    isShowing = false
+                    mapSelectionState.selectedRoute = nil
                 }
             }
             .padding()
@@ -68,6 +66,6 @@ struct RouteInfoContentView: View {
     let environmentObject = MapSelectionState()
     environmentObject.selectedRoute = route
     
-    return RouteInfoContentView(isShowing: .constant(true))
+    return RouteInfoContentView()
         .environmentObject(environmentObject)
 }

@@ -82,34 +82,38 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $showSheet) {
-            RouteListContentView(routes: routes, isPresented: $showSheet, isShowingNestedSheet: $showingNestedSheet, showingShuttleInfoSheet: $showingShuttleInfoSheet)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                .presentationDetents([.height(110), .height(360), .large], selection: showingNestedSheet ? .constant(.height(110)) : .constant(.height(360)))
-                .presentationBackground(.regularMaterial)
-                .presentationBackgroundInteraction(.enabled)
-                .interactiveDismissDisabled()
-                .sheet(isPresented: $showingNestedSheet) {
-                    if mapSelectionState.selectedRoute != nil {
-                        RouteInfoContentView(isShowing: $showingNestedSheet)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                            .presentationDetents([.height(210), .height(360), .large])
-                            .presentationBackground(.regularMaterial)
-                            .presentationBackgroundInteraction(.enabled)
-                            .interactiveDismissDisabled()
-                    }
-                }
-                .sheet(isPresented: $showingShuttleInfoSheet) {
-                    if mapSelectionState.selectedShuttle != nil {
-                        ShuttleInfoContentView(isShowing: $showingShuttleInfoSheet)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                            .presentationDetents([.height(210), .height(360), .large])
-                            .presentationBackground(.regularMaterial)
-                            .presentationBackgroundInteraction(.enabled)
-                            .interactiveDismissDisabled()
-                    }
-                }
+            sheetContent
         }
         .environmentObject(mapSelectionState)
+    }
+    
+    var sheetContent: some View {
+        RouteListContentView(routes: routes)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .presentationDetents([.height(110), .height(360), .large], selection: showingNestedSheet ? .constant(.height(110)) : .constant(.height(360)))
+            .presentationBackground(.regularMaterial)
+            .presentationBackgroundInteraction(.enabled)
+            .interactiveDismissDisabled()
+            .sheet(isPresented: .constant(mapSelectionState.selectedRoute != nil)) {
+                if mapSelectionState.selectedRoute != nil {
+                    RouteInfoContentView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                        .presentationDetents([.height(210), .height(360), .large])
+                        .presentationBackground(.regularMaterial)
+                        .presentationBackgroundInteraction(.enabled)
+                        .interactiveDismissDisabled()
+                }
+            }
+            .sheet(isPresented: .constant(mapSelectionState.selectedShuttle != nil)) {
+                if mapSelectionState.selectedShuttle != nil {
+                    ShuttleInfoContentView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                        .presentationDetents([.height(210), .height(360), .large])
+                        .presentationBackground(.regularMaterial)
+                        .presentationBackgroundInteraction(.enabled)
+                        .interactiveDismissDisabled()
+                }
+            }
     }
 }
 

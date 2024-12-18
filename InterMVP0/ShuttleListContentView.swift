@@ -88,7 +88,7 @@ struct ShuttleListContentView: View {
         .background(Color.clear)
         .sheet(isPresented: $isShowingNestedSheet) {
             if mapSelectionState.selectedShuttle != nil {
-                ShuttleInfoContentView(isShowing: $isShowingNestedSheet)
+                ShuttleInfoContentView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                     .presentationDetents([.height(210), .height(360), .large])
                     .presentationBackground(.regularMaterial)

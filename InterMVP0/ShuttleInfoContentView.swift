@@ -10,8 +10,6 @@ import SwiftUI
 struct ShuttleInfoContentView: View {
     @EnvironmentObject var mapSelectionState: MapSelectionState
     
-    @Binding var isShowing: Bool
-    
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             HStack(alignment: .top) {
@@ -31,7 +29,7 @@ struct ShuttleInfoContentView: View {
                 }
                 Spacer()
                 Button("Close") {
-                    isShowing = false
+                    mapSelectionState.selectedShuttle = nil
                 }
             }
             .padding()
@@ -57,6 +55,6 @@ struct ShuttleInfoContentView: View {
     let environmentObject = MapSelectionState()
     environmentObject.selectedShuttle = shuttle
 
-    return ShuttleInfoContentView(isShowing: .constant(true))
+    return ShuttleInfoContentView()
         .environmentObject(environmentObject)
 }
