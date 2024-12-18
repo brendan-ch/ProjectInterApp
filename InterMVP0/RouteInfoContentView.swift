@@ -55,14 +55,14 @@ struct RouteInfoContentView: View {
     }
 }
 
-let route = MockRoute(label: "Red Route", callout: "towards Chapman Grand", colorHex: "#db2316", timeEstimates: "5, 15 min")
-
-let upcomingDepartures = [
-    Shuttle(currentLatitude: 33.79964, currentLongitude: -117.89328, label: "Red Shuttle 17", estimatedTimeAwayDisplay: "5 min away"),
-    Shuttle(currentLatitude: 33.78788, currentLongitude: -117.85921, label: "Red Shuttle 25", estimatedTimeAwayDisplay: "15 min away")
-]
-
 #Preview {
+    let route = MockRoute(label: "Red Route", callout: "towards Chapman Grand", colorHex: "#db2316", timeEstimates: "5, 15 min")
+
+    let upcomingDepartures = [
+        Shuttle(currentLatitude: 33.79964, currentLongitude: -117.89328, label: "Red Shuttle 17", estimatedTimeAwayDisplay: "5 min away"),
+        Shuttle(currentLatitude: 33.78788, currentLongitude: -117.85921, label: "Red Shuttle 25", estimatedTimeAwayDisplay: "15 min away")
+    ]
+    
     route.shuttles = upcomingDepartures
     return RouteInfoContentView(isShowing: .constant(true), routeToDisplay: route)
 }

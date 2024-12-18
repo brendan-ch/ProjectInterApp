@@ -123,11 +123,11 @@ struct ShuttleListItem: View {
     }
 }
 
-let shuttles = [
-    Shuttle(currentLatitude: 33.79964, currentLongitude: -117.89328, label: "Red Shuttle 17", estimatedTimeAwayDisplay: "5 min away"),
-    Shuttle(currentLatitude: 33.78788, currentLongitude: -117.85921, label: "Teal Shuttle 12", estimatedTimeAwayDisplay: "10 min away")
-]
-
 #Preview {
+    let shuttles = [
+        Shuttle(currentLatitude: 33.79964, currentLongitude: -117.89328, label: "Red Shuttle 17", estimatedTimeAwayDisplay: "5 min away"),
+        Shuttle(currentLatitude: 33.78788, currentLongitude: -117.85921, label: "Teal Shuttle 12", estimatedTimeAwayDisplay: "10 min away")
+    ]
+
     ShuttleListContentView(isPresented: .constant(true), isShowingNestedSheet: .constant(false), shuttles: shuttles)
 }

@@ -85,11 +85,11 @@ struct RouteListItem: View {
 }
 
 
-var routes: [MockRoute] = [
-    MockRoute(label: "Red Route", callout: "towards Chapman Grand", colorHex: "#db2316", timeEstimates: "5, 15 min"),
-    MockRoute(label: "Teal Route", callout: "towards Panther Village", colorHex: "#21bdd1", timeEstimates: "8, 12 min")
-]
-
 #Preview {
+    var routes: [MockRoute] = [
+        MockRoute(label: "Red Route", callout: "towards Chapman Grand", colorHex: "#db2316", timeEstimates: "5, 15 min"),
+        MockRoute(label: "Teal Route", callout: "towards Panther Village", colorHex: "#21bdd1", timeEstimates: "8, 12 min")
+    ]
+    
     RouteListContentView(routes: routes, isPresented: .constant(true), isShowingNestedSheet: .constant(false))
 }

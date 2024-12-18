@@ -51,8 +51,8 @@ struct ShuttleInfoContentView: View {
     }
 }
 
-let shuttle = Shuttle(currentLatitude: 33.79964, currentLongitude: -117.89328, label: "Red Shuttle 17", estimatedTimeAwayDisplay: "5 min away")
-
 #Preview {
+    let shuttle = Shuttle(currentLatitude: 33.79964, currentLongitude: -117.89328, label: "Red Shuttle 17", estimatedTimeAwayDisplay: "5 min away")
+
     ShuttleInfoContentView(isShowing: .constant(true), shuttle: shuttle)
 }
