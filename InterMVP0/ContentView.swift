@@ -19,7 +19,7 @@ struct ContentView: View {
     @State var showingNestedSheet = false
     
     @State private var position: MapCameraPosition = .automatic
-    @State private var selectedTag: Int?
+    @State private var selectedShuttle: Shuttle?
     
     @Query var shuttles: [Shuttle]
     @Query var routes: [MockRoute]
@@ -43,14 +43,14 @@ struct ContentView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             Group {
-                Map(position: $position, selection: $selectedTag) {
+                Map(position: $position, selection: $selectedShuttle) {
                     UserAnnotation()
                     
-                    ForEach(shuttles.indices) { i in
-                        Annotation(shuttles[i].label, coordinate: CLLocationCoordinate2D(latitude: shuttles[i].currentLatitude, longitude: shuttles[i].currentLongitude), anchor: .center) {
+                    ForEach(shuttles) { shuttle in
+                        Annotation(shuttle.label, coordinate: CLLocationCoordinate2D(latitude: shuttle.currentLatitude, longitude: shuttle.currentLongitude), anchor: .center) {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 100)
-                                    .fill(.red)
+                                    .fill(Color(hex: shuttle.route?.colorHex ?? "#000000"))
                                 RoundedRectangle(cornerRadius: 100)
                                     .stroke(.background, lineWidth: 4)
                                 Image(systemName: "bus.fill")
@@ -60,8 +60,8 @@ struct ContentView: View {
                                     .foregroundStyle(Color.white)
                             }
                         }
-                        .annotationTitles(.hidden)
-                        .tag(i)
+                        .annotationTitles(selectedShuttle == shuttle ? .visible : .hidden)
+                        .tag(shuttle)
                     }
                     
                     MapPolyline(coordinates: sampleRoute)
@@ -69,12 +69,11 @@ struct ContentView: View {
                 }
             }
         }
-        .ignoresSafeArea()
         .task {
             showSheet = true
         }
-        .onChange(of: selectedTag) {
-            print(selectedTag)
+        .onChange(of: selectedShuttle) {
+            print(selectedShuttle)
         }
         .sheet(isPresented: $showSheet) {
             RouteListContentView(routes: routes, isPresented: $showSheet, isShowingNestedSheet: $showingNestedSheet)

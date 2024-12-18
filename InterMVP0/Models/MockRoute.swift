@@ -7,9 +7,15 @@
 
 import SwiftUI
 import SwiftData
+import CoreLocation
 
 // This is just a class used for the MVP mockup
 // Not to be used in MVP1 (probably)
+
+struct StoredCoordinate: Codable, Hashable {
+    var latitude: Double
+    var longitude: Double
+}
 
 @Model
 final class MockRoute {
@@ -17,6 +23,8 @@ final class MockRoute {
     var callout: String
     var colorHex: String
     var timeEstimates: String
+    
+//    var coordinates: [StoredCoordinate]
     
     @Relationship(deleteRule: .cascade, inverse: \Shuttle.route)
     var shuttles = [Shuttle]()
@@ -26,7 +34,18 @@ final class MockRoute {
         self.callout = callout
         self.colorHex = colorHex
         self.timeEstimates = timeEstimates
+//        self.coordinates = []
         
         self.shuttles = []
     }
+    
+//    init(label: String, callout: String, colorHex: String, timeEstimates: String, coordinates: [StoredCoordinate]) {
+//        self.label = label
+//        self.callout = callout
+//        self.colorHex = colorHex
+//        self.timeEstimates = timeEstimates
+//        self.coordinates = coordinates
+//        
+//        self.shuttles = []
+//    }
 }
