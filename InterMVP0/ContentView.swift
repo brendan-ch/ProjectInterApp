@@ -13,6 +13,25 @@ extension MKCoordinateRegion {
     static let anaheim = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 33.79787, longitude: -117.8937), span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
 }
 
+
+struct SheetViewModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .presentationDetents([.height(210), .height(360), .large])
+            .presentationBackground(.regularMaterial)
+            .presentationBackgroundInteraction(.enabled)
+            .interactiveDismissDisabled()
+    }
+}
+
+extension View {
+    func sheetViewModifier() -> some View {
+        self.modifier(SheetViewModifier())
+    }
+}
+
+
 struct ContentView: View {
     @State private var region: MKCoordinateRegion = .anaheim
     @State var showSheet = false
@@ -89,31 +108,20 @@ struct ContentView: View {
     
     var sheetContent: some View {
         RouteListContentView(routes: routes)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            .presentationDetents([.height(110), .height(360), .large], selection: showingNestedSheet ? .constant(.height(110)) : .constant(.height(360)))
-            .presentationBackground(.regularMaterial)
-            .presentationBackgroundInteraction(.enabled)
-            .interactiveDismissDisabled()
             .sheet(isPresented: .constant(mapSelectionState.selectedRoute != nil)) {
                 if mapSelectionState.selectedRoute != nil {
                     RouteInfoContentView()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                        .presentationDetents([.height(210), .height(360), .large])
-                        .presentationBackground(.regularMaterial)
-                        .presentationBackgroundInteraction(.enabled)
-                        .interactiveDismissDisabled()
+                        .sheetViewModifier()
                 }
             }
             .sheet(isPresented: .constant(mapSelectionState.selectedShuttle != nil)) {
                 if mapSelectionState.selectedShuttle != nil {
                     ShuttleInfoContentView()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                        .presentationDetents([.height(210), .height(360), .large])
-                        .presentationBackground(.regularMaterial)
-                        .presentationBackgroundInteraction(.enabled)
-                        .interactiveDismissDisabled()
+                        .sheetViewModifier()
                 }
             }
+        .sheetViewModifier()
+        .presentationDetents([.height(110), .height(360), .large], selection: showingNestedSheet ? .constant(.height(110)) : .constant(.height(360)))
     }
 }
 
