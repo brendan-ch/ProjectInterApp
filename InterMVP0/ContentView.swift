@@ -19,25 +19,11 @@ struct ContentView: View {
     @State var showingNestedSheet = false
     
     @State private var position: MapCameraPosition = .automatic
-    @State private var selectedResult: MKMapItem?
+    @State private var selectedTag: Int?
     
     @Query var shuttles: [Shuttle]
     @Query var routes: [MockRoute]
 
-    var shuttleMapItems: [MKMapItem] {
-        var mapItems: [MKMapItem] = []
-        for shuttle in shuttles {
-            let newMapItem = MKMapItem(
-                placemark: .init(
-                    coordinate: .init(latitude: shuttle.currentLatitude, longitude: shuttle.currentLongitude)
-                )
-            )
-            newMapItem.name = shuttle.label
-            mapItems.append(newMapItem)
-        }
-        return mapItems
-    }
-    
     let sampleRoute: [CLLocationCoordinate2D] = [
         // 33.79326° N, 117.85298° W
         CLLocationCoordinate2D(latitude: 33.79326, longitude: -117.85298),
@@ -57,11 +43,25 @@ struct ContentView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             Group {
-                Map(position: $position, selection: $selectedResult) {
+                Map(position: $position, selection: $selectedTag) {
                     UserAnnotation()
                     
-                    ForEach(shuttleMapItems, id: \.self) { mapItem in
-                        Marker(item: mapItem)
+                    ForEach(shuttles.indices) { i in
+                        Annotation(shuttles[i].label, coordinate: CLLocationCoordinate2D(latitude: shuttles[i].currentLatitude, longitude: shuttles[i].currentLongitude), anchor: .center) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 100)
+                                    .fill(.red)
+                                RoundedRectangle(cornerRadius: 100)
+                                    .stroke(.background, lineWidth: 4)
+                                Image(systemName: "bus.fill")
+                                    .resizable()
+                                    .frame(width: 16, height: 16)
+                                    .padding(6)
+                                    .foregroundStyle(Color.white)
+                            }
+                        }
+                        .annotationTitles(.hidden)
+                        .tag(i)
                     }
                     
                     MapPolyline(coordinates: sampleRoute)
@@ -72,6 +72,9 @@ struct ContentView: View {
         .ignoresSafeArea()
         .task {
             showSheet = true
+        }
+        .onChange(of: selectedTag) {
+            print(selectedTag)
         }
         .sheet(isPresented: $showSheet) {
             RouteListContentView(routes: routes, isPresented: $showSheet, isShowingNestedSheet: $showingNestedSheet)
