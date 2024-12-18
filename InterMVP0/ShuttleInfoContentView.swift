@@ -8,21 +8,21 @@
 import SwiftUI
 
 struct ShuttleInfoContentView: View {
-    @Binding var isShowing: Bool
+    @EnvironmentObject var mapSelectionState: MapSelectionState
     
-    var shuttle: Shuttle
+    @Binding var isShowing: Bool
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
-                    Text(shuttle.label)
+                    Text(mapSelectionState.selectedShuttle?.label ?? "")
                         .font(.title2)
                         .bold()
                     Text("Jacaranda St.")
                         .font(.callout)
                         .foregroundStyle(.secondary)
-                    Text(shuttle.estimatedTimeAwayDisplay)
+                    Text(mapSelectionState.selectedShuttle?.estimatedTimeAwayDisplay ?? "")
                         .font(.callout)
                         .foregroundStyle(.secondary)
                     Text("Last updated now")
@@ -53,6 +53,10 @@ struct ShuttleInfoContentView: View {
 
 #Preview {
     let shuttle = Shuttle(currentLatitude: 33.79964, currentLongitude: -117.89328, label: "Red Shuttle 17", estimatedTimeAwayDisplay: "5 min away")
+    
+    let environmentObject = MapSelectionState()
+    environmentObject.selectedShuttle = shuttle
 
-    ShuttleInfoContentView(isShowing: .constant(true), shuttle: shuttle)
+    return ShuttleInfoContentView(isShowing: .constant(true))
+        .environmentObject(environmentObject)
 }

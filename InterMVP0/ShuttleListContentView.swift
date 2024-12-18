@@ -11,8 +11,7 @@ struct ShuttleListContentView: View {
     @Binding var isPresented: Bool
     @Binding var isShowingNestedSheet: Bool
     
-    // Probably going to make this into a binding eventually
-    @State private var selectedShuttle: Shuttle?
+    @EnvironmentObject var mapSelectionState: MapSelectionState
 
     var shuttles: [Shuttle]
     
@@ -39,7 +38,7 @@ struct ShuttleListContentView: View {
                 if (!shuttles.isEmpty) {
                     ShuttleListItem(shuttle: shuttles[0]) { shuttle in
                         isShowingNestedSheet = true
-                        selectedShuttle = shuttle
+                        mapSelectionState.selectedShuttle = shuttle
                     }
 //                    Button(action: {
 //                        isShowingNestedSheet = true
@@ -66,7 +65,7 @@ struct ShuttleListContentView: View {
                 ForEach(otherShuttles) { otherShuttle in
                     ShuttleListItem(shuttle: otherShuttle) { shuttle in
                         isShowingNestedSheet = true
-                        selectedShuttle = shuttle
+                        mapSelectionState.selectedShuttle = shuttle
                     }
                 }
 //                HStack {
@@ -88,8 +87,8 @@ struct ShuttleListContentView: View {
         .listStyle(.plain)
         .background(Color.clear)
         .sheet(isPresented: $isShowingNestedSheet) {
-            if let selectedShuttle {
-                ShuttleInfoContentView(isShowing: $isShowingNestedSheet, shuttle: selectedShuttle)
+            if mapSelectionState.selectedShuttle != nil {
+                ShuttleInfoContentView(isShowing: $isShowingNestedSheet)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                     .presentationDetents([.height(210), .height(360), .large])
                     .presentationBackground(.regularMaterial)
@@ -130,4 +129,5 @@ struct ShuttleListItem: View {
     ]
 
     ShuttleListContentView(isPresented: .constant(true), isShowingNestedSheet: .constant(false), shuttles: shuttles)
+        .environmentObject(MapSelectionState())
 }

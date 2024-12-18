@@ -21,7 +21,7 @@ struct ContentView: View {
     
     @State private var position: MapCameraPosition = .automatic
     
-    @State private var selectedShuttle: Shuttle?
+    @StateObject var mapSelectionState = MapSelectionState()
     
     @Query var shuttles: [Shuttle]
     @Query var routes: [MockRoute]
@@ -45,7 +45,7 @@ struct ContentView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             Group {
-                Map(position: $position, selection: $selectedShuttle) {
+                Map(position: $position, selection: $mapSelectionState.selectedShuttle) {
                     UserAnnotation()
                     
                     ForEach(shuttles) { shuttle in
@@ -62,7 +62,7 @@ struct ContentView: View {
                                     .foregroundStyle(Color.white)
                             }
                         }
-                        .annotationTitles(selectedShuttle == shuttle ? .visible : .hidden)
+                        .annotationTitles(mapSelectionState.selectedShuttle == shuttle ? .visible : .hidden)
                         .tag(shuttle)
                     }
                     
@@ -74,15 +74,15 @@ struct ContentView: View {
         .task {
             showSheet = true
         }
-        .onChange(of: selectedShuttle) {
-            guard selectedShuttle != nil else { return }
+        .onChange(of: mapSelectionState.selectedShuttle) {
+            guard mapSelectionState.selectedShuttle != nil else { return }
             
             if !showingNestedSheet {
                 showingShuttleInfoSheet = true
             }
         }
         .sheet(isPresented: $showSheet) {
-            RouteListContentView(routes: routes, isPresented: $showSheet, isShowingNestedSheet: $showingNestedSheet, selectedShuttle: $selectedShuttle, showingShuttleInfoSheet: $showingShuttleInfoSheet)
+            RouteListContentView(routes: routes, isPresented: $showSheet, isShowingNestedSheet: $showingNestedSheet, showingShuttleInfoSheet: $showingShuttleInfoSheet)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                 .presentationDetents([.height(110), .height(360), .large], selection: showingNestedSheet ? .constant(.height(110)) : .constant(.height(360)))
                 .presentationBackground(.regularMaterial)

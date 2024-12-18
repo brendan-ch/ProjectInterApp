@@ -13,10 +13,9 @@ struct RouteListContentView: View {
     @Binding var isPresented: Bool
     @Binding var isShowingNestedSheet: Bool
     
-    @State private var selectedRoute: MockRoute?
-    
-    @Binding var selectedShuttle: Shuttle?
     @Binding var showingShuttleInfoSheet: Bool
+    
+    @EnvironmentObject var mapSelectionState: MapSelectionState
     
     var body: some View {
         ScrollView {
@@ -37,7 +36,7 @@ struct RouteListContentView: View {
             ForEach(routes) { route in
                 RouteListItem(route: route) { selectedRoute in
                     isShowingNestedSheet = true
-                    self.selectedRoute = selectedRoute
+                    mapSelectionState.selectedRoute = selectedRoute
                 }
                 .padding(.horizontal)
                 .buttonStyle(.plain)
@@ -46,8 +45,8 @@ struct RouteListContentView: View {
             }
         }
         .sheet(isPresented: $isShowingNestedSheet) {
-            if let selectedRoute {
-                RouteInfoContentView(isShowing: $isShowingNestedSheet, routeToDisplay: selectedRoute)
+            if mapSelectionState.selectedRoute != nil {
+                RouteInfoContentView(isShowing: $isShowingNestedSheet)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                     .presentationDetents([.height(210), .height(360), .large])
                     .presentationBackground(.regularMaterial)
@@ -56,8 +55,8 @@ struct RouteListContentView: View {
             }
         }
         .sheet(isPresented: $showingShuttleInfoSheet) {
-            if let selectedShuttle {
-                ShuttleInfoContentView(isShowing: $showingShuttleInfoSheet, shuttle: selectedShuttle)
+            if mapSelectionState.selectedShuttle != nil {
+                ShuttleInfoContentView(isShowing: $showingShuttleInfoSheet)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                     .presentationDetents([.height(210), .height(360), .large])
                     .presentationBackground(.regularMaterial)
@@ -104,5 +103,8 @@ struct RouteListItem: View {
         MockRoute(label: "Teal Route", callout: "towards Panther Village", colorHex: "#21bdd1", timeEstimates: "8, 12 min")
     ]
     
-    RouteListContentView(routes: routes, isPresented: .constant(true), isShowingNestedSheet: .constant(false), selectedShuttle: .constant(nil), showingShuttleInfoSheet: .constant(false))
+    let environmentObject = MapSelectionState()
+    
+    RouteListContentView(routes: routes, isPresented: .constant(true), isShowingNestedSheet: .constant(false), showingShuttleInfoSheet: .constant(false))
+        .environmentObject(environmentObject)
 }

@@ -8,18 +8,18 @@
 import SwiftUI
 
 struct RouteInfoContentView: View {
-    @Binding var isShowing: Bool
+    @EnvironmentObject var mapSelectionState: MapSelectionState
     
-    var routeToDisplay: MockRoute
+    @Binding var isShowing: Bool
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
-                    Text(routeToDisplay.label)
+                    Text(mapSelectionState.selectedRoute?.label ?? "")
                         .font(.title2)
                         .bold()
-                    Text(routeToDisplay.callout)
+                    Text(mapSelectionState.selectedRoute?.callout ?? "")
                         .font(.callout)
                         .foregroundStyle(.secondary)
                 }
@@ -32,7 +32,7 @@ struct RouteInfoContentView: View {
             
             Section {
                 VStack {
-                    ForEach(routeToDisplay.shuttles) { upcomingDeparture in
+                    ForEach(mapSelectionState.selectedRoute?.shuttles ?? []) { upcomingDeparture in
                         Divider()
                         
                         ShuttleListItem(shuttle: upcomingDeparture) { shuttle in
@@ -64,5 +64,10 @@ struct RouteInfoContentView: View {
     ]
     
     route.shuttles = upcomingDepartures
-    return RouteInfoContentView(isShowing: .constant(true), routeToDisplay: route)
+    
+    let environmentObject = MapSelectionState()
+    environmentObject.selectedRoute = route
+    
+    return RouteInfoContentView(isShowing: .constant(true))
+        .environmentObject(environmentObject)
 }
