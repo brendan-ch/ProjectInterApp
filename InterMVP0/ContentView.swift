@@ -89,7 +89,8 @@ struct ContentView: View {
 
 #Preview {
     let schema = Schema([
-        Shuttle.self
+        Shuttle.self,
+        MockRoute.self,
     ])
     let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
 

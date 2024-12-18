@@ -39,8 +39,10 @@ extension Color {
 struct InterMVP0App: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Shuttle.self
+            Shuttle.self,
+            MockRoute.self
         ])
+        
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
         let container = try! ModelContainer(for: schema, configurations: modelConfiguration)
