@@ -44,13 +44,46 @@ struct InterMVP0App: App {
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
         let container = try! ModelContainer(for: schema, configurations: modelConfiguration)
-    
+        
+
         return container
     }()
+    
+    func clearAndInsertMockData() {
+        try! sharedModelContainer.mainContext.delete(model: MockRoute.self)
+        try! sharedModelContainer.mainContext.delete(model: Shuttle.self)
+        
+        let routes: [MockRoute] = [
+            MockRoute(label: "Red Route", callout: "towards Chapman Grand", colorHex: "#db2316", timeEstimates: "5, 15 min"),
+            MockRoute(label: "Teal Route", callout: "towards Panther Village", colorHex: "#21bdd1", timeEstimates: "8, 12 min"),
+        ]
+        
+        for route in routes {
+            sharedModelContainer.mainContext.insert(route)
+        }
+        
+        let shuttles = [
+            Shuttle(currentLatitude: 33.79964, currentLongitude: -117.89328, label: "Red Shuttle 17", estimatedTimeAwayDisplay: "5 min away"),
+            Shuttle(currentLatitude: 33.78788, currentLongitude: -117.85921, label: "Teal Shuttle 12", estimatedTimeAwayDisplay: "5 min away")
+        ]
+        
+        shuttles[0].route = routes[0]
+        
+        for shuttle in shuttles {
+            sharedModelContainer.mainContext.insert(shuttle)
+        }
+        
+    }
+
+    init() {
+        clearAndInsertMockData()
+    }
     
     var body: some Scene {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(sharedModelContainer)
     }
 }
+

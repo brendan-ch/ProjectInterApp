@@ -32,7 +32,7 @@ struct RouteInfoContentView: View {
             
             Section {
                 VStack {
-                    ForEach(route.shuttles) { upcomingDeparture in
+                    ForEach(routeToDisplay.shuttles) { upcomingDeparture in
                         Divider()
                         
                         ShuttleListItem(shuttle: upcomingDeparture) { shuttle in
