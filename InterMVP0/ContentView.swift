@@ -89,6 +89,7 @@ struct ContentView: View {
                 .presentationBackgroundInteraction(.enabled)
                 .interactiveDismissDisabled()
         }
+        .environmentObject(mapSelectionState)
     }
 }
 
