@@ -43,10 +43,16 @@ struct RouteListContentView: View {
             }
         }
         .sheet(isPresented: $isShowingNestedSheet) {
-            if selectedRoute != nil {
-                RouteInfoContentView(isShowing: $isShowingNestedSheet)
+            if let selectedRoute {
+                RouteInfoContentView(isShowing: $isShowingNestedSheet, routeToDisplay: selectedRoute)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    .presentationDetents([.height(210), .height(360), .large])
+                    .presentationBackground(.regularMaterial)
+                    .presentationBackgroundInteraction(.enabled)
+                    .interactiveDismissDisabled()
             }
         }
+        
     }
 }
 

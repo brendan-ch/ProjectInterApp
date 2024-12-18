@@ -23,6 +23,8 @@ final class Shuttle {
     /// Could be returned by Passio API or calculated on-demand
     var estimatedTimeAwayDisplay: String
     
+    var route: MockRoute?
+    
     init(currentLatitude: Double, currentLongitude: Double, label: String, estimatedTimeAwayDisplay: String) {
         self.currentLatitude = currentLatitude
         self.currentLongitude = currentLongitude

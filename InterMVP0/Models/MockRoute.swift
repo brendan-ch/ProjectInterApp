@@ -18,10 +18,15 @@ final class MockRoute {
     var colorHex: String
     var timeEstimates: String
     
+    @Relationship(deleteRule: .cascade, inverse: \Shuttle.route)
+    var shuttles = [Shuttle]()
+    
     init(label: String, callout: String, colorHex: String, timeEstimates: String) {
         self.label = label
         self.callout = callout
         self.colorHex = colorHex
         self.timeEstimates = timeEstimates
+        
+        self.shuttles = []
     }
 }

@@ -116,7 +116,7 @@ struct ShuttleListItem: View {
                         .font(.callout)
                         .foregroundStyle(.secondary)
                 }
-                .padding(.vertical)
+                
                 Spacer()
             }
         }
