@@ -36,6 +36,16 @@ class PlaceholderDataController {
             MockRoute(label: "Teal Route", callout: "towards Panther Village", colorHex: "#21bdd1", timeEstimates: "8, 12 min"),
         ]
         
+        let redRouteCoords = [
+            StoredCoordinate(latitude: 33.79326, longitude: -117.85298),
+            StoredCoordinate(latitude: 33.79331, longitude: -117.85638),
+            StoredCoordinate(latitude: 33.78791, longitude: -117.85638),
+            StoredCoordinate(latitude: 33.78793, longitude: -117.88079),
+            StoredCoordinate(latitude: 33.78800, longitude: -117.88347),
+        ]
+        
+        routes[0].coordinates = redRouteCoords
+        
         for route in routes {
             container.mainContext.insert(route)
         }

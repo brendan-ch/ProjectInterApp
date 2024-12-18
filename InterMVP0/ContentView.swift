@@ -47,19 +47,6 @@ struct ContentView: View {
         mapSelectionState.selectedRoute != nil || mapSelectionState.selectedShuttle != nil
     }
 
-    let sampleRoute: [CLLocationCoordinate2D] = [
-        // 33.79326° N, 117.85298° W
-        CLLocationCoordinate2D(latitude: 33.79326, longitude: -117.85298),
-        // 33.79331° N, 117.85638° W
-        CLLocationCoordinate2D(latitude: 33.79331, longitude: -117.85638),
-        // 33.78791° N, 117.85639° W
-        CLLocationCoordinate2D(latitude: 33.78791, longitude: -117.85638),
-        // 33.78793° N, 117.88079° W
-        CLLocationCoordinate2D(latitude: 33.78793, longitude: -117.88079),
-        // 33.78800° N, 117.88347° W
-        CLLocationCoordinate2D(latitude: 33.78800, longitude: -117.88347),
-    ]
-    
     // The list of shuttles should be sorted by distance from user
     // TODO: Account for drawer when adjusting camera using GeometryReader
     
@@ -87,8 +74,10 @@ struct ContentView: View {
                         .tag(shuttle)
                     }
                     
-                    MapPolyline(coordinates: sampleRoute)
-                        .stroke(.red, lineWidth: 5)
+                    if let coordinates = mapSelectionState.coordinatesToDisplayForPolyline {
+                        MapPolyline(coordinates: coordinates)
+                            .stroke(.red, lineWidth: 5)
+                    }
                 }
             }
         }

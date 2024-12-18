@@ -35,14 +35,4 @@ final class MockRoute {
         
         self.shuttles = []
     }
-    
-//    init(label: String, callout: String, colorHex: String, timeEstimates: String, coordinates: [StoredCoordinate]) {
-//        self.label = label
-//        self.callout = callout
-//        self.colorHex = colorHex
-//        self.timeEstimates = timeEstimates
-//        self.coordinates = coordinates
-//        
-//        self.shuttles = []
-//    }
 }

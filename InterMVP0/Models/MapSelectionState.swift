@@ -6,8 +6,27 @@
 //
 
 import SwiftUI
+import MapKit
 
 class MapSelectionState: ObservableObject {
     @Published var selectedRoute: MockRoute?
     @Published var selectedShuttle: Shuttle?
+    
+    var coordinatesToDisplayForPolyline: [CLLocationCoordinate2D]? {
+        var routeToDisplay = selectedRoute
+        if routeToDisplay == nil {
+            routeToDisplay = selectedShuttle?.route
+        }
+        
+        guard let routeToDisplay = routeToDisplay else { return nil }
+        
+        let coordinates = routeToDisplay.coordinates
+        
+        var coordinatesToReturn: [CLLocationCoordinate2D] = []
+        for coordinate in coordinates {
+            coordinatesToReturn.append(CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude))
+        }
+        return coordinatesToReturn
+    }
+    
 }
