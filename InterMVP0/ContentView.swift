@@ -56,22 +56,44 @@ struct ContentView: View {
                 Map(position: $position, selection: $mapSelectionState.selectedShuttle) {
                     UserAnnotation()
                     
-                    ForEach(shuttles) { shuttle in
-                        Annotation(shuttle.label, coordinate: CLLocationCoordinate2D(latitude: shuttle.currentLatitude, longitude: shuttle.currentLongitude), anchor: .center) {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 100)
-                                    .fill(Color(hex: shuttle.route?.colorHex ?? "#000000"))
-                                RoundedRectangle(cornerRadius: 100)
-                                    .stroke(.background, lineWidth: 4)
-                                Image(systemName: "bus.fill")
-                                    .resizable()
-                                    .frame(width: 16, height: 16)
-                                    .padding(6)
-                                    .foregroundStyle(Color.white)
+                    if let selectedRoute = mapSelectionState.selectedRoute {
+                        ForEach(shuttles) { shuttle in
+                            if shuttle.route == selectedRoute {
+                                Annotation(shuttle.label, coordinate: CLLocationCoordinate2D(latitude: shuttle.currentLatitude, longitude: shuttle.currentLongitude), anchor: .center) {
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 100)
+                                            .fill(Color(hex: shuttle.route?.colorHex ?? "#000000"))
+                                        RoundedRectangle(cornerRadius: 100)
+                                            .stroke(.background, lineWidth: 4)
+                                        Image(systemName: "bus.fill")
+                                            .resizable()
+                                            .frame(width: 16, height: 16)
+                                            .padding(6)
+                                            .foregroundStyle(Color.white)
+                                    }
+                                }
+                                .annotationTitles(mapSelectionState.selectedShuttle == shuttle ? .visible : .hidden)
+                                .tag(shuttle)
                             }
                         }
-                        .annotationTitles(mapSelectionState.selectedShuttle == shuttle ? .visible : .hidden)
-                        .tag(shuttle)
+                    } else {
+                        ForEach(shuttles) { shuttle in
+                            Annotation(shuttle.label, coordinate: CLLocationCoordinate2D(latitude: shuttle.currentLatitude, longitude: shuttle.currentLongitude), anchor: .center) {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 100)
+                                        .fill(Color(hex: shuttle.route?.colorHex ?? "#000000"))
+                                    RoundedRectangle(cornerRadius: 100)
+                                        .stroke(.background, lineWidth: 4)
+                                    Image(systemName: "bus.fill")
+                                        .resizable()
+                                        .frame(width: 16, height: 16)
+                                        .padding(6)
+                                        .foregroundStyle(Color.white)
+                                }
+                            }
+                            .annotationTitles(mapSelectionState.selectedShuttle == shuttle ? .visible : .hidden)
+                            .tag(shuttle)
+                        }
                     }
                     
                     if let coordinates = mapSelectionState.coordinatesToDisplayForPolyline {
