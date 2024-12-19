@@ -93,9 +93,13 @@ struct ContentView: View {
     
     var sheetContent: some View {
         RouteListContentView(routes: routes)
-            .sheet(isPresented: .constant(mapSelectionState.selectedRoute != nil)) {
+            .sheet(isPresented: .constant(mapSelectionState.selectedRoute != nil) ) {
                 if mapSelectionState.selectedRoute != nil {
                     RouteInfoContentView()
+                        .sheet(isPresented: .constant(mapSelectionState.selectedShuttle != nil)) {
+                            ShuttleInfoContentView()
+                                .sheetViewModifier()
+                        }
                         .sheetViewModifier()
                 }
             }

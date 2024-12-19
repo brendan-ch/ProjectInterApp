@@ -24,6 +24,7 @@ struct RouteInfoContentView: View {
                 Spacer()
                 Button("Close") {
                     mapSelectionState.selectedRoute = nil
+                    mapSelectionState.selectedShuttle = nil
                 }
             }
             .padding()
@@ -34,7 +35,7 @@ struct RouteInfoContentView: View {
                         Divider()
                         
                         ShuttleListItem(shuttle: upcomingDeparture) { shuttle in
-                            
+                            mapSelectionState.selectedShuttle = shuttle
                         }
                         .buttonStyle(.plain)
                         .padding(.horizontal)

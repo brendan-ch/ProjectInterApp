@@ -66,6 +66,7 @@ struct RouteListItem: View {
                 Text(route.timeEstimates)
             }
             .listRowBackground(Color.clear)
+            .contentShape(Rectangle())
         }
     }
 }

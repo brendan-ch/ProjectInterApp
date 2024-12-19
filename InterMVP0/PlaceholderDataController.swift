@@ -56,6 +56,7 @@ class PlaceholderDataController {
         ]
         
         shuttles[0].route = routes[0]
+        shuttles[1].route = routes[1]
         
         for shuttle in shuttles {
             container.mainContext.insert(shuttle)
