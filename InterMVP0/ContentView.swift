@@ -18,7 +18,7 @@ struct SheetViewModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            .presentationDetents([.height(210), .height(360), .large])
+            .presentationDetents([.height(360), .large])
             .presentationBackground(.regularMaterial)
             .presentationBackgroundInteraction(.enabled)
             .interactiveDismissDisabled()
@@ -79,6 +79,7 @@ struct ContentView: View {
                             .stroke(.red, lineWidth: 5)
                     }
                 }
+                .safeAreaPadding(EdgeInsets(top: 0, leading: 0, bottom: 360, trailing: 0))
             }
         }
         .task {
@@ -105,7 +106,7 @@ struct ContentView: View {
                 }
             }
         .sheetViewModifier()
-        .presentationDetents([.height(110), .height(360), .large], selection: showingNestedSheet ? .constant(.height(110)) : .constant(.height(360)))
+        .presentationDetents([.height(359), .height(360), .large], selection: showingNestedSheet ? .constant(.height(359)) : .constant(.height(360)))
     }
 }
 
