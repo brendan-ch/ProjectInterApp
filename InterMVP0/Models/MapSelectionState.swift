@@ -12,6 +12,15 @@ class MapSelectionState: ObservableObject {
     @Published var selectedRoute: MockRoute?
     @Published var selectedShuttle: Shuttle?
     
+    var routeToDisplay: MockRoute? {
+        if selectedRoute != nil {
+            return selectedRoute
+        } else if selectedShuttle != nil {
+            return selectedShuttle?.route ?? nil
+        }
+        return nil
+    }
+    
     var coordinatesToDisplayForPolyline: [CLLocationCoordinate2D]? {
         var routeToDisplay = selectedRoute
         if routeToDisplay == nil {

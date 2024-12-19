@@ -56,7 +56,7 @@ struct ContentView: View {
                 Map(position: $position, selection: $mapSelectionState.selectedShuttle) {
                     UserAnnotation()
                     
-                    if let selectedRoute = mapSelectionState.selectedRoute {
+                    if let selectedRoute = mapSelectionState.routeToDisplay {
                         ForEach(shuttles) { shuttle in
                             if shuttle.route == selectedRoute {
                                 Annotation(shuttle.label, coordinate: CLLocationCoordinate2D(latitude: shuttle.currentLatitude, longitude: shuttle.currentLongitude), anchor: .center) {
