@@ -1,0 +1,29 @@
+{
+  "schemaNamespace" : "ProjectInterOperations",
+  "input" : {
+    "operationSearchPaths" : [
+      "**/*.graphql"
+    ],
+    "schemaSearchPaths" : [
+      "**/*.graphqls"
+    ]
+  },
+  "output" : {
+    "testMocks" : {
+      "none" : {
+      }
+    },
+    "schemaTypes" : {
+      "path" : "./ProjectInterOperations",
+      "moduleType" : {
+        "embeddedInTarget" : {
+          "name" : "ProjectInter"
+        }
+      }
+    },
+    "operations" : {
+      "inSchemaModule" : {
+      }
+    }
+  }
+}

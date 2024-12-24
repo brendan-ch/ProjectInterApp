@@ -1,0 +1,6 @@
+query GetAllSystems {
+  systems {
+    name
+    id,
+  },
+}

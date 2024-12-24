@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		2050766A2D1B46B5004CAA04 /* Apollo in Frameworks */ = {isa = PBXBuildFile; productRef = 205076692D1B46B5004CAA04 /* Apollo */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		20FA7B852D10E11F00D4EAD1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -29,9 +33,38 @@
 		20FA7B8E2D10E11F00D4EAD1 /* ProjectInterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProjectInterUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		205076712D1B485A004CAA04 /* Exceptions for "ProjectInter" folder in "ProjectInter" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Operations/GetAllSystems.graphql,
+			);
+			target = 20FA7B732D10E11E00D4EAD1 /* ProjectInter */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		205076722D1B485A004CAA04 /* Exceptions for "ProjectInter" folder in "Compile Sources" phase from "ProjectInter" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = 20FA7B702D10E11E00D4EAD1 /* Sources */;
+			membershipExceptions = (
+				Operations/GetAllSystems.graphql,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		205076CC2D1B4F0E004CAA04 /* ProjectInterOperations */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ProjectInterOperations;
+			sourceTree = "<group>";
+		};
 		20FA7B762D10E11E00D4EAD1 /* ProjectInter */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				205076712D1B485A004CAA04 /* Exceptions for "ProjectInter" folder in "ProjectInter" target */,
+				205076722D1B485A004CAA04 /* Exceptions for "ProjectInter" folder in "Compile Sources" phase from "ProjectInter" target */,
+			);
 			path = ProjectInter;
 			sourceTree = "<group>";
 		};
@@ -52,6 +85,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2050766A2D1B46B5004CAA04 /* Apollo in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,6 +113,7 @@
 				20FA7B872D10E11F00D4EAD1 /* ProjectInterTests */,
 				20FA7B912D10E11F00D4EAD1 /* ProjectInterUITests */,
 				20FA7B752D10E11E00D4EAD1 /* Products */,
+				205076CC2D1B4F0E004CAA04 /* ProjectInterOperations */,
 			);
 			sourceTree = "<group>";
 		};
@@ -108,10 +143,12 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				205076CC2D1B4F0E004CAA04 /* ProjectInterOperations */,
 				20FA7B762D10E11E00D4EAD1 /* ProjectInter */,
 			);
 			name = ProjectInter;
 			packageProductDependencies = (
+				205076692D1B46B5004CAA04 /* Apollo */,
 			);
 			productName = InterMVP1;
 			productReference = 20FA7B742D10E11E00D4EAD1 /* ProjectInter.app */;
@@ -195,6 +232,9 @@
 			);
 			mainGroup = 20FA7B6B2D10E11E00D4EAD1;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				205076682D1B46B5004CAA04 /* XCRemoteSwiftPackageReference "apollo-ios" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 20FA7B752D10E11E00D4EAD1 /* Products */;
 			projectDirPath = "";
@@ -560,6 +600,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		205076682D1B46B5004CAA04 /* XCRemoteSwiftPackageReference "apollo-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apollographql/apollo-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.15.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		205076692D1B46B5004CAA04 /* Apollo */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 205076682D1B46B5004CAA04 /* XCRemoteSwiftPackageReference "apollo-ios" */;
+			productName = Apollo;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 20FA7B6C2D10E11E00D4EAD1 /* Project object */;
 }

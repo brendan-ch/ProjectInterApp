@@ -1,0 +1,59 @@
+type Query {
+  systems: [System!]!
+  system(id: ID): System
+}
+
+type System {
+  id: ID!
+  name: String!
+  routes: [Route!]
+  route(id: ID): Route
+  stops: [Stop!]
+  stop(id: ID): Stop
+  shuttles: [Shuttle!]
+  shuttle(id: ID): Shuttle
+}
+
+type Route {
+  name: String!
+  id: ID!
+  orderedStops: [OrderedStop!]
+  shuttles: [Shuttle!]
+  polylineCoordinates: [Coordinates!]!
+  color: String!
+}
+
+type OrderedStop {
+  nextStop: OrderedStop
+  previousStop: OrderedStop
+  route: Route!
+  stop: Stop!
+}
+
+type Stop {
+  id: ID!
+  name: String!
+  coordinates: Coordinates!
+  etas: [ETA!]
+  orderedStops: [OrderedStop!]
+}
+
+type Coordinates {
+  latitude: Float!
+  longitude: Float!
+}
+
+type ETA {
+  stop: Stop!
+  shuttle: Shuttle!
+  secondsRemaining: Float!
+}
+
+type Shuttle {
+  name: String!
+  id: ID!,
+  coordinates: Coordinates!
+  route: Route
+  etas: [ETA!]
+  eta(forStopId: ID): ETA
+}

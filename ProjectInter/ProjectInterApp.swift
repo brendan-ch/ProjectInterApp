@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import Apollo
 
 extension Color {
     init(hex: String) {
@@ -51,6 +52,10 @@ struct ProjectInterApp: App {
         return container
     }()
     
+    @StateObject var globalDataStateObject = GlobalDataStateObject(apolloClient:
+        ApolloClient(url: URL(string: "http://localhost:4000/graphql")!)
+    )
+
     init() {
         PlaceholderDataController.clearAndInsertPlaceholderData(container: sharedModelContainer)
     }
@@ -60,6 +65,7 @@ struct ProjectInterApp: App {
             ContentView()
         }
         .modelContainer(sharedModelContainer)
+        .environmentObject(globalDataStateObject)
     }
 }
 
