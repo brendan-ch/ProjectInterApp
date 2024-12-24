@@ -36,7 +36,7 @@ extension Color {
 }
 
 @main
-struct InterMVP0App: App {
+struct ProjectInterApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Shuttle.self,

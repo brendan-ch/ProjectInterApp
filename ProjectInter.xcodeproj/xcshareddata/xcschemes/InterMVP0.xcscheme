@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "20FA7B732D10E11E00D4EAD1"
-               BuildableName = "InterMVP0.app"
-               BlueprintName = "InterMVP0"
-               ReferencedContainer = "container:InterMVP0.xcodeproj">
+               BuildableName = "ProjectInter.app"
+               BlueprintName = "ProjectInter"
+               ReferencedContainer = "container:ProjectInter.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -36,9 +36,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "20FA7B832D10E11F00D4EAD1"
-               BuildableName = "InterMVP0Tests.xctest"
-               BlueprintName = "InterMVP0Tests"
-               ReferencedContainer = "container:InterMVP0.xcodeproj">
+               BuildableName = "ProjectInterTests.xctest"
+               BlueprintName = "ProjectInterTests"
+               ReferencedContainer = "container:ProjectInter.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -47,9 +47,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "20FA7B8D2D10E11F00D4EAD1"
-               BuildableName = "InterMVP0UITests.xctest"
-               BlueprintName = "InterMVP0UITests"
-               ReferencedContainer = "container:InterMVP0.xcodeproj">
+               BuildableName = "ProjectInterUITests.xctest"
+               BlueprintName = "ProjectInterUITests"
+               ReferencedContainer = "container:ProjectInter.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -69,9 +69,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "20FA7B732D10E11E00D4EAD1"
-            BuildableName = "InterMVP0.app"
-            BlueprintName = "InterMVP0"
-            ReferencedContainer = "container:InterMVP0.xcodeproj">
+            BuildableName = "ProjectInter.app"
+            BlueprintName = "ProjectInter"
+            ReferencedContainer = "container:ProjectInter.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -86,9 +86,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "20FA7B732D10E11E00D4EAD1"
-            BuildableName = "InterMVP0.app"
-            BlueprintName = "InterMVP0"
-            ReferencedContainer = "container:InterMVP0.xcodeproj">
+            BuildableName = "ProjectInter.app"
+            BlueprintName = "ProjectInter"
+            ReferencedContainer = "container:ProjectInter.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

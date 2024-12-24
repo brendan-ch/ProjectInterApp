@@ -24,25 +24,25 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		20FA7B742D10E11E00D4EAD1 /* InterMVP0.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InterMVP0.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		20FA7B842D10E11F00D4EAD1 /* InterMVP0Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InterMVP0Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		20FA7B8E2D10E11F00D4EAD1 /* InterMVP0UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InterMVP0UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		20FA7B742D10E11E00D4EAD1 /* ProjectInter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProjectInter.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		20FA7B842D10E11F00D4EAD1 /* ProjectInterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProjectInterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		20FA7B8E2D10E11F00D4EAD1 /* ProjectInterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProjectInterUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		20FA7B762D10E11E00D4EAD1 /* InterMVP0 */ = {
+		20FA7B762D10E11E00D4EAD1 /* ProjectInter */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = InterMVP0;
+			path = ProjectInter;
 			sourceTree = "<group>";
 		};
-		20FA7B872D10E11F00D4EAD1 /* InterMVP0Tests */ = {
+		20FA7B872D10E11F00D4EAD1 /* ProjectInterTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = InterMVP0Tests;
+			path = ProjectInterTests;
 			sourceTree = "<group>";
 		};
-		20FA7B912D10E11F00D4EAD1 /* InterMVP0UITests */ = {
+		20FA7B912D10E11F00D4EAD1 /* ProjectInterUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = InterMVP0UITests;
+			path = ProjectInterUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -75,9 +75,9 @@
 		20FA7B6B2D10E11E00D4EAD1 = {
 			isa = PBXGroup;
 			children = (
-				20FA7B762D10E11E00D4EAD1 /* InterMVP0 */,
-				20FA7B872D10E11F00D4EAD1 /* InterMVP0Tests */,
-				20FA7B912D10E11F00D4EAD1 /* InterMVP0UITests */,
+				20FA7B762D10E11E00D4EAD1 /* ProjectInter */,
+				20FA7B872D10E11F00D4EAD1 /* ProjectInterTests */,
+				20FA7B912D10E11F00D4EAD1 /* ProjectInterUITests */,
 				20FA7B752D10E11E00D4EAD1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -85,9 +85,9 @@
 		20FA7B752D10E11E00D4EAD1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				20FA7B742D10E11E00D4EAD1 /* InterMVP0.app */,
-				20FA7B842D10E11F00D4EAD1 /* InterMVP0Tests.xctest */,
-				20FA7B8E2D10E11F00D4EAD1 /* InterMVP0UITests.xctest */,
+				20FA7B742D10E11E00D4EAD1 /* ProjectInter.app */,
+				20FA7B842D10E11F00D4EAD1 /* ProjectInterTests.xctest */,
+				20FA7B8E2D10E11F00D4EAD1 /* ProjectInterUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,9 +95,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		20FA7B732D10E11E00D4EAD1 /* InterMVP0 */ = {
+		20FA7B732D10E11E00D4EAD1 /* ProjectInter */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 20FA7B982D10E11F00D4EAD1 /* Build configuration list for PBXNativeTarget "InterMVP0" */;
+			buildConfigurationList = 20FA7B982D10E11F00D4EAD1 /* Build configuration list for PBXNativeTarget "ProjectInter" */;
 			buildPhases = (
 				20FA7B702D10E11E00D4EAD1 /* Sources */,
 				20FA7B712D10E11E00D4EAD1 /* Frameworks */,
@@ -108,18 +108,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				20FA7B762D10E11E00D4EAD1 /* InterMVP0 */,
+				20FA7B762D10E11E00D4EAD1 /* ProjectInter */,
 			);
-			name = InterMVP0;
+			name = ProjectInter;
 			packageProductDependencies = (
 			);
 			productName = InterMVP1;
-			productReference = 20FA7B742D10E11E00D4EAD1 /* InterMVP0.app */;
+			productReference = 20FA7B742D10E11E00D4EAD1 /* ProjectInter.app */;
 			productType = "com.apple.product-type.application";
 		};
-		20FA7B832D10E11F00D4EAD1 /* InterMVP0Tests */ = {
+		20FA7B832D10E11F00D4EAD1 /* ProjectInterTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 20FA7B9B2D10E11F00D4EAD1 /* Build configuration list for PBXNativeTarget "InterMVP0Tests" */;
+			buildConfigurationList = 20FA7B9B2D10E11F00D4EAD1 /* Build configuration list for PBXNativeTarget "ProjectInterTests" */;
 			buildPhases = (
 				20FA7B802D10E11F00D4EAD1 /* Sources */,
 				20FA7B812D10E11F00D4EAD1 /* Frameworks */,
@@ -131,18 +131,18 @@
 				20FA7B862D10E11F00D4EAD1 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				20FA7B872D10E11F00D4EAD1 /* InterMVP0Tests */,
+				20FA7B872D10E11F00D4EAD1 /* ProjectInterTests */,
 			);
-			name = InterMVP0Tests;
+			name = ProjectInterTests;
 			packageProductDependencies = (
 			);
 			productName = InterMVP1Tests;
-			productReference = 20FA7B842D10E11F00D4EAD1 /* InterMVP0Tests.xctest */;
+			productReference = 20FA7B842D10E11F00D4EAD1 /* ProjectInterTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		20FA7B8D2D10E11F00D4EAD1 /* InterMVP0UITests */ = {
+		20FA7B8D2D10E11F00D4EAD1 /* ProjectInterUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 20FA7B9E2D10E11F00D4EAD1 /* Build configuration list for PBXNativeTarget "InterMVP0UITests" */;
+			buildConfigurationList = 20FA7B9E2D10E11F00D4EAD1 /* Build configuration list for PBXNativeTarget "ProjectInterUITests" */;
 			buildPhases = (
 				20FA7B8A2D10E11F00D4EAD1 /* Sources */,
 				20FA7B8B2D10E11F00D4EAD1 /* Frameworks */,
@@ -154,13 +154,13 @@
 				20FA7B902D10E11F00D4EAD1 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				20FA7B912D10E11F00D4EAD1 /* InterMVP0UITests */,
+				20FA7B912D10E11F00D4EAD1 /* ProjectInterUITests */,
 			);
-			name = InterMVP0UITests;
+			name = ProjectInterUITests;
 			packageProductDependencies = (
 			);
 			productName = InterMVP1UITests;
-			productReference = 20FA7B8E2D10E11F00D4EAD1 /* InterMVP0UITests.xctest */;
+			productReference = 20FA7B8E2D10E11F00D4EAD1 /* ProjectInterUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -186,7 +186,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 20FA7B6F2D10E11E00D4EAD1 /* Build configuration list for PBXProject "InterMVP0" */;
+			buildConfigurationList = 20FA7B6F2D10E11E00D4EAD1 /* Build configuration list for PBXProject "ProjectInter" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -200,9 +200,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				20FA7B732D10E11E00D4EAD1 /* InterMVP0 */,
-				20FA7B832D10E11F00D4EAD1 /* InterMVP0Tests */,
-				20FA7B8D2D10E11F00D4EAD1 /* InterMVP0UITests */,
+				20FA7B732D10E11E00D4EAD1 /* ProjectInter */,
+				20FA7B832D10E11F00D4EAD1 /* ProjectInterTests */,
+				20FA7B8D2D10E11F00D4EAD1 /* ProjectInterUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -258,12 +258,12 @@
 /* Begin PBXTargetDependency section */
 		20FA7B862D10E11F00D4EAD1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 20FA7B732D10E11E00D4EAD1 /* InterMVP0 */;
+			target = 20FA7B732D10E11E00D4EAD1 /* ProjectInter */;
 			targetProxy = 20FA7B852D10E11F00D4EAD1 /* PBXContainerItemProxy */;
 		};
 		20FA7B902D10E11F00D4EAD1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 20FA7B732D10E11E00D4EAD1 /* InterMVP0 */;
+			target = 20FA7B732D10E11E00D4EAD1 /* ProjectInter */;
 			targetProxy = 20FA7B8F2D10E11F00D4EAD1 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -395,7 +395,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"InterMVP0/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"ProjectInter/Preview Content\"";
 				DEVELOPMENT_TEAM = 4A9XHUS87Q;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -425,7 +425,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"InterMVP0/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"ProjectInter/Preview Content\"";
 				DEVELOPMENT_TEAM = 4A9XHUS87Q;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -463,7 +463,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/InterMVP0.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/InterMVP0";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ProjectInter.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ProjectInter";
 			};
 			name = Debug;
 		};
@@ -482,7 +482,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/InterMVP0.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/InterMVP0";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ProjectInter.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ProjectInter";
 			};
 			name = Release;
 		};
@@ -523,7 +523,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		20FA7B6F2D10E11E00D4EAD1 /* Build configuration list for PBXProject "InterMVP0" */ = {
+		20FA7B6F2D10E11E00D4EAD1 /* Build configuration list for PBXProject "ProjectInter" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				20FA7B962D10E11F00D4EAD1 /* Debug */,
@@ -532,7 +532,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		20FA7B982D10E11F00D4EAD1 /* Build configuration list for PBXNativeTarget "InterMVP0" */ = {
+		20FA7B982D10E11F00D4EAD1 /* Build configuration list for PBXNativeTarget "ProjectInter" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				20FA7B992D10E11F00D4EAD1 /* Debug */,
@@ -541,7 +541,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		20FA7B9B2D10E11F00D4EAD1 /* Build configuration list for PBXNativeTarget "InterMVP0Tests" */ = {
+		20FA7B9B2D10E11F00D4EAD1 /* Build configuration list for PBXNativeTarget "ProjectInterTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				20FA7B9C2D10E11F00D4EAD1 /* Debug */,
@@ -550,7 +550,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		20FA7B9E2D10E11F00D4EAD1 /* Build configuration list for PBXNativeTarget "InterMVP0UITests" */ = {
+		20FA7B9E2D10E11F00D4EAD1 /* Build configuration list for PBXNativeTarget "ProjectInterUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				20FA7B9F2D10E11F00D4EAD1 /* Debug */,
