@@ -10,14 +10,14 @@
   },
   "output" : {
     "testMocks" : {
-      "none" : {
+      "swiftPackage" : {
+        "targetName": "ProjectInterTestMocks"
       }
     },
     "schemaTypes" : {
       "path" : "./ProjectInterOperations",
       "moduleType" : {
-        "embeddedInTarget" : {
-          "name" : "ProjectInter"
+        "swiftPackageManager" : {
         }
       }
     },
