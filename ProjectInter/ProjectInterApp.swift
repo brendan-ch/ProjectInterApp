@@ -63,6 +63,14 @@ struct ProjectInterApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .task {
+                    globalDataStateObject.refreshSystemData()
+                }
+                .onChange(of: globalDataStateObject.systems) {
+                    if !globalDataStateObject.systems.isEmpty && globalDataStateObject.selectedSystem == nil {
+                        globalDataStateObject.selectedSystem = globalDataStateObject.systems[0]
+                    }
+                }
         }
         .modelContainer(sharedModelContainer)
         .environmentObject(globalDataStateObject)
