@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		2050766A2D1B46B5004CAA04 /* Apollo in Frameworks */ = {isa = PBXBuildFile; productRef = 205076692D1B46B5004CAA04 /* Apollo */; };
 		205077112D1B78EF004CAA04 /* apollo-codegen-config.json in Resources */ = {isa = PBXBuildFile; fileRef = 205077102D1B78EF004CAA04 /* apollo-codegen-config.json */; };
+		205077142D1B79FC004CAA04 /* ProjectInterOperations in Frameworks */ = {isa = PBXBuildFile; productRef = 205077132D1B79FC004CAA04 /* ProjectInterOperations */; };
+		205077162D1B79FC004CAA04 /* ProjectInterTestMocks in Frameworks */ = {isa = PBXBuildFile; productRef = 205077152D1B79FC004CAA04 /* ProjectInterTestMocks */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,11 +58,6 @@
 /* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		205076CC2D1B4F0E004CAA04 /* ProjectInterOperations */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ProjectInterOperations;
-			sourceTree = "<group>";
-		};
 		20FA7B762D10E11E00D4EAD1 /* ProjectInter */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -87,7 +84,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				205077162D1B79FC004CAA04 /* ProjectInterTestMocks in Frameworks */,
 				2050766A2D1B46B5004CAA04 /* Apollo in Frameworks */,
+				205077142D1B79FC004CAA04 /* ProjectInterOperations in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -116,7 +115,6 @@
 				20FA7B872D10E11F00D4EAD1 /* ProjectInterTests */,
 				20FA7B912D10E11F00D4EAD1 /* ProjectInterUITests */,
 				20FA7B752D10E11E00D4EAD1 /* Products */,
-				205076CC2D1B4F0E004CAA04 /* ProjectInterOperations */,
 			);
 			sourceTree = "<group>";
 		};
@@ -146,12 +144,13 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				205076CC2D1B4F0E004CAA04 /* ProjectInterOperations */,
 				20FA7B762D10E11E00D4EAD1 /* ProjectInter */,
 			);
 			name = ProjectInter;
 			packageProductDependencies = (
 				205076692D1B46B5004CAA04 /* Apollo */,
+				205077132D1B79FC004CAA04 /* ProjectInterOperations */,
+				205077152D1B79FC004CAA04 /* ProjectInterTestMocks */,
 			);
 			productName = InterMVP1;
 			productReference = 20FA7B742D10E11E00D4EAD1 /* ProjectInter.app */;
@@ -237,6 +236,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				205076682D1B46B5004CAA04 /* XCRemoteSwiftPackageReference "apollo-ios" */,
+				205077122D1B79FC004CAA04 /* XCLocalSwiftPackageReference "ProjectInterOperations" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 20FA7B752D10E11E00D4EAD1 /* Products */;
@@ -605,6 +605,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		205077122D1B79FC004CAA04 /* XCLocalSwiftPackageReference "ProjectInterOperations" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ProjectInterOperations;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		205076682D1B46B5004CAA04 /* XCRemoteSwiftPackageReference "apollo-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -621,6 +628,14 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 205076682D1B46B5004CAA04 /* XCRemoteSwiftPackageReference "apollo-ios" */;
 			productName = Apollo;
+		};
+		205077132D1B79FC004CAA04 /* ProjectInterOperations */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ProjectInterOperations;
+		};
+		205077152D1B79FC004CAA04 /* ProjectInterTestMocks */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ProjectInterTestMocks;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
