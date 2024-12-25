@@ -8,13 +8,23 @@
 import SwiftUI
 import Apollo
 import ApolloAPI
+import ApolloTestSupport
 import ProjectInterOperations
+import ProjectInterTestMocks
 
-class GlobalDataStateObject: ObservableObject {
+protocol GlobalDataStateObjectProtocol: ObservableObject {
+    associatedtype System
+    var systems: [System] { get set }
+    var selectedSystem: System? { get set }
+    
+    func refreshSystemData()
+}
+
+class GlobalDataStateObject: GlobalDataStateObjectProtocol {
     var apolloClient: ApolloClient
     
-    @Published private(set) var systems: [GetAllSystemsQuery.Data.System] = []
-    @Published var selectedSystem: GetAllSystemsQuery.Data.System? = nil
+    @Published var systems: [System] = []
+    @Published var selectedSystem: System? = nil
     
     init(apolloClient: ApolloClient) {
         self.apolloClient = apolloClient
@@ -23,7 +33,22 @@ class GlobalDataStateObject: ObservableObject {
     func refreshSystemData() {
         apolloClient.fetch(query: GetAllSystemsQuery()) { result in
             guard let data = try? result.get().data else { return }
-            self.systems = data.systems
+            
+            self.systems = data.systems.map { system in
+                System(name: system.name, id: system.id)
+            }
         }
+    }
+}
+
+class PlaceholderGlobalDataStateObject: GlobalDataStateObjectProtocol {
+    @Published var systems: [System] = []
+    @Published var selectedSystem: System? = nil
+    
+    func refreshSystemData() {
+        systems = [
+            System(name: "Chapman University", id: "1"),
+            System(name: "City of Monterey Park", id: "2")
+        ]
     }
 }

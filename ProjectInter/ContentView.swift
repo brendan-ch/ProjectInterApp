@@ -139,4 +139,5 @@ struct ContentView: View {
 #Preview {
     return ContentView()
         .modelContainer(PlaceholderDataController.previewContainer)
+        .environmentObject(PlaceholderGlobalDataStateObject())
 }
