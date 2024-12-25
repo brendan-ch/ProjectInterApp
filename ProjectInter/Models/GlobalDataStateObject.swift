@@ -31,6 +31,7 @@ class GlobalDataStateObject: GlobalDataStateObjectProtocol {
     }
     
     func refreshSystemData() {
+        // TODO: integration test path
         apolloClient.fetch(query: GetAllSystemsQuery()) { result in
             guard let data = try? result.get().data else { return }
             
@@ -46,6 +47,7 @@ class PlaceholderGlobalDataStateObject: GlobalDataStateObjectProtocol {
     @Published var selectedSystem: System? = nil
     
     func refreshSystemData() {
+        // TODO: unit test path
         systems = [
             System(name: "Chapman University", id: "1"),
             System(name: "City of Monterey Park", id: "2")
