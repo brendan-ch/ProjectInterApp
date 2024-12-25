@@ -11,7 +11,7 @@ import Foundation
 // separated from API models.
 // Goal is to simplify preview data and unit testing.
 
-struct System {
+struct System: Equatable, Identifiable {
     var name: String
     var id: String
 }
