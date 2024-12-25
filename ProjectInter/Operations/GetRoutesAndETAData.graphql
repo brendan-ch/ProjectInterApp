@@ -1,5 +1,15 @@
 query GetRoutesAndETAData($systemId: ID!, $stopId: ID!) {
   system(id: $systemId) {
+    shuttles {
+      coordinates {
+        latitude
+        longitude
+      }
+      route {
+        color
+      }
+      id
+    }
     stop(id: $stopId) {
       name,
       orderedStops {
