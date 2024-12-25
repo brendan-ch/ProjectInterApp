@@ -43,6 +43,9 @@ protocol ContentViewModelProtocol: ObservableObject {
     var routes: [ContentViewRoute] { get set }
     
     var currentlySelectedStop: ContentViewStop? { get set }
+    
+    func refreshStopData(systemId: String)
+    func refreshShuttlesRoutesEtaData(systemId: String, stopId: String)
 }
 
 class ContentViewModel: ContentViewModelProtocol {
@@ -86,6 +89,7 @@ class ContentViewModel: ContentViewModelProtocol {
             }
             
             self.routes = data.system?.stop?.orderedStops?.map { orderedStop in
+                // TODO: compute ETA display time in minutes based on secondsRemaining values
                 ContentViewRoute(
                     id: orderedStop.route.id,
                     name: orderedStop.route.name,
@@ -104,4 +108,31 @@ class PlaceholderContentViewModel: ContentViewModelProtocol {
     @Published var routes: [ContentViewRoute] = []
     
     @Published var currentlySelectedStop: ContentViewStop? = nil
+    
+    func refreshStopData(systemId: String) {
+        stops = [
+            ContentViewStop(id: "1", name: "Chapman Grand"),
+            ContentViewStop(id: "2", name: "Chapman Court")
+        ]
+    }
+    
+    func refreshShuttlesRoutesEtaData(systemId: String, stopId: String) {
+        routes = [
+            ContentViewRoute(
+                id: "1",
+                name: "Red Route",
+                colorHex: "#db2316",
+                nextStopName: "Chapman Grand",
+                etaDisplayString: "8, 12 min"
+            ),
+            ContentViewRoute(
+                id: "2",
+                name: "Teal Route",
+                colorHex: "#21bdd1",
+                nextStopName: "Panther Village",
+                etaDisplayString: "5, 15 min"
+            ),
+        ]
+    }
+    
 }
