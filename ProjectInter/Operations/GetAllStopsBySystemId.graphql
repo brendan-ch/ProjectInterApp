@@ -1,5 +1,5 @@
-query GetAllStops($stopId: ID!) {
-  system(id: $stopId) {
+query GetAllStopsBySystemId($systemId: ID!) {
+  system(id: $systemId) {
     stops {
       name,
       id
