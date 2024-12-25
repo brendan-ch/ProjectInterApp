@@ -1,0 +1,8 @@
+query GetAllStops($stopId: ID!) {
+  system(id: $stopId) {
+    stops {
+      name,
+      id
+    }
+  }
+}
