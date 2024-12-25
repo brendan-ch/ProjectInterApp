@@ -31,7 +31,7 @@ struct ContentViewRoute: Equatable, Identifiable {
     var id: String
     var name: String
     var colorHex: String
-    var nextStopName: String
+    var nextStopName: String?
     var etaDisplayString: String
 }
 
@@ -68,8 +68,33 @@ class ContentViewModel: ContentViewModelProtocol {
         }
     }
     
-    func refreshAllData(systemId: String, stopId: String) {
-        
+    func refreshShuttlesRoutesEtaData(systemId: String, stopId: String) {
+        apolloClient.fetch(query: GetRoutesAndETADataQuery(systemId: systemId, stopId: stopId)) { result in
+            guard let data = try? result.get().data else { return }
+            
+            if let shuttles = data.system?.shuttles {
+                self.shuttles = shuttles.map { shuttle in
+                    ContentViewShuttle(
+                        coordinates: Coordinates(
+                            latitude: shuttle.coordinates.latitude,
+                            longitude: shuttle.coordinates.longitude
+                        ),
+                        routeColorHex: shuttle.route?.color ?? "#000000",
+                        id: shuttle.id
+                    )
+                }
+            }
+            
+            self.routes = data.system?.stop?.orderedStops?.map { orderedStop in
+                ContentViewRoute(
+                    id: orderedStop.route.id,
+                    name: orderedStop.route.name,
+                    colorHex: orderedStop.route.color,
+                    nextStopName: orderedStop.nextStop?.stop.name,
+                    etaDisplayString: "N/A"
+                )
+            } ?? []
+        }
     }
 }
 
