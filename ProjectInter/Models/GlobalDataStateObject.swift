@@ -12,27 +12,19 @@ import ApolloTestSupport
 import ProjectInterOperations
 import ProjectInterTestMocks
 
-protocol GlobalDataStateObjectProtocol: ObservableObject {
-    associatedtype System
-    var systems: [System] { get set }
-    var selectedSystem: System? { get set }
-    
-    func refreshSystemData()
-}
-
-class GlobalDataStateObject: GlobalDataStateObjectProtocol {
-    var apolloClient: ApolloClient
+class GlobalDataStateObject: ObservableObject {
+    var apolloClient: ApolloClient?
     
     @Published var systems: [System] = []
     @Published var selectedSystem: System? = nil
     
-    init(apolloClient: ApolloClient) {
+    init(apolloClient: ApolloClient? = nil) {
         self.apolloClient = apolloClient
     }
     
     func refreshSystemData() {
         // TODO: integration test path
-        apolloClient.fetch(query: GetAllSystemsQuery()) { result in
+        apolloClient?.fetch(query: GetAllSystemsQuery()) { result in
             guard let data = try? result.get().data else { return }
             
             self.systems = data.systems.map { system in
@@ -40,13 +32,8 @@ class GlobalDataStateObject: GlobalDataStateObjectProtocol {
             }
         }
     }
-}
-
-class PlaceholderGlobalDataStateObject: GlobalDataStateObjectProtocol {
-    @Published var systems: [System] = []
-    @Published var selectedSystem: System? = nil
     
-    func refreshSystemData() {
+    func addPlaceholderData() {
         // TODO: unit test path
         systems = [
             System(name: "Chapman University", id: "1"),
