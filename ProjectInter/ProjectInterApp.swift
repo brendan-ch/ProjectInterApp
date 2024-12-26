@@ -52,7 +52,7 @@ struct ProjectInterApp: App {
 //        return container
 //    }()
     
-    @StateObject var globalDataStateObject = GlobalDataStateObject(apolloClient:
+    @StateObject var globalDataStateObject = GlobalDataState(apolloClient:
         ApolloClient(url: URL(string: "http://localhost:4000/graphql")!)
     )
 

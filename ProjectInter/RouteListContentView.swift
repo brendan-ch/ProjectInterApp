@@ -12,7 +12,7 @@ struct RouteListContentView: View {
     @StateObject var viewModel: RouteListContentViewModel = RouteListContentViewModel()
     
 //    @EnvironmentObject var mapSelectionState: MapSelectionState
-    @EnvironmentObject var globalDataState: GlobalDataStateObject
+    @EnvironmentObject var globalDataState: GlobalDataState
     
     var body: some View {
         ScrollView {
@@ -83,7 +83,7 @@ struct RouteListItem: View {
 
 #Preview {
 //    let environmentObject = MapSelectionState()
-    let globalDataStateObject = GlobalDataStateObject()
+    let globalDataStateObject = GlobalDataState()
     globalDataStateObject.addPlaceholderData()
     
     return RouteListContentView()

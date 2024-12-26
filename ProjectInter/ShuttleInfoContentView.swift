@@ -11,7 +11,7 @@ struct ShuttleInfoContentView: View {
 //    @EnvironmentObject var mapSelectionState: GlobalMapSelectionState
     
     @StateObject var viewModel = ShuttleInfoContentViewModel()
-    @EnvironmentObject var globalDataState: GlobalDataStateObject
+    @EnvironmentObject var globalDataState: GlobalDataState
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -67,5 +67,5 @@ struct ShuttleInfoContentView: View {
 //    environmentObject.selectedShuttle = shuttle
 //
     return ShuttleInfoContentView()
-        .environmentObject(GlobalDataStateObject())
+        .environmentObject(GlobalDataState())
 }

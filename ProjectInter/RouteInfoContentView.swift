@@ -10,7 +10,7 @@ import SwiftUI
 struct RouteInfoContentView: View {
 //    @EnvironmentObject var mapSelectionState: GlobalMapSelectionState
     
-    @EnvironmentObject var globalDataState: GlobalDataStateObject
+    @EnvironmentObject var globalDataState: GlobalDataState
     @StateObject var viewModel: RouteInfoContentViewModel = RouteInfoContentViewModel()
     
     var body: some View {
@@ -92,5 +92,5 @@ struct RouteInfoShuttleViewItem: View {
 
 #Preview {
     return RouteInfoContentView()
-        .environmentObject(GlobalDataStateObject())
+        .environmentObject(GlobalDataState())
 }

@@ -138,5 +138,5 @@ struct ContentView: View {
 
 #Preview {
     return ContentView()
-        .environmentObject(GlobalDataStateObject())
+        .environmentObject(GlobalDataState())
 }

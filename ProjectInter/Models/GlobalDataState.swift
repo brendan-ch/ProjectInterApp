@@ -12,7 +12,7 @@ import ApolloTestSupport
 import ProjectInterOperations
 import ProjectInterTestMocks
 
-class GlobalDataStateObject: ObservableObject {
+class GlobalDataState: ObservableObject {
     var apolloClient: ApolloClient?
     
     @Published var systems: [System] = []
