@@ -11,7 +11,6 @@ import Apollo
 struct RouteListContentView: View {
     @StateObject var viewModel: RouteListContentViewModel = RouteListContentViewModel()
     
-//    @EnvironmentObject var mapSelectionState: MapSelectionState
     @EnvironmentObject var globalDataState: GlobalDataState
     
     var body: some View {
@@ -32,7 +31,7 @@ struct RouteListContentView: View {
             
             ForEach(viewModel.routes) { route in
                 RouteListItem(route: route) { selectedRoute in
-                    print(route)
+                    globalDataState.selectedRouteId = route.id
                 }
                 .padding(.horizontal)
                 .buttonStyle(.plain)

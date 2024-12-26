@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct ShuttleInfoContentView: View {
-//    @EnvironmentObject var mapSelectionState: GlobalMapSelectionState
-    
     @StateObject var viewModel = ShuttleInfoContentViewModel()
     @EnvironmentObject var globalDataState: GlobalDataState
     
@@ -32,7 +30,7 @@ struct ShuttleInfoContentView: View {
                 }
                 Spacer()
                 Button("Close") {
-//                    mapSelectionState.selectedShuttle = nil
+                    globalDataState.selectedShuttleId = nil
                 }
             }
             .padding()
@@ -51,21 +49,20 @@ struct ShuttleInfoContentView: View {
         }
         .onAppear {
             if let client = globalDataState.apolloClient {
-                viewModel.apolloClient = client
-//                viewModel.refreshData(shuttleId: )
-            } else {
-                viewModel.addPlaceholderData()
+                if let shuttleId = globalDataState.selectedShuttleId {
+                    viewModel.apolloClient = client
+                    viewModel.refreshData(shuttleId: shuttleId)
+                    
+                    return
+                }
             }
+            
+            viewModel.addPlaceholderData()
         }
     }
 }
 
 #Preview {
-//    let shuttle = Shuttle(currentLatitude: 33.79964, currentLongitude: -117.89328, label: "Red Shuttle 17", estimatedTimeAwayDisplay: "5 min away")
-    
-//    let environmentObject = GlobalMapSelectionState()
-//    environmentObject.selectedShuttle = shuttle
-//
     return ShuttleInfoContentView()
         .environmentObject(GlobalDataState())
 }

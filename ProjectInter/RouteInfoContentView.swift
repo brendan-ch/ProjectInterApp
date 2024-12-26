@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct RouteInfoContentView: View {
-//    @EnvironmentObject var mapSelectionState: GlobalMapSelectionState
-    
     @EnvironmentObject var globalDataState: GlobalDataState
     @StateObject var viewModel: RouteInfoContentViewModel = RouteInfoContentViewModel()
     
@@ -26,9 +24,8 @@ struct RouteInfoContentView: View {
                 }
                 Spacer()
                 Button("Close") {
-                    // TODO: implement deselection of updated map selection state
-//                    mapSelectionState.selectedRoute = nil
-//                    mapSelectionState.selectedShuttle = nil
+                    globalDataState.selectedRouteId = nil
+                    globalDataState.selectedShuttleId = nil
                 }
             }
             .padding()
@@ -39,7 +36,7 @@ struct RouteInfoContentView: View {
                         Divider()
                         
                         RouteInfoShuttleViewItem(shuttle: upcomingDeparture) { shuttle in
-//                            mapSelectionState.selectedShuttle = shuttle
+                            globalDataState.selectedShuttleId = shuttle.id
                         }
                         .buttonStyle(.plain)
                         .padding(.horizontal)
