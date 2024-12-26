@@ -38,29 +38,11 @@ extension Color {
 
 @main
 struct ProjectInterApp: App {
-//    var sharedModelContainer: ModelContainer = {
-//        let schema = Schema([
-//            Shuttle.self,
-//            MockRoute.self
-//        ])
-//        
-//        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-//
-//        let container = try! ModelContainer(for: schema, configurations: modelConfiguration)
-//        
-//
-//        return container
-//    }()
-    
     @StateObject var globalDataStateObject = GlobalDataState(apolloClient:
         ApolloClient(url: URL(string: "http://localhost:4000/graphql")!)
     )
 
-//    init() {
-//        PlaceholderDataController.clearAndInsertPlaceholderData(container: sharedModelContainer)
-//    }
-    
-    var body: some Scene {
+      var body: some Scene {
         WindowGroup {
             ContentView()
                 .task {
@@ -72,7 +54,6 @@ struct ProjectInterApp: App {
                     }
                 }
         }
-//        .modelContainer(sharedModelContainer)
         .environmentObject(globalDataStateObject)
     }
 }

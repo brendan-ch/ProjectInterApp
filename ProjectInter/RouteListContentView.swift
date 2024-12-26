@@ -81,11 +81,9 @@ struct RouteListItem: View {
 
 
 #Preview {
-//    let environmentObject = MapSelectionState()
     let globalDataStateObject = GlobalDataState()
     globalDataStateObject.addPlaceholderData()
     
     return RouteListContentView()
-//        .environmentObject(environmentObject)
         .environmentObject(globalDataStateObject)
 }
