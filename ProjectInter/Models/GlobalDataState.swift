@@ -18,6 +18,9 @@ class GlobalDataState: ObservableObject {
     @Published var systems: [System] = []
     @Published var selectedSystem: System? = nil
     
+    @Published var selectedRouteId: String? = nil
+    @Published var selectedShuttleId: String? = nil
+    
     init(apolloClient: ApolloClient? = nil) {
         self.apolloClient = apolloClient
     }

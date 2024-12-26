@@ -9,9 +9,13 @@ import SwiftUI
 import MapKit
 
 class GlobalMapSelectionState: ObservableObject {
+    // TODO: remove both properties
+    
     @Published var selectedRoute: MockRoute?
     @Published var selectedShuttle: Shuttle?
     
+    // TODO: move these computed properties to MapView
+
     var routeToDisplay: MockRoute? {
         if selectedRoute != nil {
             return selectedRoute
