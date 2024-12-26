@@ -40,9 +40,9 @@ struct ContentView: View {
     
     @StateObject var mapSelectionState = MapSelectionState()
     
-    @Query var shuttles: [Shuttle]
-    @Query var routes: [MockRoute]
-    
+//    @Query var shuttles: [Shuttle]
+//    @Query var routes: [MockRoute]
+//    
     var showingNestedSheet: Bool {
         mapSelectionState.selectedRoute != nil || mapSelectionState.selectedShuttle != nil
     }
@@ -53,91 +53,90 @@ struct ContentView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             Group {
-                Map(position: $position, selection: $mapSelectionState.selectedShuttle) {
-                    UserAnnotation()
+//                Map(position: $position, selection: $mapSelectionState.selectedShuttle) {
+//                    UserAnnotation()
                     
-                    if let selectedRoute = mapSelectionState.routeToDisplay {
-                        ForEach(shuttles) { shuttle in
-                            if shuttle.route == selectedRoute {
-                                Annotation(shuttle.label, coordinate: CLLocationCoordinate2D(latitude: shuttle.currentLatitude, longitude: shuttle.currentLongitude), anchor: .center) {
-                                    ZStack {
-                                        RoundedRectangle(cornerRadius: 100)
-                                            .fill(Color(hex: shuttle.route?.colorHex ?? "#000000"))
-                                        RoundedRectangle(cornerRadius: 100)
-                                            .stroke(.background, lineWidth: 4)
-                                        Image(systemName: "bus.fill")
-                                            .resizable()
-                                            .frame(width: 16, height: 16)
-                                            .padding(6)
-                                            .foregroundStyle(Color.white)
-                                    }
-                                }
-                                .annotationTitles(mapSelectionState.selectedShuttle == shuttle ? .visible : .hidden)
-                                .tag(shuttle)
-                            }
-                        }
-                    } else {
-                        ForEach(shuttles) { shuttle in
-                            Annotation(shuttle.label, coordinate: CLLocationCoordinate2D(latitude: shuttle.currentLatitude, longitude: shuttle.currentLongitude), anchor: .center) {
-                                ZStack {
-                                    RoundedRectangle(cornerRadius: 100)
-                                        .fill(Color(hex: shuttle.route?.colorHex ?? "#000000"))
-                                    RoundedRectangle(cornerRadius: 100)
-                                        .stroke(.background, lineWidth: 4)
-                                    Image(systemName: "bus.fill")
-                                        .resizable()
-                                        .frame(width: 16, height: 16)
-                                        .padding(6)
-                                        .foregroundStyle(Color.white)
-                                }
-                            }
-                            .annotationTitles(mapSelectionState.selectedShuttle == shuttle ? .visible : .hidden)
-                            .tag(shuttle)
-                        }
-                    }
-                    
-                    if let coordinates = mapSelectionState.coordinatesToDisplayForPolyline {
-                        MapPolyline(coordinates: coordinates)
-                            .stroke(.red, lineWidth: 5)
-                    }
-                }
-                .safeAreaPadding(EdgeInsets(top: 0, leading: 0, bottom: 360, trailing: 0))
+//                    if let selectedRoute = mapSelectionState.routeToDisplay {
+//                        ForEach(shuttles) { shuttle in
+//                            if shuttle.route == selectedRoute {
+//                                Annotation(shuttle.label, coordinate: CLLocationCoordinate2D(latitude: shuttle.currentLatitude, longitude: shuttle.currentLongitude), anchor: .center) {
+//                                    ZStack {
+//                                        RoundedRectangle(cornerRadius: 100)
+//                                            .fill(Color(hex: shuttle.route?.colorHex ?? "#000000"))
+//                                        RoundedRectangle(cornerRadius: 100)
+//                                            .stroke(.background, lineWidth: 4)
+//                                        Image(systemName: "bus.fill")
+//                                            .resizable()
+//                                            .frame(width: 16, height: 16)
+//                                            .padding(6)
+//                                            .foregroundStyle(Color.white)
+//                                    }
+//                                }
+//                                .annotationTitles(mapSelectionState.selectedShuttle == shuttle ? .visible : .hidden)
+//                                .tag(shuttle)
+//                            }
+//                        }
+//                    } else {
+//                        ForEach(shuttles) { shuttle in
+//                            Annotation(shuttle.label, coordinate: CLLocationCoordinate2D(latitude: shuttle.currentLatitude, longitude: shuttle.currentLongitude), anchor: .center) {
+//                                ZStack {
+//                                    RoundedRectangle(cornerRadius: 100)
+//                                        .fill(Color(hex: shuttle.route?.colorHex ?? "#000000"))
+//                                    RoundedRectangle(cornerRadius: 100)
+//                                        .stroke(.background, lineWidth: 4)
+//                                    Image(systemName: "bus.fill")
+//                                        .resizable()
+//                                        .frame(width: 16, height: 16)
+//                                        .padding(6)
+//                                        .foregroundStyle(Color.white)
+//                                }
+//                            }
+//                            .annotationTitles(mapSelectionState.selectedShuttle == shuttle ? .visible : .hidden)
+//                            .tag(shuttle)
+//                        }
+//                    }
+//                    
+//                    if let coordinates = mapSelectionState.coordinatesToDisplayForPolyline {
+//                        MapPolyline(coordinates: coordinates)
+//                            .stroke(.red, lineWidth: 5)
+//                    }
+//                }
+//                .safeAreaPadding(EdgeInsets(top: 0, leading: 0, bottom: 360, trailing: 0))
             }
         }
         .task {
             showSheet = true
         }
-        .sheet(isPresented: $showSheet) {
-            sheetContent
-        }
-        .environmentObject(mapSelectionState)
+//        .sheet(isPresented: $showSheet) {
+//            sheetContent
+//        }
+//        .environmentObject(mapSelectionState)
     }
     
-    var sheetContent: some View {
-        RouteListContentView(routes: routes)
-            .sheet(isPresented: .constant(mapSelectionState.selectedRoute != nil) ) {
-                if mapSelectionState.selectedRoute != nil {
-                    RouteInfoContentView()
-                        .sheet(isPresented: .constant(mapSelectionState.selectedShuttle != nil)) {
-                            ShuttleInfoContentView()
-                                .sheetViewModifier()
-                        }
-                        .sheetViewModifier()
-                }
-            }
-            .sheet(isPresented: .constant(mapSelectionState.selectedShuttle != nil)) {
-                if mapSelectionState.selectedShuttle != nil {
-                    ShuttleInfoContentView()
-                        .sheetViewModifier()
-                }
-            }
-        .sheetViewModifier()
-        .presentationDetents([.height(359), .height(360), .large], selection: showingNestedSheet ? .constant(.height(359)) : .constant(.height(360)))
-    }
+//    var sheetContent: some View {
+//        RouteListContentView(routes: routes)
+//            .sheet(isPresented: .constant(mapSelectionState.selectedRoute != nil) ) {
+//                if mapSelectionState.selectedRoute != nil {
+//                    RouteInfoContentView()
+//                        .sheet(isPresented: .constant(mapSelectionState.selectedShuttle != nil)) {
+//                            ShuttleInfoContentView()
+//                                .sheetViewModifier()
+//                        }
+//                        .sheetViewModifier()
+//                }
+//            }
+//            .sheet(isPresented: .constant(mapSelectionState.selectedShuttle != nil)) {
+//                if mapSelectionState.selectedShuttle != nil {
+//                    ShuttleInfoContentView()
+//                        .sheetViewModifier()
+//                }
+//            }
+//        .sheetViewModifier()
+//        .presentationDetents([.height(359), .height(360), .large], selection: showingNestedSheet ? .constant(.height(359)) : .constant(.height(360)))
+//    }
 }
 
 #Preview {
     return ContentView()
-        .modelContainer(PlaceholderDataController.previewContainer)
-        .environmentObject(PlaceholderGlobalDataStateObject())
+        .environmentObject(GlobalDataStateObject())
 }
