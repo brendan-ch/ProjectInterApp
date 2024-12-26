@@ -18,27 +18,31 @@ struct MapView: View {
             UserAnnotation()
             
             ForEach(viewModel.shuttles) { shuttle in
-                Annotation(
-                    shuttle.name,
-                    coordinate: shuttle.coordinates,
-                    anchor: .center
-                ) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 100)
-                            .fill(Color(hex: shuttle.routeColorHex))
-                        RoundedRectangle(cornerRadius: 100)
-                            .stroke(.white, lineWidth: 4)
-                        Image(systemName: "bus.fill")
-                            .resizable()
-                            .frame(width: 16, height: 16)
-                            .padding(6)
-                            .foregroundStyle(Color.white)
+                var shouldDisplayShuttle = globalDataState.selectedRouteId != nil && shuttle.routeId == globalDataState.selectedRouteId || globalDataState.selectedRouteId == nil
+                
+                if shouldDisplayShuttle {
+                    Annotation(
+                        shuttle.name,
+                        coordinate: shuttle.coordinates,
+                        anchor: .center
+                    ) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 100)
+                                .fill(Color(hex: shuttle.routeColorHex))
+                            RoundedRectangle(cornerRadius: 100)
+                                .stroke(.white, lineWidth: 4)
+                            Image(systemName: "bus.fill")
+                                .resizable()
+                                .frame(width: 16, height: 16)
+                                .padding(6)
+                                .foregroundStyle(Color.white)
+                        }
                     }
+                    .annotationTitles(
+                        globalDataState.selectedShuttleId == shuttle.id ? .visible : .hidden
+                    )
+                    .tag(shuttle.id)
                 }
-                .annotationTitles(
-                    globalDataState.selectedShuttleId == shuttle.id ? .visible : .hidden
-                )
-                .tag(shuttle.id)
             }
         }
         .onAppear {
