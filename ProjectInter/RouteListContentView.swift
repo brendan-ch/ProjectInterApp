@@ -43,6 +43,7 @@ struct RouteListContentView: View {
         .onAppear {
             if let apolloClient = globalDataState.apolloClient {
                 viewModel.apolloClient = apolloClient
+                viewModel.getRouteData()
             } else {
                 viewModel.addPlaceholderData()
             }
