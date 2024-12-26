@@ -38,7 +38,7 @@ struct ContentView: View {
     
     @State private var position: MapCameraPosition = .automatic
     
-    @StateObject var mapSelectionState = MapSelectionState()
+    @StateObject var mapSelectionState = GlobalMapSelectionState()
     
 //    @Query var shuttles: [Shuttle]
 //    @Query var routes: [MockRoute]

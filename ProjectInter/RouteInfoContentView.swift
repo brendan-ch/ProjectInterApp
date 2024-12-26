@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RouteInfoContentView: View {
-    @EnvironmentObject var mapSelectionState: MapSelectionState
+    @EnvironmentObject var mapSelectionState: GlobalMapSelectionState
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -64,7 +64,7 @@ struct RouteInfoContentView: View {
     
     route.shuttles = upcomingDepartures
     
-    let environmentObject = MapSelectionState()
+    let environmentObject = GlobalMapSelectionState()
     environmentObject.selectedRoute = route
     
     return RouteInfoContentView()

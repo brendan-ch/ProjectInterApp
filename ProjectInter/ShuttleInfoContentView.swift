@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ShuttleInfoContentView: View {
-    @EnvironmentObject var mapSelectionState: MapSelectionState
+    @EnvironmentObject var mapSelectionState: GlobalMapSelectionState
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -52,7 +52,7 @@ struct ShuttleInfoContentView: View {
 #Preview {
     let shuttle = Shuttle(currentLatitude: 33.79964, currentLongitude: -117.89328, label: "Red Shuttle 17", estimatedTimeAwayDisplay: "5 min away")
     
-    let environmentObject = MapSelectionState()
+    let environmentObject = GlobalMapSelectionState()
     environmentObject.selectedShuttle = shuttle
 
     return ShuttleInfoContentView()

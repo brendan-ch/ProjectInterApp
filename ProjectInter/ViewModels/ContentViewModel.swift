@@ -75,18 +75,18 @@ class ContentViewModel: ContentViewModelProtocol {
         apolloClient.fetch(query: GetRoutesAndETADataQuery(systemId: systemId, stopId: stopId)) { result in
             guard let data = try? result.get().data else { return }
             
-            if let shuttles = data.system?.shuttles {
-                self.shuttles = shuttles.map { shuttle in
-                    ContentViewShuttle(
-                        coordinates: Coordinates(
-                            latitude: shuttle.coordinates.latitude,
-                            longitude: shuttle.coordinates.longitude
-                        ),
-                        routeColorHex: shuttle.route?.color ?? "#000000",
-                        id: shuttle.id
-                    )
-                }
-            }
+//            if let shuttles = data.system?.shuttles {
+//                self.shuttles = shuttles.map { shuttle in
+//                    ContentViewShuttle(
+//                        coordinates: Coordinates(
+//                            latitude: shuttle.coordinates.latitude,
+//                            longitude: shuttle.coordinates.longitude
+//                        ),
+//                        routeColorHex: shuttle.route?.color ?? "#000000",
+//                        id: shuttle.id
+//                    )
+//                }
+//            }
             
             self.routes = data.system?.stop?.orderedStops?.map { orderedStop in
                 // TODO: compute ETA display time in minutes based on secondsRemaining values

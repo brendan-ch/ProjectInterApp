@@ -8,7 +8,7 @@
 import SwiftUI
 import MapKit
 
-class MapSelectionState: ObservableObject {
+class GlobalMapSelectionState: ObservableObject {
     @Published var selectedRoute: MockRoute?
     @Published var selectedShuttle: Shuttle?
     

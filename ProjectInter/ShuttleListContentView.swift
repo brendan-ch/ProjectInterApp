@@ -11,7 +11,7 @@ struct ShuttleListContentView: View {
     @Binding var isPresented: Bool
     @Binding var isShowingNestedSheet: Bool
     
-    @EnvironmentObject var mapSelectionState: MapSelectionState
+    @EnvironmentObject var mapSelectionState: GlobalMapSelectionState
 
     var shuttles: [Shuttle]
     
@@ -130,5 +130,5 @@ struct ShuttleListItem: View {
     ]
 
     ShuttleListContentView(isPresented: .constant(true), isShowingNestedSheet: .constant(false), shuttles: shuttles)
-        .environmentObject(MapSelectionState())
+        .environmentObject(GlobalMapSelectionState())
 }
