@@ -8,34 +8,38 @@
 import SwiftUI
 
 struct RouteInfoContentView: View {
-    @EnvironmentObject var mapSelectionState: GlobalMapSelectionState
+//    @EnvironmentObject var mapSelectionState: GlobalMapSelectionState
+    
+    @EnvironmentObject var globalDataState: GlobalDataStateObject
+    @StateObject var viewModel: RouteInfoContentViewModel = RouteInfoContentViewModel()
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
-                    Text(mapSelectionState.selectedRoute?.label ?? "")
+                    Text(viewModel.routeName)
                         .font(.title2)
                         .bold()
-                    Text(mapSelectionState.selectedRoute?.callout ?? "")
+                    Text(viewModel.routeNextStopName ?? "")
                         .font(.callout)
                         .foregroundStyle(.secondary)
                 }
                 Spacer()
                 Button("Close") {
-                    mapSelectionState.selectedRoute = nil
-                    mapSelectionState.selectedShuttle = nil
+                    // TODO: implement deselection of updated map selection state
+//                    mapSelectionState.selectedRoute = nil
+//                    mapSelectionState.selectedShuttle = nil
                 }
             }
             .padding()
             
             Section {
                 VStack {
-                    ForEach(mapSelectionState.selectedRoute?.shuttles ?? []) { upcomingDeparture in
+                    ForEach(viewModel.shuttles) { upcomingDeparture in
                         Divider()
                         
-                        ShuttleListItem(shuttle: upcomingDeparture) { shuttle in
-                            mapSelectionState.selectedShuttle = shuttle
+                        RouteInfoShuttleViewItem(shuttle: upcomingDeparture) { shuttle in
+//                            mapSelectionState.selectedShuttle = shuttle
                         }
                         .buttonStyle(.plain)
                         .padding(.horizontal)
@@ -51,22 +55,42 @@ struct RouteInfoContentView: View {
                 .padding(.horizontal)
             }
         }
+        .onAppear {
+            if let client = globalDataState.apolloClient {
+                viewModel.apolloClient = client
+                viewModel.refreshData()
+            } else {
+                viewModel.addPlaceholderData()
+            }
+        }
+    }
+}
+
+struct RouteInfoShuttleViewItem: View {
+    var shuttle: RouteInfoContentViewShuttle
+    var action: (_ selectedShuttle: RouteInfoContentViewShuttle) -> Void
+    
+    var body: some View {
+        Button {
+            action(shuttle)
+        } label: {
+            HStack {
+                VStack(alignment: .leading) {
+                    Text(shuttle.name)
+                        .bold()
+                    Text(shuttle.estimatedTimeAwayDisplay)
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                }
+                
+                Spacer()
+            }
+            .contentShape(Rectangle())
+        }
     }
 }
 
 #Preview {
-    let route = MockRoute(label: "Red Route", callout: "towards Chapman Grand", colorHex: "#db2316", timeEstimates: "5, 15 min")
-
-    let upcomingDepartures = [
-        Shuttle(currentLatitude: 33.79964, currentLongitude: -117.89328, label: "Red Shuttle 17", estimatedTimeAwayDisplay: "5 min away"),
-        Shuttle(currentLatitude: 33.78788, currentLongitude: -117.85921, label: "Red Shuttle 25", estimatedTimeAwayDisplay: "15 min away")
-    ]
-    
-    route.shuttles = upcomingDepartures
-    
-    let environmentObject = GlobalMapSelectionState()
-    environmentObject.selectedRoute = route
-    
     return RouteInfoContentView()
-        .environmentObject(environmentObject)
+        .environmentObject(GlobalDataStateObject())
 }
