@@ -48,6 +48,7 @@ struct ContentView: View {
         ZStack(alignment: .bottom) {
             Group {
                 MapView()
+                    .safeAreaPadding(EdgeInsets(top: 0, leading: 0, bottom: 360, trailing: 0))
             }
         }
         .task {
