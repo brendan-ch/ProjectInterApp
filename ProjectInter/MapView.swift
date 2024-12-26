@@ -9,10 +9,12 @@ import SwiftUI
 import MapKit
 
 struct MapView: View {
+    @EnvironmentObject var globalDataState: GlobalDataState
+    
     @StateObject var viewModel = MapViewModel()
     
     var body: some View {
-        Map(position: $viewModel.position) {
+        Map(position: $viewModel.position, selection: $globalDataState.selectedShuttleId) {
             UserAnnotation()
             
             ForEach(viewModel.shuttles) { shuttle in
@@ -33,7 +35,9 @@ struct MapView: View {
                             .foregroundStyle(Color.white)
                     }
                 }
-                .annotationTitles(.visible)
+                .annotationTitles(
+                    globalDataState.selectedShuttleId == shuttle.id ? .visible : .hidden
+                )
                 .tag(shuttle.id)
             }
         }
@@ -45,4 +49,5 @@ struct MapView: View {
 
 #Preview {
     MapView()
+        .environmentObject(GlobalDataState())
 }
