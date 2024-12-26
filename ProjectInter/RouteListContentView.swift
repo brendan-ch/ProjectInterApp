@@ -6,11 +6,13 @@
 //
 
 import SwiftUI
+import Apollo
 
 struct RouteListContentView: View {
-    var routes: [MockRoute]
+    @StateObject var viewModel: RouteListContentViewModel = RouteListContentViewModel()
     
-    @EnvironmentObject var mapSelectionState: MapSelectionState
+//    @EnvironmentObject var mapSelectionState: MapSelectionState
+    @EnvironmentObject var globalDataState: GlobalDataStateObject
     
     var body: some View {
         ScrollView {
@@ -28,9 +30,9 @@ struct RouteListContentView: View {
             }
             .padding()
             
-            ForEach(routes) { route in
+            ForEach(viewModel.routes) { route in
                 RouteListItem(route: route) { selectedRoute in
-                    mapSelectionState.selectedRoute = selectedRoute
+                    print(route)
                 }
                 .padding(.horizontal)
                 .buttonStyle(.plain)
@@ -38,13 +40,19 @@ struct RouteListContentView: View {
                 Divider()
             }
         }
-
+        .onAppear {
+            if let apolloClient = globalDataState.apolloClient {
+                viewModel.apolloClient = apolloClient
+            } else {
+                viewModel.addPlaceholderData()
+            }
+        }
     }
 }
 
 struct RouteListItem: View {
-    var route: MockRoute
-    var action: (_ selectedShuttle: MockRoute) -> Void
+    var route: RouteListContentViewRoute
+    var action: (_ selectedShuttle: RouteListContentViewRoute) -> Void
     
     var body: some View {
         Button {
@@ -56,14 +64,14 @@ struct RouteListItem: View {
                     .frame(width: 16, height: 16)
                 
                 VStack(alignment: .leading) {
-                    Text(route.label)
+                    Text(route.name)
                         .bold()
-                    Text(route.callout)
+                    Text(route.nextStopName ?? "")
                         .font(.callout)
                         .foregroundStyle(.secondary)
                 }
                 Spacer()
-                Text(route.timeEstimates)
+                Text(route.etaDisplayString)
             }
             .listRowBackground(Color.clear)
             .contentShape(Rectangle())
@@ -73,13 +81,11 @@ struct RouteListItem: View {
 
 
 #Preview {
-    var routes: [MockRoute] = [
-        MockRoute(label: "Red Route", callout: "towards Chapman Grand", colorHex: "#db2316", timeEstimates: "5, 15 min"),
-        MockRoute(label: "Teal Route", callout: "towards Panther Village", colorHex: "#21bdd1", timeEstimates: "8, 12 min")
-    ]
+//    let environmentObject = MapSelectionState()
+    let globalDataStateObject = GlobalDataStateObject()
+    globalDataStateObject.addPlaceholderData()
     
-    let environmentObject = MapSelectionState()
-    
-    RouteListContentView(routes: routes)
-        .environmentObject(environmentObject)
+    return RouteListContentView()
+//        .environmentObject(environmentObject)
+        .environmentObject(globalDataStateObject)
 }
