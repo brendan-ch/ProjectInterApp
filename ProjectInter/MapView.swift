@@ -17,8 +17,19 @@ struct MapView: View {
         Map(position: $viewModel.position, selection: $globalDataState.selectedShuttleId) {
             UserAnnotation()
             
+            if let routeId = globalDataState.selectedRouteId {
+                let routeToDisplay = viewModel.routes.first { route in
+                    route.id == routeId
+                }
+                
+                if let routeToDisplay = routeToDisplay {
+                    MapPolyline(coordinates: routeToDisplay.polylineCoordinates)
+                        .stroke(Color(hex: routeToDisplay.colorHex), lineWidth: 5)
+                }
+            }
+            
             ForEach(viewModel.shuttles) { shuttle in
-                var shouldDisplayShuttle = globalDataState.selectedRouteId != nil && shuttle.routeId == globalDataState.selectedRouteId || globalDataState.selectedRouteId == nil
+                let shouldDisplayShuttle = globalDataState.selectedRouteId != nil && shuttle.routeId == globalDataState.selectedRouteId || globalDataState.selectedRouteId == nil
                 
                 if shouldDisplayShuttle {
                     Annotation(
