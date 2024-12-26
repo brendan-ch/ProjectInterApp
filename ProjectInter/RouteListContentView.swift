@@ -20,7 +20,7 @@ struct RouteListContentView: View {
                     Text("Routes")
                         .font(.title2)
                         .bold()
-                    Text("Current stop: Chapman Court")
+                    Text("Current stop: \(globalDataState.selectedStop?.name ?? "")")
                     Button("Change stop") {
                         print("Change stop pressed")
                     }

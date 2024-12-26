@@ -12,11 +12,19 @@ import ApolloTestSupport
 import ProjectInterOperations
 import ProjectInterTestMocks
 
+struct Stop: Identifiable, Equatable {
+    var name: String
+    var id: String
+}
+
 class GlobalDataState: ObservableObject {
     var apolloClient: ApolloClient?
     
     @Published var systems: [System] = []
     @Published var selectedSystem: System? = nil
+    
+    @Published var stops: [Stop] = []
+    @Published var selectedStop: Stop? = nil
     
     @Published var selectedRouteId: String? = nil
     @Published var selectedShuttleId: String? = nil
@@ -32,6 +40,17 @@ class GlobalDataState: ObservableObject {
             
             self.systems = data.systems.map { system in
                 System(name: system.name, id: system.id)
+            }
+        }
+    }
+    
+    func refreshStopData(systemId: String) {
+        apolloClient?.fetch(query: GetAllStopsBySystemIdQuery(systemId: systemId)) { result in
+            guard let data = try? result.get().data else { return }
+            guard let stops = data.system?.stops else { return }
+            
+            self.stops = stops.map { stop in
+                Stop(name: stop.name, id: stop.id)
             }
         }
     }

@@ -48,9 +48,19 @@ struct ProjectInterApp: App {
                 .task {
                     globalDataStateObject.refreshSystemData()
                 }
+                // TODO: remove once UI for selecting system is implemented
                 .onChange(of: globalDataStateObject.systems) {
                     if !globalDataStateObject.systems.isEmpty && globalDataStateObject.selectedSystem == nil {
                         globalDataStateObject.selectedSystem = globalDataStateObject.systems[0]
+                        if let id = globalDataStateObject.selectedSystem?.id {
+                            globalDataStateObject.refreshStopData(systemId: id)
+                        }
+                    }
+                }
+                // TODO: remove once UI for selecting stop is implemented
+                .onChange(of: globalDataStateObject.stops) {
+                    if !globalDataStateObject.stops.isEmpty && globalDataStateObject.selectedStop == nil {
+                        globalDataStateObject.selectedStop = globalDataStateObject.stops[0]
                     }
                 }
         }
