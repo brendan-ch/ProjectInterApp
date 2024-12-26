@@ -1,0 +1,24 @@
+query GetRouteListData($systemId: ID!, $stopId: ID!) {
+  system(id: $systemId) {
+    stop(id: $stopId) {
+      name
+      orderedStops {
+        route {
+          id
+          name
+          color
+          shuttles {
+            eta(forStopId: $stopId) {
+              secondsRemaining
+            }
+          }
+        }
+        nextStop {
+          stop {
+            name
+          }
+        },
+      }
+    }
+  }
+}
