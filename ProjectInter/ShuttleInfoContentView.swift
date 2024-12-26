@@ -8,19 +8,22 @@
 import SwiftUI
 
 struct ShuttleInfoContentView: View {
-    @EnvironmentObject var mapSelectionState: GlobalMapSelectionState
+//    @EnvironmentObject var mapSelectionState: GlobalMapSelectionState
+    
+    @StateObject var viewModel = ShuttleInfoContentViewModel()
+    @EnvironmentObject var globalDataState: GlobalDataStateObject
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
-                    Text(mapSelectionState.selectedShuttle?.label ?? "")
+                    Text(viewModel.name)
                         .font(.title2)
                         .bold()
                     Text("Jacaranda St.")
                         .font(.callout)
                         .foregroundStyle(.secondary)
-                    Text(mapSelectionState.selectedShuttle?.estimatedTimeAwayDisplay ?? "")
+                    Text(viewModel.etaDisplay)
                         .font(.callout)
                         .foregroundStyle(.secondary)
                     Text("Last updated now")
@@ -29,7 +32,7 @@ struct ShuttleInfoContentView: View {
                 }
                 Spacer()
                 Button("Close") {
-                    mapSelectionState.selectedShuttle = nil
+//                    mapSelectionState.selectedShuttle = nil
                 }
             }
             .padding()
@@ -46,15 +49,23 @@ struct ShuttleInfoContentView: View {
             .controlSize(.large)
             .padding()
         }
+        .onAppear {
+            if let client = globalDataState.apolloClient {
+                viewModel.apolloClient = client
+//                viewModel.refreshData(shuttleId: )
+            } else {
+                viewModel.addPlaceholderData()
+            }
+        }
     }
 }
 
 #Preview {
-    let shuttle = Shuttle(currentLatitude: 33.79964, currentLongitude: -117.89328, label: "Red Shuttle 17", estimatedTimeAwayDisplay: "5 min away")
+//    let shuttle = Shuttle(currentLatitude: 33.79964, currentLongitude: -117.89328, label: "Red Shuttle 17", estimatedTimeAwayDisplay: "5 min away")
     
-    let environmentObject = GlobalMapSelectionState()
-    environmentObject.selectedShuttle = shuttle
-
+//    let environmentObject = GlobalMapSelectionState()
+//    environmentObject.selectedShuttle = shuttle
+//
     return ShuttleInfoContentView()
-        .environmentObject(environmentObject)
+        .environmentObject(GlobalDataStateObject())
 }
