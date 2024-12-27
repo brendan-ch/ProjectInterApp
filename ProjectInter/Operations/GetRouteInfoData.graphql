@@ -1,0 +1,20 @@
+query GetRouteInfoData($systemId: ID!, $stopId: ID!, $routeId: ID!) {
+  system(id: $systemId) {
+    route(id: $routeId) {
+      name,
+      orderedStop(forStopId: $stopId) {
+        nextStop {
+          stop {
+            name
+          }
+        }
+      }
+      shuttles {
+        eta(forStopId: $stopId) {
+          secondsRemaining
+        }
+        name
+      }
+    }
+  }
+}
