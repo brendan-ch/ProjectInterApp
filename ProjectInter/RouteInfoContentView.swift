@@ -55,9 +55,25 @@ struct RouteInfoContentView: View {
         .onAppear {
             if let client = globalDataState.apolloClient {
                 viewModel.apolloClient = client
-                viewModel.refreshData()
             } else {
                 viewModel.addPlaceholderData()
+            }
+            
+            if let systemId = globalDataState.selectedSystem?.id {
+                if let stopId = globalDataState.selectedStop?.id {
+                    if let routeId = globalDataState.selectedRouteId {
+                        viewModel.refreshData(systemId: systemId, stopId: stopId, routeId: routeId)
+                    }
+                }
+            }
+        }
+        .onChange(of: globalDataState.selectedRouteId) {
+            if let systemId = globalDataState.selectedSystem?.id {
+                if let stopId = globalDataState.selectedStop?.id {
+                    if let routeId = globalDataState.selectedRouteId {
+                        viewModel.refreshData(systemId: systemId, stopId: stopId, routeId: routeId)
+                    }
+                }
             }
         }
     }
