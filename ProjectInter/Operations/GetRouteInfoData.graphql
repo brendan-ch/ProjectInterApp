@@ -14,6 +14,7 @@ query GetRouteInfoData($systemId: ID!, $stopId: ID!, $routeId: ID!) {
           secondsRemaining
         }
         name
+        id
       }
     }
   }
