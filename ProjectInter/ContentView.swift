@@ -33,6 +33,24 @@ extension View {
     }
 }
 
+struct GeometryReaderSheetWrapperView<Content: View>: View {
+    @Binding var height: CGFloat
+    var shouldUpdate: Bool
+    @ViewBuilder let content: Content
+    
+    var body: some View {
+        GeometryReader { geometry in
+            content
+                .onChange(of: geometry.size) {
+                    let newHeight = geometry.size.height
+                    if shouldUpdate && newHeight <= 360 {
+                        height = newHeight
+                    }
+                }
+        }
+    }
+}
+
 
 struct ContentView: View {
     @State var showSheet = false
@@ -69,51 +87,27 @@ struct ContentView: View {
     }
     
     var sheetContent: some View {
-        GeometryReader { geometry in
+        GeometryReaderSheetWrapperView(height: $currentSheetHeight, shouldUpdate: nestedSheetLevel == 0) {
             RouteListContentView()
                 .sheet(isPresented: .constant(globalDataState.selectedRouteId != nil) ) {
-                    GeometryReader { geometry in
+                    GeometryReaderSheetWrapperView(height: $currentSheetHeight, shouldUpdate: nestedSheetLevel == 1) {
                         RouteInfoContentView()
                             .sheet(isPresented: .constant(globalDataState.selectedShuttleId != nil)) {
-                                GeometryReader { geometry in
+                                GeometryReaderSheetWrapperView(height: $currentSheetHeight, shouldUpdate: nestedSheetLevel == 2) {
                                     ShuttleInfoContentView()
                                         .sheetViewModifier(showSheet: nestedSheetLevel == 2)
-                                        .onChange(of: geometry.size) {
-                                            let height = geometry.size.height
-                                            if nestedSheetLevel == 2 && height <= 360 {
-                                                currentSheetHeight = height
-                                            }
-                                        }
                                 }
                             }
                             .sheetViewModifier(showSheet: nestedSheetLevel == 1)
-                            .onChange(of: geometry.size) {
-                                let height = geometry.size.height
-                                if nestedSheetLevel == 1 && height <= 360 {
-                                    currentSheetHeight = height
-                                }
-                            }
                     }
                 }
                 .sheet(isPresented: .constant(globalDataState.selectedShuttleId != nil && globalDataState.selectedRouteId == nil)) {
-                    GeometryReader { geometry in
+                    GeometryReaderSheetWrapperView(height: $currentSheetHeight, shouldUpdate: nestedSheetLevel == 1) {
                         ShuttleInfoContentView()
                             .sheetViewModifier(showSheet: nestedSheetLevel == 1)
-                            .onChange(of: geometry.size) {
-                                let height = geometry.size.height
-                                if nestedSheetLevel == 1 && height <= 360 {
-                                    currentSheetHeight = height
-                                }
-                            }
                     }
                 }
                 .sheetViewModifier(showSheet: nestedSheetLevel == 0)
-                .onChange(of: geometry.size) {
-                    let height = geometry.size.height
-                    if nestedSheetLevel == 0 && height <= 360 {
-                        currentSheetHeight = height
-                    }
-                }
         }
     }
 }
