@@ -1,0 +1,23 @@
+query GetMapData($systemId: ID!) {
+  system(id: $systemId) {
+    shuttles {
+      coordinates {
+        latitude
+        longitude
+      }
+      route {
+        color
+      }
+      id
+      name
+    }
+    routes {
+      polylineCoordinates {
+        latitude
+        longitude
+      }
+      color
+      id
+    }
+  }
+}
