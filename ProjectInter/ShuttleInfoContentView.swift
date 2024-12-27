@@ -49,15 +49,27 @@ struct ShuttleInfoContentView: View {
         }
         .onAppear {
             if let client = globalDataState.apolloClient {
-                if let shuttleId = globalDataState.selectedShuttleId {
-                    viewModel.apolloClient = client
-                    viewModel.refreshData(shuttleId: shuttleId)
-                    
-                    return
-                }
+                viewModel.apolloClient = client
+            } else {
+                viewModel.addPlaceholderData()
             }
             
-            viewModel.addPlaceholderData()
+            if let systemId = globalDataState.selectedSystem?.id {
+                if let stopId = globalDataState.selectedStop?.id {
+                    if let shuttleId = globalDataState.selectedShuttleId {
+                        viewModel.refreshData(systemId: systemId, stopId: stopId, shuttleId: shuttleId)
+                    }
+                }
+            }
+        }
+        .onChange(of: globalDataState.selectedShuttleId) {
+            if let systemId = globalDataState.selectedSystem?.id {
+                if let stopId = globalDataState.selectedStop?.id {
+                    if let shuttleId = globalDataState.selectedShuttleId {
+                        viewModel.refreshData(systemId: systemId, stopId: stopId, shuttleId: shuttleId)
+                    }
+                }
+            }
         }
     }
 }
