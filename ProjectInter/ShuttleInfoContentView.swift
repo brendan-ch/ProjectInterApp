@@ -18,13 +18,7 @@ struct ShuttleInfoContentView: View {
                     Text(viewModel.name)
                         .font(.title2)
                         .bold()
-                    Text("Jacaranda St.")
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
                     Text(viewModel.etaDisplay)
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                    Text("Last updated now")
                         .font(.callout)
                         .foregroundStyle(.secondary)
                 }
