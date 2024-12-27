@@ -1,0 +1,10 @@
+query GetShuttleInfoData($systemId: ID!, $stopId: ID!, $shuttleId: ID!) {
+  system(id: $systemId) {
+    shuttle(id: $shuttleId) {
+      name
+      eta(forStopId: $stopId) {
+        secondsRemaining
+      }
+    }
+  }
+}

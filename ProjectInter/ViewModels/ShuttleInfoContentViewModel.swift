@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Apollo
+import ProjectInterOperations
 
 class ShuttleInfoContentViewModel: ObservableObject {
     @Published var name: String = ""
@@ -18,8 +19,22 @@ class ShuttleInfoContentViewModel: ObservableObject {
         self.apolloClient = apolloClient
     }
     
-    func refreshData(shuttleId: String) {
-        // TODO: implement
+    func refreshData(systemId: String, stopId: String, shuttleId: String) {
+        apolloClient?.fetch(query: GetShuttleInfoDataQuery(systemId: systemId, stopId: stopId, shuttleId: shuttleId)) { result in
+            guard let data = try? result.get().data else { return }
+            guard let shuttle = data.system?.shuttle else { return }
+            
+            self.name = shuttle.name
+            
+            if let secondsRemaining = shuttle.eta?.secondsRemaining {
+                if secondsRemaining < 60 {
+                    self.etaDisplay = "Less than 1 min"
+                } else {
+                    let minutesRemaining = Int(secondsRemaining / 60)
+                    self.etaDisplay = "\(minutesRemaining) min"
+                }
+            }
+        }
     }
     
     func addPlaceholderData() {

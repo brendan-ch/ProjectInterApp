@@ -47,7 +47,7 @@ class RouteInfoContentViewModel: ObservableObject {
                     
                     if let secondsRemaining = shuttle.eta?.secondsRemaining {
                         if secondsRemaining < 60 {
-                            routeInfoContentViewShuttle.estimatedTimeAwayDisplay = "less than 1 min"
+                            routeInfoContentViewShuttle.estimatedTimeAwayDisplay = "Less than 1 min"
                         } else {
                             let minutesRemaining = Int(secondsRemaining / 60)
                             routeInfoContentViewShuttle.estimatedTimeAwayDisplay = "\(minutesRemaining) min"
