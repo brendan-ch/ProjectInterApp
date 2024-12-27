@@ -47,7 +47,9 @@ struct ContentView: View {
         }
         return 0
     }
-        
+    
+    @State var currentSheetHeight: CGFloat = 360
+    
     // The list of shuttles should be sorted by distance from user
     // TODO: Account for drawer when adjusting camera using GeometryReader
     
@@ -55,7 +57,7 @@ struct ContentView: View {
         ZStack(alignment: .bottom) {
             Group {
                 MapView()
-                    .safeAreaPadding(EdgeInsets(top: 0, leading: 0, bottom: 360, trailing: 0))
+                    .safeAreaPadding(EdgeInsets(top: 0, leading: 0, bottom: currentSheetHeight, trailing: 0))
             }
         }
         .task {
@@ -67,20 +69,52 @@ struct ContentView: View {
     }
     
     var sheetContent: some View {
-        RouteListContentView()
-            .sheet(isPresented: .constant(globalDataState.selectedRouteId != nil) ) {
-                RouteInfoContentView()
-                    .sheet(isPresented: .constant(globalDataState.selectedShuttleId != nil)) {
-                        ShuttleInfoContentView()
-                            .sheetViewModifier(showSheet: nestedSheetLevel == 2)
+        GeometryReader { geometry in
+            RouteListContentView()
+                .sheet(isPresented: .constant(globalDataState.selectedRouteId != nil) ) {
+                    GeometryReader { geometry in
+                        RouteInfoContentView()
+                            .sheet(isPresented: .constant(globalDataState.selectedShuttleId != nil)) {
+                                GeometryReader { geometry in
+                                    ShuttleInfoContentView()
+                                        .sheetViewModifier(showSheet: nestedSheetLevel == 2)
+                                        .onChange(of: geometry.size) {
+                                            let height = geometry.size.height
+                                            if nestedSheetLevel == 2 && height <= 360 {
+                                                currentSheetHeight = height
+                                            }
+                                        }
+                                }
+                            }
+                            .sheetViewModifier(showSheet: nestedSheetLevel == 1)
+                            .onChange(of: geometry.size) {
+                                let height = geometry.size.height
+                                if nestedSheetLevel == 1 && height <= 360 {
+                                    currentSheetHeight = height
+                                }
+                            }
                     }
-                    .sheetViewModifier(showSheet: nestedSheetLevel == 1)
-            }
-            .sheet(isPresented: .constant(globalDataState.selectedShuttleId != nil && globalDataState.selectedRouteId == nil)) {
-                ShuttleInfoContentView()
-                    .sheetViewModifier(showSheet: nestedSheetLevel == 1)
-            }
-            .sheetViewModifier(showSheet: nestedSheetLevel == 0)
+                }
+                .sheet(isPresented: .constant(globalDataState.selectedShuttleId != nil && globalDataState.selectedRouteId == nil)) {
+                    GeometryReader { geometry in
+                        ShuttleInfoContentView()
+                            .sheetViewModifier(showSheet: nestedSheetLevel == 1)
+                            .onChange(of: geometry.size) {
+                                let height = geometry.size.height
+                                if nestedSheetLevel == 1 && height <= 360 {
+                                    currentSheetHeight = height
+                                }
+                            }
+                    }
+                }
+                .sheetViewModifier(showSheet: nestedSheetLevel == 0)
+                .onChange(of: geometry.size) {
+                    let height = geometry.size.height
+                    if nestedSheetLevel == 0 && height <= 360 {
+                        currentSheetHeight = height
+                    }
+                }
+        }
     }
 }
 
