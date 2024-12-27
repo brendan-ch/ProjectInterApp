@@ -8,6 +8,7 @@
 import SwiftUI
 import MapKit
 import Apollo
+import ProjectInterOperations
 
 // MARK: - Map view model models
 
@@ -37,6 +38,39 @@ class MapViewModel: ObservableObject {
     
     init(apolloClient: ApolloClient? = nil) {
         self.apolloClient = apolloClient
+    }
+    
+    func refreshData(systemId: String) {
+        apolloClient?.fetch(query: GetMapDataQuery(systemId: systemId)) { result in
+            guard let data = try? result.get().data else { return }
+            
+            self.shuttles = []
+            let shuttles = data.system?.shuttles ?? []
+            for shuttle in shuttles {
+                let defaultColor = "#000000"
+                
+                if let route = shuttle.route {
+                    let coordinates = CLLocationCoordinate2D(latitude: shuttle.coordinates.latitude, longitude: shuttle.coordinates.longitude)
+                    
+                    let mapViewShuttle = MapViewShuttle(name: shuttle.name, id: shuttle.id, routeId: route.id, routeColorHex: route.color, coordinates: coordinates)
+                    
+                    self.shuttles.append(mapViewShuttle)
+                }
+            }
+            
+            self.routes = []
+            let routes = data.system?.routes ?? []
+            for route in routes {
+                let polylineCoordinates = route.polylineCoordinates
+                let mapViewRoutePolylineCoordinates = polylineCoordinates.map { coordinate in
+                    CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude)
+                }
+                
+                let mapViewRoute = MapViewRoute(id: route.id, colorHex: route.color, polylineCoordinates: mapViewRoutePolylineCoordinates)
+                
+                self.routes.append(mapViewRoute)
+            }
+        }
     }
     
     func addPlaceholderData() {

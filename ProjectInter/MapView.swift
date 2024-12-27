@@ -57,7 +57,20 @@ struct MapView: View {
             }
         }
         .onAppear {
-            viewModel.addPlaceholderData()
+            if let client = globalDataState.apolloClient {
+                viewModel.apolloClient = client
+            } else {
+                viewModel.addPlaceholderData()
+            }
+            
+            if let systemId = globalDataState.selectedSystem?.id {
+                viewModel.refreshData(systemId: systemId)
+            }
+        }
+        .onChange(of: globalDataState.selectedSystem) {
+            if let systemId = globalDataState.selectedSystem?.id {
+                viewModel.refreshData(systemId: systemId)
+            }
         }
     }
 }
