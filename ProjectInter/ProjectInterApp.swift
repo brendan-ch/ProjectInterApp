@@ -39,7 +39,7 @@ extension Color {
 @main
 struct ProjectInterApp: App {
     @StateObject var globalDataStateObject = GlobalDataState(apolloClient:
-        ApolloClient(url: URL(string: "http://localhost:4000/graphql")!)
+        ApolloClient(url: URL(string: Bundle.main.infoDictionary!["API_BASE_URL"] as! String)!)
     )
 
       var body: some Scene {
