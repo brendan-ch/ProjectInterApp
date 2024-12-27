@@ -42,9 +42,15 @@ struct RouteListContentView: View {
         .onAppear {
             if let apolloClient = globalDataState.apolloClient {
                 viewModel.apolloClient = apolloClient
-                viewModel.getRouteData()
             } else {
                 viewModel.addPlaceholderData()
+            }
+        }
+        .onChange(of: globalDataState.selectedStop) {
+            if let selectedStop = globalDataState.selectedStop {
+                if let selectedSystem = globalDataState.selectedSystem {
+                    viewModel.refreshData(systemId: selectedSystem.id, stopId: selectedStop.id)
+                }
             }
         }
     }

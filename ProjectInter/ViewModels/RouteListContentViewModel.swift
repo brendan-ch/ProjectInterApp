@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Apollo
+import ProjectInterOperations
 
 struct RouteListContentViewRoute: Identifiable {
     var id: String
@@ -28,8 +29,30 @@ class RouteListContentViewModel: ObservableObject {
         self.apolloClient = apolloClient
     }
     
-    func getRouteData() {
-        // TODO: implement data fetch
+    func refreshData(systemId: String, stopId: String) {
+        apolloClient?.fetch(query: GetRouteListDataQuery(systemId: systemId, stopId: stopId)) { result in
+            guard let data = try? result.get().data else { return }
+            guard let orderedStops = data.system?.stop?.orderedStops else { return }
+            
+            self.routes = []
+            for orderedStop in orderedStops {
+                let route = orderedStop.route
+                var routeListRoute = RouteListContentViewRoute(
+                    id: route.id,
+                    name: route.name,
+                    colorHex: route.color,
+                    etaDisplayString: "N/A"
+                )
+                
+                if let nextStopName = orderedStop.nextStop?.stop.name {
+                    routeListRoute.nextStopName = nextStopName
+                } else {
+                    routeListRoute.nextStopName = "N/A"
+                }
+                
+                self.routes.append(routeListRoute)
+            }
+        }
     }
     
     func addPlaceholderData() {
