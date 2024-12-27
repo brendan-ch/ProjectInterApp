@@ -15,19 +15,21 @@ extension MKCoordinateRegion {
 
 
 struct SheetViewModifier: ViewModifier {
+    var showSheet: Bool
+    
     func body(content: Content) -> some View {
         content
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            .presentationDetents([.height(360), .large])
-            .presentationBackground(.regularMaterial)
+            .presentationDetents([.height(180), .height(360), .large], selection: .constant(showSheet ? .height(360) : .height(180)))
+            .presentationBackground(.ultraThickMaterial)
             .presentationBackgroundInteraction(.enabled)
             .interactiveDismissDisabled()
     }
 }
 
 extension View {
-    func sheetViewModifier() -> some View {
-        self.modifier(SheetViewModifier())
+    func sheetViewModifier(showSheet: Bool) -> some View {
+        self.modifier(SheetViewModifier(showSheet: showSheet))
     }
 }
 
@@ -37,10 +39,15 @@ struct ContentView: View {
     
     @EnvironmentObject var globalDataState: GlobalDataState
     
-    var showingNestedSheet: Bool {
-        globalDataState.selectedRouteId != nil || globalDataState.selectedShuttleId != nil
+    var nestedSheetLevel: Int {
+        if globalDataState.selectedRouteId != nil && globalDataState.selectedShuttleId != nil {
+            return 2
+        } else if globalDataState.selectedRouteId != nil || globalDataState.selectedShuttleId != nil {
+            return 1
+        }
+        return 0
     }
-
+        
     // The list of shuttles should be sorted by distance from user
     // TODO: Account for drawer when adjusting camera using GeometryReader
     
@@ -65,16 +72,15 @@ struct ContentView: View {
                 RouteInfoContentView()
                     .sheet(isPresented: .constant(globalDataState.selectedShuttleId != nil)) {
                         ShuttleInfoContentView()
-                            .sheetViewModifier()
+                            .sheetViewModifier(showSheet: nestedSheetLevel == 2)
                     }
-                    .sheetViewModifier()
+                    .sheetViewModifier(showSheet: nestedSheetLevel == 1)
             }
-            .sheet(isPresented: .constant(globalDataState.selectedShuttleId != nil)) {
+            .sheet(isPresented: .constant(globalDataState.selectedShuttleId != nil && globalDataState.selectedRouteId == nil)) {
                 ShuttleInfoContentView()
-                    .sheetViewModifier()
+                    .sheetViewModifier(showSheet: nestedSheetLevel == 1)
             }
-            .sheetViewModifier()
-            .presentationDetents([.height(359), .height(360), .large], selection: showingNestedSheet ? .constant(.height(359)) : .constant(.height(360)))
+            .sheetViewModifier(showSheet: nestedSheetLevel == 0)
     }
 }
 
