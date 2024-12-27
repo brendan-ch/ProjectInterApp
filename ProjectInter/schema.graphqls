@@ -17,7 +17,7 @@ type System {
 type Route {
   name: String!
   id: ID!
-  orderedStops: [OrderedStop!]
+  orderedStop(forStopId: ID): OrderedStop
   shuttles: [Shuttle!]
   polylineCoordinates: [Coordinates!]!
   color: String!
