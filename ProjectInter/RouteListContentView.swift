@@ -38,7 +38,6 @@ struct RouteListContentView: View {
                             locationManagerState.requestAuthorization()
                         }
                     }
-                    .padding(EdgeInsets(top: 0, leading: -8, bottom: 0, trailing: 0))
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 8)
