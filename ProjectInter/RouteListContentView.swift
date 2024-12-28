@@ -25,6 +25,7 @@ struct RouteListContentView: View {
                     Button("Change stop") {
                         print("Change stop pressed")
                     }
+                    .disabled(true)
                 }
                 Spacer()
             }

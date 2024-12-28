@@ -37,6 +37,7 @@ struct ShuttleInfoContentView: View {
                     Spacer()
                 }
             }
+            .disabled(true)
             .buttonStyle(.bordered)
             .controlSize(.large)
             .padding()
