@@ -72,6 +72,12 @@ struct MapView: View {
                 viewModel.refreshData(systemId: systemId)
             }
         }
+        .onChange(of: globalDataState.selectedRouteId) {
+            viewModel.position = .automatic
+        }
+        .onChange(of: globalDataState.selectedShuttleId) {
+            viewModel.position = .automatic
+        }
     }
 }
 
