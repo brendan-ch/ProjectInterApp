@@ -41,6 +41,8 @@ struct ProjectInterApp: App {
     @StateObject var globalDataStateObject = GlobalDataState(apolloClient:
         ApolloClient(url: URL(string: Bundle.main.infoDictionary!["API_BASE_URL"] as! String)!)
     )
+    
+    @StateObject var locationManagerStateObject = LocationManagerState()
 
       var body: some Scene {
         WindowGroup {
@@ -65,6 +67,7 @@ struct ProjectInterApp: App {
                 }
         }
         .environmentObject(globalDataStateObject)
+        .environmentObject(locationManagerStateObject)
     }
 }
 

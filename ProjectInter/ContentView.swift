@@ -56,6 +56,7 @@ struct ContentView: View {
     @State var showSheet = false
     
     @EnvironmentObject var globalDataState: GlobalDataState
+    @EnvironmentObject var locationManagerState: LocationManagerState
     
     var nestedSheetLevel: Int {
         if globalDataState.selectedRouteId != nil && globalDataState.selectedShuttleId != nil {
@@ -115,4 +116,5 @@ struct ContentView: View {
 #Preview {
     return ContentView()
         .environmentObject(GlobalDataState())
+        .environmentObject(LocationManagerState())
 }

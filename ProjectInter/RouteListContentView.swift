@@ -12,6 +12,7 @@ struct RouteListContentView: View {
     @StateObject var viewModel: RouteListContentViewModel = RouteListContentViewModel()
     
     @EnvironmentObject var globalDataState: GlobalDataState
+    @EnvironmentObject var locationManagerState: LocationManagerState
     
     var body: some View {
         ScrollView {
@@ -28,6 +29,21 @@ struct RouteListContentView: View {
                 Spacer()
             }
             .padding()
+            
+            if locationManagerState.authorizationStatus == .notDetermined {
+                GroupBox(label: Label("Enable Location Access", systemImage: "location")) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("See times for your closest stop, get notifications for shuttles, and more.")
+                        Button("Grant location access") {
+                            locationManagerState.requestAuthorization()
+                        }
+                    }
+                    .padding(EdgeInsets(top: 0, leading: -8, bottom: 0, trailing: 0))
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 8)
+                .presentationBackground(.ultraThickMaterial)
+            }
             
             ForEach(viewModel.routes) { route in
                 RouteListItem(route: route) { selectedRoute in
@@ -92,4 +108,5 @@ struct RouteListItem: View {
     
     return RouteListContentView()
         .environmentObject(globalDataStateObject)
+        .environmentObject(LocationManagerState())
 }
