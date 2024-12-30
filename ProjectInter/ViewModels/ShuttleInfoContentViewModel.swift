@@ -17,9 +17,9 @@ class ShuttleInfoContentViewModel: ObservableObject {
     /// Text representing the ETA of the shuttle relative to the user's selected stop.
     @Published var etaDisplay = ""
     
-    var apolloClient: ApolloClient?
+    var apolloClient: ApolloClientProtocol?
     
-    init(apolloClient: ApolloClient? = nil) {
+    init(apolloClient: ApolloClientProtocol? = nil) {
         self.apolloClient = apolloClient
     }
     
