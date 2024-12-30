@@ -16,7 +16,8 @@ struct RouteInfoContentViewShuttle: Identifiable {
     /// The name of the shuttle.
     var name: String
     
-    /// String representing how far away the shuttle is, rendered from server-side data.
+    /// String representing how far away the shuttle is from a given stop,
+    /// rendered from server-side data.
     var estimatedTimeAwayDisplay: String
     
     /// The server-side ID of the shuttle.
