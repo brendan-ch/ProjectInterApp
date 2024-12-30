@@ -10,25 +10,37 @@ import MapKit
 import Apollo
 import ProjectInterOperations
 
-// MARK: - Map view model models
+// MARK: - Models
 
+/// Represents a single route to display on the map.
 struct MapViewRoute: Identifiable {
     var id: String
     var colorHex: String
     var polylineCoordinates: [CLLocationCoordinate2D]
 }
 
+/// Represents a single shuttle to display on the map.
 struct MapViewShuttle: Identifiable {
     var name: String
+    
+    /// The server-side ID of the shuttle.
     var id: String
+    
+    /// The route ID associated with the shuttle.
     var routeId: String
+    
+    /// The color of the associated route, to display with the shuttle.
     var routeColorHex: String
+    
+    /// The current coordinates of the shuttle.
     var coordinates: CLLocationCoordinate2D
 }
 
-// MARK: - Map view model implementation
+// MARK: - View model implementation
 
+/// Backing view model for ``MapView``.
 class MapViewModel: ObservableObject {
+    /// Position of the map camera on the associated Map view.
     @Published var position: MapCameraPosition = .automatic
     
     @Published var routes: [MapViewRoute] = []
