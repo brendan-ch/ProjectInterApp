@@ -9,8 +9,12 @@ import SwiftUI
 import Apollo
 import ProjectInterOperations
 
+/// Backing view model for ``ShuttleInfoContentView``.
 class ShuttleInfoContentViewModel: ObservableObject {
+    /// Name of the shuttle to display.
     @Published var name: String = ""
+    
+    /// Text representing the ETA of the shuttle relative to the user's selected stop.
     @Published var etaDisplay = ""
     
     var apolloClient: ApolloClient?

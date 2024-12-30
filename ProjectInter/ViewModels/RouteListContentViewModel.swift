@@ -9,16 +9,33 @@ import SwiftUI
 import Apollo
 import ProjectInterOperations
 
+// MARK: - Models
+
+/// Represents a single route to display in the list of routes.
 struct RouteListContentViewRoute: Identifiable {
+    /// Server-side ID of the route.
     var id: String
+    
+    /// The name of the route, e.g. "Red Route."
     var name: String
+    
+    /// Color to show for the route.
     var colorHex: String
+    
+    /// Name of the next stop on the route relative to a given stop ID.
     var nextStopName: String?
+    
+    /// ETAs of shuttles on routes, relative to a given stop ID.
     var etaDisplayString: String
 }
 
+// MARK: - View model implementation
+
+/// Backing view model for ``RouteListContentView``.
 class RouteListContentViewModel: ObservableObject {
+    /// All routes to render on ``RouteListContentView``.
     @Published var routes: [RouteListContentViewRoute] = []
+    
     var apolloClient: ApolloClient?
     
     init() {
