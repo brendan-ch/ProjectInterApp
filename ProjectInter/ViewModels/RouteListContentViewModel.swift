@@ -36,13 +36,13 @@ class RouteListContentViewModel: ObservableObject {
     /// All routes to render on ``RouteListContentView``.
     @Published var routes: [RouteListContentViewRoute] = []
     
-    var apolloClient: ApolloClient?
+    var apolloClient: ApolloClientProtocol?
     
     init() {
         self.apolloClient = nil
     }
     
-    init(apolloClient: ApolloClient) {
+    init(apolloClient: ApolloClientProtocol) {
         self.apolloClient = apolloClient
     }
     

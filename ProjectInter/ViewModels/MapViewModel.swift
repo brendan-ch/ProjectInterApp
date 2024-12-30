@@ -46,9 +46,9 @@ class MapViewModel: ObservableObject {
     @Published var routes: [MapViewRoute] = []
     @Published var shuttles: [MapViewShuttle] = []
     
-    var apolloClient: ApolloClient?
+    var apolloClient: ApolloClientProtocol?
     
-    init(apolloClient: ApolloClient? = nil) {
+    init(apolloClient: ApolloClientProtocol? = nil) {
         self.apolloClient = apolloClient
     }
     

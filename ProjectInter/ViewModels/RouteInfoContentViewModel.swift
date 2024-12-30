@@ -37,9 +37,9 @@ class RouteInfoContentViewModel: ObservableObject {
     /// Currently running shuttles to display for the route.
     @Published var shuttles: [RouteInfoContentViewShuttle] = []
     
-    var apolloClient: ApolloClient?
+    var apolloClient: ApolloClientProtocol?
     
-    init(apolloClient: ApolloClient? = nil) {
+    init(apolloClient: ApolloClientProtocol? = nil) {
         self.apolloClient = apolloClient
     }
     

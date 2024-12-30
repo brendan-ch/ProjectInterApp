@@ -20,7 +20,7 @@ struct Stop: Identifiable, Equatable {
 
 /// Contains globally shared data for the app.
 class GlobalDataState: ObservableObject {
-    var apolloClient: ApolloClient?
+    var apolloClient: ApolloClientProtocol?
     
     @Published var systems: [System] = []
     @Published var selectedSystem: System? = nil
@@ -31,12 +31,11 @@ class GlobalDataState: ObservableObject {
     @Published var selectedRouteId: String? = nil
     @Published var selectedShuttleId: String? = nil
     
-    init(apolloClient: ApolloClient? = nil) {
+    init(apolloClient: ApolloClientProtocol? = nil) {
         self.apolloClient = apolloClient
     }
     
     func refreshSystemData() {
-        // TODO: integration test path
         apolloClient?.fetch(query: GetAllSystemsQuery()) { result in
             guard let data = try? result.get().data else { return }
             
@@ -58,7 +57,6 @@ class GlobalDataState: ObservableObject {
     }
     
     func addPlaceholderData() {
-        // TODO: unit test path
         systems = [
             System(name: "Chapman University", id: "1"),
             System(name: "City of Monterey Park", id: "2")
