@@ -33,9 +33,16 @@ extension View {
     }
 }
 
+/// View which wraps the passed sheet view with a `GeometryReader`,
+/// reporting height changes through a binding.
 struct GeometryReaderSheetWrapperView<Content: View>: View {
+    /// The height of the given sheet.
     @Binding var height: CGFloat
+    
+    /// Controls whether the view should pass updates to the binding.
     var shouldUpdate: Bool
+    
+    /// The content to display within the `GeometryReader`.
     @ViewBuilder let content: Content
     
     var body: some View {
@@ -51,13 +58,18 @@ struct GeometryReaderSheetWrapperView<Content: View>: View {
     }
 }
 
-
+/// The primary view of the app. Controls map height adjustment and
+/// which sheet is displayed.
 struct ContentView: View {
+    /// Whether the root-level sheet should be showing.
     @State var showSheet = false
     
     @EnvironmentObject var globalDataState: GlobalDataState
     @EnvironmentObject var locationManagerState: LocationManagerState
     
+    /// Nesting level of the currently displayed sheet.
+    /// Determines which sheet propogates updates to ``currentSheetHeight``
+    /// and the presentation detent level.
     var nestedSheetLevel: Int {
         if globalDataState.selectedRouteId != nil && globalDataState.selectedShuttleId != nil {
             return 2
@@ -67,10 +79,9 @@ struct ContentView: View {
         return 0
     }
     
+    /// The height of the currently displayed sheet.
+    /// Used to adjust the nested ``MapView`` height.
     @State var currentSheetHeight: CGFloat = 360
-    
-    // The list of shuttles should be sorted by distance from user
-    // TODO: Account for drawer when adjusting camera using GeometryReader
     
     var body: some View {
         ZStack(alignment: .bottom) {
