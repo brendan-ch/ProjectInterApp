@@ -7,8 +7,14 @@
 
 import SwiftUI
 
+/// View which displays information for the currently selected
+/// route in ``GlobalDataState`` and a list of upcoming shuttles.
 struct RouteInfoContentView: View {
+    /// ``GlobalDataState`` instance containing the currently selected route
+    /// and `ApolloClient` instance.
     @EnvironmentObject var globalDataState: GlobalDataState
+    
+    /// Backing ``RouteInfoContentView`` instance.
     @StateObject var viewModel: RouteInfoContentViewModel = RouteInfoContentViewModel()
     
     var body: some View {
@@ -53,6 +59,7 @@ struct RouteInfoContentView: View {
             }
         }
         .onAppear {
+            // Control which dataset to use depending on Apollo client
             if let client = globalDataState.apolloClient {
                 viewModel.apolloClient = client
             } else {
