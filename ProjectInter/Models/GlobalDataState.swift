@@ -31,7 +31,7 @@ class GlobalDataState: ObservableObject {
     @Published var selectedRouteId: String? = nil
     @Published var selectedShuttleId: String? = nil
     
-    init(apolloClient: ApolloClient? = nil) {
+    init(apolloClient: ApolloClientProtocol? = nil) {
         self.apolloClient = apolloClient
     }
     
