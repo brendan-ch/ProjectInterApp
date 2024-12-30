@@ -8,7 +8,11 @@
 import SwiftUI
 import Apollo
 
+/// View to display a list of routes, including ETA and
+/// next stop for the currently selected stop in
+/// the passed ``GlobalDataState`` instance.
 struct RouteListContentView: View {
+    /// Backing view model.
     @StateObject var viewModel: RouteListContentViewModel = RouteListContentViewModel()
     
     @EnvironmentObject var globalDataState: GlobalDataState
@@ -31,6 +35,8 @@ struct RouteListContentView: View {
             }
             .padding()
             
+            // Display location banner if not authorized
+            // TODO: fix the spacing
             if locationManagerState.authorizationStatus == .notDetermined {
                 GroupBox(label: Label("Enable Location Access", systemImage: "location")) {
                     VStack(alignment: .leading, spacing: 8) {
@@ -63,6 +69,7 @@ struct RouteListContentView: View {
             }
         }
         .onChange(of: globalDataState.selectedStop) {
+            // Refresh data in backing view model
             if let selectedStop = globalDataState.selectedStop {
                 if let selectedSystem = globalDataState.selectedSystem {
                     viewModel.refreshData(systemId: selectedSystem.id, stopId: selectedStop.id)
@@ -72,6 +79,8 @@ struct RouteListContentView: View {
     }
 }
 
+/// View which displays a single route with all data
+/// in the passed ``RouteListContentViewRoute`` object.
 struct RouteListItem: View {
     var route: RouteListContentViewRoute
     var action: (_ selectedShuttle: RouteListContentViewRoute) -> Void

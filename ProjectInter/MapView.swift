@@ -8,9 +8,13 @@
 import SwiftUI
 import MapKit
 
+/// MapKit `Map` wrapper which displays relevant information
+/// on a map.
 struct MapView: View {
+    /// Source of truth for the currently selected route ID and shuttle ID.
     @EnvironmentObject var globalDataState: GlobalDataState
     
+    /// Backing view model.
     @StateObject var viewModel = MapViewModel()
     
     var body: some View {
@@ -72,10 +76,12 @@ struct MapView: View {
                 viewModel.refreshData(systemId: systemId)
             }
         }
+        // Reset the map position if the user selects something
         .onChange(of: globalDataState.selectedRouteId) {
             viewModel.position = .automatic
         }
         .onChange(of: globalDataState.selectedShuttleId) {
+            // TODO: center the map around the selected shuttle
             viewModel.position = .automatic
         }
     }

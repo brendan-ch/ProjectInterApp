@@ -7,8 +7,13 @@
 
 import SwiftUI
 
+/// View which displays information about a single shuttle,
+/// including ETA from the currently selected stop ID.
 struct ShuttleInfoContentView: View {
+    /// Backing view model.
     @StateObject var viewModel = ShuttleInfoContentViewModel()
+    
+    /// Source of truth for the currently selected shuttle ID.
     @EnvironmentObject var globalDataState: GlobalDataState
     
     var body: some View {

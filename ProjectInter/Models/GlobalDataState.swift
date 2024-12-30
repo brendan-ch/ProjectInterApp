@@ -12,11 +12,13 @@ import ApolloTestSupport
 import ProjectInterOperations
 import ProjectInterTestMocks
 
+/// Represents a single stop available as part of the selected system.
 struct Stop: Identifiable, Equatable {
     var name: String
     var id: String
 }
 
+/// Contains globally shared data for the app.
 class GlobalDataState: ObservableObject {
     var apolloClient: ApolloClient?
     
