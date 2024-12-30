@@ -7,11 +7,27 @@
 
 import Testing
 @testable import ProjectInter
+import ApolloTestSupport
+import ProjectInterTestMocks
 
 class GlobalDataStateTests {
     @Test func testRefreshSystemData() async throws {
         let mockClient = MockApolloClient()
         
+        let mock = Mock<ProjectInterTestMocks.Query>(
+            systems: [
+                Mock<ProjectInterTestMocks.System>(
+                    id: "1",
+                    name: "Chapman University"
+                ),
+                Mock<ProjectInterTestMocks.System>(
+                    id: "2",
+                    name: "City of Monterey Park"
+                ),
+            ]
+        )
+        mockClient.mock = mock
+
         let globalDataState = GlobalDataState(apolloClient: mockClient)
         globalDataState.refreshSystemData()
         

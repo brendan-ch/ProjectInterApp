@@ -13,6 +13,9 @@ import ApolloTestSupport
 import ProjectInterTestMocks
 
 class MockApolloClient: ApolloClientProtocol {
+    // MARK: - Mock data
+    var mock: Mock<ProjectInterTestMocks.Query>?
+    
     // MARK: - ApolloClientProtocol conformance
     var store: Apollo.ApolloStore
     
@@ -41,19 +44,9 @@ class MockApolloClient: ApolloClientProtocol {
     
     func fetch<Query>(query: Query, cachePolicy: CachePolicy = .default, contextIdentifier: UUID? = nil, context: (any RequestContext)? = nil, queue: DispatchQueue = .main, resultHandler: GraphQLResultHandler<Query.Data>? = nil) -> (any Cancellable) where Query : GraphQLQuery {
         
-        let mock = Mock<ProjectInterTestMocks.Query>(
-            systems: [
-                Mock<System>(
-                    id: "1",
-                    name: "Chapman University"
-                ),
-                Mock<System>(
-                    id: "2",
-                    name: "City of Monterey Park"
-                ),
-            ]
-        )
-        let model = GetAllSystemsQuery.Data.from(mock)
+        guard let mock = mock else {
+            return EmptyCancellable()
+        }
         
         if let resultHandler {
             resultHandler(.success(GraphQLResult(
@@ -67,6 +60,4 @@ class MockApolloClient: ApolloClientProtocol {
         
         return EmptyCancellable()
     }
-    
-    // MARK: - Methods to control returned data
 }
