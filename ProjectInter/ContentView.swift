@@ -9,10 +9,6 @@ import SwiftUI
 import SwiftData
 import MapKit
 
-extension MKCoordinateRegion {
-    static let anaheim = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 33.79787, longitude: -117.8937), span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
-}
-
 
 struct SheetViewModifier: ViewModifier {
     var showSheet: Bool
