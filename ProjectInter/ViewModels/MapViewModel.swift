@@ -36,10 +36,19 @@ struct MapViewShuttle: Identifiable {
     var coordinates: CLLocationCoordinate2D
 }
 
+// MARK: - Network arguments
+
+/// Information to pass into the network request for map data.
+struct MapViewNetworkArguments {
+    let systemId: String
+}
+
 // MARK: - View model implementation
 
 /// Backing view model for ``MapView``.
-class MapViewModel: ObservableObject {
+class MapViewModel: ViewModelProtocol {
+    typealias T = MapViewNetworkArguments
+    
     /// Position of the map camera on the associated Map view.
     @Published var position: MapCameraPosition = .automatic
     
@@ -52,15 +61,19 @@ class MapViewModel: ObservableObject {
         self.apolloClient = apolloClient
     }
     
-    func refreshData(systemId: String) {
+    func refreshData(arguments: MapViewNetworkArguments) {
+        let systemId = arguments.systemId
+        
+        refreshData(systemId: systemId)
+    }
+    
+    private func refreshData(systemId: String) {
         apolloClient?.fetch(query: GetMapDataQuery(systemId: systemId)) { result in
             guard let data = try? result.get().data else { return }
             
             self.shuttles = []
             let shuttles = data.system?.shuttles ?? []
             for shuttle in shuttles {
-                let defaultColor = "#000000"
-                
                 if let route = shuttle.route {
                     let coordinates = CLLocationCoordinate2D(latitude: shuttle.coordinates.latitude, longitude: shuttle.coordinates.longitude)
                     
