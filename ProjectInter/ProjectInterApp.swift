@@ -15,7 +15,7 @@ struct ProjectInterApp: App {
         ApolloClient(url: URL(string: Bundle.main.infoDictionary!["API_BASE_URL"] as! String)!)
     )
     
-    @StateObject var locationManagerStateObject = GlobalLocationModel()
+    @StateObject var locationManagerStateObject = GlobalLocationDataModel()
 
       var body: some Scene {
         WindowGroup {

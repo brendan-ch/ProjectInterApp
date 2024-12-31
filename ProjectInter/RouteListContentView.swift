@@ -16,7 +16,7 @@ struct RouteListContentView: View {
     @StateObject var viewModel: RouteListContentViewModel = RouteListContentViewModel()
     
     @EnvironmentObject var globalDataState: GlobalDataModel
-    @EnvironmentObject var locationManagerState: GlobalLocationModel
+    @EnvironmentObject var locationManagerState: GlobalLocationDataModel
     
     var routeListNetworkArguments: RouteListNetworkArguments? {
         guard let stopId = globalDataState.selectedStop?.id,
@@ -125,5 +125,5 @@ struct RouteListItem: View {
     
     return RouteListContentView()
         .environmentObject(globalDataStateObject)
-        .environmentObject(GlobalLocationModel())
+        .environmentObject(GlobalLocationDataModel())
 }

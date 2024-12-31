@@ -9,7 +9,7 @@ import SwiftUI
 import CoreLocation
 
 /// Global data model which manages location permissions.
-class GlobalLocationModel: NSObject, ObservableObject, CLLocationManagerDelegate {
+class GlobalLocationDataModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     var locationManager: CLLocationManager?
     
     @Published var authorizationStatus: CLAuthorizationStatus?
