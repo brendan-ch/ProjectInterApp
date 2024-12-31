@@ -36,7 +36,7 @@ struct RouteInfoNetworkArguments {
 // MARK: - View model implementation
 
 /// Backing view model for ``RouteInfoContentView``.
-class RouteInfoContentViewModel: ViewModelProtocol {
+class RouteInfoContentViewModel: NetworkDataModelProtocol {
     typealias T = RouteInfoNetworkArguments
     
     /// The name of the currently viewed route.

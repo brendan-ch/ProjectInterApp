@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-protocol ViewModelProtocol: ObservableObject {
+protocol NetworkDataModelProtocol: ObservableObject {
     associatedtype T
     
     func refreshData(arguments: T)

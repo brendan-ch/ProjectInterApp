@@ -17,7 +17,7 @@ struct ShuttleInfoNetworkArguments {
 }
 
 /// Backing view model for ``ShuttleInfoContentView``.
-class ShuttleInfoContentViewModel: ViewModelProtocol {
+class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
     typealias T = ShuttleInfoNetworkArguments
     
     /// Name of the shuttle to display.

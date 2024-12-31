@@ -46,7 +46,7 @@ struct MapViewNetworkArguments {
 // MARK: - View model implementation
 
 /// Backing view model for ``MapView``.
-class MapViewModel: ViewModelProtocol {
+class MapViewModel: NetworkDataModelProtocol {
     typealias T = MapViewNetworkArguments
     
     /// Position of the map camera on the associated Map view.

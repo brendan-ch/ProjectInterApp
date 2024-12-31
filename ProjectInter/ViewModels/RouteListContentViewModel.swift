@@ -40,7 +40,7 @@ struct RouteListNetworkArguments {
 // MARK: - View model implementation
 
 /// Backing view model for ``RouteListContentView``.
-class RouteListContentViewModel: ViewModelProtocol {
+class RouteListContentViewModel: NetworkDataModelProtocol {
     typealias T = RouteListNetworkArguments
 
     /// All routes to render on ``RouteListContentView``.
