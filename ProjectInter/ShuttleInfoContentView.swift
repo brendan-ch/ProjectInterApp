@@ -16,6 +16,19 @@ struct ShuttleInfoContentView: View {
     /// Source of truth for the currently selected shuttle ID.
     @EnvironmentObject var globalDataState: GlobalDataModel
     
+    var shuttleInfoNetworkArguments: ShuttleInfoNetworkArguments? {
+        guard let systemId = globalDataState.selectedSystem?.id,
+              let shuttleId = globalDataState.selectedShuttleId,
+              let stopId = globalDataState.selectedStop?.id
+            else { return nil }
+        
+        return ShuttleInfoNetworkArguments(
+            systemId: systemId,
+            stopId: stopId,
+            shuttleId: shuttleId
+        )
+    }
+    
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             HStack(alignment: .top) {
@@ -54,21 +67,13 @@ struct ShuttleInfoContentView: View {
                 viewModel.addPlaceholderData()
             }
             
-            if let systemId = globalDataState.selectedSystem?.id {
-                if let stopId = globalDataState.selectedStop?.id {
-                    if let shuttleId = globalDataState.selectedShuttleId {
-                        viewModel.refreshData(systemId: systemId, stopId: stopId, shuttleId: shuttleId)
-                    }
-                }
+            if let arguments = shuttleInfoNetworkArguments {
+                viewModel.refreshData(arguments: arguments)
             }
         }
         .onChange(of: globalDataState.selectedShuttleId) {
-            if let systemId = globalDataState.selectedSystem?.id {
-                if let stopId = globalDataState.selectedStop?.id {
-                    if let shuttleId = globalDataState.selectedShuttleId {
-                        viewModel.refreshData(systemId: systemId, stopId: stopId, shuttleId: shuttleId)
-                    }
-                }
+            if let arguments = shuttleInfoNetworkArguments {
+                viewModel.refreshData(arguments: arguments)
             }
         }
     }
