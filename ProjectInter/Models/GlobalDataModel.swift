@@ -12,6 +12,12 @@ import ApolloTestSupport
 import ProjectInterOperations
 import ProjectInterTestMocks
 
+/// Represents a single system available from the server.
+struct System: Equatable, Identifiable {
+    var name: String
+    var id: String
+}
+
 /// Represents a single stop available as part of the selected system.
 struct Stop: Identifiable, Equatable {
     var name: String
