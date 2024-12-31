@@ -10,7 +10,7 @@ import Testing
 import ApolloTestSupport
 import ProjectInterTestMocks
 
-class GlobalDataStateTests {
+class GlobalDataModelTests {
     @Test func testRefreshSystemData() async throws {
         let mockClient = MockApolloClient()
         
