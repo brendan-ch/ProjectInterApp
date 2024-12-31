@@ -24,10 +24,21 @@ struct RouteInfoContentViewShuttle: Identifiable {
     var id: String
 }
 
+// MARK: - Network arguments
+
+/// Information to pass into the network request for route info.
+struct RouteInfoNetworkArguments {
+    let systemId: String
+    let stopId: String
+    let routeId: String
+}
+
 // MARK: - View model implementation
 
 /// Backing view model for ``RouteInfoContentView``.
-class RouteInfoContentViewModel: ObservableObject {
+class RouteInfoContentViewModel: ViewModelProtocol {
+    typealias T = RouteInfoNetworkArguments
+    
     /// The name of the currently viewed route.
     @Published var routeName: String = ""
     
@@ -43,7 +54,15 @@ class RouteInfoContentViewModel: ObservableObject {
         self.apolloClient = apolloClient
     }
     
-    func refreshData(systemId: String, stopId: String, routeId: String) {
+    func refreshData(arguments: RouteInfoNetworkArguments) {
+        let systemId = arguments.systemId
+        let stopId = arguments.stopId
+        let routeId = arguments.routeId
+        
+        refreshData(systemId: systemId, stopId: stopId, routeId: routeId)
+    }
+    
+    private func refreshData(systemId: String, stopId: String, routeId: String) {
         apolloClient?.fetch(query: GetRouteInfoDataQuery(systemId: systemId, stopId: stopId, routeId: routeId)) { result in
             guard let data = try? result.get().data else { return }
             guard let route = data.system?.route else { return }
