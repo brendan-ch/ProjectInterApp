@@ -12,7 +12,7 @@ import SwiftUI
 struct RouteInfoContentView: View {
     /// ``GlobalDataState`` instance containing the currently selected route
     /// and `ApolloClient` instance.
-    @EnvironmentObject var globalDataState: GlobalDataState
+    @EnvironmentObject var globalDataState: GlobalDataModel
     
     /// Backing ``RouteInfoContentView`` instance.
     @StateObject var viewModel: RouteInfoContentViewModel = RouteInfoContentViewModel()
@@ -112,5 +112,5 @@ struct RouteInfoShuttleViewItem: View {
 
 #Preview {
     return RouteInfoContentView()
-        .environmentObject(GlobalDataState())
+        .environmentObject(GlobalDataModel())
 }

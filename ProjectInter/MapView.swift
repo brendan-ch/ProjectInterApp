@@ -12,7 +12,7 @@ import MapKit
 /// on a map.
 struct MapView: View {
     /// Source of truth for the currently selected route ID and shuttle ID.
-    @EnvironmentObject var globalDataState: GlobalDataState
+    @EnvironmentObject var globalDataState: GlobalDataModel
     
     /// Backing view model.
     @StateObject var viewModel = MapViewModel()
@@ -89,5 +89,5 @@ struct MapView: View {
 
 #Preview {
     MapView()
-        .environmentObject(GlobalDataState())
+        .environmentObject(GlobalDataModel())
 }

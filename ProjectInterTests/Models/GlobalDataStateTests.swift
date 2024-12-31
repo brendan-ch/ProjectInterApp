@@ -28,7 +28,7 @@ class GlobalDataStateTests {
         )
         mockClient.mock = mock
 
-        let globalDataState = GlobalDataState(apolloClient: mockClient)
+        let globalDataState = GlobalDataModel(apolloClient: mockClient)
         globalDataState.refreshSystemData()
         
         #expect(globalDataState.systems.count == 2)

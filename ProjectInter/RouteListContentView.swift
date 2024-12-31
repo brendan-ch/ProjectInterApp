@@ -15,8 +15,8 @@ struct RouteListContentView: View {
     /// Backing view model.
     @StateObject var viewModel: RouteListContentViewModel = RouteListContentViewModel()
     
-    @EnvironmentObject var globalDataState: GlobalDataState
-    @EnvironmentObject var locationManagerState: LocationManagerState
+    @EnvironmentObject var globalDataState: GlobalDataModel
+    @EnvironmentObject var locationManagerState: GlobalLocationModel
     
     var body: some View {
         ScrollView {
@@ -112,10 +112,10 @@ struct RouteListItem: View {
 
 
 #Preview {
-    let globalDataStateObject = GlobalDataState()
+    let globalDataStateObject = GlobalDataModel()
     globalDataStateObject.addPlaceholderData()
     
     return RouteListContentView()
         .environmentObject(globalDataStateObject)
-        .environmentObject(LocationManagerState())
+        .environmentObject(GlobalLocationModel())
 }

@@ -19,7 +19,7 @@ struct Stop: Identifiable, Equatable {
 }
 
 /// Contains globally shared data for the app.
-class GlobalDataState: ObservableObject {
+class GlobalDataModel: ObservableObject {
     var apolloClient: ApolloClientProtocol?
     
     @Published var systems: [System] = []

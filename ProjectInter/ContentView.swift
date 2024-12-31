@@ -64,8 +64,8 @@ struct ContentView: View {
     /// Whether the root-level sheet should be showing.
     @State var showSheet = false
     
-    @EnvironmentObject var globalDataState: GlobalDataState
-    @EnvironmentObject var locationManagerState: LocationManagerState
+    @EnvironmentObject var globalDataState: GlobalDataModel
+    @EnvironmentObject var locationManagerState: GlobalLocationModel
     
     /// Nesting level of the currently displayed sheet.
     /// Determines which sheet propogates updates to ``currentSheetHeight``
@@ -126,6 +126,6 @@ struct ContentView: View {
 
 #Preview {
     return ContentView()
-        .environmentObject(GlobalDataState())
-        .environmentObject(LocationManagerState())
+        .environmentObject(GlobalDataModel())
+        .environmentObject(GlobalLocationModel())
 }

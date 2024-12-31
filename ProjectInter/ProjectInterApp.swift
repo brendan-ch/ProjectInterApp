@@ -38,11 +38,11 @@ extension Color {
 
 @main
 struct ProjectInterApp: App {
-    @StateObject var globalDataStateObject = GlobalDataState(apolloClient:
+    @StateObject var globalDataStateObject = GlobalDataModel(apolloClient:
         ApolloClient(url: URL(string: Bundle.main.infoDictionary!["API_BASE_URL"] as! String)!)
     )
     
-    @StateObject var locationManagerStateObject = LocationManagerState()
+    @StateObject var locationManagerStateObject = GlobalLocationModel()
 
       var body: some Scene {
         WindowGroup {

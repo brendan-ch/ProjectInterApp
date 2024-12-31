@@ -14,7 +14,7 @@ struct ShuttleInfoContentView: View {
     @StateObject var viewModel = ShuttleInfoContentViewModel()
     
     /// Source of truth for the currently selected shuttle ID.
-    @EnvironmentObject var globalDataState: GlobalDataState
+    @EnvironmentObject var globalDataState: GlobalDataModel
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -76,5 +76,5 @@ struct ShuttleInfoContentView: View {
 
 #Preview {
     return ShuttleInfoContentView()
-        .environmentObject(GlobalDataState())
+        .environmentObject(GlobalDataModel())
 }
