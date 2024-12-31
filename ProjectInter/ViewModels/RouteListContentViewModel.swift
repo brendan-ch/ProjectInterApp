@@ -29,10 +29,20 @@ struct RouteListContentViewRoute: Identifiable {
     var etaDisplayString: String
 }
 
+// MARK: - Network arguments
+
+/// Information to pass into the route list network request.
+struct RouteListNetworkArguments {
+    let systemId: String
+    let stopId: String
+}
+
 // MARK: - View model implementation
 
 /// Backing view model for ``RouteListContentView``.
-class RouteListContentViewModel: ObservableObject {
+class RouteListContentViewModel: ViewModelProtocol {
+    typealias T = RouteListNetworkArguments
+
     /// All routes to render on ``RouteListContentView``.
     @Published var routes: [RouteListContentViewRoute] = []
     
@@ -46,7 +56,14 @@ class RouteListContentViewModel: ObservableObject {
         self.apolloClient = apolloClient
     }
     
-    func refreshData(systemId: String, stopId: String) {
+    func refreshData(arguments: RouteListNetworkArguments) {
+        let systemId = arguments.systemId
+        let stopId = arguments.stopId
+        
+        refreshData(systemId: systemId, stopId: stopId)
+    }
+    
+    private func refreshData(systemId: String, stopId: String) {
         apolloClient?.fetch(query: GetRouteListDataQuery(systemId: systemId, stopId: stopId)) { result in
             guard let data = try? result.get().data else { return }
             guard let orderedStops = data.system?.stop?.orderedStops else { return }
