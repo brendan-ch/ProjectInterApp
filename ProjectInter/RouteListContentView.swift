@@ -15,8 +15,18 @@ struct RouteListContentView: View {
     /// Backing view model.
     @StateObject var viewModel: RouteListContentViewModel = RouteListContentViewModel()
     
-    @EnvironmentObject var globalDataState: GlobalDataState
-    @EnvironmentObject var locationManagerState: LocationManagerState
+    @EnvironmentObject var globalDataState: GlobalDataModel
+    @EnvironmentObject var locationManagerState: GlobalLocationDataModel
+    
+    var routeListNetworkArguments: RouteListNetworkArguments? {
+        guard let stopId = globalDataState.selectedStop?.id,
+              let systemId = globalDataState.selectedSystem?.id
+        else {
+            return nil
+        }
+        
+        return RouteListNetworkArguments(systemId: systemId, stopId: stopId)
+    }
     
     var body: some View {
         ScrollView {
@@ -70,10 +80,8 @@ struct RouteListContentView: View {
         }
         .onChange(of: globalDataState.selectedStop) {
             // Refresh data in backing view model
-            if let selectedStop = globalDataState.selectedStop {
-                if let selectedSystem = globalDataState.selectedSystem {
-                    viewModel.refreshData(systemId: selectedSystem.id, stopId: selectedStop.id)
-                }
+            if let arguments = routeListNetworkArguments {
+                viewModel.refreshData(arguments: arguments)
             }
         }
     }
@@ -112,10 +120,10 @@ struct RouteListItem: View {
 
 
 #Preview {
-    let globalDataStateObject = GlobalDataState()
+    let globalDataStateObject = GlobalDataModel()
     globalDataStateObject.addPlaceholderData()
     
     return RouteListContentView()
         .environmentObject(globalDataStateObject)
-        .environmentObject(LocationManagerState())
+        .environmentObject(GlobalLocationDataModel())
 }

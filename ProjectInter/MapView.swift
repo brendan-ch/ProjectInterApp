@@ -12,10 +12,16 @@ import MapKit
 /// on a map.
 struct MapView: View {
     /// Source of truth for the currently selected route ID and shuttle ID.
-    @EnvironmentObject var globalDataState: GlobalDataState
+    @EnvironmentObject var globalDataState: GlobalDataModel
     
     /// Backing view model.
     @StateObject var viewModel = MapViewModel()
+    
+    var mapViewNetworkArguments: MapViewNetworkArguments? {
+        guard let systemId = globalDataState.selectedSystem?.id else { return nil }
+        
+        return MapViewNetworkArguments(systemId: systemId)
+    }
     
     var body: some View {
         Map(position: $viewModel.position, selection: $globalDataState.selectedShuttleId) {
@@ -67,13 +73,13 @@ struct MapView: View {
                 viewModel.addPlaceholderData()
             }
             
-            if let systemId = globalDataState.selectedSystem?.id {
-                viewModel.refreshData(systemId: systemId)
+            if let arguments = mapViewNetworkArguments {
+                viewModel.refreshData(arguments: arguments)
             }
         }
         .onChange(of: globalDataState.selectedSystem) {
-            if let systemId = globalDataState.selectedSystem?.id {
-                viewModel.refreshData(systemId: systemId)
+            if let arguments = mapViewNetworkArguments {
+                viewModel.refreshData(arguments: arguments)
             }
         }
         // Reset the map position if the user selects something
@@ -89,5 +95,5 @@ struct MapView: View {
 
 #Preview {
     MapView()
-        .environmentObject(GlobalDataState())
+        .environmentObject(GlobalDataModel())
 }

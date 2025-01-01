@@ -9,10 +9,6 @@ import SwiftUI
 import SwiftData
 import MapKit
 
-extension MKCoordinateRegion {
-    static let anaheim = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 33.79787, longitude: -117.8937), span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
-}
-
 
 struct SheetViewModifier: ViewModifier {
     var showSheet: Bool
@@ -64,8 +60,8 @@ struct ContentView: View {
     /// Whether the root-level sheet should be showing.
     @State var showSheet = false
     
-    @EnvironmentObject var globalDataState: GlobalDataState
-    @EnvironmentObject var locationManagerState: LocationManagerState
+    @EnvironmentObject var globalDataState: GlobalDataModel
+    @EnvironmentObject var locationManagerState: GlobalLocationDataModel
     
     /// Nesting level of the currently displayed sheet.
     /// Determines which sheet propogates updates to ``currentSheetHeight``
@@ -126,6 +122,6 @@ struct ContentView: View {
 
 #Preview {
     return ContentView()
-        .environmentObject(GlobalDataState())
-        .environmentObject(LocationManagerState())
+        .environmentObject(GlobalDataModel())
+        .environmentObject(GlobalLocationDataModel())
 }

@@ -9,8 +9,17 @@ import SwiftUI
 import Apollo
 import ProjectInterOperations
 
+/// Information to pass into the shuttle info network request.
+struct ShuttleInfoNetworkArguments {
+    let systemId: String
+    let stopId: String
+    let shuttleId: String
+}
+
 /// Backing view model for ``ShuttleInfoContentView``.
-class ShuttleInfoContentViewModel: ObservableObject {
+class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
+    typealias T = ShuttleInfoNetworkArguments
+    
     /// Name of the shuttle to display.
     @Published var name: String = ""
     
@@ -23,7 +32,15 @@ class ShuttleInfoContentViewModel: ObservableObject {
         self.apolloClient = apolloClient
     }
     
-    func refreshData(systemId: String, stopId: String, shuttleId: String) {
+    func refreshData(arguments: ShuttleInfoNetworkArguments) {
+        let systemId = arguments.systemId
+        let stopId = arguments.stopId
+        let shuttleId = arguments.shuttleId
+        
+        refreshData(systemId: systemId, stopId: stopId, shuttleId: shuttleId)
+    }
+    
+    private func refreshData(systemId: String, stopId: String, shuttleId: String) {
         apolloClient?.fetch(query: GetShuttleInfoDataQuery(systemId: systemId, stopId: stopId, shuttleId: shuttleId)) { result in
             guard let data = try? result.get().data else { return }
             guard let shuttle = data.system?.shuttle else { return }

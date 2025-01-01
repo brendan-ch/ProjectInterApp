@@ -12,10 +12,19 @@ import SwiftUI
 struct RouteInfoContentView: View {
     /// ``GlobalDataState`` instance containing the currently selected route
     /// and `ApolloClient` instance.
-    @EnvironmentObject var globalDataState: GlobalDataState
+    @EnvironmentObject var globalDataState: GlobalDataModel
     
     /// Backing ``RouteInfoContentView`` instance.
     @StateObject var viewModel: RouteInfoContentViewModel = RouteInfoContentViewModel()
+    
+    var routeInfoNetworkArguments: RouteInfoNetworkArguments? {
+        guard let systemId = globalDataState.selectedSystem?.id,
+              let stopId = globalDataState.selectedStop?.id,
+              let routeId = globalDataState.selectedRouteId else { return nil }
+        
+        
+        return RouteInfoNetworkArguments(systemId: systemId, stopId: stopId, routeId: routeId)
+    }
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -66,21 +75,13 @@ struct RouteInfoContentView: View {
                 viewModel.addPlaceholderData()
             }
             
-            if let systemId = globalDataState.selectedSystem?.id {
-                if let stopId = globalDataState.selectedStop?.id {
-                    if let routeId = globalDataState.selectedRouteId {
-                        viewModel.refreshData(systemId: systemId, stopId: stopId, routeId: routeId)
-                    }
-                }
+            if let arguments = routeInfoNetworkArguments {
+                viewModel.refreshData(arguments: arguments)
             }
         }
         .onChange(of: globalDataState.selectedRouteId) {
-            if let systemId = globalDataState.selectedSystem?.id {
-                if let stopId = globalDataState.selectedStop?.id {
-                    if let routeId = globalDataState.selectedRouteId {
-                        viewModel.refreshData(systemId: systemId, stopId: stopId, routeId: routeId)
-                    }
-                }
+            if let arguments = routeInfoNetworkArguments {
+                viewModel.refreshData(arguments: arguments)
             }
         }
     }
@@ -112,5 +113,5 @@ struct RouteInfoShuttleViewItem: View {
 
 #Preview {
     return RouteInfoContentView()
-        .environmentObject(GlobalDataState())
+        .environmentObject(GlobalDataModel())
 }
