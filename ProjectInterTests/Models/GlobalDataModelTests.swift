@@ -35,9 +35,9 @@ class GlobalDataModelTests {
         mockClient.mock = mock
 
         let globalDataState = GlobalDataModel(apolloClient: mockClient)
-        globalDataState.refreshSystemData(callback: callback)
+        globalDataState.refreshSystemData(onSuccess: callback)
         
         #expect(globalDataState.systems.count == 2)
         #expect(callbackCalled == true)
-   }
+    }
 }

@@ -60,14 +60,14 @@ class GlobalDataModel: NetworkDataModelProtocol {
             tempImplementation_autoSelectSystemId()
             
             if let id = selectedSystem?.id {
-                refreshStopData(systemId: id, callback: refreshStopDataCallback)
+                refreshStopData(systemId: id, onSuccess: refreshStopDataCallback)
             }
         }
         
-        refreshSystemData(callback: refreshSystemDataCallback)
+        refreshSystemData(onSuccess: refreshSystemDataCallback)
     }
     
-    func refreshSystemData(callback: (() -> ())? = nil) {
+    func refreshSystemData(onSuccess: (() -> ())? = nil) {
         apolloClient?.fetch(query: GetAllSystemsQuery()) { result in
             guard let data = try? result.get().data else { return }
             
@@ -75,7 +75,7 @@ class GlobalDataModel: NetworkDataModelProtocol {
                 System(name: system.name, id: system.id)
             }
             
-            if let callback = callback {
+            if let callback = onSuccess {
                 callback()
             }
         }
@@ -90,7 +90,7 @@ class GlobalDataModel: NetworkDataModelProtocol {
         }
     }
     
-    func refreshStopData(systemId: String, callback: (() -> ())? = nil) {
+    func refreshStopData(systemId: String, onSuccess: (() -> ())? = nil) {
         apolloClient?.fetch(query: GetAllStopsBySystemIdQuery(systemId: systemId)) { result in
             guard let data = try? result.get().data else { return }
             guard let stops = data.system?.stops else { return }
@@ -99,7 +99,7 @@ class GlobalDataModel: NetworkDataModelProtocol {
                 Stop(name: stop.name, id: stop.id)
             }
             
-            if let callback = callback {
+            if let callback = onSuccess {
                 callback()
             }
         }
