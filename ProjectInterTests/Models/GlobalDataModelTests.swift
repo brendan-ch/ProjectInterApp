@@ -40,4 +40,20 @@ class GlobalDataModelTests {
         #expect(globalDataState.systems.count == 2)
         #expect(callbackCalled == true)
     }
+    
+    @Test func testRefreshSystemDataWithInvalidData() async throws {
+        var callbackCalled = false
+        func callback() {
+            callbackCalled = true
+        }
+        
+        let mockClient = MockApolloClient()
+        mockClient.mock = nil
+        
+        let globalDataState = GlobalDataModel(apolloClient: mockClient)
+        globalDataState.refreshSystemData(onSuccess: callback)
+        
+        #expect(globalDataState.systems.count == 0)
+        #expect(callbackCalled == false)
+    }
 }
