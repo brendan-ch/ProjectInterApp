@@ -38,7 +38,7 @@ class GlobalDataModelTests {
         globalDataState.refreshSystemData(onSuccess: callback)
         
         #expect(globalDataState.systems.count == 2)
-        #expect(callbackCalled == true)
+        #expect(callbackCalled)
     }
     
     @Test func testRefreshSystemDataWithInvalidData() async throws {
@@ -54,6 +54,39 @@ class GlobalDataModelTests {
         globalDataState.refreshSystemData(onSuccess: callback)
         
         #expect(globalDataState.systems.count == 0)
-        #expect(callbackCalled == false)
+        #expect(!callbackCalled)
+    }
+    
+    @Test func testRefreshStopDataWithCallback() async throws {
+        var callbackCalled = false
+        func callback() {
+            callbackCalled = true
+        }
+        
+        let mockClient = MockApolloClient()
+        
+        let mock = Mock<ProjectInterTestMocks.Query>(
+            system: Mock<ProjectInterTestMocks.System>(
+                id: "1",
+                name: "Chapman University",
+                stops: [
+                    Mock<ProjectInterTestMocks.Stop>(
+                        id: "1",
+                        name: "Panther Village"
+                    ),
+                    Mock<ProjectInterTestMocks.Stop>(
+                        id: "2",
+                        name: "Schmid Gate"
+                    )
+                ]
+            )
+        )
+        mockClient.mock = mock
+
+        let globalDataState = GlobalDataModel(apolloClient: mockClient)
+        globalDataState.refreshStopData(systemId: "1", onSuccess: callback)
+        
+        #expect(globalDataState.stops.count == 2)
+        #expect(callbackCalled)
     }
 }
