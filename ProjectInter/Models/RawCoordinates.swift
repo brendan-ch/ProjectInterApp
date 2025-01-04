@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreLocation
 
 // TODO: apply this model to objects in MapViewModel
 
@@ -14,4 +15,8 @@ import Foundation
 struct RawCoordinates: Equatable {
     var latitude: Double
     var longitude: Double
+    
+    var asCLLocationCoordinate2D: CLLocationCoordinate2D {
+        CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    }
 }

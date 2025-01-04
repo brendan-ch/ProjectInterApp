@@ -57,14 +57,11 @@ class GlobalStopsModel: NetworkDataModelProtocol {
         guard var closest = stops.first else { return }
         
         for savedStop in stops {
-            // TODO: move conversion of coordinates between types to model struct
-            let originalLocation = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
-            let stopLocation = CLLocationCoordinate2D(latitude: savedStop.coordinates.latitude, longitude: savedStop.coordinates.longitude)
+            let stopLocation = savedStop.coordinates.asCLLocationCoordinate2D
+            let locationOfCurrentClosestStop = closest.coordinates.asCLLocationCoordinate2D
             
-            let locationOfCurrentClosestStop = CLLocationCoordinate2D(latitude: closest.coordinates.latitude, longitude: closest.coordinates.longitude)
-            
-            let distanceForCurrentStopInIteration = calculateDistance(originalLocation, stopLocation)
-            let distanceForCurrentClosestStop = calculateDistance(originalLocation, locationOfCurrentClosestStop)
+            let distanceForCurrentStopInIteration = calculateDistance(location, stopLocation)
+            let distanceForCurrentClosestStop = calculateDistance(location, locationOfCurrentClosestStop)
             
             if distanceForCurrentClosestStop > distanceForCurrentStopInIteration {
                 closest = savedStop
