@@ -31,6 +31,14 @@ struct ProjectInterApp: App {
                     )
                     globalStopsStateObject.refreshData(arguments: stopsNetworkArguments)
                 }
+                .onChange(of: globalStopsStateObject.stops) {
+                    if globalStopsStateObject.selectedStop == nil {
+                        // Grab the user's current location if available
+                        // If unavailable, return
+                        
+                        // If available, set selected stop by calling method on globalStopsStateObject
+                    }
+                }
         }
         .environmentObject(globalDataStateObject)
         .environmentObject(globalStopsStateObject)
