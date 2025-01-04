@@ -57,8 +57,33 @@ class GlobalStopsModel: NetworkDataModelProtocol {
         }
     }
     
-    func selectStopBasedOnClosestLocation(location: CLLocationCoordinate2D) {
-        // TODO: Implement this method
+    /// From the currently saved stops, select the one that is closest to the provided location.
+    func selectClosestStopBasedOnLocation(location: CLLocationCoordinate2D) {
+        guard var closest = stops.first else { return }
+        
+        for savedStop in stops {
+            // TODO: move conversion of coordinates between types to model struct
+            let originalLocation = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
+            let stopLocation = CLLocationCoordinate2D(latitude: savedStop.coordinates.latitude, longitude: savedStop.coordinates.longitude)
+            
+            let locationOfCurrentClosestStop = CLLocationCoordinate2D(latitude: closest.coordinates.latitude, longitude: closest.coordinates.longitude)
+            
+            let distanceForCurrentStopInIteration = calculateDistance(originalLocation, stopLocation)
+            let distanceForCurrentClosestStop = calculateDistance(originalLocation, locationOfCurrentClosestStop)
+            
+            if distanceForCurrentClosestStop > distanceForCurrentStopInIteration {
+                closest = savedStop
+            }
+        }
+        
+        selectedStop = closest
+    }
+    
+    private func calculateDistance(_ location1: CLLocationCoordinate2D, _ location2: CLLocationCoordinate2D) -> Double {
+        let location1 = CLLocation(latitude: location1.latitude, longitude: location1.longitude)
+        let location2 = CLLocation(latitude: location2.latitude, longitude: location2.longitude)
+        
+        return location1.distance(from: location2)
     }
 }
 

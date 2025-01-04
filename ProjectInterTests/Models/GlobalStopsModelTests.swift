@@ -81,7 +81,7 @@ class GlobalStopsModelTests {
         let state = GlobalStopsModel()
         state.stops = stops
         
-        state.selectStopBasedOnClosestLocation(
+        state.selectClosestStopBasedOnLocation(
             location: CLLocationCoordinate2D(latitude: stops[0].coordinates.latitude, longitude: stops[0].coordinates.longitude)
         )
         
