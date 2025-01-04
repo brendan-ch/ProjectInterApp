@@ -20,10 +20,20 @@ class GlobalStopsModelTests {
                 name: "Chapman University",
                 stops: [
                     Mock<ProjectInterTestMocks.Stop>(
+                        // 33.789730, -117.886539
+                        coordinates: Mock<ProjectInterTestMocks.Coordinates>(
+                            latitude: 33.789730,
+                            longitude: -117.886539
+                        ),
                         id: "1",
                         name: "Panther Village"
                     ),
                     Mock<ProjectInterTestMocks.Stop>(
+                        // 33.793316, -117.852825
+                        coordinates: Mock<ProjectInterTestMocks.Coordinates>(
+                            latitude: 33.793316,
+                            longitude: -117.852825
+                        ),
                         id: "2",
                         name: "Schmid Gate"
                     )
@@ -32,15 +42,36 @@ class GlobalStopsModelTests {
         )
         mockClient.mock = mock
 
-        let globalDataState = GlobalStopsModel(apolloClient: mockClient)
+        let globalStopsModel = GlobalStopsModel(apolloClient: mockClient)
         let arguments = GlobalStopsNetworkArguments(systemId: "1")
         
-        globalDataState.refreshData(arguments: arguments)
+        globalStopsModel.refreshData(arguments: arguments)
         
-        #expect(globalDataState.stops.count == 2)
+        #expect(globalStopsModel.stops.count == 2)
+        
+        func matchesStop(input: Mock<ProjectInterTestMocks.Stop>, result: ProjectInter.Stop) -> Bool {
+            if input.id != result.id { return false }
+            if input.name != result.name { return false }
+            if input.coordinates?.latitude != result.coordinates.latitude { return false }
+            if input.coordinates?.longitude != result.coordinates.longitude { return false }
+            
+            return true
+        }
+        
+        for i in 0..<globalStopsModel.stops.count {
+            #expect(matchesStop(input: mock.system!.stops![i], result: globalStopsModel.stops[i]))
+        }
     }
     
     @Test func selectStopBasedOnClosestLocation() async throws {
-        <#body#>
+//        let stops: [ProjectInter.Stop] = [
+//            ProjectInter.Stop(name: "Panther Village", id: "1"),
+//            ProjectInter.Stop(name: "Schmid Gate", id: "2")
+//        ]
+//        
+//        let state = GlobalStopsModel()
+//        state.stops = stops
+        
+        // state.selectStopBasedOnClosestLocation(location: )
     }
 }
