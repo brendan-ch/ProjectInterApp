@@ -36,9 +36,6 @@ class GlobalDataModel: NetworkDataModelProtocol {
     @Published var systems: [System] = []
     @Published var selectedSystem: System? = nil
     
-    @Published var stops: [Stop] = []
-    @Published var selectedStop: Stop? = nil
-    
     @Published var selectedRouteId: String? = nil
     @Published var selectedShuttleId: String? = nil
     
@@ -47,16 +44,10 @@ class GlobalDataModel: NetworkDataModelProtocol {
     }
     
     func refreshData(arguments _: GlobalDataModelNetworkArguments) {
-        func refreshStopDataCallback() {
-            tempImplementation_autoSelectStopId()
-        }
-        
         func refreshSystemDataCallback() {
+            // TODO: move system selection into separately called method for storage loading
             tempImplementation_autoSelectSystemId()
             
-            if let id = selectedSystem?.id {
-                refreshStopData(systemId: id, onSuccess: refreshStopDataCallback)
-            }
         }
         
         refreshSystemData(onSuccess: refreshSystemDataCallback)
@@ -82,30 +73,6 @@ class GlobalDataModel: NetworkDataModelProtocol {
            selectedSystem == nil
         {
             selectedSystem = systems[0]
-        }
-    }
-    
-    func refreshStopData(systemId: String, onSuccess: (() -> ())? = nil) {
-        apolloClient?.fetch(query: GetAllStopsBySystemIdQuery(systemId: systemId)) { result in
-            guard let data = try? result.get().data else { return }
-            guard let stops = data.system?.stops else { return }
-            
-            self.stops = stops.map { stop in
-                Stop(name: stop.name, id: stop.id)
-            }
-            
-            if let callback = onSuccess {
-                callback()
-            }
-        }
-    }
-    
-    // TODO: replace with auto selection based on distance to user's location
-    private func tempImplementation_autoSelectStopId() {
-        if !stops.isEmpty,
-           selectedStop == nil
-        {
-            selectedStop = stops[0]
         }
     }
     
