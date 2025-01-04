@@ -16,16 +16,11 @@ struct GlobalStopsNetworkArguments {
     let systemId: String
 }
 
-struct Coordinates: Equatable {
-    var latitude: Double
-    var longitude: Double
-}
-
 /// Represents a single stop available as part of the selected system.
 struct Stop: Identifiable, Equatable {
     var name: String
     var id: String
-    var coordinates: Coordinates
+    var coordinates: RawCoordinates
 }
 
 // MARK: - Data model implementation
@@ -50,7 +45,7 @@ class GlobalStopsModel: NetworkDataModelProtocol {
             guard let stops = data.system?.stops else { return }
             
             self.stops = stops.map { stop in
-                let coordinates = Coordinates(latitude: stop.coordinates.latitude, longitude: stop.coordinates.longitude)
+                let coordinates = RawCoordinates(latitude: stop.coordinates.latitude, longitude: stop.coordinates.longitude)
                 
                 return Stop(name: stop.name, id: stop.id, coordinates: coordinates)
             }

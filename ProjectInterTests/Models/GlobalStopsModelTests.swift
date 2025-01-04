@@ -69,12 +69,12 @@ class GlobalStopsModelTests {
             ProjectInter.Stop(
                 name: "Panther Village",
                 id: "1",
-                coordinates: Coordinates(latitude: 33.789730, longitude: -117.886539)
+                coordinates: RawCoordinates(latitude: 33.789730, longitude: -117.886539)
             ),
             ProjectInter.Stop(
                 name: "Schmid Gate",
                 id: "2",
-                coordinates: Coordinates(latitude: 33.793316, longitude: -117.852825)
+                coordinates: RawCoordinates(latitude: 33.793316, longitude: -117.852825)
             )
         ]
         
