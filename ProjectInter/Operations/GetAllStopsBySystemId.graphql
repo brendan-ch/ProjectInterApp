@@ -1,8 +1,12 @@
 query GetAllStopsBySystemId($systemId: ID!) {
   system(id: $systemId) {
     stops {
-      name,
+      name
       id
+      coordinates {
+        latitude
+        longitude
+      }
     }
   }
 }
