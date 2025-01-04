@@ -10,9 +10,19 @@ import Apollo
 import ProjectInterOperations
 import MapKit
 
+// MARK: - Models
+
 struct GlobalStopsNetworkArguments {
     let systemId: String
 }
+
+/// Represents a single stop available as part of the selected system.
+struct Stop: Identifiable, Equatable {
+    var name: String
+    var id: String
+}
+
+// MARK: - Data model implementation
 
 class GlobalStopsModel: NetworkDataModelProtocol {
     typealias T = GlobalStopsNetworkArguments

@@ -17,11 +17,6 @@ struct System: Equatable, Identifiable {
     var id: String
 }
 
-/// Represents a single stop available as part of the selected system.
-struct Stop: Identifiable, Equatable {
-    var name: String
-    var id: String
-}
 
 // MARK: - Network arguments
 
