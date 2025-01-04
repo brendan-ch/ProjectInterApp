@@ -14,12 +14,14 @@ struct RouteInfoContentView: View {
     /// and `ApolloClient` instance.
     @EnvironmentObject var globalDataState: GlobalDataModel
     
+    @EnvironmentObject var globalStopsState: GlobalStopsModel
+    
     /// Backing ``RouteInfoContentView`` instance.
     @StateObject var viewModel: RouteInfoContentViewModel = RouteInfoContentViewModel()
     
     var routeInfoNetworkArguments: RouteInfoNetworkArguments? {
         guard let systemId = globalDataState.selectedSystem?.id,
-              let stopId = globalDataState.selectedStop?.id,
+              let stopId = globalStopsState.selectedStop?.id,
               let routeId = globalDataState.selectedRouteId else { return nil }
         
         
@@ -114,4 +116,5 @@ struct RouteInfoShuttleViewItem: View {
 #Preview {
     return RouteInfoContentView()
         .environmentObject(GlobalDataModel())
+        .environmentObject(GlobalStopsModel())
 }

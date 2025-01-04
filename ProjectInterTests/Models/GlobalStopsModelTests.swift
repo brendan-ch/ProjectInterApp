@@ -11,8 +11,6 @@ import ApolloTestSupport
 import ProjectInterTestMocks
 
 class GlobalStopsModelTests {
-    // TODO: Move tests
-    
     @Test func testRefreshStopDataWithValidData() async throws {
         let mockClient = MockApolloClient()
         
@@ -40,5 +38,9 @@ class GlobalStopsModelTests {
         globalDataState.refreshData(arguments: arguments)
         
         #expect(globalDataState.stops.count == 2)
+    }
+    
+    @Test func selectStopBasedOnClosestLocation() async throws {
+        <#body#>
     }
 }
