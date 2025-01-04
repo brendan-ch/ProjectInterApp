@@ -9,6 +9,7 @@ import Testing
 @testable import ProjectInter
 import ApolloTestSupport
 import ProjectInterTestMocks
+import CoreLocation
 
 class GlobalStopsModelTests {
     @Test func testRefreshStopDataWithValidData() async throws {
@@ -64,14 +65,26 @@ class GlobalStopsModelTests {
     }
     
     @Test func selectStopBasedOnClosestLocation() async throws {
-//        let stops: [ProjectInter.Stop] = [
-//            ProjectInter.Stop(name: "Panther Village", id: "1"),
-//            ProjectInter.Stop(name: "Schmid Gate", id: "2")
-//        ]
-//        
-//        let state = GlobalStopsModel()
-//        state.stops = stops
+        let stops: [ProjectInter.Stop] = [
+            ProjectInter.Stop(
+                name: "Panther Village",
+                id: "1",
+                coordinates: Coordinates(latitude: 33.789730, longitude: -117.886539)
+            ),
+            ProjectInter.Stop(
+                name: "Schmid Gate",
+                id: "2",
+                coordinates: Coordinates(latitude: 33.793316, longitude: -117.852825)
+            )
+        ]
         
-        // state.selectStopBasedOnClosestLocation(location: )
+        let state = GlobalStopsModel()
+        state.stops = stops
+        
+        state.selectStopBasedOnClosestLocation(
+            location: CLLocationCoordinate2D(latitude: stops[0].coordinates.latitude, longitude: stops[0].coordinates.longitude)
+        )
+        
+        #expect(state.selectedStop == stops[0])
     }
 }
