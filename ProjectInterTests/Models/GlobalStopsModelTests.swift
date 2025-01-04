@@ -87,4 +87,13 @@ class GlobalStopsModelTests {
         
         #expect(state.selectedStop == stops[0])
     }
+    
+    @Test func selectStopBasedOnClosestLocationWithNoStopsAvailable() async throws {
+        let state = GlobalStopsModel()
+        state.selectClosestStopBasedOnLocation(
+            location: CLLocationCoordinate2D(latitude: 33.789730, longitude: -117.886539)
+        )
+        
+        #expect(state.selectedStop == nil)
+    }
 }
