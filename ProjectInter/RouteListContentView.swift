@@ -124,7 +124,10 @@ struct RouteListItem: View {
     let globalDataStateObject = GlobalDataModel()
     globalDataStateObject.addPlaceholderData()
     
-    return RouteListContentView()
+    let viewModelBuilder = RouteListContentViewModelPlaceholderBuilder()
+    let viewModel = viewModelBuilder.build()
+    
+    return RouteListContentView(viewModel: viewModel)
         .environmentObject(globalDataStateObject)
         .environmentObject(GlobalLocationDataModel())
         .environmentObject(GlobalStopsModel())
