@@ -9,9 +9,7 @@ import Foundation
 import CoreLocation
 
 class MapViewModelPlaceholderBuilder {
-    private(set) var mapViewModel: MapViewModel?
-    
-    func build() {
+    func build() -> MapViewModel {
         let newModel = MapViewModel()
         
         newModel.routes = [
@@ -45,6 +43,6 @@ class MapViewModelPlaceholderBuilder {
             )
         ]
 
-        self.mapViewModel = newModel
+        return newModel
     }
 }
