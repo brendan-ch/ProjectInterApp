@@ -57,10 +57,17 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
             }
         }
     }
+}
+
+class ShuttleInfoContentViewModelPlaceholderBuilder: PlaceholderBuilderProtocol {
+    typealias T = ShuttleInfoContentViewModel
     
-    func addPlaceholderData() {
-        name = "Red Shuttle 17"
-        etaDisplay = "5 min away"
+    func build() -> ShuttleInfoContentViewModel {
+        let model = ShuttleInfoContentViewModel()
+        model.name = "Red Shuttle 17"
+        model.etaDisplay = "5 min away"
+        
+        return model
     }
 }
 
