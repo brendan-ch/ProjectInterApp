@@ -24,7 +24,7 @@ struct StopSelectionView: View {
     }
     
     var body: some View {
-        VStack {
+        NavigationStack {
             List {
                 ForEach(searchResults) { stop in
                     Button {
@@ -39,7 +39,11 @@ struct StopSelectionView: View {
                     Text("No stops found.")
                 }
             }
-            .searchable(text: $searchText, placement: .automatic)
+            .searchable(
+                text: $searchText,
+                placement: .automatic,
+                prompt: Text("Search for a stop")
+            )
         }
     }
 }
