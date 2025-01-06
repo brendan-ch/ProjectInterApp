@@ -13,6 +13,7 @@ class GlobalLocationDataModel: NSObject, ObservableObject, CLLocationManagerDele
     var locationManager: CLLocationManager?
     
     @Published var authorizationStatus: CLAuthorizationStatus?
+    @Published var lastUpdatedLocation: CLLocationCoordinate2D?
     
     override init() {
         super.init()
@@ -26,5 +27,25 @@ class GlobalLocationDataModel: NSObject, ObservableObject, CLLocationManagerDele
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         authorizationStatus = status
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let mostRecentLocation = locations.last else { return }
+        lastUpdatedLocation = CLLocationCoordinate2D(
+            latitude: mostRecentLocation.coordinate.latitude,
+            longitude: mostRecentLocation.coordinate.longitude
+        )
+    }
+    
+    func startUpdatingLocation() {
+        locationManager?.startUpdatingLocation()
+    }
+    
+    func stopUpdatingLocation() {
+        locationManager?.stopUpdatingLocation()
+    }
+    
+    func updateLocationOnce() {
+        locationManager?.requestLocation()
     }
 }
