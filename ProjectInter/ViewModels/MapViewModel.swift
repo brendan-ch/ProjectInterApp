@@ -101,7 +101,9 @@ class MapViewModel: NetworkDataModelProtocol {
 
 /// Builder class to add placeholder data to ``MapViewModel``,
 /// for previews.
-class MapViewModelPlaceholderBuilder {
+class MapViewModelPlaceholderBuilder: PlaceholderBuilderProtocol {
+    typealias T = MapViewModel
+    
     func build() -> MapViewModel {
         let newModel = MapViewModel()
         
