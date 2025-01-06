@@ -19,6 +19,10 @@ struct RouteListContentView: View {
     @EnvironmentObject var globalStopsState: GlobalStopsModel
     @EnvironmentObject var locationManagerState: GlobalLocationDataModel
     
+    // State that only has to do with presentation logic
+    
+    @State var showStopSelectionView: Bool = false
+    
     var routeListNetworkArguments: RouteListNetworkArguments? {
         guard let stopId = globalStopsState.selectedStop?.id,
               let systemId = globalDataState.selectedSystem?.id
@@ -38,9 +42,8 @@ struct RouteListContentView: View {
                         .bold()
                     Text("Current stop: \(globalStopsState.selectedStop?.name ?? "")")
                     Button("Change stop") {
-                        print("Change stop pressed")
+                        showStopSelectionView = true
                     }
-                    .disabled(true)
                 }
                 Spacer()
             }
@@ -82,6 +85,9 @@ struct RouteListContentView: View {
             if let arguments = routeListNetworkArguments {
                 viewModel.refreshData(arguments: arguments)
             }
+        }
+        .sheet(isPresented: $showStopSelectionView) {
+            StopSelectionView()
         }
     }
 }
@@ -125,8 +131,11 @@ struct RouteListItem: View {
     let viewModelBuilder = RouteListContentViewModelPlaceholderBuilder()
     let viewModel = viewModelBuilder.build()
     
+    let globalStopModelBuilder = GlobalStopsModelPlaceholderBuilder()
+    let globalStopsModel = globalStopModelBuilder.build()
+    
     return RouteListContentView(viewModel: viewModel)
         .environmentObject(globalDataStateObject)
         .environmentObject(GlobalLocationDataModel())
-        .environmentObject(GlobalStopsModel())
+        .environmentObject(globalStopsModel)
 }
