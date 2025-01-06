@@ -16,10 +16,12 @@ struct ShuttleInfoContentView: View {
     /// Source of truth for the currently selected shuttle ID.
     @EnvironmentObject var globalDataState: GlobalDataModel
     
+    @EnvironmentObject var globalStopsState: GlobalStopsModel
+    
     var shuttleInfoNetworkArguments: ShuttleInfoNetworkArguments? {
         guard let systemId = globalDataState.selectedSystem?.id,
               let shuttleId = globalDataState.selectedShuttleId,
-              let stopId = globalDataState.selectedStop?.id
+              let stopId = globalStopsState.selectedStop?.id
             else { return nil }
         
         return ShuttleInfoNetworkArguments(
@@ -82,4 +84,5 @@ struct ShuttleInfoContentView: View {
 #Preview {
     return ShuttleInfoContentView()
         .environmentObject(GlobalDataModel())
+        .environmentObject(GlobalStopsModel())
 }
