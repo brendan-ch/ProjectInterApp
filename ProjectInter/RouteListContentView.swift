@@ -119,8 +119,8 @@ struct RouteListItem: View {
 
 
 #Preview {
-    let globalDataStateObject = GlobalDataModel()
-    globalDataStateObject.addPlaceholderData()
+    let globalDataModelBuilder = GlobalDataModelPlaceholderBuilder()
+    let globalDataStateObject = globalDataModelBuilder.build()
     
     let viewModelBuilder = RouteListContentViewModelPlaceholderBuilder()
     let viewModel = viewModelBuilder.build()
