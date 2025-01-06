@@ -34,6 +34,10 @@ struct StopSelectionView: View {
                         Text(stop.name)
                     }
                 }
+                
+                if searchResults.isEmpty {
+                    Text("No stops found.")
+                }
             }
             .searchable(text: $searchText, placement: .automatic)
         }
