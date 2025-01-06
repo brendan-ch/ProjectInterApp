@@ -33,6 +33,7 @@ struct StopSelectionView: View {
                     } label: {
                         Text(stop.name)
                     }
+                    .tint(Color.primary)
                 }
                 
                 if searchResults.isEmpty {
