@@ -80,7 +80,7 @@ class GlobalStopsModel: NetworkDataModelProtocol {
 }
 
 class GlobalStopsModelPlaceholderBuilder: PlaceholderBuilderProtocol {
-    typealias T = GlobalStopsModel
+    typealias PlaceholderType = GlobalStopsModel
     
     func build() -> GlobalStopsModel {
         let newModel = GlobalStopsModel()

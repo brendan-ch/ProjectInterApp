@@ -79,7 +79,7 @@ class GlobalDataModel: NetworkDataModelProtocol {
 }
 
 class GlobalDataModelPlaceholderBuilder: PlaceholderBuilderProtocol {
-    typealias T = GlobalDataModel
+    typealias PlaceholderType = GlobalDataModel
     
     func build() -> GlobalDataModel {
         let model = GlobalDataModel()

@@ -6,7 +6,7 @@
 //
 
 protocol PlaceholderBuilderProtocol {
-    associatedtype T
+    associatedtype PlaceholderType
     
-    func build() -> T
+    func build() -> PlaceholderType
 }

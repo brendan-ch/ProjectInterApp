@@ -92,7 +92,7 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
 }
 
 class RouteListContentViewModelPlaceholderBuilder: PlaceholderBuilderProtocol {
-    typealias T = RouteListContentViewModel
+    typealias PlaceholderType = RouteListContentViewModel
     
     func build() -> RouteListContentViewModel {
         let newModel = RouteListContentViewModel()

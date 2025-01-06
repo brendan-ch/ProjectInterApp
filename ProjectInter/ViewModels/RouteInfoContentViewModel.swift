@@ -101,7 +101,7 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
 }
 
 class RouteInfoContentViewModelPlaceholderBuilder: PlaceholderBuilderProtocol {
-    typealias T = RouteInfoContentViewModel
+    typealias PlaceholderType = RouteInfoContentViewModel
     
     func build() -> RouteInfoContentViewModel {
         let newModel = RouteInfoContentViewModel()

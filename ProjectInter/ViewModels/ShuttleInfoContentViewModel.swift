@@ -60,7 +60,7 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
 }
 
 class ShuttleInfoContentViewModelPlaceholderBuilder: PlaceholderBuilderProtocol {
-    typealias T = ShuttleInfoContentViewModel
+    typealias PlaceholderType = ShuttleInfoContentViewModel
     
     func build() -> ShuttleInfoContentViewModel {
         let model = ShuttleInfoContentViewModel()
