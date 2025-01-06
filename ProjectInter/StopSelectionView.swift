@@ -13,6 +13,8 @@ struct StopSelectionView: View {
     
     @EnvironmentObject var globalStopsModel: GlobalStopsModel
     
+    @Environment(\.dismiss) var dismiss
+    
     var searchResults: [Stop] {
         if searchText.isEmpty {
             return globalStopsModel.stops
@@ -27,6 +29,7 @@ struct StopSelectionView: View {
                 ForEach(searchResults) { stop in
                     Button {
                         globalStopsModel.selectedStop = stop
+                        dismiss()
                     } label: {
                         Text(stop.name)
                     }
