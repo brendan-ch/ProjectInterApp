@@ -98,14 +98,20 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
             }
         }
     }
-    
-    func addPlaceholderData() {
-        routeName = "Red Route"
-        routeNextStopName = "Chapman Grand"
+}
+
+class RouteInfoContentViewModelPlaceholderBuilder {
+    func build() -> RouteInfoContentViewModel {
+        let newModel = RouteInfoContentViewModel()
         
-        shuttles = [
+        newModel.routeName = "Red Route"
+        newModel.routeNextStopName = "Chapman Grand"
+        
+        newModel.shuttles = [
             RouteInfoContentViewShuttle(name: "Red Shuttle 17", estimatedTimeAwayDisplay: "5 min away", id: "1"),
             RouteInfoContentViewShuttle(name: "Red Shuttle 5", estimatedTimeAwayDisplay: "15 min away", id: "2"),
         ]
+
+        return newModel
     }
 }

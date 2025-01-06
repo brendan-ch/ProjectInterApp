@@ -73,8 +73,6 @@ struct RouteInfoContentView: View {
             // Control which dataset to use depending on Apollo client
             if let client = globalDataState.apolloClient {
                 viewModel.apolloClient = client
-            } else {
-                viewModel.addPlaceholderData()
             }
             
             if let arguments = routeInfoNetworkArguments {
@@ -114,7 +112,10 @@ struct RouteInfoShuttleViewItem: View {
 }
 
 #Preview {
-    return RouteInfoContentView()
+    let builder = RouteInfoContentViewModelPlaceholderBuilder()
+    let model = builder.build()
+    
+    return RouteInfoContentView(viewModel: model)
         .environmentObject(GlobalDataModel())
         .environmentObject(GlobalStopsModel())
 }
