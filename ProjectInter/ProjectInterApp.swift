@@ -17,11 +17,18 @@ struct ProjectInterApp: App {
     
     @StateObject var globalStopsStateObject = GlobalStopsModel(apolloClient: ApolloClientHolderSingleton.shared.apolloClient)
     
+    var canAutomaticallySelectStop: Bool {
+        globalStopsStateObject.selectedStop == nil
+        && locationManagerStateObject.lastUpdatedLocation != nil
+        && globalStopsStateObject.stops.count > 0
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .task {
                     globalDataStateObject.refreshData(arguments: GlobalDataModelNetworkArguments())
+                    locationManagerStateObject.updateLocationOnce()
                 }
                 .onChange(of: globalDataStateObject.selectedSystem) {
                     guard let systemId = globalDataStateObject.selectedSystem?.id else { return }
@@ -31,13 +38,10 @@ struct ProjectInterApp: App {
                     )
                     globalStopsStateObject.refreshData(arguments: stopsNetworkArguments)
                 }
-                .onChange(of: globalStopsStateObject.stops) {
-                    if globalStopsStateObject.selectedStop == nil {
-                        // Grab the user's current location if available
-                        // If unavailable, return
-                        
-                        // If available, set selected stop by calling method on globalStopsStateObject
-                    }
+                .onChange(of: canAutomaticallySelectStop) {
+                    guard let location = locationManagerStateObject.lastUpdatedLocation else { return }
+                    
+                    globalStopsStateObject.selectClosestStopBasedOnLocation(location: location)
                 }
         }
         .environmentObject(globalDataStateObject)
