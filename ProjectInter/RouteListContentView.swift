@@ -75,8 +75,6 @@ struct RouteListContentView: View {
         .onAppear {
             if let apolloClient = globalDataState.apolloClient {
                 viewModel.apolloClient = apolloClient
-            } else {
-                viewModel.addPlaceholderData()
             }
         }
         .onChange(of: globalStopsState.selectedStop) {

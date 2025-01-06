@@ -89,24 +89,6 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
         }
     }
     
-    func addPlaceholderData() {
-        routes = [
-            RouteListContentViewRoute(
-                id: "1",
-                name: "Red Route",
-                colorHex: "#db2316",
-                nextStopName: "Chapman Grand",
-                etaDisplayString: "8, 12 min"
-            ),
-            RouteListContentViewRoute(
-                id: "2",
-                name: "Teal Route",
-                colorHex: "#21bdd1",
-                nextStopName: "Panther Village",
-                etaDisplayString: "5, 15 min"
-            ),
-        ]
-    }
 }
 
 class RouteListContentViewModelPlaceholderBuilder: PlaceholderBuilderProtocol {
