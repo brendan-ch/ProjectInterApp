@@ -65,10 +65,7 @@ struct ShuttleInfoContentView: View {
         .onAppear {
             if let client = globalDataState.apolloClient {
                 viewModel.apolloClient = client
-            } else {
-                viewModel.addPlaceholderData()
             }
-            
             if let arguments = shuttleInfoNetworkArguments {
                 viewModel.refreshData(arguments: arguments)
             }
@@ -82,7 +79,10 @@ struct ShuttleInfoContentView: View {
 }
 
 #Preview {
-    return ShuttleInfoContentView()
+    let builder = ShuttleInfoContentViewModelPlaceholderBuilder()
+    let model = builder.build()
+    
+    return ShuttleInfoContentView(viewModel: model)
         .environmentObject(GlobalDataModel())
         .environmentObject(GlobalStopsModel())
 }

@@ -97,9 +97,17 @@ class MapViewModel: NetworkDataModelProtocol {
             }
         }
     }
+}
+
+/// Builder class to add placeholder data to ``MapViewModel``,
+/// for previews.
+class MapViewModelPlaceholderBuilder: PlaceholderBuilderProtocol {
+    typealias PlaceholderType = MapViewModel
     
-    func addPlaceholderData() {
-        routes = [
+    func build() -> MapViewModel {
+        let newModel = MapViewModel()
+        
+        newModel.routes = [
             MapViewRoute(
                 id: "1",
                 colorHex: "#db2316",
@@ -112,7 +120,8 @@ class MapViewModel: NetworkDataModelProtocol {
                 ]
             )
         ]
-        shuttles = [
+        
+        newModel.shuttles = [
             MapViewShuttle(
                 name: "Red Shuttle 17",
                 id: "1",
@@ -128,5 +137,7 @@ class MapViewModel: NetworkDataModelProtocol {
                 coordinates: CLLocationCoordinate2D(latitude: 33.78788, longitude: -117.85921)
             )
         ]
+
+        return newModel
     }
 }

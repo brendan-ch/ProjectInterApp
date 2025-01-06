@@ -69,8 +69,6 @@ struct MapView: View {
         .onAppear {
             if let client = globalDataState.apolloClient {
                 viewModel.apolloClient = client
-            } else {
-                viewModel.addPlaceholderData()
             }
             
             if let arguments = mapViewNetworkArguments {
@@ -94,6 +92,9 @@ struct MapView: View {
 }
 
 #Preview {
-    MapView()
+    let builder = MapViewModelPlaceholderBuilder()
+    let viewModel = builder.build()
+    
+    MapView(viewModel: viewModel)
         .environmentObject(GlobalDataModel())
 }

@@ -89,8 +89,15 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
         }
     }
     
-    func addPlaceholderData() {
-        routes = [
+}
+
+class RouteListContentViewModelPlaceholderBuilder: PlaceholderBuilderProtocol {
+    typealias PlaceholderType = RouteListContentViewModel
+    
+    func build() -> RouteListContentViewModel {
+        let newModel = RouteListContentViewModel()
+        
+        newModel.routes = [
             RouteListContentViewRoute(
                 id: "1",
                 name: "Red Route",
@@ -106,5 +113,7 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
                 etaDisplayString: "5, 15 min"
             ),
         ]
+        
+        return newModel
     }
 }

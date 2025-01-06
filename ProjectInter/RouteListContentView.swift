@@ -75,8 +75,6 @@ struct RouteListContentView: View {
         .onAppear {
             if let apolloClient = globalDataState.apolloClient {
                 viewModel.apolloClient = apolloClient
-            } else {
-                viewModel.addPlaceholderData()
             }
         }
         .onChange(of: globalStopsState.selectedStop) {
@@ -121,10 +119,13 @@ struct RouteListItem: View {
 
 
 #Preview {
-    let globalDataStateObject = GlobalDataModel()
-    globalDataStateObject.addPlaceholderData()
+    let globalDataModelBuilder = GlobalDataModelPlaceholderBuilder()
+    let globalDataStateObject = globalDataModelBuilder.build()
     
-    return RouteListContentView()
+    let viewModelBuilder = RouteListContentViewModelPlaceholderBuilder()
+    let viewModel = viewModelBuilder.build()
+    
+    return RouteListContentView(viewModel: viewModel)
         .environmentObject(globalDataStateObject)
         .environmentObject(GlobalLocationDataModel())
         .environmentObject(GlobalStopsModel())

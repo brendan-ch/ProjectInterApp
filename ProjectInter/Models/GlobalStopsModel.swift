@@ -79,3 +79,19 @@ class GlobalStopsModel: NetworkDataModelProtocol {
     }
 }
 
+class GlobalStopsModelPlaceholderBuilder: PlaceholderBuilderProtocol {
+    typealias PlaceholderType = GlobalStopsModel
+    
+    func build() -> GlobalStopsModel {
+        let newModel = GlobalStopsModel()
+        
+        newModel.stops = [
+            Stop(name: "Chapman Court", id: "1", coordinates: RawCoordinates(latitude: 33.796796, longitude: -117.889293)),
+            Stop(name: "Schmid Gate", id: "2", coordinates: RawCoordinates(latitude: 33.793292, longitude: -117.852904))
+        ]
+        newModel.selectedStop = newModel.stops.first
+        
+        return newModel
+    }
+}
+
