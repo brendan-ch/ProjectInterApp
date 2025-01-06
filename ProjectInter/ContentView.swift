@@ -123,5 +123,6 @@ struct ContentView: View {
 #Preview {
     return ContentView()
         .environmentObject(GlobalDataModel())
+        .environmentObject(GlobalStopsModel())
         .environmentObject(GlobalLocationDataModel())
 }
