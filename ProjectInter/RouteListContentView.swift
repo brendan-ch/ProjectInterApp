@@ -16,10 +16,11 @@ struct RouteListContentView: View {
     @StateObject var viewModel: RouteListContentViewModel = RouteListContentViewModel()
     
     @EnvironmentObject var globalDataState: GlobalDataModel
+    @EnvironmentObject var globalStopsState: GlobalStopsModel
     @EnvironmentObject var locationManagerState: GlobalLocationDataModel
     
     var routeListNetworkArguments: RouteListNetworkArguments? {
-        guard let stopId = globalDataState.selectedStop?.id,
+        guard let stopId = globalStopsState.selectedStop?.id,
               let systemId = globalDataState.selectedSystem?.id
         else {
             return nil
@@ -35,7 +36,7 @@ struct RouteListContentView: View {
                     Text("Routes")
                         .font(.title2)
                         .bold()
-                    Text("Current stop: \(globalDataState.selectedStop?.name ?? "")")
+                    Text("Current stop: \(globalStopsState.selectedStop?.name ?? "")")
                     Button("Change stop") {
                         print("Change stop pressed")
                     }
@@ -78,7 +79,7 @@ struct RouteListContentView: View {
                 viewModel.addPlaceholderData()
             }
         }
-        .onChange(of: globalDataState.selectedStop) {
+        .onChange(of: globalStopsState.selectedStop) {
             // Refresh data in backing view model
             if let arguments = routeListNetworkArguments {
                 viewModel.refreshData(arguments: arguments)
@@ -126,4 +127,5 @@ struct RouteListItem: View {
     return RouteListContentView()
         .environmentObject(globalDataStateObject)
         .environmentObject(GlobalLocationDataModel())
+        .environmentObject(GlobalStopsModel())
 }
