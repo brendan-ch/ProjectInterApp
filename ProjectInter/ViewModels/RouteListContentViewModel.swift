@@ -26,7 +26,7 @@ struct RouteListContentViewRoute: Identifiable {
     var nextStopName: String?
     
     /// ETAs of upcoming shuttles in seconds relative to a given stop ID.
-    var etasInSeconds: [Int] = []
+    var etasInSeconds: [Double] = []
     
     /// ETAs of shuttles on routes, relative to a given stop ID.
     var etaDisplayString: String {
@@ -35,7 +35,7 @@ struct RouteListContentViewRoute: Identifiable {
         }
         
         let etasInMinutesAsStrings: [String] = etasInSeconds.map { etaInSeconds in
-            return String(etaInSeconds / 60)
+            return String(Int(etaInSeconds / 60))
         }
         
         var constructedString = etasInMinutesAsStrings.joined(separator: ", ")
@@ -97,6 +97,14 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
                     routeListRoute.nextStopName = nextStopName
                 } else {
                     routeListRoute.nextStopName = "N/A"
+                }
+                
+                if let shuttles = orderedStop.route.shuttles {
+                    for shuttle in shuttles {
+                        if let secondsRemaining = shuttle.eta?.secondsRemaining {
+                            routeListRoute.etasInSeconds.append(secondsRemaining)
+                        }
+                    }
                 }
                 
                 self.routes.append(routeListRoute)
