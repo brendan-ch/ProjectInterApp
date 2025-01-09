@@ -24,6 +24,19 @@ class RouteListContentViewRouteTests {
         let expectedString = "0, 2, 5 min"
         #expect(route.etaDisplayString == expectedString)
     }
+    
+    @Test func testEtaDisplayStringWithNoEtas() async throws {
+        let route = RouteListContentViewRoute(
+            id: "1",
+            name: "Chapman Court",
+            colorHex: "#000000",
+            nextStopName: "Panther Village",
+            etasInSeconds: []
+        )
+        
+        let expectedString = "N/A"
+        #expect(route.etaDisplayString == expectedString)
+    }
 }
 
 class RouteListContentViewModelTests {

@@ -30,6 +30,10 @@ struct RouteListContentViewRoute: Identifiable {
     
     /// ETAs of shuttles on routes, relative to a given stop ID.
     var etaDisplayString: String {
+        if etasInSeconds.isEmpty {
+            return "N/A"
+        }
+        
         let etasInMinutesAsStrings: [String] = etasInSeconds.map { etaInSeconds in
             return String(etaInSeconds / 60)
         }
