@@ -25,8 +25,20 @@ struct RouteListContentViewRoute: Identifiable {
     /// Name of the next stop on the route relative to a given stop ID.
     var nextStopName: String?
     
+    /// ETAs of upcoming shuttles in seconds relative to a given stop ID.
+    var etasInSeconds: [Int] = []
+    
     /// ETAs of shuttles on routes, relative to a given stop ID.
-    var etaDisplayString: String
+    var etaDisplayString: String {
+        let etasInMinutesAsStrings: [String] = etasInSeconds.map { etaInSeconds in
+            return String(etaInSeconds / 60)
+        }
+        
+        var constructedString = etasInMinutesAsStrings.joined(separator: ", ")
+        constructedString.append(" min")
+        
+        return constructedString
+    }
 }
 
 // MARK: - Network arguments
@@ -74,8 +86,7 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
                 var routeListRoute = RouteListContentViewRoute(
                     id: route.id,
                     name: route.name,
-                    colorHex: route.color,
-                    etaDisplayString: "N/A"
+                    colorHex: route.color
                 )
                 
                 if let nextStopName = orderedStop.nextStop?.stop.name {
@@ -103,14 +114,14 @@ class RouteListContentViewModelPlaceholderBuilder: PlaceholderBuilderProtocol {
                 name: "Red Route",
                 colorHex: "#db2316",
                 nextStopName: "Chapman Grand",
-                etaDisplayString: "8, 12 min"
+                etasInSeconds: [480, 720]
             ),
             RouteListContentViewRoute(
                 id: "2",
                 name: "Teal Route",
                 colorHex: "#21bdd1",
                 nextStopName: "Panther Village",
-                etaDisplayString: "5, 15 min"
+                etasInSeconds: [300, 900]
             ),
         ]
         
