@@ -16,12 +16,11 @@ class RouteListContentViewRouteTests {
             colorHex: "#000000",
             nextStopName: "Panther Village",
             etasInSeconds: [
-                // Expected: 0, 2, 5 min
                 25, 125, 332
             ]
         )
         
-        let expectedString = "0, 2, 5 min"
+        let expectedString = "<1, 2, 5 min"
         #expect(route.etaDisplayString == expectedString)
     }
     

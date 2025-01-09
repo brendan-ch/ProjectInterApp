@@ -35,7 +35,12 @@ struct RouteListContentViewRoute: Identifiable {
         }
         
         let etasInMinutesAsStrings: [String] = etasInSeconds.map { etaInSeconds in
-            return String(Int(etaInSeconds / 60))
+            let etaInMinutes = Int(etaInSeconds / 60)
+            if etaInMinutes < 1 {
+                return "<1"
+            } else {
+                return String(etaInMinutes)
+            }
         }
         
         var constructedString = etasInMinutesAsStrings.joined(separator: ", ")
