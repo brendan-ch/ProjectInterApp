@@ -25,8 +25,38 @@ struct RouteListContentViewRoute: Identifiable {
     /// Name of the next stop on the route relative to a given stop ID.
     var nextStopName: String?
     
+    /// ETAs of upcoming shuttles in seconds relative to a given stop ID.
+    private(set) var etasInSeconds: [Double] = []
+    
+    mutating func addEta(_ newValue: Double) {
+        etasInSeconds.append(newValue)
+        etasInSeconds.sort()
+    }
+    
+    mutating func clearEtas() {
+        etasInSeconds = []
+    }
+    
     /// ETAs of shuttles on routes, relative to a given stop ID.
-    var etaDisplayString: String
+    var etaDisplayString: String {
+        if etasInSeconds.isEmpty {
+            return "N/A"
+        }
+        
+        let etasInMinutesAsStrings: [String] = etasInSeconds.map { etaInSeconds in
+            let etaInMinutes = Int(etaInSeconds / 60)
+            if etaInMinutes < 1 {
+                return "<1"
+            } else {
+                return String(etaInMinutes)
+            }
+        }
+        
+        var constructedString = etasInMinutesAsStrings.joined(separator: ", ")
+        constructedString.append(" min")
+        
+        return constructedString
+    }
 }
 
 // MARK: - Network arguments
@@ -74,14 +104,21 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
                 var routeListRoute = RouteListContentViewRoute(
                     id: route.id,
                     name: route.name,
-                    colorHex: route.color,
-                    etaDisplayString: "N/A"
+                    colorHex: route.color
                 )
                 
                 if let nextStopName = orderedStop.nextStop?.stop.name {
                     routeListRoute.nextStopName = nextStopName
                 } else {
                     routeListRoute.nextStopName = "N/A"
+                }
+                
+                if let shuttles = orderedStop.route.shuttles {
+                    for shuttle in shuttles {
+                        if let secondsRemaining = shuttle.eta?.secondsRemaining {
+                            routeListRoute.addEta(secondsRemaining)
+                        }
+                    }
                 }
                 
                 self.routes.append(routeListRoute)
@@ -103,14 +140,14 @@ class RouteListContentViewModelPlaceholderBuilder: PlaceholderBuilderProtocol {
                 name: "Red Route",
                 colorHex: "#db2316",
                 nextStopName: "Chapman Grand",
-                etaDisplayString: "8, 12 min"
+                etasInSeconds: [480, 720]
             ),
             RouteListContentViewRoute(
                 id: "2",
                 name: "Teal Route",
                 colorHex: "#21bdd1",
                 nextStopName: "Panther Village",
-                etaDisplayString: "5, 15 min"
+                etasInSeconds: [300, 900]
             ),
         ]
         
