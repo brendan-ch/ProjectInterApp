@@ -10,5 +10,5 @@ import SwiftUI
 protocol NetworkDataModelProtocol: ObservableObject {
     associatedtype T
     
-    func refreshData(arguments: T)
+    func refreshDataOnce(arguments: T)
 }

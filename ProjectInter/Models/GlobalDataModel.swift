@@ -43,7 +43,7 @@ class GlobalDataModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func refreshData(arguments _: GlobalDataModelNetworkArguments) {
+    func refreshDataOnce(arguments _: GlobalDataModelNetworkArguments) {
         func refreshSystemDataCallback() {
             // TODO: move system selection into separately called method for storage loading
             tempImplementation_autoSelectSystemId()

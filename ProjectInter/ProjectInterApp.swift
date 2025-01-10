@@ -27,7 +27,7 @@ struct ProjectInterApp: App {
         WindowGroup {
             ContentView()
                 .task {
-                    globalDataStateObject.refreshData(arguments: GlobalDataModelNetworkArguments())
+                    globalDataStateObject.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
                     locationManagerStateObject.updateLocationOnce()
                 }
                 .onChange(of: globalDataStateObject.selectedSystem) {
@@ -36,7 +36,7 @@ struct ProjectInterApp: App {
                     let stopsNetworkArguments = GlobalStopsNetworkArguments(
                         systemId: systemId
                     )
-                    globalStopsStateObject.refreshData(arguments: stopsNetworkArguments)
+                    globalStopsStateObject.refreshDataOnce(arguments: stopsNetworkArguments)
                 }
                 .onChange(of: canAutomaticallySelectStop) {
                     guard let location = locationManagerStateObject.lastUpdatedLocation else { return }

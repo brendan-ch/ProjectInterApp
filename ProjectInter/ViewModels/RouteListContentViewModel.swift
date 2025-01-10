@@ -86,7 +86,7 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func refreshData(arguments: RouteListNetworkArguments) {
+    func refreshDataOnce(arguments: RouteListNetworkArguments) {
         let systemId = arguments.systemId
         let stopId = arguments.stopId
         

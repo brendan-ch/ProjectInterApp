@@ -37,7 +37,7 @@ class GlobalStopsModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func refreshData(arguments: GlobalStopsNetworkArguments) {
+    func refreshDataOnce(arguments: GlobalStopsNetworkArguments) {
         let systemId = arguments.systemId
         
         apolloClient?.fetch(query: GetAllStopsBySystemIdQuery(systemId: systemId)) { result in

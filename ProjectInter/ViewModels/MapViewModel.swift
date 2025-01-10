@@ -61,7 +61,7 @@ class MapViewModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func refreshData(arguments: MapViewNetworkArguments) {
+    func refreshDataOnce(arguments: MapViewNetworkArguments) {
         let systemId = arguments.systemId
         
         refreshData(systemId: systemId)
