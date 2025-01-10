@@ -78,6 +78,8 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
     
     var apolloClient: ApolloClientProtocol?
     
+    private var timer: Timer?
+    
     init() {
         self.apolloClient = nil
     }
@@ -91,6 +93,26 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
         let stopId = arguments.stopId
         
         refreshData(systemId: systemId, stopId: stopId)
+    }
+    
+    func startRefreshingData(arguments: RouteListNetworkArguments) {
+        // Invalidate any previous timers
+        stopRefreshingData()
+        
+        // Refresh the data once immediately
+        refreshDataOnce(arguments: arguments)
+        
+        timer = Timer.scheduledTimer(
+            withTimeInterval: 15,
+            repeats: true
+        ) { [weak self] _ in
+            self?.refreshDataOnce(arguments: arguments)
+        }
+    }
+    
+    func stopRefreshingData() {
+        timer?.invalidate()
+        timer = nil
     }
     
     private func refreshData(systemId: String, stopId: String) {
