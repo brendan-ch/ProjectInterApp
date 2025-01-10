@@ -116,31 +116,34 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
     private func refreshData(systemId: String, stopId: String) {
         isRefreshingData = true
         
-        apolloClient?.clearCache(callbackQueue: .main) { _ in
-            self.apolloClient?.fetch(query: GetRouteListDataQuery(systemId: systemId, stopId: stopId)) { result in
-                guard let data = try? result.get().data else { return }
-                guard let orderedStops = data.system?.stop?.orderedStops else { return }
+        self.apolloClient?.fetch(
+            query: GetRouteListDataQuery(systemId: systemId, stopId: stopId),
+            cachePolicy: .returnCacheDataAndFetch,
+            context: nil,
+            queue: .main
+        ) { result in
+            guard let data = try? result.get().data else { return }
+            guard let orderedStops = data.system?.stop?.orderedStops else { return }
+            
+            self.routes = []
+            for orderedStop in orderedStops {
+                let route = orderedStop.route
+                var routeListRoute = RouteListContentViewRoute(
+                    id: route.id,
+                    name: route.name,
+                    colorHex: route.color
+                )
                 
-                self.routes = []
-                for orderedStop in orderedStops {
-                    let route = orderedStop.route
-                    var routeListRoute = RouteListContentViewRoute(
-                        id: route.id,
-                        name: route.name,
-                        colorHex: route.color
-                    )
-                    
-                    if let nextStopName = orderedStop.nextStop?.stop.name {
-                        routeListRoute.nextStopName = nextStopName
-                    } else {
-                        routeListRoute.nextStopName = "N/A"
-                    }
-                    
-                    if let shuttles = orderedStop.route.shuttles {
-                        for shuttle in shuttles {
-                            if let secondsRemaining = shuttle.eta?.secondsRemaining {
-                                routeListRoute.addEta(secondsRemaining)
-                            }
+                if let nextStopName = orderedStop.nextStop?.stop.name {
+                    routeListRoute.nextStopName = nextStopName
+                } else {
+                    routeListRoute.nextStopName = "N/A"
+                }
+                
+                if let shuttles = orderedStop.route.shuttles {
+                    for shuttle in shuttles {
+                        if let secondsRemaining = shuttle.eta?.secondsRemaining {
+                            routeListRoute.addEta(secondsRemaining)
                         }
                     }
                     
