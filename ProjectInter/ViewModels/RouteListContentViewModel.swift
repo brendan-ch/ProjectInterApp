@@ -79,6 +79,8 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
     var apolloClient: ApolloClientProtocol?
     
     private var timer: Timer?
+    private var isRunning = false
+    private var isRefreshingData = false
     
     init() {
         self.apolloClient = nil
@@ -89,61 +91,63 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
     }
     
     func refreshDataOnce(arguments: RouteListNetworkArguments) {
-        let systemId = arguments.systemId
-        let stopId = arguments.stopId
-        
-        refreshData(systemId: systemId, stopId: stopId)
+        if !isRefreshingData {
+            let systemId = arguments.systemId
+            let stopId = arguments.stopId
+            
+            refreshData(systemId: systemId, stopId: stopId)
+        }
     }
     
     func startRefreshingData(arguments: RouteListNetworkArguments) {
-        // Invalidate any previous timers
-        stopRefreshingData()
-        
-        // Refresh the data once immediately
-        refreshDataOnce(arguments: arguments)
-        
-        timer = Timer.scheduledTimer(
-            withTimeInterval: 15,
-            repeats: true
-        ) { [weak self] _ in
-            self?.refreshDataOnce(arguments: arguments)
+        isRunning = true
+        Task {
+            while isRunning {
+                refreshDataOnce(arguments: arguments)
+                try await Task.sleep(for: .seconds(5))
+            }
         }
     }
     
     func stopRefreshingData() {
-        timer?.invalidate()
-        timer = nil
+        isRunning = false
     }
     
     private func refreshData(systemId: String, stopId: String) {
-        apolloClient?.fetch(query: GetRouteListDataQuery(systemId: systemId, stopId: stopId)) { result in
-            guard let data = try? result.get().data else { return }
-            guard let orderedStops = data.system?.stop?.orderedStops else { return }
-            
-            self.routes = []
-            for orderedStop in orderedStops {
-                let route = orderedStop.route
-                var routeListRoute = RouteListContentViewRoute(
-                    id: route.id,
-                    name: route.name,
-                    colorHex: route.color
-                )
+        isRefreshingData = true
+        
+        apolloClient?.clearCache(callbackQueue: .main) { _ in
+            self.apolloClient?.fetch(query: GetRouteListDataQuery(systemId: systemId, stopId: stopId)) { result in
+                guard let data = try? result.get().data else { return }
+                guard let orderedStops = data.system?.stop?.orderedStops else { return }
                 
-                if let nextStopName = orderedStop.nextStop?.stop.name {
-                    routeListRoute.nextStopName = nextStopName
-                } else {
-                    routeListRoute.nextStopName = "N/A"
-                }
-                
-                if let shuttles = orderedStop.route.shuttles {
-                    for shuttle in shuttles {
-                        if let secondsRemaining = shuttle.eta?.secondsRemaining {
-                            routeListRoute.addEta(secondsRemaining)
+                self.routes = []
+                for orderedStop in orderedStops {
+                    let route = orderedStop.route
+                    var routeListRoute = RouteListContentViewRoute(
+                        id: route.id,
+                        name: route.name,
+                        colorHex: route.color
+                    )
+                    
+                    if let nextStopName = orderedStop.nextStop?.stop.name {
+                        routeListRoute.nextStopName = nextStopName
+                    } else {
+                        routeListRoute.nextStopName = "N/A"
+                    }
+                    
+                    if let shuttles = orderedStop.route.shuttles {
+                        for shuttle in shuttles {
+                            if let secondsRemaining = shuttle.eta?.secondsRemaining {
+                                routeListRoute.addEta(secondsRemaining)
+                            }
                         }
                     }
+                    
+                    self.routes.append(routeListRoute)
                 }
                 
-                self.routes.append(routeListRoute)
+                self.isRefreshingData = false
             }
         }
     }
