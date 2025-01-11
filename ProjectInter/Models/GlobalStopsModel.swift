@@ -37,7 +37,7 @@ class GlobalStopsModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func refreshDataOnce(arguments: GlobalStopsNetworkArguments, onSuccess: @escaping () -> Void = {}) {
+    func refreshDataOnce(arguments: GlobalStopsNetworkArguments) {
         let systemId = arguments.systemId
         
         apolloClient?.fetch(query: GetAllStopsBySystemIdQuery(systemId: systemId)) { result in
@@ -49,8 +49,6 @@ class GlobalStopsModel: NetworkDataModelProtocol {
                 
                 return Stop(name: stop.name, id: stop.id, coordinates: coordinates)
             }
-            
-            onSuccess()
         }
     }
     

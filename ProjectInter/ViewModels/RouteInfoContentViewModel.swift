@@ -54,7 +54,7 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func refreshDataOnce(arguments: RouteInfoNetworkArguments, onSuccess: @escaping () -> Void = {}) {
+    func refreshDataOnce(arguments: RouteInfoNetworkArguments) {
         let systemId = arguments.systemId
         let stopId = arguments.stopId
         let routeId = arguments.routeId
@@ -62,7 +62,7 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
         refreshData(systemId: systemId, stopId: stopId, routeId: routeId)
     }
     
-    private func refreshData(systemId: String, stopId: String, routeId: String, onSuccess: @escaping () -> Void = {}) {
+    private func refreshData(systemId: String, stopId: String, routeId: String) {
         apolloClient?.fetch(query: GetRouteInfoDataQuery(systemId: systemId, stopId: stopId, routeId: routeId)) { result in
             guard let data = try? result.get().data else { return }
             guard let route = data.system?.route else { return }
