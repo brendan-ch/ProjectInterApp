@@ -70,8 +70,8 @@ struct RouteListNetworkArguments {
 // MARK: - View model implementation
 
 /// Backing view model for ``RouteListContentView``.
-class RouteListContentViewModel: ObservableObject {
-//    typealias T = RouteListNetworkArguments
+class RouteListContentViewModel: NetworkDataModelProtocol {
+    typealias T = RouteListNetworkArguments
 
     /// All routes to render on ``RouteListContentView``.
     @Published var routes: [RouteListContentViewRoute] = []
@@ -89,21 +89,21 @@ class RouteListContentViewModel: ObservableObject {
         self.apolloClient = apolloClient
     }
     
-    func refreshDataOnce(arguments: RouteListNetworkArguments, onSuccess: @escaping () -> Void = {}) {
+    func refreshDataOnce(arguments: RouteListNetworkArguments) {
         if !isRefreshingData {
             let systemId = arguments.systemId
             let stopId = arguments.stopId
             
-            refreshData(systemId: systemId, stopId: stopId, onSuccess: onSuccess)
+            refreshData(systemId: systemId, stopId: stopId)
         }
     }
     
-    func startRefreshingData(arguments: RouteListNetworkArguments, onSuccess: @escaping () -> Void = {}) {
+    func startRefreshingData(arguments: RouteListNetworkArguments) {
         stopRefreshingData()
         
         task = Task {
             while true {
-                refreshDataOnce(arguments: arguments, onSuccess: onSuccess)
+                refreshDataOnce(arguments: arguments)
                 try await Task.sleep(for: .seconds(5))
             }
         }
@@ -114,7 +114,7 @@ class RouteListContentViewModel: ObservableObject {
         task = nil
     }
     
-    private func refreshData(systemId: String, stopId: String, onSuccess: @escaping () -> Void = {}) {
+    private func refreshData(systemId: String, stopId: String) {
         isRefreshingData = true
         
         self.apolloClient?.fetch(
@@ -153,7 +153,6 @@ class RouteListContentViewModel: ObservableObject {
             }
             
             self.isRefreshingData = false
-            onSuccess()
         }
     }
     

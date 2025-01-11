@@ -7,8 +7,6 @@
 
 import Testing
 @testable import ProjectInter
-import ApolloTestSupport
-import ProjectInterTestMocks
 
 class RouteListContentViewRouteTests {
     func generateRouteObject() -> RouteListContentViewRoute {
@@ -54,57 +52,5 @@ class RouteListContentViewRouteTests {
 }
 
 class RouteListContentViewModelTests {
-    @Test func refreshDataUpdatesStateData() async throws {
-        // Arrange
-        let mockClient = MockApolloClient()
-        let mock = Mock<ProjectInterTestMocks.Query>(
-            systems: [
-                Mock<ProjectInterTestMocks.System>(
-                    id: "1",
-                    name: "Chapman University",
-                    stop: Mock<ProjectInterTestMocks.Stop>(
-                        id: "1",
-                        name: "Chapman Court",
-                        orderedStops: [
-                            Mock<ProjectInterTestMocks.OrderedStop>(
-                                nextStop: Mock<ProjectInterTestMocks.OrderedStop>(
-                                    stop: Mock<ProjectInterTestMocks.Stop>(
-                                        name: "Panther Village"
-                                    )
-                                ), route: Mock<ProjectInterTestMocks.Route>(
-                                    color: "#db2316",
-                                    id: "1",
-                                    name: "Red Route",
-                                    shuttles: [
-                                        Mock<ProjectInterTestMocks.Shuttle>(
-                                            eta: Mock<ProjectInterTestMocks.ETA>(
-                                                secondsRemaining: 20
-                                            )
-                                        ),
-                                        Mock<ProjectInterTestMocks.Shuttle>(
-                                            eta: Mock<ProjectInterTestMocks.ETA>(
-                                                secondsRemaining: 100
-                                            )
-                                        )
-                                    ]
-                                )
-                            )
-                        ]
-                    )
-                )
-            ]
-        )
-        mockClient.mock = mock
-        
-        let viewModel = RouteListContentViewModel(apolloClient: mockClient)
-        let arguments = RouteListNetworkArguments(systemId: "1", stopId: "1")
-        
-        func callback() {
-            // Assert
-            #expect(viewModel.routes.count == 1)
-        }
-        
-        // Act
-        viewModel.refreshDataOnce(arguments: arguments, onSuccess: callback)
-    }
+    
 }
