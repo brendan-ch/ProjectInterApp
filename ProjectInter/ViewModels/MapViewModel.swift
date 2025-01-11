@@ -61,13 +61,13 @@ class MapViewModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func refreshDataOnce(arguments: MapViewNetworkArguments) {
+    func refreshDataOnce(arguments: MapViewNetworkArguments, onSuccess: @escaping () -> Void = {}) {
         let systemId = arguments.systemId
         
-        refreshData(systemId: systemId)
+        refreshData(systemId: systemId, onSuccess: onSuccess)
     }
     
-    private func refreshData(systemId: String) {
+    private func refreshData(systemId: String, onSuccess: @escaping () -> Void = {}) {
         apolloClient?.fetch(query: GetMapDataQuery(systemId: systemId)) { result in
             guard let data = try? result.get().data else { return }
             

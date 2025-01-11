@@ -32,7 +32,7 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func refreshDataOnce(arguments: ShuttleInfoNetworkArguments) {
+    func refreshDataOnce(arguments: ShuttleInfoNetworkArguments, onSuccess: @escaping () -> Void = {}) {
         let systemId = arguments.systemId
         let stopId = arguments.stopId
         let shuttleId = arguments.shuttleId
@@ -40,7 +40,7 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
         refreshData(systemId: systemId, stopId: stopId, shuttleId: shuttleId)
     }
     
-    private func refreshData(systemId: String, stopId: String, shuttleId: String) {
+    private func refreshData(systemId: String, stopId: String, shuttleId: String, onSuccess: @escaping () -> Void = {}) {
         apolloClient?.fetch(query: GetShuttleInfoDataQuery(systemId: systemId, stopId: stopId, shuttleId: shuttleId)) { result in
             guard let data = try? result.get().data else { return }
             guard let shuttle = data.system?.shuttle else { return }
