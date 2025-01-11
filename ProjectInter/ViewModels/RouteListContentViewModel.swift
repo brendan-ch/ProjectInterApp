@@ -70,8 +70,8 @@ struct RouteListNetworkArguments {
 // MARK: - View model implementation
 
 /// Backing view model for ``RouteListContentView``.
-class RouteListContentViewModel: NetworkDataModelProtocol {
-    typealias T = RouteListNetworkArguments
+class RouteListContentViewModel: ObservableObject {
+//    typealias T = RouteListNetworkArguments
 
     /// All routes to render on ``RouteListContentView``.
     @Published var routes: [RouteListContentViewRoute] = []
@@ -89,21 +89,21 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func refreshDataOnce(arguments: RouteListNetworkArguments) {
+    func refreshDataOnce(arguments: RouteListNetworkArguments, onSuccess: @escaping () -> Void = {}) {
         if !isRefreshingData {
             let systemId = arguments.systemId
             let stopId = arguments.stopId
             
-            refreshData(systemId: systemId, stopId: stopId)
+            refreshData(systemId: systemId, stopId: stopId, onSuccess: onSuccess)
         }
     }
     
-    func startRefreshingData(arguments: RouteListNetworkArguments) {
+    func startRefreshingData(arguments: RouteListNetworkArguments, onSuccess: @escaping () -> Void = {}) {
         stopRefreshingData()
         
         task = Task {
             while true {
-                refreshDataOnce(arguments: arguments)
+                refreshDataOnce(arguments: arguments, onSuccess: onSuccess)
                 try await Task.sleep(for: .seconds(5))
             }
         }
@@ -114,7 +114,7 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
         task = nil
     }
     
-    private func refreshData(systemId: String, stopId: String) {
+    private func refreshData(systemId: String, stopId: String, onSuccess: @escaping () -> Void = {}) {
         isRefreshingData = true
         
         self.apolloClient?.fetch(
@@ -153,6 +153,7 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
             }
             
             self.isRefreshingData = false
+            onSuccess()
         }
     }
     
