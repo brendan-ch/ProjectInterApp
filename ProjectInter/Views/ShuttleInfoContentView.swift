@@ -67,12 +67,12 @@ struct ShuttleInfoContentView: View {
                 viewModel.apolloClient = client
             }
             if let arguments = shuttleInfoNetworkArguments {
-                viewModel.refreshData(arguments: arguments)
+                viewModel.refreshDataOnce(arguments: arguments)
             }
         }
         .onChange(of: globalDataState.selectedShuttleId) {
             if let arguments = shuttleInfoNetworkArguments {
-                viewModel.refreshData(arguments: arguments)
+                viewModel.refreshDataOnce(arguments: arguments)
             }
         }
     }

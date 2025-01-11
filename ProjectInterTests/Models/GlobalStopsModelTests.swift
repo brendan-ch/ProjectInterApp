@@ -46,7 +46,7 @@ class GlobalStopsModelTests {
         let globalStopsModel = GlobalStopsModel(apolloClient: mockClient)
         let arguments = GlobalStopsNetworkArguments(systemId: "1")
         
-        globalStopsModel.refreshData(arguments: arguments)
+        globalStopsModel.refreshDataOnce(arguments: arguments)
         
         #expect(globalStopsModel.stops.count == 2)
         

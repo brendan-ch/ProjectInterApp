@@ -32,7 +32,7 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func refreshData(arguments: ShuttleInfoNetworkArguments) {
+    func refreshDataOnce(arguments: ShuttleInfoNetworkArguments) {
         let systemId = arguments.systemId
         let stopId = arguments.stopId
         let shuttleId = arguments.shuttleId

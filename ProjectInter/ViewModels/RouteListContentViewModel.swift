@@ -78,6 +78,9 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
     
     var apolloClient: ApolloClientProtocol?
     
+    private var isRefreshingData = false
+    private var task: Task<Void, Error>?
+    
     init() {
         self.apolloClient = nil
     }
@@ -86,15 +89,40 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func refreshData(arguments: RouteListNetworkArguments) {
-        let systemId = arguments.systemId
-        let stopId = arguments.stopId
+    func refreshDataOnce(arguments: RouteListNetworkArguments) {
+        if !isRefreshingData {
+            let systemId = arguments.systemId
+            let stopId = arguments.stopId
+            
+            refreshData(systemId: systemId, stopId: stopId)
+        }
+    }
+    
+    func startRefreshingData(arguments: RouteListNetworkArguments) {
+        stopRefreshingData()
         
-        refreshData(systemId: systemId, stopId: stopId)
+        task = Task {
+            while true {
+                refreshDataOnce(arguments: arguments)
+                try await Task.sleep(for: .seconds(5))
+            }
+        }
+    }
+    
+    func stopRefreshingData() {
+        task?.cancel()
+        task = nil
     }
     
     private func refreshData(systemId: String, stopId: String) {
-        apolloClient?.fetch(query: GetRouteListDataQuery(systemId: systemId, stopId: stopId)) { result in
+        isRefreshingData = true
+        
+        self.apolloClient?.fetch(
+            query: GetRouteListDataQuery(systemId: systemId, stopId: stopId),
+            cachePolicy: .returnCacheDataAndFetch,
+            context: nil,
+            queue: .main
+        ) { result in
             guard let data = try? result.get().data else { return }
             guard let orderedStops = data.system?.stop?.orderedStops else { return }
             
@@ -123,6 +151,8 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
                 
                 self.routes.append(routeListRoute)
             }
+            
+            self.isRefreshingData = false
         }
     }
     
