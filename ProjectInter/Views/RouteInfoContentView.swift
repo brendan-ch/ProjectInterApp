@@ -76,12 +76,16 @@ struct RouteInfoContentView: View {
             }
             
             if let arguments = routeInfoNetworkArguments {
-                viewModel.refreshDataOnce(arguments: arguments)
+                Task {
+                    await viewModel.refreshDataOnce(arguments: arguments)
+                }
             }
         }
         .onChange(of: globalDataState.selectedRouteId) {
             if let arguments = routeInfoNetworkArguments {
-                viewModel.refreshDataOnce(arguments: arguments)
+                Task {
+                    await viewModel.refreshDataOnce(arguments: arguments)
+                }
             }
         }
     }
