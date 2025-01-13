@@ -37,17 +37,32 @@ class GlobalStopsModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func refreshDataOnce(arguments: GlobalStopsNetworkArguments) {
-        let systemId = arguments.systemId
-        
-        apolloClient?.fetch(query: GetAllStopsBySystemIdQuery(systemId: systemId)) { result in
-            guard let data = try? result.get().data else { return }
-            guard let stops = data.system?.stops else { return }
+    func refreshDataOnce(arguments: GlobalStopsNetworkArguments) async {
+        return await withCheckedContinuation { continuation in
+            let systemId = arguments.systemId
             
-            self.stops = stops.map { stop in
-                let coordinates = RawCoordinates(latitude: stop.coordinates.latitude, longitude: stop.coordinates.longitude)
+            guard let apolloClient = apolloClient else {
+                continuation.resume()
+                return
+            }
+            
+            apolloClient.fetch(query: GetAllStopsBySystemIdQuery(systemId: systemId)) { result in
+                guard let data = try? result.get().data else {
+                    continuation.resume()
+                    return
+                }
+                guard let stops = data.system?.stops else {
+                    continuation.resume()
+                    return
+                }
                 
-                return Stop(name: stop.name, id: stop.id, coordinates: coordinates)
+                self.stops = stops.map { stop in
+                    let coordinates = RawCoordinates(latitude: stop.coordinates.latitude, longitude: stop.coordinates.longitude)
+                    
+                    return Stop(name: stop.name, id: stop.id, coordinates: coordinates)
+                }
+                
+                continuation.resume()
             }
         }
     }
