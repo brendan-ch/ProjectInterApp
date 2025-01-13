@@ -12,12 +12,7 @@ import ProjectInterTestMocks
 
 // TODO: Split GlobalDataModel into multiple classes for easier testing
 class GlobalDataModelTests {
-    @Test func testRefreshSystemDataWithCallback() async throws {
-        var callbackCalled = false
-        func callback() {
-            callbackCalled = true
-        }
-        
+    @Test func testRefreshSystemData() async throws {
         let mockClient = MockApolloClient()
         
         let mock = Mock<ProjectInterTestMocks.Query>(
@@ -35,25 +30,18 @@ class GlobalDataModelTests {
         mockClient.mock = mock
 
         let globalDataState = GlobalDataModel(apolloClient: mockClient)
-        globalDataState.refreshSystemData(onSuccess: callback)
+        await globalDataState.refreshSystemData()
         
         #expect(globalDataState.systems.count == 2)
-        #expect(callbackCalled)
     }
     
     @Test func testRefreshSystemDataWithInvalidData() async throws {
-        var callbackCalled = false
-        func callback() {
-            callbackCalled = true
-        }
-        
         let mockClient = MockApolloClient()
         mockClient.mock = nil
         
         let globalDataState = GlobalDataModel(apolloClient: mockClient)
-        globalDataState.refreshSystemData(onSuccess: callback)
+        await globalDataState.refreshSystemData()
         
         #expect(globalDataState.systems.count == 0)
-        #expect(!callbackCalled)
     }
 }

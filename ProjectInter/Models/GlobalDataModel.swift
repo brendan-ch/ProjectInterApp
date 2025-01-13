@@ -43,26 +43,31 @@ class GlobalDataModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func refreshDataOnce(arguments _: GlobalDataModelNetworkArguments) {
-        func refreshSystemDataCallback() {
-            // TODO: move system selection into separately called method for storage loading
-            tempImplementation_autoSelectSystemId()
-            
-        }
-        
-        refreshSystemData(onSuccess: refreshSystemDataCallback)
+    func refreshDataOnce(arguments _: GlobalDataModelNetworkArguments) async {
+        await refreshSystemData()
+        tempImplementation_autoSelectSystemId()
     }
     
-    func refreshSystemData(onSuccess: (() -> ())? = nil) {
-        apolloClient?.fetch(query: GetAllSystemsQuery()) { result in
-            guard let data = try? result.get().data else { return }
-            
-            self.systems = data.systems.map { system in
-                System(name: system.name, id: system.id)
+    func refreshSystemData() async {
+        return await withCheckedContinuation { continuation in
+            guard let apolloClient = apolloClient else {
+                continuation.resume()
+                return
             }
             
-            if let callback = onSuccess {
-                callback()
+            apolloClient.fetch(query: GetAllSystemsQuery()) { result in
+                switch result {
+                case .success(let response):
+                    if let data = response.data {
+                        self.systems = data.systems.map { system in
+                            System(name: system.name, id: system.id)
+                        }
+                    }
+                case .failure(let error):
+                    print("Error fetching data: \(error)")
+                }
+                
+                continuation.resume()
             }
         }
     }
@@ -72,7 +77,9 @@ class GlobalDataModel: NetworkDataModelProtocol {
         if !systems.isEmpty,
            selectedSystem == nil
         {
-            selectedSystem = systems[0]
+            DispatchQueue.main.async {
+                self.selectedSystem = self.systems[0]
+            }
         }
     }
     

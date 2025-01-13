@@ -27,7 +27,7 @@ struct ProjectInterApp: App {
         WindowGroup {
             ContentView()
                 .task {
-                    globalDataStateObject.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
+                    await globalDataStateObject.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
                     locationManagerStateObject.updateLocationOnce()
                 }
                 .onChange(of: globalDataStateObject.selectedSystem) {
