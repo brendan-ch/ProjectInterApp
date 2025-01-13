@@ -70,12 +70,12 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
             }
             
             apolloClient.fetch(query: GetRouteInfoDataQuery(systemId: systemId, stopId: stopId, routeId: routeId)) { result in
+                defer { continuation.resume() }
+                
                 guard let data = try? result.get().data else {
-                    continuation.resume()
                     return
                 }
                 guard let route = data.system?.route else {
-                    continuation.resume()
                     return
                 }
                 
@@ -108,8 +108,6 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
                         self.shuttles.append(routeInfoContentViewShuttle)
                     }
                 }
-                
-                continuation.resume()
             }
         }
     }

@@ -48,12 +48,12 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
             }
             
             apolloClient.fetch(query: GetShuttleInfoDataQuery(systemId: systemId, stopId: stopId, shuttleId: shuttleId)) { result in
+                defer { continuation.resume() }
+                
                 guard let data = try? result.get().data else {
-                    continuation.resume()
                     return
                 }
                 guard let shuttle = data.system?.shuttle else {
-                    continuation.resume()
                     return
                 }
                 
@@ -67,8 +67,6 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
                         self.etaDisplay = "\(minutesRemaining) min"
                     }
                 }
-                
-                continuation.resume()
             }
         }
     }

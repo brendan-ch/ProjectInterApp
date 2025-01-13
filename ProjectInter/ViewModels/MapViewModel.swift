@@ -79,8 +79,9 @@ class MapViewModel: NetworkDataModelProtocol {
             }
             
             apolloClient.fetch(query: GetMapDataQuery(systemId: systemId)) { result in
+                defer { continuation.resume() }
+                
                 guard let data = try? result.get().data else {
-                    continuation.resume()
                     return
                 }
                 
@@ -108,8 +109,6 @@ class MapViewModel: NetworkDataModelProtocol {
                     
                     self.routes.append(mapViewRoute)
                 }
-                
-                continuation.resume()
             }
         }
     }

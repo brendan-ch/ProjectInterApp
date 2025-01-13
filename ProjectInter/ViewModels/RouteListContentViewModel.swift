@@ -130,12 +130,12 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
                 context: nil,
                 queue: .main
             ) { result in
+                defer { continuation.resume() }
+                
                 guard let data = try? result.get().data else {
-                    continuation.resume()
                     return
                 }
                 guard let orderedStops = data.system?.stop?.orderedStops else {
-                    continuation.resume()
                     return
                 }
                 
@@ -166,8 +166,6 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
                 }
                 
                 self.isRefreshingData = false
-                
-                continuation.resume()
             }
         }
         
