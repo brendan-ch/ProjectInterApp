@@ -46,9 +46,7 @@ struct MapViewNetworkArguments {
 // MARK: - View model implementation
 
 /// Backing view model for ``MapView``.
-class MapViewModel: NetworkDataModelProtocol {
-    typealias T = MapViewNetworkArguments
-    
+class MapViewModel: ObservableObject {
     /// Position of the map camera on the associated Map view.
     @Published var position: MapCameraPosition = .automatic
     
@@ -61,42 +59,83 @@ class MapViewModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func refreshDataOnce(arguments: MapViewNetworkArguments) {
+    func refreshDataOnce(arguments: MapViewNetworkArguments) async {
         let systemId = arguments.systemId
         
-        refreshData(systemId: systemId)
+        await refreshData(systemId: systemId)
     }
     
-    private func refreshData(systemId: String) {
-        apolloClient?.fetch(query: GetMapDataQuery(systemId: systemId)) { result in
-            guard let data = try? result.get().data else { return }
-            
-            self.shuttles = []
-            let shuttles = data.system?.shuttles ?? []
-            for shuttle in shuttles {
-                if let route = shuttle.route {
-                    let coordinates = CLLocationCoordinate2D(latitude: shuttle.coordinates.latitude, longitude: shuttle.coordinates.longitude)
-                    
-                    let mapViewShuttle = MapViewShuttle(name: shuttle.name, id: shuttle.id, routeId: route.id, routeColorHex: route.color, coordinates: coordinates)
-                    
-                    self.shuttles.append(mapViewShuttle)
-                }
-            }
-            
-            self.routes = []
-            let routes = data.system?.routes ?? []
-            for route in routes {
-                let polylineCoordinates = route.polylineCoordinates
-                let mapViewRoutePolylineCoordinates = polylineCoordinates.map { coordinate in
-                    CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude)
+//    func refreshDataOnce(arguments: MapViewNetworkArguments) {
+//        let systemId = arguments.systemId
+//        
+//        refreshData(systemId: systemId)
+//    }
+    
+    private func refreshData(systemId: String) async {
+        return await withCheckedContinuation { continuation in
+            apolloClient?.fetch(query: GetMapDataQuery(systemId: systemId)) { result in
+                guard let data = try? result.get().data else { return }
+                
+                self.shuttles = []
+                let shuttles = data.system?.shuttles ?? []
+                for shuttle in shuttles {
+                    if let route = shuttle.route {
+                        let coordinates = CLLocationCoordinate2D(latitude: shuttle.coordinates.latitude, longitude: shuttle.coordinates.longitude)
+                        
+                        let mapViewShuttle = MapViewShuttle(name: shuttle.name, id: shuttle.id, routeId: route.id, routeColorHex: route.color, coordinates: coordinates)
+                        
+                        self.shuttles.append(mapViewShuttle)
+                    }
                 }
                 
-                let mapViewRoute = MapViewRoute(id: route.id, colorHex: route.color, polylineCoordinates: mapViewRoutePolylineCoordinates)
+                self.routes = []
+                let routes = data.system?.routes ?? []
+                for route in routes {
+                    let polylineCoordinates = route.polylineCoordinates
+                    let mapViewRoutePolylineCoordinates = polylineCoordinates.map { coordinate in
+                        CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude)
+                    }
+                    
+                    let mapViewRoute = MapViewRoute(id: route.id, colorHex: route.color, polylineCoordinates: mapViewRoutePolylineCoordinates)
+                    
+                    self.routes.append(mapViewRoute)
+                }
                 
-                self.routes.append(mapViewRoute)
+                continuation.resume()
             }
         }
     }
+    
+//    private func refreshData(systemId: String) {
+//        apolloClient?.fetch(query: GetMapDataQuery(systemId: systemId)) { result in
+//            guard let data = try? result.get().data else { return }
+//            
+//            self.shuttles = []
+//            let shuttles = data.system?.shuttles ?? []
+//            for shuttle in shuttles {
+//                if let route = shuttle.route {
+//                    let coordinates = CLLocationCoordinate2D(latitude: shuttle.coordinates.latitude, longitude: shuttle.coordinates.longitude)
+//                    
+//                    let mapViewShuttle = MapViewShuttle(name: shuttle.name, id: shuttle.id, routeId: route.id, routeColorHex: route.color, coordinates: coordinates)
+//                    
+//                    self.shuttles.append(mapViewShuttle)
+//                }
+//            }
+//            
+//            self.routes = []
+//            let routes = data.system?.routes ?? []
+//            for route in routes {
+//                let polylineCoordinates = route.polylineCoordinates
+//                let mapViewRoutePolylineCoordinates = polylineCoordinates.map { coordinate in
+//                    CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude)
+//                }
+//                
+//                let mapViewRoute = MapViewRoute(id: route.id, colorHex: route.color, polylineCoordinates: mapViewRoutePolylineCoordinates)
+//                
+//                self.routes.append(mapViewRoute)
+//            }
+//        }
+//    }
 }
 
 /// Builder class to add placeholder data to ``MapViewModel``,
