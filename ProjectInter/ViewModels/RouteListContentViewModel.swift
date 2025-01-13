@@ -117,9 +117,14 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
     
     private func refreshData(systemId: String, stopId: String) async {
         return await withCheckedContinuation { continuation in
+            guard let apolloClient = apolloClient else {
+                continuation.resume()
+                return
+            }
+            
             isRefreshingData = true
             
-            self.apolloClient?.fetch(
+            apolloClient.fetch(
                 query: GetRouteListDataQuery(systemId: systemId, stopId: stopId),
                 cachePolicy: .returnCacheDataAndFetch,
                 context: nil,
