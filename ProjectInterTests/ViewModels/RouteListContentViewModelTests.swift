@@ -52,5 +52,15 @@ class RouteListContentViewRouteTests {
 }
 
 class RouteListContentViewModelTests {
+    @Test func refreshDataOnceUpdatesRouteData() async {
+        
+    }
     
+    @Test func refreshDataOnceDoesNothingIfNoData() async {
+        
+    }
+    
+    @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
+        
+    }
 }
