@@ -7,6 +7,8 @@
 
 import Testing
 @testable import ProjectInter
+import ProjectInterTestMocks
+import ApolloTestSupport
 
 class RouteListContentViewRouteTests {
     func generateRouteObject() -> RouteListContentViewRoute {
@@ -52,15 +54,68 @@ class RouteListContentViewRouteTests {
 }
 
 class RouteListContentViewModelTests {
+    let defaultArguments = RouteListNetworkArguments(systemId: "1", stopId: "1")
+    
     @Test func refreshDataOnceUpdatesRouteData() async {
+        let mock = Mock<ProjectInterTestMocks.Query>(
+            system: Mock<ProjectInterTestMocks.System>(
+                stop: Mock<ProjectInterTestMocks.Stop>(
+                    name: "Chapman Court",
+                    orderedStops: [
+                        Mock<ProjectInterTestMocks.OrderedStop>(
+                            nextStop: Mock<ProjectInterTestMocks.OrderedStop>(
+                                stop: Mock<ProjectInterTestMocks.Stop>(
+                                    name: "Panther Village"
+                                )
+                            ), route: Mock<ProjectInterTestMocks.Route>(
+                                color: "#000000", id: "1",
+                                name: "Black Route",
+                                shuttles: [
+                                    Mock<ProjectInterTestMocks.Shuttle>(
+                                        eta: Mock<ProjectInterTestMocks.ETA>(
+                                            secondsRemaining: 35
+                                        )
+                                    ),
+                                    Mock<ProjectInterTestMocks.Shuttle>(
+                                        eta: Mock<ProjectInterTestMocks.ETA>(
+                                            secondsRemaining: 125
+                                        )
+                                    )
+                                ]
+                            )
+                        )
+                    ]
+                )
+            )
+        )
         
+        let mockClient = MockApolloClient()
+        mockClient.mock = mock
+        
+        let viewModel = RouteListContentViewModel(apolloClient: mockClient)
+        let arguments = defaultArguments
+        await viewModel.refreshDataOnce(arguments: arguments)
+        
+        #expect(viewModel.routes.count == 1)
+        #expect(viewModel.routes[0].etasInSeconds.count == 2)
     }
     
     @Test func refreshDataOnceDoesNothingIfNoData() async {
+        let mockClient = MockApolloClient()
+        mockClient.mock = nil
         
+        let viewModel = RouteListContentViewModel(apolloClient: mockClient)
+        let arguments = defaultArguments
+        await viewModel.refreshDataOnce(arguments: arguments)
+        
+        #expect(viewModel.routes.isEmpty)
     }
     
     @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
+        let viewModel = RouteListContentViewModel()
+        let arguments = defaultArguments
+        await viewModel.refreshDataOnce(arguments: arguments)
         
+        #expect(viewModel.routes.isEmpty)
     }
 }
