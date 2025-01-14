@@ -72,12 +72,16 @@ struct MapView: View {
             }
             
             if let arguments = mapViewNetworkArguments {
-                viewModel.refreshDataOnce(arguments: arguments)
+                Task {
+                    await viewModel.refreshDataOnce(arguments: arguments)
+                }
             }
         }
         .onChange(of: globalDataState.selectedSystem) {
             if let arguments = mapViewNetworkArguments {
-                viewModel.refreshDataOnce(arguments: arguments)
+                Task {
+                    await viewModel.refreshDataOnce(arguments: arguments)
+                }
             }
         }
         // Reset the map position if the user selects something

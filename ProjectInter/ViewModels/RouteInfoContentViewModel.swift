@@ -54,46 +54,59 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func refreshDataOnce(arguments: RouteInfoNetworkArguments) {
+    func refreshDataOnce(arguments: RouteInfoNetworkArguments) async {
         let systemId = arguments.systemId
         let stopId = arguments.stopId
         let routeId = arguments.routeId
         
-        refreshData(systemId: systemId, stopId: stopId, routeId: routeId)
+        await refreshData(systemId: systemId, stopId: stopId, routeId: routeId)
     }
     
-    private func refreshData(systemId: String, stopId: String, routeId: String) {
-        apolloClient?.fetch(query: GetRouteInfoDataQuery(systemId: systemId, stopId: stopId, routeId: routeId)) { result in
-            guard let data = try? result.get().data else { return }
-            guard let route = data.system?.route else { return }
-            
-            // Set basic route data
-            self.routeName = route.name
-            if let nextStopName = route.orderedStop?.nextStop?.stop.name {
-                self.routeNextStopName = nextStopName
+    private func refreshData(systemId: String, stopId: String, routeId: String) async {
+        return await withCheckedContinuation { continuation in
+            guard let apolloClient = apolloClient else {
+                continuation.resume()
+                return
             }
             
-            self.shuttles = []
-            
-            // Add shuttles and calculate ETAs
-            if let shuttles = route.shuttles {
-                for shuttle in shuttles {
-                    var routeInfoContentViewShuttle = RouteInfoContentViewShuttle(
-                        name: shuttle.name,
-                        estimatedTimeAwayDisplay: "N/A",
-                        id: shuttle.id
-                    )
-                    
-                    if let secondsRemaining = shuttle.eta?.secondsRemaining {
-                        if secondsRemaining < 60 {
-                            routeInfoContentViewShuttle.estimatedTimeAwayDisplay = "Less than 1 min"
-                        } else {
-                            let minutesRemaining = Int(secondsRemaining / 60)
-                            routeInfoContentViewShuttle.estimatedTimeAwayDisplay = "\(minutesRemaining) min"
+            apolloClient.fetch(query: GetRouteInfoDataQuery(systemId: systemId, stopId: stopId, routeId: routeId)) { result in
+                defer { continuation.resume() }
+                
+                guard let data = try? result.get().data else {
+                    return
+                }
+                guard let route = data.system?.route else {
+                    return
+                }
+                
+                // Set basic route data
+                self.routeName = route.name
+                if let nextStopName = route.orderedStop?.nextStop?.stop.name {
+                    self.routeNextStopName = nextStopName
+                }
+                
+                self.shuttles = []
+                
+                // Add shuttles and calculate ETAs
+                if let shuttles = route.shuttles {
+                    for shuttle in shuttles {
+                        var routeInfoContentViewShuttle = RouteInfoContentViewShuttle(
+                            name: shuttle.name,
+                            estimatedTimeAwayDisplay: "N/A",
+                            id: shuttle.id
+                        )
+                        
+                        if let secondsRemaining = shuttle.eta?.secondsRemaining {
+                            if secondsRemaining < 60 {
+                                routeInfoContentViewShuttle.estimatedTimeAwayDisplay = "Less than 1 min"
+                            } else {
+                                let minutesRemaining = Int(secondsRemaining / 60)
+                                routeInfoContentViewShuttle.estimatedTimeAwayDisplay = "\(minutesRemaining) min"
+                            }
                         }
+                        
+                        self.shuttles.append(routeInfoContentViewShuttle)
                     }
-                    
-                    self.shuttles.append(routeInfoContentViewShuttle)
                 }
             }
         }

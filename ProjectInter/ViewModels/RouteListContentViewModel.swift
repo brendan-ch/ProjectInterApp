@@ -89,12 +89,12 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func refreshDataOnce(arguments: RouteListNetworkArguments) {
+    func refreshDataOnce(arguments: RouteListNetworkArguments) async {
         if !isRefreshingData {
             let systemId = arguments.systemId
             let stopId = arguments.stopId
             
-            refreshData(systemId: systemId, stopId: stopId)
+            await refreshData(systemId: systemId, stopId: stopId)
         }
     }
     
@@ -102,10 +102,11 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
         stopRefreshingData()
         
         task = Task {
-            while true {
-                refreshDataOnce(arguments: arguments)
-                try await Task.sleep(for: .seconds(5))
-            }
+            await refreshDataOnce(arguments: arguments)
+            // TODO: Figure out a way to loop this without calling continuation.resume multiple times
+//            while true {
+//                try await Task.sleep(for: .seconds(5))
+//            }
         }
     }
     
@@ -114,46 +115,60 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
         task = nil
     }
     
-    private func refreshData(systemId: String, stopId: String) {
-        isRefreshingData = true
-        
-        self.apolloClient?.fetch(
-            query: GetRouteListDataQuery(systemId: systemId, stopId: stopId),
-            cachePolicy: .returnCacheDataAndFetch,
-            context: nil,
-            queue: .main
-        ) { result in
-            guard let data = try? result.get().data else { return }
-            guard let orderedStops = data.system?.stop?.orderedStops else { return }
-            
-            self.routes = []
-            for orderedStop in orderedStops {
-                let route = orderedStop.route
-                var routeListRoute = RouteListContentViewRoute(
-                    id: route.id,
-                    name: route.name,
-                    colorHex: route.color
-                )
-                
-                if let nextStopName = orderedStop.nextStop?.stop.name {
-                    routeListRoute.nextStopName = nextStopName
-                } else {
-                    routeListRoute.nextStopName = "N/A"
-                }
-                
-                if let shuttles = orderedStop.route.shuttles {
-                    for shuttle in shuttles {
-                        if let secondsRemaining = shuttle.eta?.secondsRemaining {
-                            routeListRoute.addEta(secondsRemaining)
-                        }
-                    }
-                }
-                
-                self.routes.append(routeListRoute)
+    private func refreshData(systemId: String, stopId: String) async {
+        return await withCheckedContinuation { continuation in
+            guard let apolloClient = apolloClient else {
+                continuation.resume()
+                return
             }
             
-            self.isRefreshingData = false
+            isRefreshingData = true
+            
+            apolloClient.fetch(
+                query: GetRouteListDataQuery(systemId: systemId, stopId: stopId),
+                cachePolicy: .returnCacheDataAndFetch,
+                context: nil,
+                queue: .main
+            ) { result in
+                defer { continuation.resume() }
+                
+                guard let data = try? result.get().data else {
+                    return
+                }
+                guard let orderedStops = data.system?.stop?.orderedStops else {
+                    return
+                }
+                
+                self.routes = []
+                for orderedStop in orderedStops {
+                    let route = orderedStop.route
+                    var routeListRoute = RouteListContentViewRoute(
+                        id: route.id,
+                        name: route.name,
+                        colorHex: route.color
+                    )
+                    
+                    if let nextStopName = orderedStop.nextStop?.stop.name {
+                        routeListRoute.nextStopName = nextStopName
+                    } else {
+                        routeListRoute.nextStopName = "N/A"
+                    }
+                    
+                    if let shuttles = orderedStop.route.shuttles {
+                        for shuttle in shuttles {
+                            if let secondsRemaining = shuttle.eta?.secondsRemaining {
+                                routeListRoute.addEta(secondsRemaining)
+                            }
+                        }
+                    }
+                    
+                    self.routes.append(routeListRoute)
+                }
+                
+                self.isRefreshingData = false
+            }
         }
+        
     }
     
 }

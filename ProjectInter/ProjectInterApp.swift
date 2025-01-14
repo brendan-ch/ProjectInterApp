@@ -27,16 +27,18 @@ struct ProjectInterApp: App {
         WindowGroup {
             ContentView()
                 .task {
-                    globalDataStateObject.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
+                    await globalDataStateObject.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
                     locationManagerStateObject.updateLocationOnce()
                 }
                 .onChange(of: globalDataStateObject.selectedSystem) {
                     guard let systemId = globalDataStateObject.selectedSystem?.id else { return }
                     
-                    let stopsNetworkArguments = GlobalStopsNetworkArguments(
-                        systemId: systemId
-                    )
-                    globalStopsStateObject.refreshDataOnce(arguments: stopsNetworkArguments)
+                    Task {
+                        let stopsNetworkArguments = GlobalStopsNetworkArguments(
+                            systemId: systemId
+                        )
+                        await globalStopsStateObject.refreshDataOnce(arguments: stopsNetworkArguments)
+                    }
                 }
                 .onChange(of: canAutomaticallySelectStop) {
                     guard let location = locationManagerStateObject.lastUpdatedLocation else { return }

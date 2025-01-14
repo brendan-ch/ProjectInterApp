@@ -12,6 +12,12 @@ import ProjectInterOperations
 import ApolloTestSupport
 import ProjectInterTestMocks
 
+/// An error struct thrown by ``MockApolloClient`` in the
+/// event of a failed request.
+struct MockError: Error {
+    
+}
+
 class MockApolloClient: ApolloClientProtocol {
     // MARK: - Mock data
     var mock: Mock<ProjectInterTestMocks.Query>?
@@ -45,6 +51,7 @@ class MockApolloClient: ApolloClientProtocol {
     func fetch<Query>(query: Query, cachePolicy: CachePolicy = .default, contextIdentifier: UUID? = nil, context: (any RequestContext)? = nil, queue: DispatchQueue = .main, resultHandler: GraphQLResultHandler<Query.Data>? = nil) -> (any Cancellable) where Query : GraphQLQuery {
         
         guard let mock = mock else {
+            resultHandler?(.failure(MockError()))
             return EmptyCancellable()
         }
         
