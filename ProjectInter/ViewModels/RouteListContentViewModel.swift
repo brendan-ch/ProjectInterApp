@@ -98,23 +98,6 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
         }
     }
     
-    func startRefreshingData(arguments: RouteListNetworkArguments) {
-        stopRefreshingData()
-        
-        task = Task {
-            await refreshDataOnce(arguments: arguments)
-            // TODO: Figure out a way to loop this without calling continuation.resume multiple times
-//            while true {
-//                try await Task.sleep(for: .seconds(5))
-//            }
-        }
-    }
-    
-    func stopRefreshingData() {
-        task?.cancel()
-        task = nil
-    }
-    
     private func refreshData(systemId: String, stopId: String) async {
         return await withCheckedContinuation { continuation in
             guard let apolloClient = apolloClient else {
@@ -130,7 +113,10 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
                 context: nil,
                 queue: .main
             ) { result in
-                defer { continuation.resume() }
+                defer {
+                    continuation.resume()
+                    self.isRefreshingData = false
+                }
                 
                 guard let data = try? result.get().data else {
                     return
@@ -165,7 +151,6 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
                     self.routes.append(routeListRoute)
                 }
                 
-                self.isRefreshingData = false
             }
         }
         

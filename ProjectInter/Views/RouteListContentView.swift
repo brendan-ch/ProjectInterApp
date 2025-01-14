@@ -83,7 +83,9 @@ struct RouteListContentView: View {
         .onChange(of: globalStopsState.selectedStop) {
             // Refresh data in backing view model
             if let arguments = routeListNetworkArguments {
-                viewModel.startRefreshingData(arguments: arguments)
+                Task {
+                    await viewModel.refreshDataOnce(arguments: arguments)
+                }
             }
         }
         .sheet(isPresented: $showStopSelectionView) {
