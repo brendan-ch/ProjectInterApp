@@ -79,17 +79,10 @@ struct RouteListContentView: View {
             if let apolloClient = globalDataState.apolloClient {
                 viewModel.apolloClient = apolloClient
             }
-//            if let arguments = routeListNetworkArguments {
-//                viewModel.startRefreshingData(arguments: arguments)
-//            }
         }
         .onChange(of: globalStopsState.selectedStop) {
             // Refresh data in backing view model
             if let arguments = routeListNetworkArguments {
-//                Task {
-//                    await viewModel.refreshDataOnce(arguments: arguments)
-//                }
-//                
                 viewModel.stopRefreshingData()
                 viewModel.startRefreshingData(arguments: arguments)
             }
