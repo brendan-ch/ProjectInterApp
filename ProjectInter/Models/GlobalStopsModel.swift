@@ -26,6 +26,7 @@ struct Stop: Identifiable, Equatable {
 // MARK: - Data model implementation
 
 class GlobalStopsModel: NetworkDataModelProtocol {
+    
     typealias T = GlobalStopsNetworkArguments
     
     var apolloClient: ApolloClientProtocol?
@@ -35,6 +36,14 @@ class GlobalStopsModel: NetworkDataModelProtocol {
     
     init(apolloClient: ApolloClientProtocol? = nil) {
         self.apolloClient = apolloClient
+    }
+    
+    func startRefreshingData(arguments: GlobalStopsNetworkArguments, sleepDuration: Duration = .seconds(5)) {
+        fatalError("This method is not implemented yet.")
+    }
+    
+    func stopRefreshingData() {
+        fatalError("This method is not implemented yet.")
     }
     
     func refreshDataOnce(arguments: GlobalStopsNetworkArguments) async {
