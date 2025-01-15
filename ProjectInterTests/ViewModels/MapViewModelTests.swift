@@ -52,6 +52,69 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
         )
     }
     
+    var secondaryMock: Mock<Query> {
+        Mock<ProjectInterTestMocks.Query>(
+            system: .init(
+                routes: [
+                    .init(
+                        color: "#000000",
+                        id: "2",
+                        polylineCoordinates: [
+                            .init(
+                                latitude: 3,
+                                longitude: 3
+                            ),
+                            .init(
+                                latitude: 4,
+                                longitude: 4
+                            )
+                        ]
+                    ),
+                    .init(
+                        color: "#111111",
+                        id: "3",
+                        polylineCoordinates: [
+                            .init(
+                                latitude: 5,
+                                longitude: 5
+                            ),
+                            .init(
+                                latitude: 6,
+                                longitude: 6
+                            )
+                        ]
+                    )
+                ],
+                shuttles: [
+                    .init(
+                        coordinates: Mock<Coordinates>(
+                            latitude: 3,
+                            longitude: 3
+                        ),
+                        id: "2",
+                        name: "Shuttle 2",
+                        route: Mock<Route>(
+                            color: "#000000",
+                            id: "2"
+                        )
+                    ),
+                    .init(
+                        coordinates: Mock<Coordinates>(
+                            latitude: 5,
+                            longitude: 5
+                        ),
+                        id: "3",
+                        name: "Shuttle 3",
+                        route: Mock<Route>(
+                            color: "#111111",
+                            id: "3"
+                        )
+                    )
+                ]
+            )
+        )
+    }
+    
     func generateClientAndViewModelWithArguments() -> (MockApolloClient, MapViewModel, MapViewNetworkArguments) {
         let mockClient = MockApolloClient()
         
@@ -61,12 +124,37 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
         return (mockClient, viewModel, arguments)
     }
     
+    func assertViewModelDataForDefaultMock(viewModel: MapViewModel) {
+        #expect(viewModel.routes.count == 1)
+        #expect(viewModel.shuttles.count == 1)
+    }
+    
+    func assertViewModelDataForSecondaryMock(viewModel: MapViewModel) {
+        #expect(viewModel.routes.count == 2)
+        #expect(viewModel.shuttles.count == 2)
+    }
+    
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
+        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
+        mockClient.mock = defaultMock
         
+        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(500))
+        try? await Task.sleep(for: .milliseconds(200))
+        
+        assertViewModelDataForDefaultMock(viewModel: viewModel)
     }
     
     @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
+        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
+        mockClient.mock = defaultMock
         
+        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(500))
+        try? await Task.sleep(for: .milliseconds(200))
+        
+        mockClient.mock = secondaryMock
+        try? await Task.sleep(for: .milliseconds(400))
+        
+        assertViewModelDataForSecondaryMock(viewModel: viewModel)
     }
     
     @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
@@ -79,8 +167,7 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
         
         await viewModel.refreshDataOnce(arguments: arguments)
         
-        #expect(viewModel.routes.count == 1)
-        #expect(viewModel.shuttles.count == 1)
+        assertViewModelDataForDefaultMock(viewModel: viewModel)
     }
     
     @Test func refreshDataOnceDoesNothingIfNoData() async {
