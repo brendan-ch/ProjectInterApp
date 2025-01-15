@@ -71,18 +71,10 @@ struct MapView: View {
                 viewModel.apolloClient = client
             }
             
-            if let arguments = mapViewNetworkArguments {
-                Task {
-                    await viewModel.refreshDataOnce(arguments: arguments)
-                }
-            }
+            restartDataUpdatesIfArgumentsExist()
         }
         .onChange(of: globalDataState.selectedSystem) {
-            if let arguments = mapViewNetworkArguments {
-                Task {
-                    await viewModel.refreshDataOnce(arguments: arguments)
-                }
-            }
+            restartDataUpdatesIfArgumentsExist()
         }
         // Reset the map position if the user selects something
         .onChange(of: globalDataState.selectedRouteId) {
@@ -91,6 +83,13 @@ struct MapView: View {
         .onChange(of: globalDataState.selectedShuttleId) {
             // TODO: center the map around the selected shuttle
             viewModel.position = .automatic
+        }
+    }
+    
+    private func restartDataUpdatesIfArgumentsExist() {
+        if let arguments = mapViewNetworkArguments {
+            viewModel.stopRefreshingData()
+            viewModel.startRefreshingData(arguments: arguments)
         }
     }
 }
