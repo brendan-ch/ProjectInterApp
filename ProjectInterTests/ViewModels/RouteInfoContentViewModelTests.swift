@@ -118,11 +118,15 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         mockClient.mock = defaultMock
         
         let viewModel = RouteInfoContentViewModel(apolloClient: mockClient)
-        viewModel.startRefreshingData(arguments: defaultArguments, sleepDuration: .seconds(5))
+        viewModel.startRefreshingData(arguments: defaultArguments, sleepDuration: .seconds(1))
+        
+        try? await Task.sleep(for: .milliseconds(500))
         
         // Act
         viewModel.stopRefreshingData()
         mockClient.mock = secondaryMock
+        
+        try? await Task.sleep(for: .milliseconds(600))
         
         // Assert
         #expect(viewModel.routeName == "Red Route")

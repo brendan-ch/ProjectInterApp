@@ -51,17 +51,28 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
     var apolloClient: ApolloClientProtocol?
     
     private var continuationIsActive: Bool = false
+    private var task: Task<Void, Error>?
     
     init(apolloClient: ApolloClientProtocol? = nil) {
         self.apolloClient = apolloClient
     }
     
     func startRefreshingData(arguments: RouteInfoNetworkArguments, sleepDuration: Duration = .seconds(5)) {
-        fatalError("This method is not implemented yet.")
+        if task != nil {
+            return
+        }
+        
+        task = Task {
+            while !Task.isCancelled {
+                await refreshDataOnce(arguments: arguments)
+                try? await Task.sleep(for: sleepDuration)
+            }
+        }
     }
     
     func stopRefreshingData() {
-        fatalError("This method is not implemented yet.")
+        task?.cancel()
+        task = nil
     }
     
     func refreshDataOnce(arguments: RouteInfoNetworkArguments) async {
