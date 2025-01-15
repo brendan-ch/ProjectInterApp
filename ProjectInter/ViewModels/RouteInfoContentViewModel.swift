@@ -50,7 +50,6 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
     
     var apolloClient: ApolloClientProtocol?
     
-    private var continuationIsActive: Bool = false
     private var task: Task<Void, Error>?
     
     init(apolloClient: ApolloClientProtocol? = nil) {
@@ -85,7 +84,7 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
     
     private func refreshData(systemId: String, stopId: String, routeId: String) async {
         return await withCheckedContinuation { continuation in
-            continuationIsActive = true
+            var continuationIsActive = true
             guard let apolloClient = apolloClient else {
                 continuationIsActive = false
                 continuation.resume()
@@ -93,7 +92,7 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
             }
             
             apolloClient.fetch(query: GetRouteInfoDataQuery(systemId: systemId, stopId: stopId, routeId: routeId)) { result in
-                if !self.continuationIsActive {
+                if !continuationIsActive {
                     return
                 }
                 
@@ -104,7 +103,7 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
                     print("Error fetching data: \(error)")
                 }
                 
-                self.continuationIsActive = false
+                continuationIsActive = false
                 continuation.resume()
             }
         }
