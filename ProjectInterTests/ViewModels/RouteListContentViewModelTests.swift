@@ -156,7 +156,7 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.routes[0].etasInSeconds.count == 1)
     }
 
-    @Test func stopRefreshingDataStopsDataRefresh() async {
+    @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
         // Arrange
         let mockClient = MockApolloClient()
         mockClient.mock = defaultMock

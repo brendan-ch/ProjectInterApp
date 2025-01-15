@@ -10,7 +10,7 @@
 protocol NetworkDataModelTestsProtocol {
     func startRefreshingDataRefreshesDataOnFirstCall() async
     func startRefreshingDataRefreshesDataMultipleTimes() async
-    func stopRefreshingDataStopsDataRefresh() async
+    func stopRefreshingDataStopsDataUpdatesAfterCompletion() async
     func refreshDataOnceUpdatesData() async
     func refreshDataOnceDoesNothingIfNoData() async
     func refreshDataOnceDoesNothingIfNoApolloClient() async
