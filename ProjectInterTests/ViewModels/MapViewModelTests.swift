@@ -51,7 +51,15 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
             )
         )
     }
-
+    
+    func generateClientAndViewModelWithArguments() -> (MockApolloClient, MapViewModel, MapViewNetworkArguments) {
+        let mockClient = MockApolloClient()
+        
+        let viewModel = MapViewModel(apolloClient: mockClient)
+        let arguments = MapViewNetworkArguments(systemId: "1")
+        
+        return (mockClient, viewModel, arguments)
+    }
     
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
         
@@ -66,12 +74,8 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func refreshDataOnceUpdatesData() async {
-        let mockClient = MockApolloClient()
-        
+        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
         mockClient.mock = defaultMock
-        
-        let viewModel = MapViewModel(apolloClient: mockClient)
-        let arguments = MapViewNetworkArguments(systemId: "1")
         
         await viewModel.refreshDataOnce(arguments: arguments)
         
@@ -80,12 +84,9 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func refreshDataOnceDoesNothingIfNoData() async {
-        let mockClient = MockApolloClient()
+        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
         mockClient.mock = nil
-        
-        let viewModel = MapViewModel(apolloClient: mockClient)
-        let arguments = MapViewNetworkArguments(systemId: "1")
-        
+
         await viewModel.refreshDataOnce(arguments: arguments)
         
         #expect(viewModel.routes.isEmpty)
@@ -93,7 +94,7 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func refreshDataOnceStillPopulatesRoutesIfNoShuttles() async {
-        let mockClient = MockApolloClient()
+        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
         let mock = Mock<ProjectInterTestMocks.Query>(
             system: Mock<ProjectInterTestMocks.System>(
                 routes: [
@@ -103,9 +104,6 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
         )
         mockClient.mock = mock
         
-        let viewModel = MapViewModel(apolloClient: mockClient)
-        let arguments = MapViewNetworkArguments(systemId: "1")
-        
         await viewModel.refreshDataOnce(arguments: arguments)
         
         #expect(viewModel.routes.count == 1)
@@ -113,7 +111,7 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func refreshDataOnceStillPopulatesShuttlesIfNoRoutes() async {
-        let mockClient = MockApolloClient()
+        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
         let mock = Mock<ProjectInterTestMocks.Query>(
             system: Mock<ProjectInterTestMocks.System>(
                 shuttles: [
@@ -123,9 +121,6 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
         )
         mockClient.mock = mock
         
-        let viewModel = MapViewModel(apolloClient: mockClient)
-        let arguments = MapViewNetworkArguments(systemId: "1")
-        
         await viewModel.refreshDataOnce(arguments: arguments)
         
         #expect(viewModel.shuttles.count == 1)
@@ -133,8 +128,8 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
-        let viewModel = MapViewModel()
-        let arguments = MapViewNetworkArguments(systemId: "1")
+        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
+        viewModel.apolloClient = nil
         
         await viewModel.refreshDataOnce(arguments: arguments)
         
