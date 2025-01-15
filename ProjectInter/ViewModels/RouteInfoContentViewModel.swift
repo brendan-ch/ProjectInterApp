@@ -50,6 +50,8 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
     
     var apolloClient: ApolloClientProtocol?
     
+    private var continuationIsActive: Bool = false
+    
     init(apolloClient: ApolloClientProtocol? = nil) {
         self.apolloClient = apolloClient
     }
@@ -72,21 +74,34 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
     
     private func refreshData(systemId: String, stopId: String, routeId: String) async {
         return await withCheckedContinuation { continuation in
+            continuationIsActive = true
             guard let apolloClient = apolloClient else {
+                continuationIsActive = false
                 continuation.resume()
                 return
             }
             
             apolloClient.fetch(query: GetRouteInfoDataQuery(systemId: systemId, stopId: stopId, routeId: routeId)) { result in
-                defer { continuation.resume() }
-                
-                guard let data = try? result.get().data else {
-                    return
-                }
-                guard let route = data.system?.route else {
+                if !self.continuationIsActive {
                     return
                 }
                 
+                switch result {
+                case .success(let response):
+                    self.updateDataFromResponse(response)
+                case .failure(let error):
+                    print("Error fetching data: \(error)")
+                }
+                
+                self.continuationIsActive = false
+                continuation.resume()
+            }
+        }
+    }
+    
+    private func updateDataFromResponse(_ response: GraphQLResult<GetRouteInfoDataQuery.Data>) {
+        if let data = response.data {
+            if let route = data.system?.route {
                 // Set basic route data
                 self.routeName = route.name
                 if let nextStopName = route.orderedStop?.nextStop?.stop.name {
