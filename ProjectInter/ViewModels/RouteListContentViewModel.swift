@@ -78,8 +78,9 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
     
     var apolloClient: ApolloClientProtocol?
     
-    private var isRefreshingData = false
     private var task: Task<Void, Error>?
+    
+    private var continuationIsActive = false
     
     init() {
         self.apolloClient = nil
@@ -89,23 +90,38 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func refreshDataOnce(arguments: RouteListNetworkArguments) async {
-        if !isRefreshingData {
-            let systemId = arguments.systemId
-            let stopId = arguments.stopId
-            
-            await refreshData(systemId: systemId, stopId: stopId)
+    func startRefreshingData(arguments: RouteListNetworkArguments) {
+        if task != nil {
+            return
         }
+        
+        task = Task {
+            while !Task.isCancelled {
+                await refreshDataOnce(arguments: arguments)
+                try? await Task.sleep(for: .seconds(5))
+            }
+        }
+    }
+    
+    func stopRefreshingData() {
+        task?.cancel()
+        task = nil
+    }
+    
+    func refreshDataOnce(arguments: RouteListNetworkArguments) async {
+        let systemId = arguments.systemId
+        let stopId = arguments.stopId
+        
+        await refreshData(systemId: systemId, stopId: stopId)
     }
     
     private func refreshData(systemId: String, stopId: String) async {
         return await withCheckedContinuation { continuation in
+            continuationIsActive = true
             guard let apolloClient = apolloClient else {
                 continuation.resume()
                 return
             }
-            
-            isRefreshingData = true
             
             apolloClient.fetch(
                 query: GetRouteListDataQuery(systemId: systemId, stopId: stopId),
@@ -113,47 +129,50 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
                 context: nil,
                 queue: .main
             ) { result in
-                defer {
-                    continuation.resume()
-                    self.isRefreshingData = false
-                }
-                
-                guard let data = try? result.get().data else {
-                    return
-                }
-                guard let orderedStops = data.system?.stop?.orderedStops else {
+                // Handle cases where callback is called multiple times
+                if !self.continuationIsActive {
                     return
                 }
                 
-                self.routes = []
-                for orderedStop in orderedStops {
-                    let route = orderedStop.route
-                    var routeListRoute = RouteListContentViewRoute(
-                        id: route.id,
-                        name: route.name,
-                        colorHex: route.color
-                    )
-                    
-                    if let nextStopName = orderedStop.nextStop?.stop.name {
-                        routeListRoute.nextStopName = nextStopName
-                    } else {
-                        routeListRoute.nextStopName = "N/A"
-                    }
-                    
-                    if let shuttles = orderedStop.route.shuttles {
-                        for shuttle in shuttles {
-                            if let secondsRemaining = shuttle.eta?.secondsRemaining {
-                                routeListRoute.addEta(secondsRemaining)
+                switch result {
+                case .success(let response):
+                    if let data = response.data {
+                        if let orderedStops = data.system?.stop?.orderedStops {
+                            self.routes = []
+                            for orderedStop in orderedStops {
+                                let route = orderedStop.route
+                                var routeListRoute = RouteListContentViewRoute(
+                                    id: route.id,
+                                    name: route.name,
+                                    colorHex: route.color
+                                )
+                                
+                                if let nextStopName = orderedStop.nextStop?.stop.name {
+                                    routeListRoute.nextStopName = nextStopName
+                                } else {
+                                    routeListRoute.nextStopName = "N/A"
+                                }
+                                
+                                if let shuttles = orderedStop.route.shuttles {
+                                    for shuttle in shuttles {
+                                        if let secondsRemaining = shuttle.eta?.secondsRemaining {
+                                            routeListRoute.addEta(secondsRemaining)
+                                        }
+                                    }
+                                }
+                                
+                                self.routes.append(routeListRoute)
                             }
                         }
                     }
-                    
-                    self.routes.append(routeListRoute)
+                case .failure(let error):
+                    print("Error fetching data: \(error)")
                 }
                 
+                self.continuationIsActive = false
+                continuation.resume()
             }
         }
-        
     }
     
 }
