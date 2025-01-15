@@ -124,11 +124,8 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
                 return
             }
             
-            let _ = apolloClient.fetch(
-                query: GetRouteListDataQuery(systemId: systemId, stopId: stopId),
-                cachePolicy: .fetchIgnoringCacheData,
-                context: nil,
-                queue: .main
+            apolloClient.fetch(
+                query: GetRouteListDataQuery(systemId: systemId, stopId: stopId)
             ) { result in
                 // Handle cases where callback is called multiple times
                 if !self.continuationIsActive {
