@@ -114,7 +114,23 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
             )
         )
 
+    @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
+        // Arrange
+        let mockClient = MockApolloClient()
+        mockClient.mock = defaultMock
+        
+        let viewModel = RouteListContentViewModel(apolloClient: mockClient)
+        let arguments = defaultArguments
+        
+        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .seconds(1))
+        
+        try? await Task.sleep(for: .milliseconds(500))
+        
+        #expect(viewModel.routes.count == 1)
+        #expect(viewModel.routes[0].etasInSeconds.count == 2)
+    }
     
+
     @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
         // Arrange
         let mockClient = MockApolloClient()
@@ -147,15 +163,16 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
         mockClient.mock = defaultMock
         
         let viewModel = RouteListContentViewModel(apolloClient: mockClient)
-        viewModel.startRefreshingData(arguments: defaultArguments, sleepDuration: .milliseconds(10))
+        viewModel.startRefreshingData(arguments: defaultArguments, sleepDuration: .seconds(1))
         
         // Act
-        try? await Task.sleep(for: .milliseconds(50))
+        try? await Task.sleep(for: .milliseconds(500))
         viewModel.stopRefreshingData()
         mockClient.mock = secondaryMock
         
         // Assert
-        try? await Task.sleep(for: .milliseconds(50))
+        // Wait for the task to expire
+        try? await Task.sleep(for: .milliseconds(600))
         #expect(viewModel.routes.count == 1)
         #expect(viewModel.routes[0].etasInSeconds.count == 2)
     }

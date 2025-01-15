@@ -66,7 +66,11 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         )
     )
 
+    @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
+        
+    }
     
+
     @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
         // TODO: Find a way to generate this type of test quickly
         // Arrange
