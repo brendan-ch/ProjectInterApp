@@ -95,6 +95,10 @@ class RouteInfoContentViewModelTests {
         #expect(viewModel.shuttles.count == 1)
     }
     
+    @Test func stopRefreshingDataStopsDataRefresh() async {
+        
+    }
+    
     @Test func refreshDataOnceRefreshesData() async {
         let mock = defaultMock
         let mockClient = MockApolloClient()
