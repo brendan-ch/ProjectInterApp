@@ -59,17 +59,19 @@ class MapViewModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
+    func startRefreshingData(arguments: MapViewNetworkArguments, sleepDuration: Duration = .seconds(5)) {
+        fatalError("This method is not implemented yet.")
+    }
+    
+    func stopRefreshingData() {
+        fatalError("This method is not implemented yet.")
+    }
+    
     func refreshDataOnce(arguments: MapViewNetworkArguments) async {
         let systemId = arguments.systemId
         
         await refreshData(systemId: systemId)
     }
-    
-//    func refreshDataOnce(arguments: MapViewNetworkArguments) {
-//        let systemId = arguments.systemId
-//        
-//        refreshData(systemId: systemId)
-//    }
     
     private func refreshData(systemId: String) async {
         return await withCheckedContinuation { continuation in

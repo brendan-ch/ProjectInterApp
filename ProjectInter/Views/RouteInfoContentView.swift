@@ -75,18 +75,17 @@ struct RouteInfoContentView: View {
                 viewModel.apolloClient = client
             }
             
-            if let arguments = routeInfoNetworkArguments {
-                Task {
-                    await viewModel.refreshDataOnce(arguments: arguments)
-                }
-            }
+            restartDataUpdatesIfArgumentsExist()
         }
         .onChange(of: globalDataState.selectedRouteId) {
-            if let arguments = routeInfoNetworkArguments {
-                Task {
-                    await viewModel.refreshDataOnce(arguments: arguments)
-                }
-            }
+            restartDataUpdatesIfArgumentsExist()
+        }
+    }
+    
+    private func restartDataUpdatesIfArgumentsExist() {
+        if let arguments = routeInfoNetworkArguments {
+            viewModel.stopRefreshingData()
+            viewModel.startRefreshingData(arguments: arguments)
         }
     }
 }

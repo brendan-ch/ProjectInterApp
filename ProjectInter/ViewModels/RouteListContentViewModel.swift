@@ -80,7 +80,7 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
     
     private var task: Task<Void, Error>?
     
-    private var continuationIsActive = false
+    // private var continuationIsActive = false
     
     init() {
         self.apolloClient = nil
@@ -117,20 +117,18 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
     
     private func refreshData(systemId: String, stopId: String) async {
         return await withCheckedContinuation { continuation in
-            continuationIsActive = true
+            var continuationIsActive = true
             guard let apolloClient = apolloClient else {
+                continuationIsActive = false
                 continuation.resume()
                 return
             }
             
-            let _ = apolloClient.fetch(
-                query: GetRouteListDataQuery(systemId: systemId, stopId: stopId),
-                cachePolicy: .fetchIgnoringCacheData,
-                context: nil,
-                queue: .main
+            apolloClient.fetch(
+                query: GetRouteListDataQuery(systemId: systemId, stopId: stopId)
             ) { result in
                 // Handle cases where callback is called multiple times
-                if !self.continuationIsActive {
+                if !continuationIsActive {
                     return
                 }
                 
@@ -141,7 +139,7 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
                     print("Error fetching data: \(error)")
                 }
                 
-                self.continuationIsActive = false
+                continuationIsActive = false
                 continuation.resume()
             }
         }

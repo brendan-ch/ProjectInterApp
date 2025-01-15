@@ -50,8 +50,28 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
     
     var apolloClient: ApolloClientProtocol?
     
+    private var task: Task<Void, Error>?
+    
     init(apolloClient: ApolloClientProtocol? = nil) {
         self.apolloClient = apolloClient
+    }
+    
+    func startRefreshingData(arguments: RouteInfoNetworkArguments, sleepDuration: Duration = .seconds(5)) {
+        if task != nil {
+            return
+        }
+        
+        task = Task {
+            while !Task.isCancelled {
+                await refreshDataOnce(arguments: arguments)
+                try? await Task.sleep(for: sleepDuration)
+            }
+        }
+    }
+    
+    func stopRefreshingData() {
+        task?.cancel()
+        task = nil
     }
     
     func refreshDataOnce(arguments: RouteInfoNetworkArguments) async {
@@ -64,21 +84,34 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
     
     private func refreshData(systemId: String, stopId: String, routeId: String) async {
         return await withCheckedContinuation { continuation in
+            var continuationIsActive = true
             guard let apolloClient = apolloClient else {
+                continuationIsActive = false
                 continuation.resume()
                 return
             }
             
             apolloClient.fetch(query: GetRouteInfoDataQuery(systemId: systemId, stopId: stopId, routeId: routeId)) { result in
-                defer { continuation.resume() }
-                
-                guard let data = try? result.get().data else {
-                    return
-                }
-                guard let route = data.system?.route else {
+                if !continuationIsActive {
                     return
                 }
                 
+                switch result {
+                case .success(let response):
+                    self.updateDataFromResponse(response)
+                case .failure(let error):
+                    print("Error fetching data: \(error)")
+                }
+                
+                continuationIsActive = false
+                continuation.resume()
+            }
+        }
+    }
+    
+    private func updateDataFromResponse(_ response: GraphQLResult<GetRouteInfoDataQuery.Data>) {
+        if let data = response.data {
+            if let route = data.system?.route {
                 // Set basic route data
                 self.routeName = route.name
                 if let nextStopName = route.orderedStop?.nextStop?.stop.name {
