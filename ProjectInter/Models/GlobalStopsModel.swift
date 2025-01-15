@@ -31,6 +31,8 @@ class GlobalStopsModel: NetworkDataModelProtocol {
     
     var apolloClient: ApolloClientProtocol?
     
+    var dataRefreshLoopTask: Task<Void, any Error>?
+    
     @Published var stops: [Stop] = []
     @Published var selectedStop: Stop? = nil
     

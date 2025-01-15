@@ -78,7 +78,7 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
     
     var apolloClient: ApolloClientProtocol?
     
-    private var task: Task<Void, Error>?
+    var dataRefreshLoopTask: Task<Void, Error>?
     
     // private var continuationIsActive = false
     
@@ -88,24 +88,6 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
     
     init(apolloClient: ApolloClientProtocol) {
         self.apolloClient = apolloClient
-    }
-    
-    func startRefreshingData(arguments: RouteListNetworkArguments, sleepDuration: Duration = .seconds(5)) {
-        if task != nil {
-            return
-        }
-        
-        task = Task {
-            while !Task.isCancelled {
-                await refreshDataOnce(arguments: arguments)
-                try? await Task.sleep(for: sleepDuration)
-            }
-        }
-    }
-    
-    func stopRefreshingData() {
-        task?.cancel()
-        task = nil
     }
     
     func refreshDataOnce(arguments: RouteListNetworkArguments) async {

@@ -55,16 +55,10 @@ class MapViewModel: NetworkDataModelProtocol {
     
     var apolloClient: ApolloClientProtocol?
     
+    var dataRefreshLoopTask: Task<Void, any Error>?
+    
     init(apolloClient: ApolloClientProtocol? = nil) {
         self.apolloClient = apolloClient
-    }
-    
-    func startRefreshingData(arguments: MapViewNetworkArguments, sleepDuration: Duration = .seconds(5)) {
-        fatalError("This method is not implemented yet.")
-    }
-    
-    func stopRefreshingData() {
-        fatalError("This method is not implemented yet.")
     }
     
     func refreshDataOnce(arguments: MapViewNetworkArguments) async {
