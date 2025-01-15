@@ -125,7 +125,7 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
             
             let _ = apolloClient.fetch(
                 query: GetRouteListDataQuery(systemId: systemId, stopId: stopId),
-                cachePolicy: .returnCacheDataAndFetch,
+                cachePolicy: .fetchIgnoringCacheData,
                 context: nil,
                 queue: .main
             ) { result in
