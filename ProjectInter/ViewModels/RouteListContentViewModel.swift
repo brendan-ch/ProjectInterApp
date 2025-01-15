@@ -123,7 +123,7 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
                 return
             }
             
-            apolloClient.fetch(
+            let _ = apolloClient.fetch(
                 query: GetRouteListDataQuery(systemId: systemId, stopId: stopId),
                 cachePolicy: .returnCacheDataAndFetch,
                 context: nil,
@@ -136,41 +136,45 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
                 
                 switch result {
                 case .success(let response):
-                    if let data = response.data {
-                        if let orderedStops = data.system?.stop?.orderedStops {
-                            self.routes = []
-                            for orderedStop in orderedStops {
-                                let route = orderedStop.route
-                                var routeListRoute = RouteListContentViewRoute(
-                                    id: route.id,
-                                    name: route.name,
-                                    colorHex: route.color
-                                )
-                                
-                                if let nextStopName = orderedStop.nextStop?.stop.name {
-                                    routeListRoute.nextStopName = nextStopName
-                                } else {
-                                    routeListRoute.nextStopName = "N/A"
-                                }
-                                
-                                if let shuttles = orderedStop.route.shuttles {
-                                    for shuttle in shuttles {
-                                        if let secondsRemaining = shuttle.eta?.secondsRemaining {
-                                            routeListRoute.addEta(secondsRemaining)
-                                        }
-                                    }
-                                }
-                                
-                                self.routes.append(routeListRoute)
-                            }
-                        }
-                    }
+                    self.updateDataFromResponse(response: response)
                 case .failure(let error):
                     print("Error fetching data: \(error)")
                 }
                 
                 self.continuationIsActive = false
                 continuation.resume()
+            }
+        }
+    }
+    
+    private func updateDataFromResponse(response: GraphQLResult<GetRouteListDataQuery.Data>) {
+        if let data = response.data {
+            if let orderedStops = data.system?.stop?.orderedStops {
+                self.routes = []
+                for orderedStop in orderedStops {
+                    let route = orderedStop.route
+                    var routeListRoute = RouteListContentViewRoute(
+                        id: route.id,
+                        name: route.name,
+                        colorHex: route.color
+                    )
+                    
+                    if let nextStopName = orderedStop.nextStop?.stop.name {
+                        routeListRoute.nextStopName = nextStopName
+                    } else {
+                        routeListRoute.nextStopName = "N/A"
+                    }
+                    
+                    if let shuttles = orderedStop.route.shuttles {
+                        for shuttle in shuttles {
+                            if let secondsRemaining = shuttle.eta?.secondsRemaining {
+                                routeListRoute.addEta(secondsRemaining)
+                            }
+                        }
+                    }
+                    
+                    self.routes.append(routeListRoute)
+                }
             }
         }
     }
