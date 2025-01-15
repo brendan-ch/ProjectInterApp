@@ -66,18 +66,17 @@ struct ShuttleInfoContentView: View {
             if let client = globalDataState.apolloClient {
                 viewModel.apolloClient = client
             }
-            if let arguments = shuttleInfoNetworkArguments {
-                Task {
-                    await viewModel.refreshDataOnce(arguments: arguments)
-                }
-            }
+            restartDataUpdatesIfArgumentsExist()
         }
         .onChange(of: globalDataState.selectedShuttleId) {
-            if let arguments = shuttleInfoNetworkArguments {
-                Task {
-                    await viewModel.refreshDataOnce(arguments: arguments)
-                }
-            }
+            restartDataUpdatesIfArgumentsExist()
+        }
+    }
+    
+    private func restartDataUpdatesIfArgumentsExist() {
+        if let arguments = shuttleInfoNetworkArguments {
+            viewModel.stopRefreshingData()
+            viewModel.startRefreshingData(arguments: arguments)
         }
     }
 }
