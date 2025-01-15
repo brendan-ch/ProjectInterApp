@@ -115,4 +115,15 @@ class MapViewModelTests {
         #expect(viewModel.shuttles.count == 1)
         #expect(viewModel.routes.isEmpty)
     }
+    
+    @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
+        let viewModel = MapViewModel()
+        let arguments = MapViewNetworkArguments(systemId: "1")
+        
+        await viewModel.refreshDataOnce(arguments: arguments)
+        
+        #expect(viewModel.routes.isEmpty)
+        #expect(viewModel.shuttles.isEmpty)
+    }
+    
 }
