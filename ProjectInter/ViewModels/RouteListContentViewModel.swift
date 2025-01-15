@@ -119,6 +119,7 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
         return await withCheckedContinuation { continuation in
             continuationIsActive = true
             guard let apolloClient = apolloClient else {
+                continuationIsActive = false
                 continuation.resume()
                 return
             }
