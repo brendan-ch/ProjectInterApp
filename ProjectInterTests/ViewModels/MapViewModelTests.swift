@@ -10,7 +10,7 @@ import Testing
 import ApolloTestSupport
 import ProjectInterTestMocks
 
-class MapViewModelTests {
+class MapViewModelTests: NetworkDataModelTestsProtocol {
     let defaultRoute = Mock<ProjectInterTestMocks.Route>(
         color: "#ffffff",
         id: "1",
@@ -39,10 +39,8 @@ class MapViewModelTests {
         )
     )
     
-    @Test func refreshDataOnceRefreshesData() async {
-        let mockClient = MockApolloClient()
-        
-        let mock = Mock<ProjectInterTestMocks.Query>(
+    var defaultMock: Mock<Query> {
+        Mock<ProjectInterTestMocks.Query>(
             system: Mock<ProjectInterTestMocks.System>(
                 routes: [
                     defaultRoute
@@ -52,7 +50,25 @@ class MapViewModelTests {
                 ]
             )
         )
-        mockClient.mock = mock
+    }
+
+    
+    @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
+        
+    }
+    
+    @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
+        
+    }
+    
+    @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
+        
+    }
+    
+    @Test func refreshDataOnceUpdatesData() async {
+        let mockClient = MockApolloClient()
+        
+        mockClient.mock = defaultMock
         
         let viewModel = MapViewModel(apolloClient: mockClient)
         let arguments = MapViewNetworkArguments(systemId: "1")
