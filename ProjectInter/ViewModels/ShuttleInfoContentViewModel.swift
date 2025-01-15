@@ -32,14 +32,6 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func startRefreshingData(arguments: ShuttleInfoNetworkArguments, sleepDuration: Duration = .seconds(5)) {
-        fatalError("This method is not implemented yet.")
-    }
-    
-    func stopRefreshingData() {
-        fatalError("This method is not implemented yet.")
-    }
-    
     var dataRefreshLoopTask: Task<Void, any Error>?
 
     func refreshDataOnce(arguments: ShuttleInfoNetworkArguments) async {
