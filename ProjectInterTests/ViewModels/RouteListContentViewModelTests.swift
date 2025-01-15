@@ -55,9 +55,58 @@ class RouteListContentViewRouteTests {
 
 class RouteListContentViewModelTests {
     let defaultArguments = RouteListNetworkArguments(systemId: "1", stopId: "1")
+    let defaultMock = Mock<ProjectInterTestMocks.Query>(
+        system: Mock<ProjectInterTestMocks.System>(
+            stop: Mock<ProjectInterTestMocks.Stop>(
+                name: "Chapman Court",
+                orderedStops: [
+                    Mock<ProjectInterTestMocks.OrderedStop>(
+                        nextStop: Mock<ProjectInterTestMocks.OrderedStop>(
+                            stop: Mock<ProjectInterTestMocks.Stop>(
+                                name: "Panther Village"
+                            )
+                        ), route: Mock<ProjectInterTestMocks.Route>(
+                            color: "#000000", id: "1",
+                            name: "Black Route",
+                            shuttles: [
+                                Mock<ProjectInterTestMocks.Shuttle>(
+                                    eta: Mock<ProjectInterTestMocks.ETA>(
+                                        secondsRemaining: 35
+                                    )
+                                ),
+                                Mock<ProjectInterTestMocks.Shuttle>(
+                                    eta: Mock<ProjectInterTestMocks.ETA>(
+                                        secondsRemaining: 125
+                                    )
+                                )
+                            ]
+                        )
+                    )
+                ]
+            )
+        )
+    )
+
     
-    @Test func refreshDataOnceUpdatesRouteData() async {
-        let mock = Mock<ProjectInterTestMocks.Query>(
+    @Test func startRefreshDataRefreshesDataMultipleTimes() async {
+        // Arrange
+        let mockClient = MockApolloClient()
+        mockClient.mock = defaultMock
+        
+        let viewModel = RouteListContentViewModel(apolloClient: mockClient)
+        let arguments = defaultArguments
+        
+        // Act
+        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(10))
+        
+        // Assert
+        try? await Task.sleep(for: .milliseconds(50))
+        
+        #expect(viewModel.routes.count == 1)
+        #expect(viewModel.routes[0].etasInSeconds.count == 2)
+        
+        // Arrange
+        let updatedMock = Mock<ProjectInterTestMocks.Query>(
             system: Mock<ProjectInterTestMocks.System>(
                 stop: Mock<ProjectInterTestMocks.Stop>(
                     name: "Chapman Court",
@@ -73,11 +122,6 @@ class RouteListContentViewModelTests {
                                 shuttles: [
                                     Mock<ProjectInterTestMocks.Shuttle>(
                                         eta: Mock<ProjectInterTestMocks.ETA>(
-                                            secondsRemaining: 35
-                                        )
-                                    ),
-                                    Mock<ProjectInterTestMocks.Shuttle>(
-                                        eta: Mock<ProjectInterTestMocks.ETA>(
                                             secondsRemaining: 125
                                         )
                                     )
@@ -88,7 +132,16 @@ class RouteListContentViewModelTests {
                 )
             )
         )
+        mockClient.mock = updatedMock
         
+        // Assert
+        try? await Task.sleep(for: .milliseconds(50))
+        
+        #expect(viewModel.routes[0].etasInSeconds.count == 1)
+    }
+    
+    @Test func refreshDataOnceUpdatesRouteData() async {
+        let mock = defaultMock
         let mockClient = MockApolloClient()
         mockClient.mock = mock
         

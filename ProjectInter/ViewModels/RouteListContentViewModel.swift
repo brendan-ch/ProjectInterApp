@@ -78,8 +78,9 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
     
     var apolloClient: ApolloClientProtocol?
     
-    private var isRefreshingData = false
     private var task: Task<Void, Error>?
+    
+    private var continuationIsActive = false
     
     init() {
         self.apolloClient = nil
@@ -89,24 +90,16 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func refreshDataOnce(arguments: RouteListNetworkArguments) async {
-        if !isRefreshingData {
-            let systemId = arguments.systemId
-            let stopId = arguments.stopId
-            
-            await refreshData(systemId: systemId, stopId: stopId)
+    func startRefreshingData(arguments: RouteListNetworkArguments, sleepDuration: Duration = .seconds(5)) {
+        if task != nil {
+            return
         }
-    }
-    
-    func startRefreshingData(arguments: RouteListNetworkArguments) {
-        stopRefreshingData()
         
         task = Task {
-            await refreshDataOnce(arguments: arguments)
-            // TODO: Figure out a way to loop this without calling continuation.resume multiple times
-//            while true {
-//                try await Task.sleep(for: .seconds(5))
-//            }
+            while !Task.isCancelled {
+                await refreshDataOnce(arguments: arguments)
+                try? await Task.sleep(for: sleepDuration)
+            }
         }
     }
     
@@ -115,30 +108,48 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
         task = nil
     }
     
+    func refreshDataOnce(arguments: RouteListNetworkArguments) async {
+        let systemId = arguments.systemId
+        let stopId = arguments.stopId
+        
+        await refreshData(systemId: systemId, stopId: stopId)
+    }
+    
     private func refreshData(systemId: String, stopId: String) async {
         return await withCheckedContinuation { continuation in
+            continuationIsActive = true
             guard let apolloClient = apolloClient else {
                 continuation.resume()
                 return
             }
             
-            isRefreshingData = true
-            
-            apolloClient.fetch(
+            let _ = apolloClient.fetch(
                 query: GetRouteListDataQuery(systemId: systemId, stopId: stopId),
-                cachePolicy: .returnCacheDataAndFetch,
+                cachePolicy: .fetchIgnoringCacheData,
                 context: nil,
                 queue: .main
             ) { result in
-                defer { continuation.resume() }
-                
-                guard let data = try? result.get().data else {
-                    return
-                }
-                guard let orderedStops = data.system?.stop?.orderedStops else {
+                // Handle cases where callback is called multiple times
+                if !self.continuationIsActive {
                     return
                 }
                 
+                switch result {
+                case .success(let response):
+                    self.updateDataFromResponse(response: response)
+                case .failure(let error):
+                    print("Error fetching data: \(error)")
+                }
+                
+                self.continuationIsActive = false
+                continuation.resume()
+            }
+        }
+    }
+    
+    private func updateDataFromResponse(response: GraphQLResult<GetRouteListDataQuery.Data>) {
+        if let data = response.data {
+            if let orderedStops = data.system?.stop?.orderedStops {
                 self.routes = []
                 for orderedStop in orderedStops {
                     let route = orderedStop.route
@@ -164,11 +175,8 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
                     
                     self.routes.append(routeListRoute)
                 }
-                
-                self.isRefreshingData = false
             }
         }
-        
     }
     
 }
