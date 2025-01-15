@@ -86,27 +86,8 @@ class RouteListContentViewModelTests {
             )
         )
     )
-
     
-    @Test func startRefreshDataRefreshesDataMultipleTimes() async {
-        // Arrange
-        let mockClient = MockApolloClient()
-        mockClient.mock = defaultMock
-        
-        let viewModel = RouteListContentViewModel(apolloClient: mockClient)
-        let arguments = defaultArguments
-        
-        // Act
-        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(10))
-        
-        // Assert
-        try? await Task.sleep(for: .milliseconds(50))
-        
-        #expect(viewModel.routes.count == 1)
-        #expect(viewModel.routes[0].etasInSeconds.count == 2)
-        
-        // Arrange
-        let updatedMock = Mock<ProjectInterTestMocks.Query>(
+    let secondaryMock = Mock<ProjectInterTestMocks.Query>(
             system: Mock<ProjectInterTestMocks.System>(
                 stop: Mock<ProjectInterTestMocks.Stop>(
                     name: "Chapman Court",
@@ -132,12 +113,51 @@ class RouteListContentViewModelTests {
                 )
             )
         )
-        mockClient.mock = updatedMock
+
+    
+    @Test func startRefreshDataRefreshesDataMultipleTimes() async {
+        // Arrange
+        let mockClient = MockApolloClient()
+        mockClient.mock = defaultMock
+        
+        let viewModel = RouteListContentViewModel(apolloClient: mockClient)
+        let arguments = defaultArguments
+        
+        // Act
+        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(10))
+        
+        // Assert
+        try? await Task.sleep(for: .milliseconds(50))
+        
+        #expect(viewModel.routes.count == 1)
+        #expect(viewModel.routes[0].etasInSeconds.count == 2)
+        
+        // Arrange
+        mockClient.mock = secondaryMock
         
         // Assert
         try? await Task.sleep(for: .milliseconds(50))
         
         #expect(viewModel.routes[0].etasInSeconds.count == 1)
+    }
+
+    @Test func stopRefreshingDataStopsDataRefresh() async {
+        // Arrange
+        let mockClient = MockApolloClient()
+        mockClient.mock = defaultMock
+        
+        let viewModel = RouteListContentViewModel(apolloClient: mockClient)
+        viewModel.startRefreshingData(arguments: defaultArguments, sleepDuration: .milliseconds(10))
+        
+        // Act
+        try? await Task.sleep(for: .milliseconds(50))
+        viewModel.stopRefreshingData()
+        mockClient.mock = secondaryMock
+        
+        // Assert
+        try? await Task.sleep(for: .milliseconds(50))
+        #expect(viewModel.routes.count == 1)
+        #expect(viewModel.routes[0].etasInSeconds.count == 2)
     }
     
     @Test func refreshDataOnceUpdatesRouteData() async {
