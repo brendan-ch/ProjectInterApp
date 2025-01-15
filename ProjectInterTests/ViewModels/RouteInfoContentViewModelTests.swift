@@ -10,7 +10,7 @@ import Testing
 import ApolloTestSupport
 import ProjectInterTestMocks
 
-class RouteInfoContentViewModelTests {
+class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     let defaultArguments = RouteInfoNetworkArguments(systemId: "1", stopId: "1", routeId: "1")
     let defaultMock = Mock<ProjectInterTestMocks.Query>(
         system: .init(
@@ -67,7 +67,7 @@ class RouteInfoContentViewModelTests {
     )
 
     
-    @Test func startRefreshingDataRefreshesDataOverTime() async {
+    @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
         // TODO: Find a way to generate this type of test quickly
         // Arrange
         let mockClient = MockApolloClient()
@@ -114,7 +114,7 @@ class RouteInfoContentViewModelTests {
         #expect(viewModel.shuttles.count == 2)
     }
     
-    @Test func refreshDataOnceRefreshesData() async {
+    @Test func refreshDataOnceUpdatesData() async {
         let mock = defaultMock
         let mockClient = MockApolloClient()
         mockClient.mock = mock

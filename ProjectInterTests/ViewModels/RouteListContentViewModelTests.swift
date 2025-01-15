@@ -53,7 +53,7 @@ class RouteListContentViewRouteTests {
     }
 }
 
-class RouteListContentViewModelTests {
+class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
     let defaultArguments = RouteListNetworkArguments(systemId: "1", stopId: "1")
     let defaultMock = Mock<ProjectInterTestMocks.Query>(
         system: Mock<ProjectInterTestMocks.System>(
@@ -115,7 +115,7 @@ class RouteListContentViewModelTests {
         )
 
     
-    @Test func startRefreshDataRefreshesDataMultipleTimes() async {
+    @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
         // Arrange
         let mockClient = MockApolloClient()
         mockClient.mock = defaultMock
@@ -160,7 +160,7 @@ class RouteListContentViewModelTests {
         #expect(viewModel.routes[0].etasInSeconds.count == 2)
     }
     
-    @Test func refreshDataOnceUpdatesRouteData() async {
+    @Test func refreshDataOnceUpdatesData() async {
         let mock = defaultMock
         let mockClient = MockApolloClient()
         mockClient.mock = mock
