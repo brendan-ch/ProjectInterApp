@@ -115,7 +115,6 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
         )
 
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
-        // Arrange
         let mockClient = MockApolloClient()
         mockClient.mock = defaultMock
         
