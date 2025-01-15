@@ -10,7 +10,7 @@ import Testing
 import ApolloTestSupport
 import ProjectInterTestMocks
 
-class MapViewModelTests {
+class MapViewModelTests: NetworkDataModelTestsProtocol {
     let defaultRoute = Mock<ProjectInterTestMocks.Route>(
         color: "#ffffff",
         id: "1",
@@ -39,10 +39,8 @@ class MapViewModelTests {
         )
     )
     
-    @Test func refreshDataOnceRefreshesData() async {
-        let mockClient = MockApolloClient()
-        
-        let mock = Mock<ProjectInterTestMocks.Query>(
+    var defaultMock: Mock<Query> {
+        Mock<ProjectInterTestMocks.Query>(
             system: Mock<ProjectInterTestMocks.System>(
                 routes: [
                     defaultRoute
@@ -52,24 +50,141 @@ class MapViewModelTests {
                 ]
             )
         )
-        mockClient.mock = mock
+    }
+    
+    var secondaryMock: Mock<Query> {
+        Mock<ProjectInterTestMocks.Query>(
+            system: .init(
+                routes: [
+                    .init(
+                        color: "#000000",
+                        id: "2",
+                        polylineCoordinates: [
+                            .init(
+                                latitude: 3,
+                                longitude: 3
+                            ),
+                            .init(
+                                latitude: 4,
+                                longitude: 4
+                            )
+                        ]
+                    ),
+                    .init(
+                        color: "#111111",
+                        id: "3",
+                        polylineCoordinates: [
+                            .init(
+                                latitude: 5,
+                                longitude: 5
+                            ),
+                            .init(
+                                latitude: 6,
+                                longitude: 6
+                            )
+                        ]
+                    )
+                ],
+                shuttles: [
+                    .init(
+                        coordinates: Mock<Coordinates>(
+                            latitude: 3,
+                            longitude: 3
+                        ),
+                        id: "2",
+                        name: "Shuttle 2",
+                        route: Mock<Route>(
+                            color: "#000000",
+                            id: "2"
+                        )
+                    ),
+                    .init(
+                        coordinates: Mock<Coordinates>(
+                            latitude: 5,
+                            longitude: 5
+                        ),
+                        id: "3",
+                        name: "Shuttle 3",
+                        route: Mock<Route>(
+                            color: "#111111",
+                            id: "3"
+                        )
+                    )
+                ]
+            )
+        )
+    }
+    
+    func generateClientAndViewModelWithArguments() -> (MockApolloClient, MapViewModel, MapViewNetworkArguments) {
+        let mockClient = MockApolloClient()
         
         let viewModel = MapViewModel(apolloClient: mockClient)
         let arguments = MapViewNetworkArguments(systemId: "1")
         
-        await viewModel.refreshDataOnce(arguments: arguments)
-        
+        return (mockClient, viewModel, arguments)
+    }
+    
+    func assertViewModelDataForDefaultMock(viewModel: MapViewModel) {
         #expect(viewModel.routes.count == 1)
         #expect(viewModel.shuttles.count == 1)
     }
     
+    func assertViewModelDataForSecondaryMock(viewModel: MapViewModel) {
+        #expect(viewModel.routes.count == 2)
+        #expect(viewModel.shuttles.count == 2)
+    }
+    
+    @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
+        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
+        mockClient.mock = defaultMock
+        
+        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(500))
+        try? await Task.sleep(for: .milliseconds(200))
+        
+        assertViewModelDataForDefaultMock(viewModel: viewModel)
+    }
+    
+    @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
+        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
+        mockClient.mock = defaultMock
+        
+        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(500))
+        try? await Task.sleep(for: .milliseconds(200))
+        
+        mockClient.mock = secondaryMock
+        try? await Task.sleep(for: .milliseconds(400))
+        
+        assertViewModelDataForSecondaryMock(viewModel: viewModel)
+    }
+    
+    @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
+        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
+        mockClient.mock = defaultMock
+        
+        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(500))
+        try? await Task.sleep(for: .milliseconds(700))
+        
+        viewModel.stopRefreshingData()
+        
+        mockClient.mock = secondaryMock
+        try? await Task.sleep(for: .milliseconds(400))
+        
+        assertViewModelDataForDefaultMock(viewModel: viewModel)
+    }
+    
+    @Test func refreshDataOnceUpdatesData() async {
+        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
+        mockClient.mock = defaultMock
+        
+        await viewModel.refreshDataOnce(arguments: arguments)
+        
+        assertViewModelDataForDefaultMock(viewModel: viewModel)
+    }
+    
     @Test func refreshDataOnceDoesNothingIfNoData() async {
-        let mockClient = MockApolloClient()
+        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
         mockClient.mock = nil
-        
-        let viewModel = MapViewModel(apolloClient: mockClient)
-        let arguments = MapViewNetworkArguments(systemId: "1")
-        
+
         await viewModel.refreshDataOnce(arguments: arguments)
         
         #expect(viewModel.routes.isEmpty)
@@ -77,7 +192,7 @@ class MapViewModelTests {
     }
     
     @Test func refreshDataOnceStillPopulatesRoutesIfNoShuttles() async {
-        let mockClient = MockApolloClient()
+        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
         let mock = Mock<ProjectInterTestMocks.Query>(
             system: Mock<ProjectInterTestMocks.System>(
                 routes: [
@@ -87,9 +202,6 @@ class MapViewModelTests {
         )
         mockClient.mock = mock
         
-        let viewModel = MapViewModel(apolloClient: mockClient)
-        let arguments = MapViewNetworkArguments(systemId: "1")
-        
         await viewModel.refreshDataOnce(arguments: arguments)
         
         #expect(viewModel.routes.count == 1)
@@ -97,7 +209,7 @@ class MapViewModelTests {
     }
     
     @Test func refreshDataOnceStillPopulatesShuttlesIfNoRoutes() async {
-        let mockClient = MockApolloClient()
+        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
         let mock = Mock<ProjectInterTestMocks.Query>(
             system: Mock<ProjectInterTestMocks.System>(
                 shuttles: [
@@ -107,12 +219,20 @@ class MapViewModelTests {
         )
         mockClient.mock = mock
         
-        let viewModel = MapViewModel(apolloClient: mockClient)
-        let arguments = MapViewNetworkArguments(systemId: "1")
-        
         await viewModel.refreshDataOnce(arguments: arguments)
         
         #expect(viewModel.shuttles.count == 1)
         #expect(viewModel.routes.isEmpty)
     }
+    
+    @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
+        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
+        viewModel.apolloClient = nil
+        
+        await viewModel.refreshDataOnce(arguments: arguments)
+        
+        #expect(viewModel.routes.isEmpty)
+        #expect(viewModel.shuttles.isEmpty)
+    }
+    
 }

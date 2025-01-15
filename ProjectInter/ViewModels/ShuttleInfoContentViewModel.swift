@@ -40,6 +40,7 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
         fatalError("This method is not implemented yet.")
     }
     
+    var dataRefreshLoopTask: Task<Void, any Error>?
 
     func refreshDataOnce(arguments: ShuttleInfoNetworkArguments) async {
         let systemId = arguments.systemId

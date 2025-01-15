@@ -33,6 +33,8 @@ class GlobalDataModel: NetworkDataModelProtocol {
     
     var apolloClient: ApolloClientProtocol?
     
+    var dataRefreshLoopTask: Task<Void, any Error>?
+    
     @Published var systems: [System] = []
     @Published var selectedSystem: System? = nil
     

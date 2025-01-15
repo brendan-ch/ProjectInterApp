@@ -10,6 +10,8 @@ import SwiftUI
 protocol NetworkDataModelProtocol: ObservableObject {
     associatedtype T
     
+    var dataRefreshLoopTask: Task<Void, Error>? { get set }
+    
     /// Starts looping a repeating task to refresh data.
     /// Waits for data to complete refreshing and waits for the specified
     /// duration. Also refreshes when first called before the sleep duration.
@@ -26,4 +28,24 @@ protocol NetworkDataModelProtocol: ObservableObject {
     /// Refreshes the data once and blocks the calling thread.
     /// Resumes when the refresh is done.
     func refreshDataOnce(arguments: T) async
+}
+
+extension NetworkDataModelProtocol {
+    func startRefreshingData(arguments: T, sleepDuration: Duration = .seconds(5)) {
+        if dataRefreshLoopTask != nil {
+            return
+        }
+        
+        dataRefreshLoopTask = Task {
+            while !Task.isCancelled {
+                await refreshDataOnce(arguments: arguments)
+                try? await Task.sleep(for: sleepDuration)
+            }
+        }
+    }
+    
+    func stopRefreshingData() {
+        dataRefreshLoopTask?.cancel()
+        dataRefreshLoopTask = nil
+    }
 }
