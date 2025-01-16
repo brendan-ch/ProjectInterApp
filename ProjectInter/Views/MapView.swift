@@ -14,6 +14,9 @@ struct MapView: View {
     /// Source of truth for the currently selected route ID and shuttle ID.
     @EnvironmentObject var globalDataState: GlobalDataModel
     
+    /// Source of truth for the currently selected stop ID and the list of stops.
+    @EnvironmentObject var globalStopsModel: GlobalStopsModel
+    
     /// Backing view model.
     @StateObject var viewModel = MapViewModel()
     
@@ -27,6 +30,8 @@ struct MapView: View {
         Map(position: $viewModel.position, selection: $globalDataState.selectedShuttleId) {
             UserAnnotation()
             
+            // MARK: Polyline rendering
+            
             if let routeId = globalDataState.selectedRouteId {
                 let routeToDisplay = viewModel.routes.first { route in
                     route.id == routeId
@@ -37,6 +42,8 @@ struct MapView: View {
                         .stroke(Color(hex: routeToDisplay.colorHex), lineWidth: 5)
                 }
             }
+            
+            // MARK: Shuttle rendering
             
             ForEach(viewModel.shuttles) { shuttle in
                 let shouldDisplayShuttle = globalDataState.selectedRouteId != nil && shuttle.routeId == globalDataState.selectedRouteId || globalDataState.selectedRouteId == nil
@@ -63,6 +70,31 @@ struct MapView: View {
                         globalDataState.selectedShuttleId == shuttle.id ? .visible : .hidden
                     )
                     .tag(shuttle.id)
+                }
+            }
+            
+            // MARK: Stop rendering
+            
+            // TODO: display all stops associated with route if selected
+            if globalStopsModel.selectedStop != nil {
+                let stopToRender = viewModel.stops.first { element in
+                    element.id == globalStopsModel.selectedStop?.id
+                }
+                
+                if let stopToRender = stopToRender {
+                    Annotation(
+                        stopToRender.name,
+                        coordinate: stopToRender.coordinates,
+                        anchor: .center
+                    ) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 100)
+                                .fill(Color.white)
+                            RoundedRectangle(cornerRadius: 100)
+                                .stroke(.black, lineWidth: 2)
+                        }
+                    }
+                    .annotationTitles(.visible)
                 }
             }
         }
@@ -98,6 +130,12 @@ struct MapView: View {
     let builder = MapViewModelPlaceholderBuilder()
     let viewModel = builder.build()
     
-    MapView(viewModel: viewModel)
+    let stopToSelectFromViewModel = viewModel.stops.first!
+    
+    let globalStopsModel = GlobalStopsModel()
+    globalStopsModel.selectedStop = .init(name: stopToSelectFromViewModel.name, id: stopToSelectFromViewModel.id, coordinates: .init(latitude: stopToSelectFromViewModel.coordinates.latitude, longitude: stopToSelectFromViewModel.coordinates.longitude))
+    
+    return MapView(viewModel: viewModel)
         .environmentObject(GlobalDataModel())
+        .environmentObject(globalStopsModel)
 }
