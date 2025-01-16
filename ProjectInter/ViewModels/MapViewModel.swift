@@ -118,6 +118,21 @@ class MapViewModel: NetworkDataModelProtocol {
                     
                     self.routes.append(mapViewRoute)
                 }
+                
+                self.stops = []
+                let stops = data.system?.stops ?? []
+                for stop in stops {
+                    let mapViewStop = MapViewStop(
+                        id: stop.id,
+                        name: stop.name,
+                        coordinates: CLLocationCoordinate2D(
+                            latitude: stop.coordinates.latitude,
+                            longitude: stop.coordinates.longitude
+                        )
+                    )
+                    
+                    self.stops.append(mapViewStop)
+                }
             }
         }
     }
