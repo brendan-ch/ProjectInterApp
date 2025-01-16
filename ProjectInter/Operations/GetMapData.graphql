@@ -1,5 +1,12 @@
 query GetMapData($systemId: ID!) {
   system(id: $systemId) {
+    stops {
+      name
+      coordinates {
+        latitude
+        longitude
+      }
+    }
     shuttles {
       coordinates {
         latitude
