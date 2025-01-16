@@ -64,6 +64,7 @@ class MapViewModel: NetworkDataModelProtocol {
     
     @Published var routes: [MapViewRoute] = []
     @Published var shuttles: [MapViewShuttle] = []
+    @Published var stops: [MapViewStop] = []
     
     var apolloClient: ApolloClientProtocol?
     
