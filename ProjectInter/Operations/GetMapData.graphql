@@ -1,6 +1,7 @@
 query GetMapData($systemId: ID!) {
   system(id: $systemId) {
     stops {
+      id
       name
       coordinates {
         latitude
