@@ -36,6 +36,18 @@ struct MapViewShuttle: Identifiable {
     var coordinates: CLLocationCoordinate2D
 }
 
+/// Represents a stop on the map.
+struct MapViewStop: Identifiable {
+    /// The server-side ID of the stop.
+    var id: String
+    
+    /// The name of the stop.
+    var name: String
+    
+    /// Coordinates of the stop's location.
+    var coordinates: CLLocationCoordinate2D
+}
+
 // MARK: - Network arguments
 
 /// Information to pass into the network request for map data.
