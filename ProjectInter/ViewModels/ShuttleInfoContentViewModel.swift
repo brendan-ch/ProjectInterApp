@@ -36,6 +36,8 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
     /// Text representing the ETA of the shuttle relative to the user's selected stop.
     @Published var etaDisplay = ""
     
+    @Published var etaListItems: [ShuttleInfoEtaListItem] = []
+    
     var apolloClient: ApolloClientProtocol?
     
     init(apolloClient: ApolloClientProtocol? = nil) {
@@ -61,7 +63,7 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
                 return
             }
             
-            apolloClient.fetch(query: GetShuttleInfoDataQuery(systemId: systemId, stopId: stopId, shuttleId: shuttleId)) { result in
+            apolloClient.fetch(query: GetShuttleInfoDataQuery(systemId: systemId, shuttleId: shuttleId)) { result in
                 defer {
                     continuationIsActive = false
                     continuation.resume()
@@ -80,12 +82,17 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
                 
                 self.name = shuttle.name
                 
-                if let secondsRemaining = shuttle.eta?.secondsRemaining {
-                    if secondsRemaining < 60 {
-                        self.etaDisplay = "Less than 1 min"
-                    } else {
-                        let minutesRemaining = Int(secondsRemaining / 60)
-                        self.etaDisplay = "\(minutesRemaining) min"
+                if let etas = shuttle.etas {
+                    self.etaListItems = []
+                    for eta in etas {
+                        if eta.stop.id == stopId {
+                            self.etaDisplay = ETAFormatter.formatSecondsRemaining(eta.secondsRemaining)
+                        }
+                        
+                        self.etaListItems.append(ShuttleInfoEtaListItem(stopName: eta.stop.name, secondsRemaining: eta.secondsRemaining))
+                    }
+                    self.etaListItems.sort {
+                        $0.secondsRemaining < $1.secondsRemaining
                     }
                 }
             }
