@@ -10,6 +10,24 @@ import Testing
 import ApolloTestSupport
 import ProjectInterTestMocks
 
+/// Tests for ``RouteInfoContentViewShuttle``.
+class RouteInfoContentViewShuttleTests {
+    @Test func testEstimatedTimeAwayDisplayForNoData() {
+        let shuttle = RouteInfoContentViewShuttle(name: "Shuttle 1", id: "1")
+        #expect(shuttle.estimatedTimeAwayDisplay == "N/A")
+    }
+    
+    @Test func testEstimatedTimeAwayDisplayForUnderOneMinute() {
+        let shuttle = RouteInfoContentViewShuttle(name: "Shuttle 1", secondsRemaining: 20, id: "1")
+        #expect(shuttle.estimatedTimeAwayDisplay == "Less than 1 minute")
+    }
+    
+    @Test func testEstimatedTimeAwayDisplayForAboveOneMinute() {
+        let shuttle = RouteInfoContentViewShuttle(name: "Shuttle 1", secondsRemaining: 120, id: "1")
+        #expect(shuttle.estimatedTimeAwayDisplay == "2 min")
+    }
+}
+
 class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     let defaultArguments = RouteInfoNetworkArguments(systemId: "1", stopId: "1", routeId: "1")
     let defaultMock = Mock<ProjectInterTestMocks.Query>(
@@ -26,14 +44,14 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
                 shuttles: [
                     .init(
                         eta: .init(
-                            secondsRemaining: 30
+                            secondsRemaining: 125
                         ),
                         id: "1",
                         name: "Shuttle 1"
                     ),
                     .init(
                         eta: .init(
-                            secondsRemaining: 125
+                            secondsRemaining: 30
                         ),
                         id: "2",
                         name: "Shuttle 2"
@@ -200,5 +218,55 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.routeName == "Red Route")
         #expect(viewModel.routeNextStopName == "Panther Village")
         #expect(viewModel.shuttles.count == 0)
+    }
+    
+    @Test func refreshDataOnceSortsShuttlesBySecondsRemaining() async {
+        let mock = Mock<ProjectInterTestMocks.Query>(
+            system: .init(
+                route: .init(
+                    name: "Red Route",
+                    orderedStop: .init(
+                        nextStop: .init(
+                            stop: .init(
+                                name: "Panther Village"
+                            )
+                        )
+                    ),
+                    shuttles: [
+                        .init(
+                            id: "3",
+                            name: "Shuttle 3"
+                        ),
+                        .init(
+                            eta: .init(
+                                secondsRemaining: 125
+                            ),
+                            id: "1",
+                            name: "Shuttle 1"
+                        ),
+                        .init(
+                            eta: .init(
+                                secondsRemaining: 30
+                            ),
+                            id: "2",
+                            name: "Shuttle 2"
+                        )
+                    ]
+                )
+            )
+        )
+        
+        let mockClient = MockApolloClient()
+        mockClient.mock = mock
+        
+        let viewModel = RouteInfoContentViewModel(apolloClient: mockClient)
+        let arguments = defaultArguments
+        
+        await viewModel.refreshDataOnce(arguments: arguments)
+        
+        #expect(viewModel.shuttles.count == 3)
+        #expect(viewModel.shuttles[0].secondsRemaining == 30)
+        #expect(viewModel.shuttles[1].secondsRemaining == 125)
+        #expect(viewModel.shuttles[2].secondsRemaining == nil)
     }
 }
