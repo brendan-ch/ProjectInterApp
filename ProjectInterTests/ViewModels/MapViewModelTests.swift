@@ -32,14 +32,8 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
             latitude: 1,
             longitude: 1
         ),
-        etas: [
-            .init(
-                secondsRemaining: 20
-            )
-        ],
         id: "1",
-        name: "Shuttle 1",
-        route: Mock<Route>(
+        name: "Shuttle 1", route: Mock<Route>(
             color: "#ffffff",
             id: "1"
         )
@@ -113,11 +107,6 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
                             latitude: 3,
                             longitude: 3
                         ),
-                        etas: [
-                            .init(
-                                secondsRemaining: 20
-                            )
-                        ],
                         id: "2",
                         name: "Shuttle 2",
                         route: Mock<Route>(
@@ -130,11 +119,6 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
                             latitude: 5,
                             longitude: 5
                         ),
-                        etas: [
-                            .init(
-                                secondsRemaining: 20
-                            )
-                        ],
                         id: "3",
                         name: "Shuttle 3",
                         route: Mock<Route>(
@@ -304,47 +288,5 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
         
         #expect(viewModel.stops.first!.routeIds.count == 1)
         #expect(viewModel.stops.first!.routeIds.contains("1"))
-    }
-    
-    @Test func refreshDataOnceOnlyAddsShuttlesWithEtaData() async {
-        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        
-        mockClient.mock = Mock<ProjectInterTestMocks.Query>(
-            system: .init(
-                shuttles: [
-                    defaultShuttle,
-                    .init(
-                        coordinates: .init(
-                            latitude: 2,
-                            longitude: 2
-                        ),
-                        etas: nil,
-                        id: "2",
-                        name: "Shuttle 2",
-                        route: Mock<Route>(
-                            color: "#ffffff",
-                            id: "1"
-                        )
-                    ),
-                    .init(
-                        coordinates: .init(
-                            latitude: 3,
-                            longitude: 3
-                        ),
-                        etas: [],
-                        id: "3",
-                        name: "Shuttle 3",
-                        route: Mock<Route>(
-                            color: "#ffffff",
-                            id: "1"
-                        )
-                    )
-                ]
-            )
-        )
-        
-        await viewModel.refreshDataOnce(arguments: arguments)
-        
-        #expect(viewModel.shuttles.count == 1)
     }
 }
