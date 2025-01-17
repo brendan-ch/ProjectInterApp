@@ -10,6 +10,24 @@ import Testing
 import ApolloTestSupport
 import ProjectInterTestMocks
 
+/// Tests for ``RouteInfoContentViewShuttle``.
+class RouteInfoContentViewShuttleTests {
+    @Test func testEstimatedTimeAwayDisplayForNoData() {
+        let shuttle = RouteInfoContentViewShuttle(name: "Shuttle 1", id: "1")
+        #expect(shuttle.estimatedTimeAwayDisplay == "N/A")
+    }
+    
+    @Test func testEstimatedTimeAwayDisplayForUnderOneMinute() {
+        let shuttle = RouteInfoContentViewShuttle(name: "Shuttle 1", secondsRemaining: 20, id: "1")
+        #expect(shuttle.estimatedTimeAwayDisplay == "Less than 1 minute")
+    }
+    
+    @Test func testEstimatedTimeAwayDisplayForAboveOneMinute() {
+        let shuttle = RouteInfoContentViewShuttle(name: "Shuttle 1", secondsRemaining: 120, id: "1")
+        #expect(shuttle.estimatedTimeAwayDisplay == "2 min")
+    }
+}
+
 class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     let defaultArguments = RouteInfoNetworkArguments(systemId: "1", stopId: "1", routeId: "1")
     let defaultMock = Mock<ProjectInterTestMocks.Query>(

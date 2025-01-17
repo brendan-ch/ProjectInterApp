@@ -16,9 +16,22 @@ struct RouteInfoContentViewShuttle: Identifiable {
     /// The name of the shuttle.
     var name: String
     
+    /// The number of seconds remaining (for sorting).
+    var secondsRemaining: Double?
+    
     /// String representing how far away the shuttle is from a given stop,
     /// rendered from server-side data.
-    var estimatedTimeAwayDisplay: String
+    var estimatedTimeAwayDisplay: String {
+        if let secondsRemaining = secondsRemaining {
+            if secondsRemaining < 60 {
+                return "Less than 1 minute"
+            } else {
+                let minutesRemaining = Int(secondsRemaining / 60)
+                return "\(minutesRemaining) min"
+            }
+        }
+        return "N/A"
+    }
     
     /// The server-side ID of the shuttle.
     var id: String
@@ -107,18 +120,9 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
                     for shuttle in shuttles {
                         var routeInfoContentViewShuttle = RouteInfoContentViewShuttle(
                             name: shuttle.name,
-                            estimatedTimeAwayDisplay: "N/A",
+                            secondsRemaining: shuttle.eta?.secondsRemaining,
                             id: shuttle.id
                         )
-                        
-                        if let secondsRemaining = shuttle.eta?.secondsRemaining {
-                            if secondsRemaining < 60 {
-                                routeInfoContentViewShuttle.estimatedTimeAwayDisplay = "Less than 1 min"
-                            } else {
-                                let minutesRemaining = Int(secondsRemaining / 60)
-                                routeInfoContentViewShuttle.estimatedTimeAwayDisplay = "\(minutesRemaining) min"
-                            }
-                        }
                         
                         self.shuttles.append(routeInfoContentViewShuttle)
                     }
@@ -138,8 +142,8 @@ class RouteInfoContentViewModelPlaceholderBuilder: PlaceholderBuilderProtocol {
         newModel.routeNextStopName = "Chapman Grand"
         
         newModel.shuttles = [
-            RouteInfoContentViewShuttle(name: "Red Shuttle 17", estimatedTimeAwayDisplay: "5 min away", id: "1"),
-            RouteInfoContentViewShuttle(name: "Red Shuttle 5", estimatedTimeAwayDisplay: "15 min away", id: "2"),
+            RouteInfoContentViewShuttle(name: "Red Shuttle 17", secondsRemaining: 20, id: "1"),
+            RouteInfoContentViewShuttle(name: "Red Shuttle 5", secondsRemaining: 120, id: "2"),
         ]
 
         return newModel
