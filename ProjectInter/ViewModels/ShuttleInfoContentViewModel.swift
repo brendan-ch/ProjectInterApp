@@ -16,6 +16,16 @@ struct ShuttleInfoNetworkArguments {
     let shuttleId: String
 }
 
+/// Displays the ETA and seconds remaining for the currently open shuttle.
+struct ShuttleInfoEtaListItem {
+    let stopName: String
+    let secondsRemaining: Double
+    
+    var estimatedTimeAwayDisplay: String {
+        ETAFormatter.formatSecondsRemaining(secondsRemaining)
+    }
+}
+
 /// Backing view model for ``ShuttleInfoContentView``.
 class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
     typealias T = ShuttleInfoNetworkArguments
