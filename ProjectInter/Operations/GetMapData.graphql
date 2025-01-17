@@ -7,6 +7,11 @@ query GetMapData($systemId: ID!) {
         latitude
         longitude
       }
+      orderedStops {
+        route {
+          id
+        }
+      }
     }
     shuttles {
       coordinates {
