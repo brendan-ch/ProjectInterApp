@@ -44,14 +44,14 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
                 shuttles: [
                     .init(
                         eta: .init(
-                            secondsRemaining: 30
+                            secondsRemaining: 125
                         ),
                         id: "1",
                         name: "Shuttle 1"
                     ),
                     .init(
                         eta: .init(
-                            secondsRemaining: 125
+                            secondsRemaining: 30
                         ),
                         id: "2",
                         name: "Shuttle 2"
@@ -218,5 +218,21 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.routeName == "Red Route")
         #expect(viewModel.routeNextStopName == "Panther Village")
         #expect(viewModel.shuttles.count == 0)
+    }
+    
+    @Test func refreshDataOnceSortsShuttlesBySecondsRemaining() async {
+        let mock = defaultMock
+        
+        let mockClient = MockApolloClient()
+        mockClient.mock = mock
+        
+        let viewModel = RouteInfoContentViewModel(apolloClient: mockClient)
+        let arguments = defaultArguments
+        
+        await viewModel.refreshDataOnce(arguments: arguments)
+        
+        #expect(viewModel.shuttles.count == 2)
+        #expect(viewModel.shuttles.first!.secondsRemaining == 30)
+        #expect(viewModel.shuttles.last!.secondsRemaining == 125)
     }
 }
