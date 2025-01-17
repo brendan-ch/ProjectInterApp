@@ -75,10 +75,28 @@ struct MapView: View {
             
             // MARK: Stop rendering
             
-            // TODO: display all stops associated with route if selected
-            if globalStopsModel.selectedStop != nil {
+            if let routeId = globalDataState.selectedRouteId {
+                ForEach(viewModel.stops) { stop in
+                    if stop.routeIds.contains(routeId) {
+                        Annotation(
+                            stop.name,
+                            coordinate: stop.coordinates,
+                            anchor: .center
+                        ) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 100)
+                                    .fill(Color.white)
+                                RoundedRectangle(cornerRadius: 100)
+                                    .stroke(.black, lineWidth: 2)
+                            }
+                        }
+                        .annotationTitles(globalStopsModel.selectedStop?.id == stop.id ? .visible : .hidden)
+                    }
+                }
+            }
+            else if let selectedStop = globalStopsModel.selectedStop {
                 let stopToRender = viewModel.stops.first { element in
-                    element.id == globalStopsModel.selectedStop?.id
+                    element.id == selectedStop.id
                 }
                 
                 if let stopToRender = stopToRender {
