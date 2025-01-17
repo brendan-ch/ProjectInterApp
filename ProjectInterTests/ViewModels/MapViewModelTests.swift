@@ -32,11 +32,9 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
             latitude: 1,
             longitude: 1
         ),
-        etas: [
-            .init(
-                secondsRemaining: 20
-            )
-        ],
+        eta: .init(
+            secondsRemaining: 20
+        ),
         id: "1",
         name: "Shuttle 1",
         route: Mock<Route>(
@@ -113,11 +111,9 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
                             latitude: 3,
                             longitude: 3
                         ),
-                        etas: [
-                            .init(
-                                secondsRemaining: 20
-                            )
-                        ],
+                        eta: .init(
+                            secondsRemaining: 20
+                        ),
                         id: "2",
                         name: "Shuttle 2",
                         route: Mock<Route>(
@@ -130,11 +126,9 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
                             latitude: 5,
                             longitude: 5
                         ),
-                        etas: [
-                            .init(
-                                secondsRemaining: 20
-                            )
-                        ],
+                        eta: .init(
+                            secondsRemaining: 20
+                        ),
                         id: "3",
                         name: "Shuttle 3",
                         route: Mock<Route>(
@@ -160,7 +154,7 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
         let mockClient = MockApolloClient()
         
         let viewModel = MapViewModel(apolloClient: mockClient)
-        let arguments = MapViewNetworkArguments(systemId: "1")
+        let arguments = MapViewNetworkArguments(systemId: "1", stopId: "1")
         
         return (mockClient, viewModel, arguments)
     }
@@ -318,22 +312,9 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
                             latitude: 2,
                             longitude: 2
                         ),
-                        etas: nil,
+                        eta: nil,
                         id: "2",
                         name: "Shuttle 2",
-                        route: Mock<Route>(
-                            color: "#ffffff",
-                            id: "1"
-                        )
-                    ),
-                    .init(
-                        coordinates: .init(
-                            latitude: 3,
-                            longitude: 3
-                        ),
-                        etas: [],
-                        id: "3",
-                        name: "Shuttle 3",
                         route: Mock<Route>(
                             color: "#ffffff",
                             id: "1"

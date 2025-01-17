@@ -56,6 +56,7 @@ struct MapViewStop: Identifiable {
 /// Information to pass into the network request for map data.
 struct MapViewNetworkArguments {
     let systemId: String
+    let stopId: String
 }
 
 // MARK: - View model implementation
@@ -79,11 +80,12 @@ class MapViewModel: NetworkDataModelProtocol {
     
     func refreshDataOnce(arguments: MapViewNetworkArguments) async {
         let systemId = arguments.systemId
+        let stopId = arguments.stopId
         
-        await refreshData(systemId: systemId)
+        await refreshData(systemId: systemId, stopId: stopId)
     }
     
-    private func refreshData(systemId: String) async {
+    private func refreshData(systemId: String, stopId: String) async {
         return await withCheckedContinuation { continuation in
             var continuationIsActive = true
             guard let apolloClient = apolloClient else {
@@ -92,7 +94,7 @@ class MapViewModel: NetworkDataModelProtocol {
                 return
             }
             
-            apolloClient.fetch(query: GetMapDataQuery(systemId: systemId)) { result in
+            apolloClient.fetch(query: GetMapDataQuery(systemId: systemId, stopId: stopId)) { result in
                 defer {
                     continuationIsActive = false
                     continuation.resume()
@@ -110,14 +112,12 @@ class MapViewModel: NetworkDataModelProtocol {
                 let shuttles = data.system?.shuttles ?? []
                 for shuttle in shuttles {
                     // Only add shuttles which have ETA data
-                    if let route = shuttle.route, let etas = shuttle.etas {
-                        if !etas.isEmpty {
-                            let coordinates = CLLocationCoordinate2D(latitude: shuttle.coordinates.latitude, longitude: shuttle.coordinates.longitude)
-                            
-                            let mapViewShuttle = MapViewShuttle(name: shuttle.name, id: shuttle.id, routeId: route.id, routeColorHex: route.color, coordinates: coordinates)
-                            
-                            self.shuttles.append(mapViewShuttle)
-                        }
+                    if let route = shuttle.route, let _ = shuttle.eta {
+                        let coordinates = CLLocationCoordinate2D(latitude: shuttle.coordinates.latitude, longitude: shuttle.coordinates.longitude)
+                        
+                        let mapViewShuttle = MapViewShuttle(name: shuttle.name, id: shuttle.id, routeId: route.id, routeColorHex: route.color, coordinates: coordinates)
+                        
+                        self.shuttles.append(mapViewShuttle)
                     }
                 }
                 
