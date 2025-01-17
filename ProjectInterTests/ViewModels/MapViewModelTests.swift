@@ -253,7 +253,7 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
-        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
+        let (_, viewModel, arguments) = generateClientAndViewModelWithArguments()
         viewModel.apolloClient = nil
         
         await viewModel.refreshDataOnce(arguments: arguments)
@@ -262,4 +262,31 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.shuttles.isEmpty)
     }
     
+    @Test func refreshDataOnceUpdatesOrderedStopDataForStopIfExists() async {
+        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
+        
+        mockClient.mock = Mock<ProjectInterTestMocks.Query>(
+            system: .init(
+                stops: [
+                    .init(
+                        coordinates: .init(latitude: 1, longitude: 1),
+                        id: "1",
+                        name: "Chapman Court",
+                        orderedStops: [
+                            .init(
+                                route: .init(
+                                    id: "1"
+                                )
+                            )
+                        ]
+                    )
+                ]
+            )
+        )
+        
+        await viewModel.refreshDataOnce(arguments: arguments)
+        
+        #expect(viewModel.stops.first!.routeIds.count == 1)
+        #expect(viewModel.stops.first!.routeIds.contains("1"))
+    }
 }

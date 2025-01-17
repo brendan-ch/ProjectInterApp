@@ -46,6 +46,9 @@ struct MapViewStop: Identifiable {
     
     /// Coordinates of the stop's location.
     var coordinates: CLLocationCoordinate2D
+    
+    /// Set of route IDs associated with the stop.
+    var routeIds: Set<String> = []
 }
 
 // MARK: - Network arguments
@@ -131,7 +134,7 @@ class MapViewModel: NetworkDataModelProtocol {
                 self.stops = []
                 let stops = data.system?.stops ?? []
                 for stop in stops {
-                    let mapViewStop = MapViewStop(
+                    var mapViewStop = MapViewStop(
                         id: stop.id,
                         name: stop.name,
                         coordinates: CLLocationCoordinate2D(
@@ -139,6 +142,14 @@ class MapViewModel: NetworkDataModelProtocol {
                             longitude: stop.coordinates.longitude
                         )
                     )
+                    
+                    if let orderedStops = stop.orderedStops {
+                        for orderedStop in orderedStops {
+                            mapViewStop.routeIds.insert(
+                                orderedStop.route.id
+                            )
+                        }
+                    }
                     
                     self.stops.append(mapViewStop)
                 }
