@@ -57,7 +57,6 @@ struct RouteInfoContentView: View {
                         }
                         .buttonStyle(.plain)
                         .padding(.horizontal)
-                        .disabled(upcomingDeparture.secondsRemaining == nil)
                         
                     }
                 }
