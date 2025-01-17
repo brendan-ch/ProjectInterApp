@@ -36,6 +36,21 @@ struct MapViewShuttle: Identifiable {
     var coordinates: CLLocationCoordinate2D
 }
 
+/// Represents a stop on the map.
+struct MapViewStop: Identifiable {
+    /// The server-side ID of the stop.
+    var id: String
+    
+    /// The name of the stop.
+    var name: String
+    
+    /// Coordinates of the stop's location.
+    var coordinates: CLLocationCoordinate2D
+    
+    /// Set of route IDs associated with the stop.
+    var routeIds: Set<String> = []
+}
+
 // MARK: - Network arguments
 
 /// Information to pass into the network request for map data.
@@ -52,6 +67,7 @@ class MapViewModel: NetworkDataModelProtocol {
     
     @Published var routes: [MapViewRoute] = []
     @Published var shuttles: [MapViewShuttle] = []
+    @Published var stops: [MapViewStop] = []
     
     var apolloClient: ApolloClientProtocol?
     
@@ -69,13 +85,22 @@ class MapViewModel: NetworkDataModelProtocol {
     
     private func refreshData(systemId: String) async {
         return await withCheckedContinuation { continuation in
+            var continuationIsActive = true
             guard let apolloClient = apolloClient else {
+                continuationIsActive = false
                 continuation.resume()
                 return
             }
             
             apolloClient.fetch(query: GetMapDataQuery(systemId: systemId)) { result in
-                defer { continuation.resume() }
+                defer {
+                    continuationIsActive = false
+                    continuation.resume()
+                }
+                
+                if !continuationIsActive {
+                    return
+                }
                 
                 guard let data = try? result.get().data else {
                     return
@@ -104,6 +129,29 @@ class MapViewModel: NetworkDataModelProtocol {
                     let mapViewRoute = MapViewRoute(id: route.id, colorHex: route.color, polylineCoordinates: mapViewRoutePolylineCoordinates)
                     
                     self.routes.append(mapViewRoute)
+                }
+                
+                self.stops = []
+                let stops = data.system?.stops ?? []
+                for stop in stops {
+                    var mapViewStop = MapViewStop(
+                        id: stop.id,
+                        name: stop.name,
+                        coordinates: CLLocationCoordinate2D(
+                            latitude: stop.coordinates.latitude,
+                            longitude: stop.coordinates.longitude
+                        )
+                    )
+                    
+                    if let orderedStops = stop.orderedStops {
+                        for orderedStop in orderedStops {
+                            mapViewStop.routeIds.insert(
+                                orderedStop.route.id
+                            )
+                        }
+                    }
+                    
+                    self.stops.append(mapViewStop)
                 }
             }
         }
@@ -146,6 +194,19 @@ class MapViewModelPlaceholderBuilder: PlaceholderBuilderProtocol {
                 routeId: "1",
                 routeColorHex: "#db2316",
                 coordinates: CLLocationCoordinate2D(latitude: 33.78788, longitude: -117.85921)
+            )
+        ]
+        
+        newModel.stops = [
+            MapViewStop(
+                id: "1",
+                name: "Chapman Court",
+                coordinates: CLLocationCoordinate2D(latitude: 33.796464, longitude: -117.889352)
+            ),
+            MapViewStop(
+                id: "2",
+                name: "Schmid Gate",
+                coordinates: CLLocationCoordinate2D(latitude: 33.793255, longitude: -117.852755)
             )
         ]
 

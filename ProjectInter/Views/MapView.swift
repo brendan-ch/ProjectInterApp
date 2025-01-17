@@ -14,6 +14,9 @@ struct MapView: View {
     /// Source of truth for the currently selected route ID and shuttle ID.
     @EnvironmentObject var globalDataState: GlobalDataModel
     
+    /// Source of truth for the currently selected stop ID and the list of stops.
+    @EnvironmentObject var globalStopsModel: GlobalStopsModel
+    
     /// Backing view model.
     @StateObject var viewModel = MapViewModel()
     
@@ -27,6 +30,8 @@ struct MapView: View {
         Map(position: $viewModel.position, selection: $globalDataState.selectedShuttleId) {
             UserAnnotation()
             
+            // MARK: Polyline rendering
+            
             if let routeId = globalDataState.selectedRouteId {
                 let routeToDisplay = viewModel.routes.first { route in
                     route.id == routeId
@@ -38,8 +43,13 @@ struct MapView: View {
                 }
             }
             
+            // MARK: Shuttle rendering
+            
             ForEach(viewModel.shuttles) { shuttle in
-                let shouldDisplayShuttle = globalDataState.selectedRouteId != nil && shuttle.routeId == globalDataState.selectedRouteId || globalDataState.selectedRouteId == nil
+                let associatedStopForSelectedStop = viewModel.stops.first { stop in
+                    stop.id == globalStopsModel.selectedStop?.id
+                }
+                let shouldDisplayShuttle = globalDataState.selectedRouteId != nil && shuttle.routeId == globalDataState.selectedRouteId || globalDataState.selectedRouteId == nil && associatedStopForSelectedStop != nil && associatedStopForSelectedStop!.routeIds.contains(shuttle.routeId)
                 
                 if shouldDisplayShuttle {
                     Annotation(
@@ -47,22 +57,45 @@ struct MapView: View {
                         coordinate: shuttle.coordinates,
                         anchor: .center
                     ) {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 100)
-                                .fill(Color(hex: shuttle.routeColorHex))
-                            RoundedRectangle(cornerRadius: 100)
-                                .stroke(.white, lineWidth: 4)
-                            Image(systemName: "bus.fill")
-                                .resizable()
-                                .frame(width: 16, height: 16)
-                                .padding(6)
-                                .foregroundStyle(Color.white)
-                        }
+                        ShuttleAnnotationView(shuttle: shuttle)
                     }
                     .annotationTitles(
                         globalDataState.selectedShuttleId == shuttle.id ? .visible : .hidden
                     )
                     .tag(shuttle.id)
+                }
+            }
+            
+            // MARK: Stop rendering
+            
+            if let routeId = globalDataState.selectedRouteId {
+                ForEach(viewModel.stops) { stop in
+                    if stop.routeIds.contains(routeId) {
+                        Annotation(
+                            stop.name,
+                            coordinate: stop.coordinates,
+                            anchor: .center
+                        ) {
+                            StopAnnotationView()
+                        }
+                        .annotationTitles(globalStopsModel.selectedStop?.id == stop.id ? .visible : .hidden)
+                    }
+                }
+            }
+            else if let selectedStop = globalStopsModel.selectedStop {
+                let stopToRender = viewModel.stops.first { element in
+                    element.id == selectedStop.id
+                }
+                
+                if let stopToRender = stopToRender {
+                    Annotation(
+                        stopToRender.name,
+                        coordinate: stopToRender.coordinates,
+                        anchor: .center
+                    ) {
+                        StopAnnotationView()
+                    }
+                    .annotationTitles(.visible)
                 }
             }
         }
@@ -98,6 +131,41 @@ struct MapView: View {
     let builder = MapViewModelPlaceholderBuilder()
     let viewModel = builder.build()
     
-    MapView(viewModel: viewModel)
+    let stopToSelectFromViewModel = viewModel.stops.first!
+    
+    let globalStopsModel = GlobalStopsModel()
+    globalStopsModel.selectedStop = .init(name: stopToSelectFromViewModel.name, id: stopToSelectFromViewModel.id, coordinates: .init(latitude: stopToSelectFromViewModel.coordinates.latitude, longitude: stopToSelectFromViewModel.coordinates.longitude))
+    
+    return MapView(viewModel: viewModel)
         .environmentObject(GlobalDataModel())
+        .environmentObject(globalStopsModel)
+}
+
+struct StopAnnotationView: View {
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 100)
+                .fill(Color.white)
+            RoundedRectangle(cornerRadius: 100)
+                .stroke(.black, lineWidth: 2)
+        }
+    }
+}
+
+struct ShuttleAnnotationView: View {
+    var shuttle: MapViewShuttle
+    
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 100)
+                .fill(Color(hex: shuttle.routeColorHex))
+            RoundedRectangle(cornerRadius: 100)
+                .stroke(.white, lineWidth: 4)
+            Image(systemName: "bus.fill")
+                .resizable()
+                .frame(width: 16, height: 16)
+                .padding(6)
+                .foregroundStyle(Color.white)
+        }
+    }
 }

@@ -44,13 +44,22 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
     
     private func refreshData(systemId: String, stopId: String, shuttleId: String) async {
         return await withCheckedContinuation { continuation in
+            var continuationIsActive = true
             guard let apolloClient = apolloClient else {
+                continuationIsActive = false
                 continuation.resume()
                 return
             }
             
             apolloClient.fetch(query: GetShuttleInfoDataQuery(systemId: systemId, stopId: stopId, shuttleId: shuttleId)) { result in
-                defer { continuation.resume() }
+                defer {
+                    continuationIsActive = false
+                    continuation.resume()
+                }
+                
+                if !continuationIsActive {
+                    return
+                }
                 
                 guard let data = try? result.get().data else {
                     return
