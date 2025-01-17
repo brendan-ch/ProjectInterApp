@@ -109,12 +109,15 @@ class MapViewModel: NetworkDataModelProtocol {
                 self.shuttles = []
                 let shuttles = data.system?.shuttles ?? []
                 for shuttle in shuttles {
-                    if let route = shuttle.route {
-                        let coordinates = CLLocationCoordinate2D(latitude: shuttle.coordinates.latitude, longitude: shuttle.coordinates.longitude)
-                        
-                        let mapViewShuttle = MapViewShuttle(name: shuttle.name, id: shuttle.id, routeId: route.id, routeColorHex: route.color, coordinates: coordinates)
-                        
-                        self.shuttles.append(mapViewShuttle)
+                    // Only add shuttles which have ETA data
+                    if let route = shuttle.route, let etas = shuttle.etas {
+                        if !etas.isEmpty {
+                            let coordinates = CLLocationCoordinate2D(latitude: shuttle.coordinates.latitude, longitude: shuttle.coordinates.longitude)
+                            
+                            let mapViewShuttle = MapViewShuttle(name: shuttle.name, id: shuttle.id, routeId: route.id, routeColorHex: route.color, coordinates: coordinates)
+                            
+                            self.shuttles.append(mapViewShuttle)
+                        }
                     }
                 }
                 
