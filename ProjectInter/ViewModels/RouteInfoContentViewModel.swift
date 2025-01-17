@@ -118,7 +118,7 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
                 // Add shuttles and calculate ETAs
                 if let shuttles = route.shuttles {
                     for shuttle in shuttles {
-                        var routeInfoContentViewShuttle = RouteInfoContentViewShuttle(
+                        let routeInfoContentViewShuttle = RouteInfoContentViewShuttle(
                             name: shuttle.name,
                             secondsRemaining: shuttle.eta?.secondsRemaining,
                             id: shuttle.id
@@ -126,6 +126,16 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
                         
                         self.shuttles.append(routeInfoContentViewShuttle)
                     }
+                }
+                
+                self.shuttles.sort {
+                    if $0.secondsRemaining != nil {
+                        if $1.secondsRemaining != nil {
+                            return $0.secondsRemaining! < $1.secondsRemaining!
+                        }
+                        return false
+                    }
+                    return true
                 }
             }
         }
