@@ -35,7 +35,7 @@ struct RouteInfoContentView: View {
                     Text(viewModel.routeName)
                         .font(.title2)
                         .bold()
-                    Text(viewModel.routeNextStopName ?? "")
+                    Text("Towards \(viewModel.routeNextStopName ?? "unknown stop")")
                         .font(.callout)
                         .foregroundStyle(.secondary)
                 }
