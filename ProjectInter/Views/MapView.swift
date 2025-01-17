@@ -49,7 +49,10 @@ struct MapView: View {
                 let associatedStopForSelectedStop = viewModel.stops.first { stop in
                     stop.id == globalStopsModel.selectedStop?.id
                 }
-                let shouldDisplayShuttle = globalDataState.selectedRouteId != nil && shuttle.routeId == globalDataState.selectedRouteId || globalDataState.selectedRouteId == nil && associatedStopForSelectedStop != nil && associatedStopForSelectedStop!.routeIds.contains(shuttle.routeId)
+                let shouldDisplayShuttle =
+                    (globalDataState.selectedRouteId != nil && shuttle.routeId == globalDataState.selectedRouteId)
+                     ||
+                    (globalDataState.selectedRouteId == nil && associatedStopForSelectedStop != nil && associatedStopForSelectedStop!.routeIds.contains(shuttle.routeId))
                 
                 if shouldDisplayShuttle {
                     Annotation(
