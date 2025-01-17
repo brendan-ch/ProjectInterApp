@@ -1,4 +1,4 @@
-query GetMapData($systemId: ID!, $stopId: ID!) {
+query GetMapData($systemId: ID!) {
   system(id: $systemId) {
     stops {
       id
@@ -24,7 +24,7 @@ query GetMapData($systemId: ID!, $stopId: ID!) {
       }
       id
       name
-      eta(forStopId: $stopId) {
+      etas {
         secondsRemaining
       }
     }

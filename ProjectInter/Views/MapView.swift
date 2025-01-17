@@ -21,12 +21,9 @@ struct MapView: View {
     @StateObject var viewModel = MapViewModel()
     
     var mapViewNetworkArguments: MapViewNetworkArguments? {
-        guard
-            let systemId = globalDataState.selectedSystem?.id,
-            let stopId = globalStopsModel.selectedStop?.id
-        else { return nil }
+        guard let systemId = globalDataState.selectedSystem?.id else { return nil }
         
-        return MapViewNetworkArguments(systemId: systemId, stopId: stopId)
+        return MapViewNetworkArguments(systemId: systemId)
     }
     
     var body: some View {
@@ -113,9 +110,6 @@ struct MapView: View {
             restartDataUpdatesIfArgumentsExist()
         }
         .onChange(of: globalDataState.selectedSystem) {
-            restartDataUpdatesIfArgumentsExist()
-        }
-        .onChange(of: globalStopsModel.selectedStop) {
             restartDataUpdatesIfArgumentsExist()
         }
         // Reset the map position if the user selects something
