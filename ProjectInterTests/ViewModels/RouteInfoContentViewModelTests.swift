@@ -221,7 +221,40 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func refreshDataOnceSortsShuttlesBySecondsRemaining() async {
-        let mock = defaultMock
+        let mock = Mock<ProjectInterTestMocks.Query>(
+            system: .init(
+                route: .init(
+                    name: "Red Route",
+                    orderedStop: .init(
+                        nextStop: .init(
+                            stop: .init(
+                                name: "Panther Village"
+                            )
+                        )
+                    ),
+                    shuttles: [
+                        .init(
+                            id: "3",
+                            name: "Shuttle 3"
+                        ),
+                        .init(
+                            eta: .init(
+                                secondsRemaining: 125
+                            ),
+                            id: "1",
+                            name: "Shuttle 1"
+                        ),
+                        .init(
+                            eta: .init(
+                                secondsRemaining: 30
+                            ),
+                            id: "2",
+                            name: "Shuttle 2"
+                        )
+                    ]
+                )
+            )
+        )
         
         let mockClient = MockApolloClient()
         mockClient.mock = mock
@@ -231,8 +264,9 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         
         await viewModel.refreshDataOnce(arguments: arguments)
         
-        #expect(viewModel.shuttles.count == 2)
-        #expect(viewModel.shuttles.first!.secondsRemaining == 30)
-        #expect(viewModel.shuttles.last!.secondsRemaining == 125)
+        #expect(viewModel.shuttles.count == 3)
+        #expect(viewModel.shuttles[0].secondsRemaining == 30)
+        #expect(viewModel.shuttles[1].secondsRemaining == 125)
+        #expect(viewModel.shuttles[2].secondsRemaining == nil)
     }
 }

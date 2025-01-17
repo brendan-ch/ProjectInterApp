@@ -133,9 +133,9 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
                         if $1.secondsRemaining != nil {
                             return $0.secondsRemaining! < $1.secondsRemaining!
                         }
-                        return false
+                        return true
                     }
-                    return true
+                    return false
                 }
             }
         }
