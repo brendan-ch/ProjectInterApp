@@ -54,17 +54,7 @@ struct MapView: View {
                         coordinate: shuttle.coordinates,
                         anchor: .center
                     ) {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 100)
-                                .fill(Color(hex: shuttle.routeColorHex))
-                            RoundedRectangle(cornerRadius: 100)
-                                .stroke(.white, lineWidth: 4)
-                            Image(systemName: "bus.fill")
-                                .resizable()
-                                .frame(width: 16, height: 16)
-                                .padding(6)
-                                .foregroundStyle(Color.white)
-                        }
+                        ShuttleAnnotationView(shuttle: shuttle)
                     }
                     .annotationTitles(
                         globalDataState.selectedShuttleId == shuttle.id ? .visible : .hidden
@@ -83,12 +73,7 @@ struct MapView: View {
                             coordinate: stop.coordinates,
                             anchor: .center
                         ) {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 100)
-                                    .fill(Color.white)
-                                RoundedRectangle(cornerRadius: 100)
-                                    .stroke(.black, lineWidth: 2)
-                            }
+                            StopAnnotationView()
                         }
                         .annotationTitles(globalStopsModel.selectedStop?.id == stop.id ? .visible : .hidden)
                     }
@@ -105,12 +90,7 @@ struct MapView: View {
                         coordinate: stopToRender.coordinates,
                         anchor: .center
                     ) {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 100)
-                                .fill(Color.white)
-                            RoundedRectangle(cornerRadius: 100)
-                                .stroke(.black, lineWidth: 2)
-                        }
+                        StopAnnotationView()
                     }
                     .annotationTitles(.visible)
                 }
@@ -156,4 +136,33 @@ struct MapView: View {
     return MapView(viewModel: viewModel)
         .environmentObject(GlobalDataModel())
         .environmentObject(globalStopsModel)
+}
+
+struct StopAnnotationView: View {
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 100)
+                .fill(Color.white)
+            RoundedRectangle(cornerRadius: 100)
+                .stroke(.black, lineWidth: 2)
+        }
+    }
+}
+
+struct ShuttleAnnotationView: View {
+    var shuttle: MapViewShuttle
+    
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 100)
+                .fill(Color(hex: shuttle.routeColorHex))
+            RoundedRectangle(cornerRadius: 100)
+                .stroke(.white, lineWidth: 4)
+            Image(systemName: "bus.fill")
+                .resizable()
+                .frame(width: 16, height: 16)
+                .padding(6)
+                .foregroundStyle(Color.white)
+        }
+    }
 }
