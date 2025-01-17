@@ -20,6 +20,7 @@ struct ShuttleInfoNetworkArguments {
 struct ShuttleInfoEtaListItem {
     let stopName: String
     let secondsRemaining: Double
+    let stopId: String
     
     var estimatedTimeAwayDisplay: String {
         ETAFormatter.formatSecondsRemaining(secondsRemaining)
@@ -89,7 +90,11 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
                             self.etaDisplay = ETAFormatter.formatSecondsRemaining(eta.secondsRemaining)
                         }
                         
-                        self.etaListItems.append(ShuttleInfoEtaListItem(stopName: eta.stop.name, secondsRemaining: eta.secondsRemaining))
+                        self.etaListItems.append(ShuttleInfoEtaListItem(
+                            stopName: eta.stop.name,
+                            secondsRemaining: eta.secondsRemaining,
+                            stopId: eta.stop.id
+                        ))
                     }
                     self.etaListItems.sort {
                         $0.secondsRemaining < $1.secondsRemaining

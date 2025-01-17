@@ -52,19 +52,15 @@ struct ShuttleInfoContentView: View {
             
             Section {
                 VStack {
-                    HStack {
-                        Text("Chapman Court")
-                        Spacer()
-                        Text("5 min")
+                    ForEach(viewModel.etaListItems, id: \.stopId) { etaListItem in
+                        HStack {
+                            Text(etaListItem.stopName)
+                            Spacer()
+                            Text(etaListItem.estimatedTimeAwayDisplay)
+                        }
+                        .padding(.horizontal)
                     }
-                    .padding(.horizontal)
                     
-                    HStack {
-                        Text("Chapman Grand")
-                        Spacer()
-                        Text("10 min")
-                    }
-                    .padding(.horizontal)
                 }
             } header: {
                 HStack {
