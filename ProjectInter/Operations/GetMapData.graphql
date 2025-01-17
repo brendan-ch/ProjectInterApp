@@ -24,9 +24,6 @@ query GetMapData($systemId: ID!) {
       }
       id
       name
-      etas {
-        secondsRemaining
-      }
     }
     routes {
       polylineCoordinates {
