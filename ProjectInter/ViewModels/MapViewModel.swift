@@ -82,13 +82,22 @@ class MapViewModel: NetworkDataModelProtocol {
     
     private func refreshData(systemId: String) async {
         return await withCheckedContinuation { continuation in
+            var continuationIsActive = true
             guard let apolloClient = apolloClient else {
+                continuationIsActive = false
                 continuation.resume()
                 return
             }
             
             apolloClient.fetch(query: GetMapDataQuery(systemId: systemId)) { result in
-                defer { continuation.resume() }
+                defer {
+                    continuationIsActive = false
+                    continuation.resume()
+                }
+                
+                if !continuationIsActive {
+                    return
+                }
                 
                 guard let data = try? result.get().data else {
                     return
