@@ -49,6 +49,32 @@ struct ShuttleInfoContentView: View {
             }
             .padding()
             
+            
+            Section {
+                VStack {
+                    HStack {
+                        Text("Chapman Court")
+                        Spacer()
+                        Text("5 min")
+                    }
+                    .padding(.horizontal)
+                    
+                    HStack {
+                        Text("Chapman Grand")
+                        Spacer()
+                        Text("10 min")
+                    }
+                    .padding(.horizontal)
+                }
+            } header: {
+                HStack {
+                    Text("Upcoming stops")
+                        .bold()
+                    Spacer()
+                }
+                .padding(.horizontal)
+            }
+
             Button(action: {}) {
                 HStack {
                     Spacer()
