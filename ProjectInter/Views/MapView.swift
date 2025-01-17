@@ -46,7 +46,10 @@ struct MapView: View {
             // MARK: Shuttle rendering
             
             ForEach(viewModel.shuttles) { shuttle in
-                let shouldDisplayShuttle = globalDataState.selectedRouteId != nil && shuttle.routeId == globalDataState.selectedRouteId || globalDataState.selectedRouteId == nil
+                let associatedStopForSelectedStop = viewModel.stops.first { stop in
+                    stop.id == globalStopsModel.selectedStop?.id
+                }
+                let shouldDisplayShuttle = globalDataState.selectedRouteId != nil && shuttle.routeId == globalDataState.selectedRouteId || globalDataState.selectedRouteId == nil && associatedStopForSelectedStop != nil && associatedStopForSelectedStop!.routeIds.contains(shuttle.routeId)
                 
                 if shouldDisplayShuttle {
                     Annotation(
