@@ -113,6 +113,12 @@ class ShuttleInfoContentViewModelPlaceholderBuilder: PlaceholderBuilderProtocol 
         model.name = "Red Shuttle 17"
         model.etaDisplay = "5 min away"
         
+        model.etaListItems = [
+            .init(stopName: "Schmid Gate", secondsRemaining: 125, stopId: "1"),
+            .init(stopName: "Panther Village", secondsRemaining: 300, stopId: "2"),
+            .init(stopName: "Chapman Grand", secondsRemaining: 1430, stopId: "3")
+        ]
+        
         return model
     }
 }
