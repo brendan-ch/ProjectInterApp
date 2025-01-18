@@ -71,7 +71,7 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
 
     func assertViewModelDataForDefaultMock(viewModel: ShuttleInfoContentViewModel) {
         #expect(viewModel.name == "Shuttle 1")
-        #expect(viewModel.etaDisplay == "2 min")
+        #expect(viewModel.etaDisplay == "2 min to Stop 1")
         
         // Check sorting of items
         #expect(viewModel.etaListItems.count == 2)
@@ -81,7 +81,7 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     
     func assertViewModelDataForSecondaryMock(viewModel: ShuttleInfoContentViewModel) {
         #expect(viewModel.name == "Shuttle 2")
-        #expect(viewModel.etaDisplay == "5 min")
+        #expect(viewModel.etaDisplay == "5 min to Stop 1")
         
         
         // Check sorting of items
@@ -159,7 +159,7 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         
         await viewModel.refreshDataOnce(arguments: arguments)
         
-        #expect(viewModel.etaDisplay == "Less than 1 minute")
+        #expect(viewModel.etaDisplay == "Less than 1 minute to Stop 1")
     }
     
     @Test func refreshDataOnceDoesNothingIfNoData() async {

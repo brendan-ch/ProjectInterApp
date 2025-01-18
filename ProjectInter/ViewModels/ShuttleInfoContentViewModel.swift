@@ -87,7 +87,7 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
                     self.etaListItems = []
                     for eta in etas {
                         if eta.stop.id == stopId {
-                            self.etaDisplay = ETAFormatter.formatSecondsRemaining(eta.secondsRemaining)
+                            self.etaDisplay = "\(ETAFormatter.formatSecondsRemaining(eta.secondsRemaining)) to \(eta.stop.name)"
                         }
                         
                         self.etaListItems.append(ShuttleInfoEtaListItem(
