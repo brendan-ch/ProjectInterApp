@@ -15,9 +15,23 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     let defaultMock = Mock<Query>(
         system: .init(
             shuttle: .init(
-                eta: .init(
-                    secondsRemaining: 125
-                ), name: "Shuttle 1"
+                etas: [
+                    .init(
+                        secondsRemaining: 125,
+                        stop: .init(
+                            id: "1",
+                            name: "Stop 1"
+                        )
+                    ),
+                    .init(
+                        secondsRemaining: 20,
+                        stop: .init(
+                            id: "2",
+                            name: "Stop 2"
+                        )
+                    ),
+                ],
+                name: "Shuttle 1"
             )
         )
     )
@@ -25,9 +39,23 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     let secondaryMock = Mock<Query>(
         system: .init(
             shuttle: .init(
-                eta: .init(
-                    secondsRemaining: 306
-                ), name: "Shuttle 2"
+                etas: [
+                    .init(
+                        secondsRemaining: 306,
+                        stop: .init(
+                            id: "1",
+                            name: "Stop 1"
+                        )
+                    ),
+                    .init(
+                        secondsRemaining: 205,
+                        stop: .init(
+                            id: "2",
+                            name: "Stop 2"
+                        )
+                    ),
+                ],
+                name: "Shuttle 2"
             )
         )
     )
@@ -43,12 +71,23 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
 
     func assertViewModelDataForDefaultMock(viewModel: ShuttleInfoContentViewModel) {
         #expect(viewModel.name == "Shuttle 1")
-        #expect(viewModel.etaDisplay == "2 min")
+        #expect(viewModel.etaDisplay == "2 min to Stop 1")
+        
+        // Check sorting of items
+        #expect(viewModel.etaListItems.count == 2)
+        #expect(viewModel.etaListItems[0].secondsRemaining == 20)
+        #expect(viewModel.etaListItems[1].secondsRemaining == 125)
     }
     
     func assertViewModelDataForSecondaryMock(viewModel: ShuttleInfoContentViewModel) {
         #expect(viewModel.name == "Shuttle 2")
-        #expect(viewModel.etaDisplay == "5 min")
+        #expect(viewModel.etaDisplay == "5 min to Stop 1")
+        
+        
+        // Check sorting of items
+        #expect(viewModel.etaListItems.count == 2)
+        #expect(viewModel.etaListItems[0].secondsRemaining == 205)
+        #expect(viewModel.etaListItems[1].secondsRemaining == 306)
     }
     
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
@@ -104,16 +143,23 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         mockClient.mock = Mock<Query>(
             system: .init(
                 shuttle: .init(
-                    eta: .init(
-                        secondsRemaining: 20
-                    ), name: "Shuttle 1"
+                    etas: [
+                        .init(
+                            secondsRemaining: 20,
+                            stop: .init(
+                                id: "1",
+                                name: "Stop 1"
+                            )
+                        )
+                    ],
+                    name: "Shuttle 1"
                 )
             )
         )
         
         await viewModel.refreshDataOnce(arguments: arguments)
         
-        #expect(viewModel.etaDisplay == "Less than 1 min")
+        #expect(viewModel.etaDisplay == "Less than 1 minute to Stop 1")
     }
     
     @Test func refreshDataOnceDoesNothingIfNoData() async {

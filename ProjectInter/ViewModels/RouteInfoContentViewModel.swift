@@ -22,15 +22,7 @@ struct RouteInfoContentViewShuttle: Identifiable {
     /// String representing how far away the shuttle is from a given stop,
     /// rendered from server-side data.
     var estimatedTimeAwayDisplay: String {
-        if let secondsRemaining = secondsRemaining {
-            if secondsRemaining < 60 {
-                return "Less than 1 minute"
-            } else {
-                let minutesRemaining = Int(secondsRemaining / 60)
-                return "\(minutesRemaining) min"
-            }
-        }
-        return "N/A"
+        ETAFormatter.formatSecondsRemaining(secondsRemaining)
     }
     
     /// The server-side ID of the shuttle.

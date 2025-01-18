@@ -16,6 +16,17 @@ struct ShuttleInfoNetworkArguments {
     let shuttleId: String
 }
 
+/// Displays the ETA and seconds remaining for the currently open shuttle.
+struct ShuttleInfoEtaListItem {
+    let stopName: String
+    let secondsRemaining: Double
+    let stopId: String
+    
+    var estimatedTimeAwayDisplay: String {
+        ETAFormatter.formatSecondsRemaining(secondsRemaining)
+    }
+}
+
 /// Backing view model for ``ShuttleInfoContentView``.
 class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
     typealias T = ShuttleInfoNetworkArguments
@@ -25,6 +36,8 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
     
     /// Text representing the ETA of the shuttle relative to the user's selected stop.
     @Published var etaDisplay = ""
+    
+    @Published var etaListItems: [ShuttleInfoEtaListItem] = []
     
     var apolloClient: ApolloClientProtocol?
     
@@ -51,7 +64,7 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
                 return
             }
             
-            apolloClient.fetch(query: GetShuttleInfoDataQuery(systemId: systemId, stopId: stopId, shuttleId: shuttleId)) { result in
+            apolloClient.fetch(query: GetShuttleInfoDataQuery(systemId: systemId, shuttleId: shuttleId)) { result in
                 defer {
                     continuationIsActive = false
                     continuation.resume()
@@ -70,12 +83,21 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
                 
                 self.name = shuttle.name
                 
-                if let secondsRemaining = shuttle.eta?.secondsRemaining {
-                    if secondsRemaining < 60 {
-                        self.etaDisplay = "Less than 1 min"
-                    } else {
-                        let minutesRemaining = Int(secondsRemaining / 60)
-                        self.etaDisplay = "\(minutesRemaining) min"
+                if let etas = shuttle.etas {
+                    self.etaListItems = []
+                    for eta in etas {
+                        if eta.stop.id == stopId {
+                            self.etaDisplay = "\(ETAFormatter.formatSecondsRemaining(eta.secondsRemaining)) to \(eta.stop.name)"
+                        }
+                        
+                        self.etaListItems.append(ShuttleInfoEtaListItem(
+                            stopName: eta.stop.name,
+                            secondsRemaining: eta.secondsRemaining,
+                            stopId: eta.stop.id
+                        ))
+                    }
+                    self.etaListItems.sort {
+                        $0.secondsRemaining < $1.secondsRemaining
                     }
                 }
             }
@@ -90,6 +112,12 @@ class ShuttleInfoContentViewModelPlaceholderBuilder: PlaceholderBuilderProtocol 
         let model = ShuttleInfoContentViewModel()
         model.name = "Red Shuttle 17"
         model.etaDisplay = "5 min away"
+        
+        model.etaListItems = [
+            .init(stopName: "Schmid Gate", secondsRemaining: 125, stopId: "1"),
+            .init(stopName: "Panther Village", secondsRemaining: 300, stopId: "2"),
+            .init(stopName: "Chapman Grand", secondsRemaining: 1430, stopId: "3")
+        ]
         
         return model
     }

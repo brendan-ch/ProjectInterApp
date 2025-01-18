@@ -111,7 +111,7 @@ struct RouteListItem: View {
                 VStack(alignment: .leading) {
                     Text(route.name)
                         .bold()
-                    Text(route.nextStopName ?? "")
+                    Text("Towards \(route.nextStopName ?? "unknown stop")")
                         .font(.callout)
                         .foregroundStyle(.secondary)
                 }
