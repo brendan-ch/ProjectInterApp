@@ -49,27 +49,48 @@ struct ShuttleInfoContentView: View {
             }
             .padding()
             
-            
-            Section {
-                VStack {
-                    ForEach(viewModel.etaListItems, id: \.stopId) { etaListItem in
-                        HStack {
-                            Text(etaListItem.stopName)
-                            Spacer()
-                            Text(etaListItem.estimatedTimeAwayDisplay)
-                        }
-                        .padding(.horizontal)
-                    }
-                    
-                }
-            } header: {
+            // MARK: Upcoming stops
+            // TODO: Display using the route's color
+            // TODO: Gray out stops before the user's current stop
+            VStack(spacing: 0) {
                 HStack {
-                    Text("Upcoming stops")
-                        .bold()
+                    ZStack {
+                        Rectangle()
+                            .frame(width: 2, height: 40)
+                            .foregroundStyle(Color.blue)
+                        Circle()
+                            .frame(width: 24, height: 24)
+                            .foregroundStyle(Color.blue)
+                        Image(systemName: "bus.fill")
+                            .resizable()
+                            .frame(width: 16, height: 16)
+                            .foregroundStyle(Color.white)
+                    }
                     Spacer()
                 }
                 .padding(.horizontal)
+                ForEach(viewModel.etaListItems, id: \.stopId) { etaListItem in
+                    HStack {
+                        ZStack {
+                            Rectangle()
+                                .frame(width: 2, height: 40)
+                                .foregroundStyle(Color.blue)
+                            Circle()
+                                .frame(width: 24, height: 12)
+                                .foregroundStyle(Color.blue)
+                        }
+                        Text(etaListItem.stopName)
+                        Spacer()
+                        Text(etaListItem.estimatedTimeAwayDisplay)
+                    }
+                    .padding(.horizontal)
+                }
             }
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .foregroundStyle(.background.secondary)
+            )
+            .padding(.horizontal)
 
             Button(action: {}) {
                 HStack {
