@@ -17,16 +17,15 @@ class GlobalLocationDataModel: NSObject, ObservableObject, CLLocationManagerDele
     
     @Published private(set) var locationIsUpdating: Bool = false
     
-    override init() {
-        super.init()
-        locationManager = CLLocationManager()
-        locationManager?.desiredAccuracy = kCLLocationAccuracyKilometer
-        locationManager?.delegate = self
+    convenience override init() {
+        self.init(locationManager: CLLocationManager())
     }
     
-    convenience init(locationManager: CLLocationManager) {
-        self.init()
+    init(locationManager: CLLocationManager) {
+        super.init()
         self.locationManager = locationManager
+        locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
+        locationManager.delegate = self
     }
     
     func requestAuthorization() {
