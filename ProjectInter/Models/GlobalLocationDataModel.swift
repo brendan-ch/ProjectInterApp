@@ -47,6 +47,7 @@ class GlobalLocationDataModel: NSObject, ObservableObject, CLLocationManagerDele
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
         print(error)
+        locationIsUpdating = false
     }
     
     func updateLocationOnce() {
