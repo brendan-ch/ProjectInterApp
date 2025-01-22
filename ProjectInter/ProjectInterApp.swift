@@ -43,7 +43,9 @@ struct ProjectInterApp: App {
                 .onChange(of: canAutomaticallySelectStop) {
                     guard let location = locationManagerStateObject.lastUpdatedLocation else { return }
                     
-                    globalStopsStateObject.selectClosestStopBasedOnLocation(location: location)
+                    if canAutomaticallySelectStop {
+                        globalStopsStateObject.selectClosestStopBasedOnLocation(location: location)
+                    }
                 }
         }
         .environmentObject(globalDataStateObject)

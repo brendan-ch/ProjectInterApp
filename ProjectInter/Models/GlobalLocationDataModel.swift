@@ -15,10 +15,17 @@ class GlobalLocationDataModel: NSObject, ObservableObject, CLLocationManagerDele
     @Published var authorizationStatus: CLAuthorizationStatus?
     @Published var lastUpdatedLocation: CLLocationCoordinate2D?
     
-    override init() {
+    @Published private(set) var locationIsUpdating: Bool = false
+    
+    convenience override init() {
+        self.init(locationManager: CLLocationManager())
+    }
+    
+    init(locationManager: CLLocationManager) {
         super.init()
-        locationManager = CLLocationManager()
-        locationManager?.delegate = self
+        self.locationManager = locationManager
+        locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
+        locationManager.delegate = self
     }
     
     func requestAuthorization() {
@@ -35,21 +42,20 @@ class GlobalLocationDataModel: NSObject, ObservableObject, CLLocationManagerDele
             latitude: mostRecentLocation.coordinate.latitude,
             longitude: mostRecentLocation.coordinate.longitude
         )
+        locationIsUpdating = false
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
         print(error)
-    }
-    
-    func startUpdatingLocation() {
-        locationManager?.startUpdatingLocation()
-    }
-    
-    func stopUpdatingLocation() {
-        locationManager?.stopUpdatingLocation()
+        locationIsUpdating = false
     }
     
     func updateLocationOnce() {
+        if locationIsUpdating {
+            return
+        }
+        
+        locationIsUpdating = true
         locationManager?.requestLocation()
     }
 }
