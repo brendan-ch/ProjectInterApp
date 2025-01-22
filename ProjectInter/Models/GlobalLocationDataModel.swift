@@ -24,6 +24,11 @@ class GlobalLocationDataModel: NSObject, ObservableObject, CLLocationManagerDele
         locationManager?.delegate = self
     }
     
+    convenience init(locationManager: CLLocationManager) {
+        self.init()
+        self.locationManager = locationManager
+    }
+    
     func requestAuthorization() {
         locationManager?.requestAlwaysAuthorization()
     }
