@@ -40,7 +40,12 @@ struct RouteListContentView: View {
                     Text("Routes")
                         .font(.title2)
                         .bold()
-                    Text("Current stop: \(globalStopsState.selectedStop?.name ?? "")")
+                    HStack(spacing: 0) {
+                        Text("Current stop: \(globalStopsState.selectedStop?.name ?? "")")
+                        if locationManagerState.locationIsUpdating {
+                            Text("Loading...")
+                        }
+                    }
                     Button("Change stop") {
                         showStopSelectionView = true
                     }
