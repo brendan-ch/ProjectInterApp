@@ -18,9 +18,10 @@ class MockCLLocationManager: CLLocationManager {
     }
     
     override func requestLocation() {
-        if authorizationStatusToGrant == .notDetermined,
-           authorizationStatusToGrant == .denied,
+        if authorizationStatusToGrant == .notDetermined ||
+           authorizationStatusToGrant == .denied ||
            authorizationStatusToGrant == .restricted {
+            delegate?.locationManager?(self, didFailWithError: CLError(.denied))
             return
         }
         
