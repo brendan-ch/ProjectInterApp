@@ -8,11 +8,10 @@
 import CoreLocation
 
 class MockCLLocationManager: CLLocationManager {
-    var mockLocationAccessGranted = false
+    var authorizationStatusToGrant = CLAuthorizationStatus.authorizedAlways
     
     override func requestAlwaysAuthorization() {
-        mockLocationAccessGranted = true
-        delegate?.locationManager?(self, didChangeAuthorization: CLAuthorizationStatus.authorizedAlways)
+        delegate?.locationManager?(self, didChangeAuthorization: authorizationStatusToGrant)
     }
     
     override func requestLocation() {
