@@ -132,20 +132,20 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
             if let orderedStops = data.system?.stop?.orderedStops {
                 self.routes = []
                 for orderedStop in orderedStops {
-                    let route = orderedStop.route
+                    guard let route = orderedStop.route else { return }
                     var routeListRoute = RouteListContentViewRoute(
                         id: route.id,
                         name: route.name,
                         colorHex: route.color
                     )
                     
-                    if let nextStopName = orderedStop.nextStop?.stop.name {
+                    if let nextStopName = orderedStop.nextStop?.stop?.name {
                         routeListRoute.nextStopName = nextStopName
                     } else {
                         routeListRoute.nextStopName = "N/A"
                     }
                     
-                    if let shuttles = orderedStop.route.shuttles {
+                    if let shuttles = route.shuttles {
                         for shuttle in shuttles {
                             if let secondsRemaining = shuttle.eta?.secondsRemaining {
                                 routeListRoute.addEta(secondsRemaining)

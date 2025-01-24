@@ -86,14 +86,15 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
                 if let etas = shuttle.etas {
                     self.etaListItems = []
                     for eta in etas {
-                        if eta.stop.id == stopId {
-                            self.etaDisplay = "\(ETAFormatter.formatSecondsRemaining(eta.secondsRemaining)) to \(eta.stop.name)"
+                        guard let stop = eta.stop else { return }
+                        if stop.id == stopId {
+                            self.etaDisplay = "\(ETAFormatter.formatSecondsRemaining(eta.secondsRemaining)) to \(stop.name)"
                         }
                         
                         self.etaListItems.append(ShuttleInfoEtaListItem(
-                            stopName: eta.stop.name,
+                            stopName: stop.name,
                             secondsRemaining: eta.secondsRemaining,
-                            stopId: eta.stop.id
+                            stopId: stop.id
                         ))
                     }
                     self.etaListItems.sort {

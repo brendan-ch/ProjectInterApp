@@ -101,7 +101,7 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
             if let route = data.system?.route {
                 // Set basic route data
                 self.routeName = route.name
-                if let nextStopName = route.orderedStop?.nextStop?.stop.name {
+                if let nextStopName = route.orderedStop?.nextStop?.stop?.name {
                     self.routeNextStopName = nextStopName
                 }
                 
