@@ -26,8 +26,10 @@ type Route {
 type OrderedStop {
   nextStop: OrderedStop
   previousStop: OrderedStop
-  route: Route!
-  stop: Stop!
+  route: Route
+  routeId: ID!
+  stop: Stop
+  stopId: ID!
 }
 
 type Stop {
@@ -44,8 +46,10 @@ type Coordinates {
 }
 
 type ETA {
-  stop: Stop!
-  shuttle: Shuttle!
+  stop: Stop
+  stopId: ID!
+  shuttle: Shuttle
+  shuttleId: ID!
   secondsRemaining: Float!
 }
 
@@ -54,6 +58,7 @@ type Shuttle {
   id: ID!,
   coordinates: Coordinates!
   route: Route
+  routeId: ID!
   etas: [ETA!]
   eta(forStopId: ID): ETA
 }
