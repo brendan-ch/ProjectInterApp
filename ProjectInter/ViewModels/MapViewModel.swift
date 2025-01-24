@@ -146,7 +146,7 @@ class MapViewModel: NetworkDataModelProtocol {
                     if let orderedStops = stop.orderedStops {
                         for orderedStop in orderedStops {
                             mapViewStop.routeIds.insert(
-                                orderedStop.route.id
+                                orderedStop.routeId
                             )
                         }
                     }

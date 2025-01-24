@@ -8,9 +8,7 @@ query GetMapData($systemId: ID!) {
         longitude
       }
       orderedStops {
-        route {
-          id
-        }
+        routeId
       }
     }
     shuttles {
