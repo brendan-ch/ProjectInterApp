@@ -274,9 +274,7 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
                         name: "Chapman Court",
                         orderedStops: [
                             .init(
-                                route: .init(
-                                    id: "1"
-                                )
+                                routeId: "1"
                             )
                         ]
                     )
