@@ -10,8 +10,6 @@ import SwiftUI
 // Class design subject to change
 
 class GlobalNotificationsModel: NSObject, ObservableObject, UNUserNotificationCenterDelegate {
-    @Published var authorizationStatus: UNAuthorizationStatus?
-    
     override init() {
         super.init()
         UNUserNotificationCenter.current().delegate = self
@@ -28,7 +26,10 @@ class GlobalNotificationsModel: NSObject, ObservableObject, UNUserNotificationCe
             print(error)
         }
         
+    }
+    
+    func getAuthorizationStatus() async -> UNAuthorizationStatus {
         var settings = await UNUserNotificationCenter.current().notificationSettings()
-        self.authorizationStatus = settings.authorizationStatus
+        return settings.authorizationStatus
     }
 }
