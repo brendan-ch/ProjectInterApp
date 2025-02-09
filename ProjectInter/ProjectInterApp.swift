@@ -17,7 +17,8 @@ struct ProjectInterApp: App {
     
     @StateObject var globalStopsStateObject = GlobalStopsModel(apolloClient: ApolloClientHolderSingleton.shared.apolloClient)
     
-    @StateObject var globalNotificationsStateObject = GlobalNotificationsModel()
+//    @StateObject var globalNotificationsStateObject = CustomAppDelegate()
+    @UIApplicationDelegateAdaptor(CustomAppDelegate.self) var globalNotificationsStateObject: CustomAppDelegate
     
     var canAutomaticallySelectStop: Bool {
         globalStopsStateObject.selectedStop == nil
