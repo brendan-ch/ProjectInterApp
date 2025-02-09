@@ -41,17 +41,6 @@ class CustomAppDelegate: NSObject, ObservableObject, UIApplicationDelegate, UNUs
         }
     }
     
-    func requestAuthorization() async {
-//        do {
-//            try await notificationCenter.requestAuthorization(options: [
-//                .alert,
-//                .sound
-//            ])
-//        } catch {
-//            print(error)
-//        }
-    }
-    
     func getAuthorizationStatus() async -> UNAuthorizationStatus {
         var settings = await notificationCenter.notificationSettings()
         return settings.authorizationStatus
