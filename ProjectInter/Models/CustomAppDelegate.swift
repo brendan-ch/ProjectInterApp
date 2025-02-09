@@ -13,6 +13,7 @@ import SwiftUI
 // for example custom app delegate
 
 class CustomAppDelegate: NSObject, ObservableObject, UIApplicationDelegate {
+    @Published var notificationTokenString: String?
     private var notificationCenterDelegate = CustomNotificationCenterDelegate()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -24,8 +25,8 @@ class CustomAppDelegate: NSObject, ObservableObject, UIApplicationDelegate {
     }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        let tokenString = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
-        print(tokenString)
+        notificationTokenString = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
+        print(notificationTokenString ?? "No token assigned")
     }
     
     private func registerForRemoteNotificationsIfPermissionGranted(_ application: UIApplication) async {
