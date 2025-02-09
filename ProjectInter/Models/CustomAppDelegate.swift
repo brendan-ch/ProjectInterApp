@@ -35,14 +35,9 @@ class CustomAppDelegate: NSObject, ObservableObject, UIApplicationDelegate, UNUs
     }
     
     private func registerForRemoteNotificationsIfPermissionGranted(_ application: UIApplication) async {
-        let status = await getAuthorizationStatus()
-        if status == .authorized {
-            application.registerForRemoteNotifications()
-        }
-    }
-    
-    func getAuthorizationStatus() async -> UNAuthorizationStatus {
-        var settings = await notificationCenter.notificationSettings()
-        return settings.authorizationStatus
+//        let status = await getAuthorizationStatus()
+//        if status == .authorized {
+//            application.registerForRemoteNotifications()
+//        }
     }
 }
