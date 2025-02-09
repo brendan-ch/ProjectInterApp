@@ -11,13 +11,21 @@ import UserNotifications
 // for an explanation behind this design
 
 class MockUNUserNotificationCenter: UNUserNotificationCenterProtocol {
-    // MARK: Controls for authorization
-    var shouldBeAuthorized = true
+    var delegate: (any UNUserNotificationCenterDelegate)?
+    
+    var mockSettings = MockUNNotificationSettings()
     
     init() {
     }
     
     func requestAuthorization(options: UNAuthorizationOptions = []) async throws -> Bool {
-        return shouldBeAuthorized
+        if mockSettings.authorizationStatus == .authorized {
+            return true
+        }
+        return false
+    }
+    
+    func notificationSettings() async -> UNNotificationSettingsProtocol {
+        return mockSettings
     }
 }

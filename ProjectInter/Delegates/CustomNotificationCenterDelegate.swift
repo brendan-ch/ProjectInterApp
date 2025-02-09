@@ -10,7 +10,7 @@ import UserNotifications
 import UIKit
 
 class CustomNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
-    private var notificationCenter: UNUserNotificationCenter
+    private var notificationCenter: UNUserNotificationCenterProtocol
     
     override init() {
         notificationCenter = UNUserNotificationCenter.current()

@@ -43,6 +43,7 @@
 		20405B4B2D5951FB00F90B8C /* Exceptions for "ProjectInter" folder in "ProjectInterTests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Protocols/UNNotificationSettingsProtocol.swift,
 				Protocols/UNUserNotificationCenterProtocol.swift,
 			);
 			target = 20FA7B832D10E11F00D4EAD1 /* ProjectInterTests */;
