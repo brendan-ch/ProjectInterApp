@@ -10,14 +10,16 @@ import SwiftUI
 // Class design subject to change
 
 class GlobalNotificationsModel: NSObject, ObservableObject, UNUserNotificationCenterDelegate {
+    private let notificationCenter = UNUserNotificationCenter.current()
+    
     override init() {
         super.init()
-        UNUserNotificationCenter.current().delegate = self
+        notificationCenter.delegate = self
     }
     
     func requestAuthorization() async {
         do {
-            try await UNUserNotificationCenter.current().requestAuthorization(options: [
+            try await notificationCenter.requestAuthorization(options: [
                 .alert,
                 .sound
             ])
@@ -29,7 +31,7 @@ class GlobalNotificationsModel: NSObject, ObservableObject, UNUserNotificationCe
     }
     
     func getAuthorizationStatus() async -> UNAuthorizationStatus {
-        var settings = await UNUserNotificationCenter.current().notificationSettings()
+        var settings = await notificationCenter.notificationSettings()
         return settings.authorizationStatus
     }
 }
