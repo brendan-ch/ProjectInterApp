@@ -12,20 +12,14 @@ import SwiftUI
 // See https://medium.com/@jpmtech/your-complete-guide-to-push-notifications-in-swiftui-8a13f5588662
 // for example custom app delegate
 
-class CustomAppDelegate: NSObject, ObservableObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
-    private let notificationCenter = UNUserNotificationCenter.current()
+class CustomAppDelegate: NSObject, ObservableObject, UIApplicationDelegate {
+    private var notificationCenterDelegate = CustomNotificationCenterDelegate()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        notificationCenter.requestAuthorization(options: [.alert, .sound]) { granted, error in
-            if granted {
-                DispatchQueue.main.async {
-                    UIApplication.shared.registerForRemoteNotifications()
-                }
-            }
+        Task {
+            await notificationCenterDelegate.requestAuthorization()
+            await registerForRemoteNotificationsIfPermissionGranted(application)
         }
-        
-        notificationCenter.delegate = self
-        
         return true
     }
     
@@ -35,9 +29,9 @@ class CustomAppDelegate: NSObject, ObservableObject, UIApplicationDelegate, UNUs
     }
     
     private func registerForRemoteNotificationsIfPermissionGranted(_ application: UIApplication) async {
-//        let status = await getAuthorizationStatus()
-//        if status == .authorized {
-//            application.registerForRemoteNotifications()
-//        }
+        let status = await notificationCenterDelegate.getAuthorizationStatus()
+        if status == .authorized {
+            application.registerForRemoteNotifications()
+        }
     }
 }

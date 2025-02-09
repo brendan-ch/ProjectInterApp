@@ -7,6 +7,7 @@
 
 import Foundation
 import UserNotifications
+import UIKit
 
 class CustomNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
     private var notificationCenter: UNUserNotificationCenter
@@ -21,6 +22,12 @@ class CustomNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelega
         self.notificationCenter = notificationCenter
         super.init()
         self.notificationCenter.delegate = self
+    }
+    
+    func requestAuthorization() async {
+        try? await notificationCenter.requestAuthorization(
+            options: [.alert, .sound]
+        )
     }
     
     func getAuthorizationStatus() async -> UNAuthorizationStatus {
