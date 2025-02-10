@@ -20,7 +20,7 @@ enum NotificationSchedulingFailedError: Error {
     case operationFailed
 }
 
-class GlobalNotificationSchedulingModel {
+class GlobalNotificationSchedulingModel: ObservableObject {
     var apolloClient: ApolloClientProtocol?
     
     init(apolloClient: ApolloClientProtocol? = nil) {
