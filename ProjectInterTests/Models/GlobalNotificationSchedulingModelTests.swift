@@ -11,24 +11,20 @@ import ApolloTestSupport
 import ProjectInterTestMocks
 
 class GlobalNotificationSchedulingModelTests {
-    let successfulScheduleNotificationResponse =  Mock<Mutation>(
-        scheduleNotification: .init(
-            data: .init(
-                deviceId: "1",
-                shuttleId: "1",
-                stopId: "1"
-            ),
-            message: "Successfully performed operation",
-            success: true
-        )
+    let successfulNotificationResponse = Mock<NotificationResponse>(
+        data: .init(
+            deviceId: "1",
+            shuttleId: "1",
+            stopId: "1"
+        ),
+        message: "Successfully performed operation",
+        success: true
     )
-
-    let failedScheduleNotificationResponse = Mock<Mutation>(
-        cancelNotification: .init(
-            data: nil,
-            message: "Failed to perform operation",
-            success: false
-        )
+    
+    let failedNotificationResponse = Mock<NotificationResponse>(
+        data: nil,
+        message: "Failed to perform operation",
+        success: false
     )
     
     let arguments = NotificationNetworkArguments(
@@ -37,22 +33,13 @@ class GlobalNotificationSchedulingModelTests {
         stopId: "1"
     )
     
-    func generateSuccessfulResponseApolloClientMock() -> MockApolloClient {
+    @Test func scheduleNotificationSchedulesNotificationWithApollo() async throws {
+        let successfulScheduleNotificationResponse =  Mock<Mutation>(
+            scheduleNotification: successfulNotificationResponse
+        )
+
         let mockApolloClient = MockApolloClient()
         mockApolloClient.mutationMock = successfulScheduleNotificationResponse
-        
-        return mockApolloClient
-    }
-    
-    func generateFailedResponseApolloClientMock() -> MockApolloClient {
-        let mockApolloClient = MockApolloClient()
-        mockApolloClient.mutationMock = failedScheduleNotificationResponse
-        
-        return mockApolloClient
-    }
-    
-    @Test func scheduleNotificationSchedulesNotificationWithApollo() async throws {
-        let mockApolloClient = generateSuccessfulResponseApolloClientMock()
         let model = GlobalNotificationSchedulingModel(apolloClient: mockApolloClient)
         
         await #expect(throws: Never.self) {
@@ -61,7 +48,12 @@ class GlobalNotificationSchedulingModelTests {
     }
     
     @Test func scheduleNotificationThrowsErrorIfFailing() async {
-        let mockApolloClient = generateFailedResponseApolloClientMock()
+        let failedScheduleNotificationResponse = Mock<Mutation>(
+            scheduleNotification: failedNotificationResponse
+        )
+        
+        let mockApolloClient = MockApolloClient()
+        mockApolloClient.mutationMock = failedScheduleNotificationResponse
         let model = GlobalNotificationSchedulingModel(apolloClient: mockApolloClient)
         
         await #expect(throws: NotificationSchedulingFailedError.operationFailed) {
@@ -70,7 +62,12 @@ class GlobalNotificationSchedulingModelTests {
     }
     
     @Test func removeNotificationRemovesNotificationWithApollo() async {
-        let mockApolloClient = generateSuccessfulResponseApolloClientMock()
+        let successfulCancelNotificationResponse = Mock<Mutation>(
+            cancelNotification: successfulNotificationResponse
+        )
+        
+        let mockApolloClient = MockApolloClient()
+        mockApolloClient.mutationMock = successfulCancelNotificationResponse
         let model = GlobalNotificationSchedulingModel(apolloClient: mockApolloClient)
         
         await #expect(throws: Never.self) {
@@ -79,7 +76,12 @@ class GlobalNotificationSchedulingModelTests {
     }
     
     @Test func removeNotificationThrowsErrorIfFailing() async {
-        let mockApolloClient = generateSuccessfulResponseApolloClientMock()
+        let successfulCancelNotificationResponse = Mock<Mutation>(
+            cancelNotification: failedNotificationResponse
+        )
+        
+        let mockApolloClient = MockApolloClient()
+        mockApolloClient.mutationMock = successfulCancelNotificationResponse
         let model = GlobalNotificationSchedulingModel(apolloClient: mockApolloClient)
         
         await #expect(throws: NotificationSchedulingFailedError.operationFailed) {
