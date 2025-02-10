@@ -7,7 +7,18 @@
 
 import Foundation
 
+struct NotificationNetworkArguments {
+    let deviceId: String
+    let shuttleId: String
+    let stopId: String
+}
+
 class GlobalNotificationSchedulingModel {
-    // Method to schedule a notification
-    // Method to remove a notification
+    func scheduleNotification(_ arguments: NotificationNetworkArguments) {
+        
+    }
+    
+    func removeNotification(_ arguments: NotificationNetworkArguments) {
+        
+    }
 }
