@@ -27,6 +27,15 @@ class GlobalNotificationSchedulingModel {
         self.apolloClient = apolloClient
     }
     
+    func generateNotificationInput(_ arguments: NotificationNetworkArguments) -> NotificationInput {
+        let notificationInput = NotificationInput(
+            deviceId: arguments.deviceId,
+            shuttleId: arguments.shuttleId,
+            stopId: arguments.stopId
+        )
+        
+        return notificationInput
+    }
     func scheduleNotification(_ arguments: NotificationNetworkArguments) async throws {
         return try await withCheckedThrowingContinuation { continuation in
             var continuationIsActive = true
@@ -37,11 +46,7 @@ class GlobalNotificationSchedulingModel {
                 return
             }
             
-            let notificationInput = NotificationInput(
-                deviceId: arguments.deviceId,
-                shuttleId: arguments.shuttleId,
-                stopId: arguments.stopId
-            )
+            let notificationInput = generateNotificationInput(arguments)
             
             apolloClient.perform(mutation: ScheduleNotificationMutation(input: notificationInput)) { result in
                 if !continuationIsActive { return }
@@ -66,6 +71,35 @@ class GlobalNotificationSchedulingModel {
     }
     
     func removeNotification(_ arguments: NotificationNetworkArguments) async throws {
-        
+        return try await withCheckedThrowingContinuation { continuation in
+            var continuationIsActive = true
+            
+            guard let apolloClient = apolloClient else {
+                continuationIsActive = false
+                continuation.resume()
+                return
+            }
+            
+            let notificationInput = generateNotificationInput(arguments)
+            
+            apolloClient.perform(mutation: CancelNotificationMutation(input: notificationInput)) { result in
+                if !continuationIsActive { return }
+                
+                guard let data = try? result.get().data else {
+                    continuation.resume(throwing: NotificationSchedulingFailedError.graphqlError)
+                    continuationIsActive = false
+                    return
+                }
+                
+                if !data.cancelNotification.success {
+                    continuation.resume(throwing: NotificationSchedulingFailedError.operationFailed)
+                    continuationIsActive = false
+                    return
+                }
+                
+                continuation.resume()
+                continuationIsActive = false
+            }
+        }
     }
 }
