@@ -8,7 +8,7 @@
 import UserNotifications
 
 extension UNNotificationSettings {
-    static var fakeAuthorizationStatus: UNAuthorizationStatus = .authorized
+    static var fakeAuthorizationStatus: UNAuthorizationStatus = .notDetermined
         
     static func swizzleAuthorizationStatus() {
         let originalMethod = class_getInstanceMethod(self, #selector(getter: authorizationStatus))!
