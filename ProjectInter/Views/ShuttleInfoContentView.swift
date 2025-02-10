@@ -18,6 +18,10 @@ struct ShuttleInfoContentView: View {
     
     @EnvironmentObject var globalStopsState: GlobalStopsModel
     
+    @EnvironmentObject var notificationSchedulingState: GlobalNotificationSchedulingModel
+    
+    @EnvironmentObject var customAppDelegate: CustomAppDelegate
+    
     var shuttleInfoNetworkArguments: ShuttleInfoNetworkArguments? {
         guard let systemId = globalDataState.selectedSystem?.id,
               let shuttleId = globalDataState.selectedShuttleId,
@@ -47,6 +51,36 @@ struct ShuttleInfoContentView: View {
                     globalDataState.selectedShuttleId = nil
                 }
             }
+            .padding()
+            
+            Button(action: {
+                Task {
+                    guard let stopId = globalStopsState.selectedStop?.id,
+                          let shuttleId = globalDataState.selectedShuttleId,
+                          let deviceId = customAppDelegate.notificationTokenString
+                    else { return }
+                    
+                    let input = NotificationNetworkArguments(
+                        deviceId: deviceId,
+                        shuttleId: shuttleId,
+                        stopId: stopId
+                    )
+                    do {
+                        try await notificationSchedulingState.scheduleNotification(input)
+                    } catch {
+                        print(error)
+                    }
+                }
+            }) {
+                HStack {
+                    Spacer()
+                    Image(systemName: "bell.badge")
+                    Text("Notify me when nearby")
+                    Spacer()
+                }
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.large)
             .padding()
             
             // MARK: Upcoming stops
@@ -92,18 +126,6 @@ struct ShuttleInfoContentView: View {
             )
             .padding(.horizontal)
 
-            Button(action: {}) {
-                HStack {
-                    Spacer()
-                    Image(systemName: "bell.badge")
-                    Text("Notify me when nearby")
-                    Spacer()
-                }
-            }
-            .disabled(true)
-            .buttonStyle(.bordered)
-            .controlSize(.large)
-            .padding()
         }
         .onAppear {
             if let client = globalDataState.apolloClient {
@@ -131,4 +153,6 @@ struct ShuttleInfoContentView: View {
     return ShuttleInfoContentView(viewModel: model)
         .environmentObject(GlobalDataModel())
         .environmentObject(GlobalStopsModel())
+        .environmentObject(GlobalNotificationSchedulingModel())
+        .environmentObject(CustomAppDelegate())
 }
