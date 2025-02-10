@@ -12,20 +12,19 @@ import UserNotifications
 
 class MockUNUserNotificationCenter: UNUserNotificationCenterProtocol {
     var delegate: (any UNUserNotificationCenterDelegate)?
-    
-    var mockSettings = MockUNNotificationSettings()
+    var settings: UNNotificationSettings
     
     init() {
+        settings = UNNotificationSettings(coder: MockNSCoder())!
+        UNNotificationSettings.swizzleAuthorizationStatus()
     }
     
     func requestAuthorization(options: UNAuthorizationOptions = []) async throws -> Bool {
-        if mockSettings.authorizationStatus == .authorized {
-            return true
-        }
-        return false
+        UNNotificationSettings.fakeAuthorizationStatus = .authorized
+        return true
     }
     
-    func notificationSettings() async -> UNNotificationSettingsProtocol {
-        return mockSettings
+    func notificationSettings() async -> UNNotificationSettings {
+        return settings
     }
 }
