@@ -17,7 +17,9 @@ struct ProjectInterApp: App {
     
     @StateObject var globalStopsStateObject = GlobalStopsModel(apolloClient: ApolloClientHolderSingleton.shared.apolloClient)
     
-    @UIApplicationDelegateAdaptor(CustomAppDelegate.self) var globalNotificationsStateObject: CustomAppDelegate
+    @StateObject var globalNotificationsStateObject = GlobalNotificationSchedulingModel(apolloClient: ApolloClientHolderSingleton.shared.apolloClient)
+    
+    @UIApplicationDelegateAdaptor(CustomAppDelegate.self) var customAppDelegate: CustomAppDelegate
     
     var canAutomaticallySelectStop: Bool {
         globalStopsStateObject.selectedStop == nil
@@ -53,6 +55,7 @@ struct ProjectInterApp: App {
         .environmentObject(globalDataStateObject)
         .environmentObject(globalStopsStateObject)
         .environmentObject(locationManagerStateObject)
+        .environmentObject(globalNotificationsStateObject)
     }
 }
 
