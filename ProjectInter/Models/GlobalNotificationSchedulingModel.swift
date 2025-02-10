@@ -22,11 +22,19 @@ class GlobalNotificationSchedulingModel {
         self.apolloClient = apolloClient
     }
     
-    func scheduleNotification(_ arguments: NotificationNetworkArguments) {
-        
+    func scheduleNotification(_ arguments: NotificationNetworkArguments) async {
+        return await withCheckedContinuation { continuation in
+            var continuationIsActive = true
+            
+            guard let apolloClient = apolloClient else {
+                continuationIsActive = false
+                continuation.resume()
+                return
+            }
+        }
     }
     
-    func removeNotification(_ arguments: NotificationNetworkArguments) {
+    func removeNotification(_ arguments: NotificationNetworkArguments) async {
         
     }
 }
