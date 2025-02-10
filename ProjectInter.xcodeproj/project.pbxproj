@@ -45,7 +45,6 @@
 			membershipExceptions = (
 				Extensions/UNNotificationSettings.swift,
 				Protocols/UNNotificationSettingsProtocol.swift,
-				Protocols/UNUserNotificationCenterProtocol.swift,
 			);
 			target = 20FA7B832D10E11F00D4EAD1 /* ProjectInterTests */;
 		};

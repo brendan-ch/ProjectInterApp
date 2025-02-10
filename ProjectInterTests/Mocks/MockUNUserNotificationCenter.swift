@@ -6,6 +6,7 @@
 //
 
 import UserNotifications
+@testable import ProjectInter
 
 // See https://stackoverflow.com/questions/40862551/unit-testing-ios-10-notifications
 // for an explanation behind this design
@@ -16,7 +17,6 @@ class MockUNUserNotificationCenter: UNUserNotificationCenterProtocol {
     
     init() {
         settings = UNNotificationSettings(coder: MockNSCoder())!
-        UNNotificationSettings.swizzleAuthorizationStatus()
     }
     
     func requestAuthorization(options: UNAuthorizationOptions = []) async throws -> Bool {
@@ -26,5 +26,9 @@ class MockUNUserNotificationCenter: UNUserNotificationCenterProtocol {
     
     func notificationSettings() async -> UNNotificationSettings {
         return settings
+    }
+    
+    func resetAuthorization() {
+        UNNotificationSettings.fakeAuthorizationStatus = .notDetermined
     }
 }

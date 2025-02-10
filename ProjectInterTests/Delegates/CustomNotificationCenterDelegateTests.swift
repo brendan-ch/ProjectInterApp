@@ -6,10 +6,23 @@
 //
 
 import Testing
+import UserNotifications
 @testable import ProjectInter
 
 class CustomNotificationCenterDelegateTests {
-    @Test func mocksWork() {
+    func setupMockNotificationCenter() -> MockUNUserNotificationCenter {
+        UNNotificationSettings.swizzleAuthorizationStatus()
         let mockNotificationCenter = MockUNUserNotificationCenter()
+        mockNotificationCenter.resetAuthorization()
+        return mockNotificationCenter
+    }
+    
+    @Test func requestAuthorizationUpdateAuthorization() async {
+        let mockNotificationCenter = setupMockNotificationCenter()
+        
+        let delegate = CustomNotificationCenterDelegate(notificationCenter: mockNotificationCenter)
+        
+        await delegate.requestAuthorization()
+        #expect(UNNotificationSettings.fakeAuthorizationStatus == .authorized)
     }
 }
