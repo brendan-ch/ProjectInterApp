@@ -15,6 +15,10 @@ struct NotificationNetworkArguments {
     let stopId: String
 }
 
+enum NotificationSchedulingFailedError: Error {
+    case operationFailed
+}
+
 class GlobalNotificationSchedulingModel {
     var apolloClient: ApolloClientProtocol?
     
@@ -22,8 +26,8 @@ class GlobalNotificationSchedulingModel {
         self.apolloClient = apolloClient
     }
     
-    func scheduleNotification(_ arguments: NotificationNetworkArguments) async {
-        return await withCheckedContinuation { continuation in
+    func scheduleNotification(_ arguments: NotificationNetworkArguments) async throws {
+        return try await withCheckedThrowingContinuation { continuation in
             var continuationIsActive = true
             
             guard let apolloClient = apolloClient else {
@@ -31,10 +35,12 @@ class GlobalNotificationSchedulingModel {
                 continuation.resume()
                 return
             }
+            
+            continuation.resume(throwing: NotificationSchedulingFailedError.operationFailed)
         }
     }
     
-    func removeNotification(_ arguments: NotificationNetworkArguments) async {
+    func removeNotification(_ arguments: NotificationNetworkArguments) async throws {
         
     }
 }
