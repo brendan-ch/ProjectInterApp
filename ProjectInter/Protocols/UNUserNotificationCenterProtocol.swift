@@ -11,6 +11,6 @@ import UserNotifications
 /// of the class.
 protocol UNUserNotificationCenterProtocol: AnyObject {
     func requestAuthorization(options: UNAuthorizationOptions) async throws -> Bool
-    func notificationSettings() async -> UNNotificationSettingsProtocol
+    func notificationSettings() async -> UNNotificationSettings
     var delegate: UNUserNotificationCenterDelegate? { get set }
 }
