@@ -11,7 +11,14 @@ import ApolloTestSupport
 import ProjectInterTestMocks
 
 class GlobalNotificationSchedulingModelTests {
-//    let defaultNotification = Mock
+    let successfulScheduleNotificationResponse = Mock<ProjectInterTestMocks.NotificationResponse>(
+        data: Mock<ProjectInterTestMocks.Notification>(
+            deviceId: "1",
+            shuttleId: "1",
+            stopId: "1"
+        ), message: "Successfully scheduled notification",
+        success: true
+    )
     
     @Test func scheduleNotificationSchedulesNotificationWithApollo() async {
         
