@@ -18,7 +18,7 @@ class CustomNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelega
         notificationCenter.delegate = self
     }
     
-    init(notificationCenter: UNUserNotificationCenter) {
+    init(notificationCenter: UNUserNotificationCenterProtocol) {
         self.notificationCenter = notificationCenter
         super.init()
         self.notificationCenter.delegate = self
