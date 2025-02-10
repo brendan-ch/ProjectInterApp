@@ -31,7 +31,15 @@ class GlobalNotificationSchedulingModelTests {
         
     }
     
+    @Test func scheduleNotificationThrowsErrorIfFailing() async {
+        
+    }
+    
     @Test func removeNotificationRemovesNotificationWithApollo() async {
+        
+    }
+    
+    @Test func removeNotificationThrowsErrorIfFailing() async {
         
     }
 }
