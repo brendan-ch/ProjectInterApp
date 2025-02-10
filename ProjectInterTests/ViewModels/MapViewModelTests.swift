@@ -163,7 +163,7 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.mock = defaultMock
+        mockClient.queryMock = defaultMock
         
         viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(500))
         try? await Task.sleep(for: .milliseconds(200))
@@ -173,12 +173,12 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     
     @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.mock = defaultMock
+        mockClient.queryMock = defaultMock
         
         viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(500))
         try? await Task.sleep(for: .milliseconds(200))
         
-        mockClient.mock = secondaryMock
+        mockClient.queryMock = secondaryMock
         try? await Task.sleep(for: .milliseconds(400))
         
         assertViewModelDataForSecondaryMock(viewModel: viewModel)
@@ -186,14 +186,14 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     
     @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.mock = defaultMock
+        mockClient.queryMock = defaultMock
         
         viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(500))
         try? await Task.sleep(for: .milliseconds(700))
         
         viewModel.stopRefreshingData()
         
-        mockClient.mock = secondaryMock
+        mockClient.queryMock = secondaryMock
         try? await Task.sleep(for: .milliseconds(400))
         
         assertViewModelDataForDefaultMock(viewModel: viewModel)
@@ -201,7 +201,7 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     
     @Test func refreshDataOnceUpdatesData() async {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.mock = defaultMock
+        mockClient.queryMock = defaultMock
         
         await viewModel.refreshDataOnce(arguments: arguments)
         
@@ -210,7 +210,7 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     
     @Test func refreshDataOnceDoesNothingIfNoData() async {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.mock = nil
+        mockClient.queryMock = nil
 
         await viewModel.refreshDataOnce(arguments: arguments)
         
@@ -227,7 +227,7 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
                 ]
             )
         )
-        mockClient.mock = mock
+        mockClient.queryMock = mock
         
         await viewModel.refreshDataOnce(arguments: arguments)
         
@@ -244,7 +244,7 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
                 ]
             )
         )
-        mockClient.mock = mock
+        mockClient.queryMock = mock
         
         await viewModel.refreshDataOnce(arguments: arguments)
         
@@ -265,7 +265,7 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     @Test func refreshDataOnceUpdatesOrderedStopDataForStopIfExists() async {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
         
-        mockClient.mock = Mock<ProjectInterTestMocks.Query>(
+        mockClient.queryMock = Mock<ProjectInterTestMocks.Query>(
             system: .init(
                 stops: [
                     .init(

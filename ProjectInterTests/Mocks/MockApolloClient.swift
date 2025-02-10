@@ -20,7 +20,8 @@ struct MockError: Error {
 
 class MockApolloClient: ApolloClientProtocol {
     // MARK: - Mock data
-    var mock: Mock<ProjectInterTestMocks.Query>?
+    var queryMock: Mock<ProjectInterTestMocks.Query>?
+    var mutationMock: Mock<ProjectInterTestMocks.Mutation>?
     
     // MARK: - ApolloClientProtocol conformance
     var store: Apollo.ApolloStore
@@ -50,7 +51,7 @@ class MockApolloClient: ApolloClientProtocol {
     
     func fetch<Query>(query: Query, cachePolicy: CachePolicy = .default, contextIdentifier: UUID? = nil, context: (any RequestContext)? = nil, queue: DispatchQueue = .main, resultHandler: GraphQLResultHandler<Query.Data>? = nil) -> (any Cancellable) where Query : GraphQLQuery {
         
-        guard let mock = mock else {
+        guard let mock = queryMock else {
             resultHandler?(.failure(MockError()))
             return EmptyCancellable()
         }

@@ -27,7 +27,7 @@ class GlobalDataModelTests {
                 ),
             ]
         )
-        mockClient.mock = mock
+        mockClient.queryMock = mock
 
         let globalDataState = GlobalDataModel(apolloClient: mockClient)
         await globalDataState.refreshSystemData()
@@ -37,7 +37,7 @@ class GlobalDataModelTests {
     
     @Test func testRefreshSystemDataWithInvalidData() async throws {
         let mockClient = MockApolloClient()
-        mockClient.mock = nil
+        mockClient.queryMock = nil
         
         let globalDataState = GlobalDataModel(apolloClient: mockClient)
         await globalDataState.refreshSystemData()
