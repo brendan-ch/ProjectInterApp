@@ -1,0 +1,12 @@
+mutation CancelNotification($input: NotificationInput!) {
+  cancelNotification(input: $input) {
+    success
+    message
+    data {
+      deviceId
+      shuttleId
+      stopId
+    }
+  }
+}
+

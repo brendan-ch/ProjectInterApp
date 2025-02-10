@@ -1,0 +1,12 @@
+mutation ScheduleNotification($input: NotificationInput!) {
+  scheduleNotification(input: $input) {
+     success
+     message
+     data {
+       deviceId
+       shuttleId
+       stopId
+     }
+  }
+}
+
