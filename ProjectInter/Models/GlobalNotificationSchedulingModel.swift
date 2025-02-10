@@ -70,7 +70,7 @@ class GlobalNotificationSchedulingModel {
         }
     }
     
-    func removeNotification(_ arguments: NotificationNetworkArguments) async throws {
+    func cancelNotification(_ arguments: NotificationNetworkArguments) async throws {
         return try await withCheckedThrowingContinuation { continuation in
             var continuationIsActive = true
             

@@ -61,7 +61,7 @@ class GlobalNotificationSchedulingModelTests {
         }
     }
     
-    @Test func removeNotificationRemovesNotificationWithApollo() async {
+    @Test func cancelNotificationRemovesNotificationWithApollo() async {
         let successfulCancelNotificationResponse = Mock<Mutation>(
             cancelNotification: successfulNotificationResponse
         )
@@ -71,11 +71,11 @@ class GlobalNotificationSchedulingModelTests {
         let model = GlobalNotificationSchedulingModel(apolloClient: mockApolloClient)
         
         await #expect(throws: Never.self) {
-            try await model.removeNotification(arguments)
+            try await model.cancelNotification(arguments)
         }
     }
     
-    @Test func removeNotificationThrowsErrorIfFailing() async {
+    @Test func cancelNotificationThrowsErrorIfFailing() async {
         let successfulCancelNotificationResponse = Mock<Mutation>(
             cancelNotification: failedNotificationResponse
         )
@@ -85,7 +85,7 @@ class GlobalNotificationSchedulingModelTests {
         let model = GlobalNotificationSchedulingModel(apolloClient: mockApolloClient)
         
         await #expect(throws: NotificationSchedulingFailedError.operationFailed) {
-            try await model.removeNotification(arguments)
+            try await model.cancelNotification(arguments)
         }
     }
 }
