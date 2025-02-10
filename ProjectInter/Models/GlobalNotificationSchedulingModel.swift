@@ -16,6 +16,7 @@ struct NotificationNetworkArguments {
 }
 
 enum NotificationSchedulingFailedError: Error {
+    case graphqlError
     case operationFailed
 }
 
@@ -36,7 +37,31 @@ class GlobalNotificationSchedulingModel {
                 return
             }
             
-            continuation.resume(throwing: NotificationSchedulingFailedError.operationFailed)
+            let notificationInput = NotificationInput(
+                deviceId: arguments.deviceId,
+                shuttleId: arguments.shuttleId,
+                stopId: arguments.stopId
+            )
+            
+            apolloClient.perform(mutation: ScheduleNotificationMutation(input: notificationInput)) { result in
+                if !continuationIsActive { return }
+                
+                guard let data = try? result.get().data else {
+                    continuation.resume(throwing: NotificationSchedulingFailedError.graphqlError)
+                    continuationIsActive = false
+                    return
+                }
+                
+                if !data.scheduleNotification.success {
+                    continuation.resume(throwing: NotificationSchedulingFailedError.operationFailed)
+                    continuationIsActive = false
+                    return
+                }
+                
+                continuation.resume()
+                continuationIsActive = false
+            }
+            
         }
     }
     
