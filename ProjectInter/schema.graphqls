@@ -1,8 +1,4 @@
-type Query {
-  systems: [System!]!
-  system(id: ID): System
-}
-
+# Base types
 type System {
   id: ID!
   name: String!
@@ -61,4 +57,34 @@ type Shuttle {
   routeId: ID!
   etas: [ETA!]
   eta(forStopId: ID): ETA
+}
+
+# Queries
+type Query {
+  systems: [System!]!
+  system(id: ID): System
+}
+
+# Mutations
+type Mutation {
+  scheduleNotification(input: NotificationInput!): NotificationResponse!
+  cancelNotification(input: NotificationInput!): NotificationResponse!
+}
+
+input NotificationInput {
+  deviceId: ID!
+  shuttleId: ID!
+  stopId: ID!
+}
+
+type NotificationResponse {
+  success: Boolean!
+  message: String!
+  data: Notification
+}
+
+type Notification {
+  deviceId: ID!
+  shuttleId: ID!
+  stopId: ID!
 }

@@ -20,17 +20,14 @@ struct MockError: Error {
 
 class MockApolloClient: ApolloClientProtocol {
     // MARK: - Mock data
-    var mock: Mock<ProjectInterTestMocks.Query>?
+    var queryMock: Mock<ProjectInterTestMocks.Query>?
+    var mutationMock: Mock<ProjectInterTestMocks.Mutation>?
     
     // MARK: - ApolloClientProtocol conformance
     var store: Apollo.ApolloStore
     
     init() {
         store = Apollo.ApolloStore()
-    }
-    
-    func perform<Mutation>(mutation: Mutation, publishResultToStore: Bool, contextIdentifier: UUID?, context: (any Apollo.RequestContext)?, queue: DispatchQueue, resultHandler: Apollo.GraphQLResultHandler<Mutation.Data>?) -> (any Apollo.Cancellable) where Mutation : ApolloAPI.GraphQLMutation {
-        return EmptyCancellable()
     }
 
     func clearCache(callbackQueue: DispatchQueue, completion: ((Result<Void, any Error>) -> Void)?) {
@@ -50,7 +47,7 @@ class MockApolloClient: ApolloClientProtocol {
     
     func fetch<Query>(query: Query, cachePolicy: CachePolicy = .default, contextIdentifier: UUID? = nil, context: (any RequestContext)? = nil, queue: DispatchQueue = .main, resultHandler: GraphQLResultHandler<Query.Data>? = nil) -> (any Cancellable) where Query : GraphQLQuery {
         
-        guard let mock = mock else {
+        guard let mock = queryMock else {
             resultHandler?(.failure(MockError()))
             return EmptyCancellable()
         }
@@ -65,6 +62,26 @@ class MockApolloClient: ApolloClientProtocol {
             )))
         }
         
+        return EmptyCancellable()
+    }
+    
+    func perform<Mutation>(mutation: Mutation, publishResultToStore: Bool, contextIdentifier: UUID?, context: (any Apollo.RequestContext)?, queue: DispatchQueue, resultHandler: Apollo.GraphQLResultHandler<Mutation.Data>?) -> (any Apollo.Cancellable) where Mutation : ApolloAPI.GraphQLMutation {
+        
+        guard let mock = mutationMock else {
+            resultHandler?(.failure(MockError()))
+            return EmptyCancellable()
+        }
+        
+        if let resultHandler {
+            resultHandler(.success(GraphQLResult(
+                data: Mutation.Data.from(mock),
+                extensions: nil,
+                errors: nil,
+                source: .server,
+                dependentKeys: nil
+            )))
+        }
+                          
         return EmptyCancellable()
     }
 }

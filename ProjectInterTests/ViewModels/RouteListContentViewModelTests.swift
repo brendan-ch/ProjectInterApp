@@ -116,7 +116,7 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
 
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
         let mockClient = MockApolloClient()
-        mockClient.mock = defaultMock
+        mockClient.queryMock = defaultMock
         
         let viewModel = RouteListContentViewModel(apolloClient: mockClient)
         let arguments = defaultArguments
@@ -133,7 +133,7 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
     @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
         // Arrange
         let mockClient = MockApolloClient()
-        mockClient.mock = defaultMock
+        mockClient.queryMock = defaultMock
         
         let viewModel = RouteListContentViewModel(apolloClient: mockClient)
         let arguments = defaultArguments
@@ -148,7 +148,7 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.routes[0].etasInSeconds.count == 2)
         
         // Arrange
-        mockClient.mock = secondaryMock
+        mockClient.queryMock = secondaryMock
         
         // Assert
         try? await Task.sleep(for: .milliseconds(50))
@@ -159,7 +159,7 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
     @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
         // Arrange
         let mockClient = MockApolloClient()
-        mockClient.mock = defaultMock
+        mockClient.queryMock = defaultMock
         
         let viewModel = RouteListContentViewModel(apolloClient: mockClient)
         viewModel.startRefreshingData(arguments: defaultArguments, sleepDuration: .seconds(1))
@@ -167,7 +167,7 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
         // Act
         try? await Task.sleep(for: .milliseconds(500))
         viewModel.stopRefreshingData()
-        mockClient.mock = secondaryMock
+        mockClient.queryMock = secondaryMock
         
         // Assert
         // Wait for the task to expire
@@ -179,7 +179,7 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
     @Test func refreshDataOnceUpdatesData() async {
         let mock = defaultMock
         let mockClient = MockApolloClient()
-        mockClient.mock = mock
+        mockClient.queryMock = mock
         
         let viewModel = RouteListContentViewModel(apolloClient: mockClient)
         let arguments = defaultArguments
@@ -191,7 +191,7 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
     
     @Test func refreshDataOnceDoesNothingIfNoData() async {
         let mockClient = MockApolloClient()
-        mockClient.mock = nil
+        mockClient.queryMock = nil
         
         let viewModel = RouteListContentViewModel(apolloClient: mockClient)
         let arguments = defaultArguments

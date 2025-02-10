@@ -92,7 +92,7 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.mock = defaultMock
+        mockClient.queryMock = defaultMock
         
         viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(500))
         try? await Task.sleep(for: .milliseconds(200))
@@ -102,12 +102,12 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     
     @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.mock = defaultMock
+        mockClient.queryMock = defaultMock
         
         viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(500))
         try? await Task.sleep(for: .milliseconds(600))
         
-        mockClient.mock = secondaryMock
+        mockClient.queryMock = secondaryMock
         try? await Task.sleep(for: .milliseconds(500))
         
         assertViewModelDataForSecondaryMock(viewModel: viewModel)
@@ -115,14 +115,14 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     
     @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.mock = defaultMock
+        mockClient.queryMock = defaultMock
         
         viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(500))
         try? await Task.sleep(for: .milliseconds(600))
         
         viewModel.stopRefreshingData()
         
-        mockClient.mock = secondaryMock
+        mockClient.queryMock = secondaryMock
         try? await Task.sleep(for: .milliseconds(500))
 
         assertViewModelDataForDefaultMock(viewModel: viewModel)
@@ -130,7 +130,7 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     
     @Test func refreshDataOnceUpdatesData() async {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.mock = defaultMock
+        mockClient.queryMock = defaultMock
         
         await viewModel.refreshDataOnce(arguments: arguments)
         
@@ -140,7 +140,7 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     @Test func refreshDataOnceUpdatesEtaCorrectlyIfUnderOneMin() async {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
         
-        mockClient.mock = Mock<Query>(
+        mockClient.queryMock = Mock<Query>(
             system: .init(
                 shuttle: .init(
                     etas: [
@@ -164,7 +164,7 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     
     @Test func refreshDataOnceDoesNothingIfNoData() async {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.mock = nil
+        mockClient.queryMock = nil
 
         await viewModel.refreshDataOnce(arguments: arguments)
         

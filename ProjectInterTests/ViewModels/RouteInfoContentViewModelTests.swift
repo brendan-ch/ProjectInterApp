@@ -86,7 +86,7 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
 
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
         let mockClient = MockApolloClient()
-        mockClient.mock = defaultMock
+        mockClient.queryMock = defaultMock
         
         let viewModel = RouteInfoContentViewModel(apolloClient: mockClient)
         let arguments = defaultArguments
@@ -105,7 +105,7 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         // TODO: Find a way to generate this type of test quickly
         // Arrange
         let mockClient = MockApolloClient()
-        mockClient.mock = defaultMock
+        mockClient.queryMock = defaultMock
         
         let viewModel = RouteInfoContentViewModel(apolloClient: mockClient)
         let arguments = defaultArguments
@@ -121,7 +121,7 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.shuttles.count == 2)
         
         let updatedMock = secondaryMock
-        mockClient.mock = updatedMock
+        mockClient.queryMock = updatedMock
         
         try? await Task.sleep(for: .milliseconds(50))
         
@@ -133,7 +133,7 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
         // Arrange
         let mockClient = MockApolloClient()
-        mockClient.mock = defaultMock
+        mockClient.queryMock = defaultMock
         
         let viewModel = RouteInfoContentViewModel(apolloClient: mockClient)
         viewModel.startRefreshingData(arguments: defaultArguments, sleepDuration: .seconds(1))
@@ -142,7 +142,7 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         
         // Act
         viewModel.stopRefreshingData()
-        mockClient.mock = secondaryMock
+        mockClient.queryMock = secondaryMock
         
         try? await Task.sleep(for: .milliseconds(600))
         
@@ -155,7 +155,7 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     @Test func refreshDataOnceUpdatesData() async {
         let mock = defaultMock
         let mockClient = MockApolloClient()
-        mockClient.mock = mock
+        mockClient.queryMock = mock
         
         let viewModel = RouteInfoContentViewModel(apolloClient: mockClient)
         let arguments = defaultArguments
@@ -168,7 +168,7 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     
     @Test func refreshDataOnceDoesNothingIfNoData() async {
         let mockClient = MockApolloClient()
-        mockClient.mock = nil
+        mockClient.queryMock = nil
         
         let viewModel = RouteInfoContentViewModel(apolloClient: mockClient)
         let arguments = defaultArguments
@@ -208,7 +208,7 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         )
         
         let mockClient = MockApolloClient()
-        mockClient.mock = mock
+        mockClient.queryMock = mock
         
         let viewModel = RouteInfoContentViewModel(apolloClient: mockClient)
         let arguments = defaultArguments
@@ -257,7 +257,7 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         )
         
         let mockClient = MockApolloClient()
-        mockClient.mock = mock
+        mockClient.queryMock = mock
         
         let viewModel = RouteInfoContentViewModel(apolloClient: mockClient)
         let arguments = defaultArguments

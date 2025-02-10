@@ -20,4 +20,16 @@ extension ApolloClientProtocol {
             resultHandler: resultHandler
         )
     }
+    
+    @discardableResult
+    func perform<Mutation>(mutation: Mutation, resultHandler: GraphQLResultHandler<Mutation.Data>?) -> (any Cancellable) where Mutation : GraphQLMutation {
+        return perform(
+            mutation: mutation,
+            publishResultToStore: false,
+            contextIdentifier: nil,
+            context: nil,
+            queue: .main,
+            resultHandler: resultHandler
+        )
+    }
 }

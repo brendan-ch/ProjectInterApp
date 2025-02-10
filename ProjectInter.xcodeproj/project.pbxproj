@@ -40,6 +40,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		20405B4B2D5951FB00F90B8C /* Exceptions for "ProjectInter" folder in "ProjectInterTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Extensions/UNNotificationSettings.swift,
+				Protocols/UNNotificationSettingsProtocol.swift,
+			);
+			target = 20FA7B832D10E11F00D4EAD1 /* ProjectInterTests */;
+		};
 		205076712D1B485A004CAA04 /* Exceptions for "ProjectInter" folder in "ProjectInter" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -66,6 +74,7 @@
 			exceptions = (
 				205076712D1B485A004CAA04 /* Exceptions for "ProjectInter" folder in "ProjectInter" target */,
 				205076722D1B485A004CAA04 /* Exceptions for "ProjectInter" folder in "Compile Sources" phase from "ProjectInter" target */,
+				20405B4B2D5951FB00F90B8C /* Exceptions for "ProjectInter" folder in "ProjectInterTests" target */,
 			);
 			path = ProjectInter;
 			sourceTree = "<group>";

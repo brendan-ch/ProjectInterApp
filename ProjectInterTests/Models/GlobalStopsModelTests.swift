@@ -41,7 +41,7 @@ class GlobalStopsModelTests {
                 ]
             )
         )
-        mockClient.mock = mock
+        mockClient.queryMock = mock
 
         let globalStopsModel = GlobalStopsModel(apolloClient: mockClient)
         let arguments = GlobalStopsNetworkArguments(systemId: "1")
