@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import Apollo
+import ProjectInterOperations
 
 struct NotificationNetworkArguments {
     let deviceId: String
@@ -14,6 +16,12 @@ struct NotificationNetworkArguments {
 }
 
 class GlobalNotificationSchedulingModel {
+    var apolloClient: ApolloClientProtocol?
+    
+    init(apolloClient: ApolloClientProtocol? = nil) {
+        self.apolloClient = apolloClient
+    }
+    
     func scheduleNotification(_ arguments: NotificationNetworkArguments) {
         
     }
