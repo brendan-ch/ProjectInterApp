@@ -44,18 +44,15 @@ class GlobalNotificationSchedulingModel: ObservableObject {
             var continuationIsActive = true
             
             // TODO: Sync this state with the server once it becomes available
-            defer {
-                if continuationIsActive {
-                    continuationIsActive = false
-                    continuation.resume()
-                }
-            }
-            
             guard let apolloClient = apolloClient else {
+                continuationIsActive = false
+                continuation.resume()
                 return
             }
             
             if scheduledNotifications.contains(arguments) {
+                continuationIsActive = false
+                continuation.resume()
                 return
             }
             
@@ -77,6 +74,8 @@ class GlobalNotificationSchedulingModel: ObservableObject {
                 }
                 
                 self.scheduledNotifications.insert(arguments)
+                continuationIsActive = false
+                continuation.resume()
             }
             
         }
