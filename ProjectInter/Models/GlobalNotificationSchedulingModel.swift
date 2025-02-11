@@ -9,11 +9,13 @@ import Foundation
 import Apollo
 import ProjectInterOperations
 
-struct NotificationNetworkArguments {
+struct NotificationNetworkArguments: Hashable {
     let deviceId: String
     let shuttleId: String
     let stopId: String
 }
+
+typealias NotificationInfo = NotificationNetworkArguments
 
 enum NotificationSchedulingFailedError: Error {
     case graphqlError
@@ -22,6 +24,7 @@ enum NotificationSchedulingFailedError: Error {
 
 class GlobalNotificationSchedulingModel: ObservableObject {
     var apolloClient: ApolloClientProtocol?
+    var scheduledNotifications = Set<NotificationInfo>()
     
     init(apolloClient: ApolloClientProtocol? = nil) {
         self.apolloClient = apolloClient
