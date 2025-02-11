@@ -80,6 +80,7 @@ struct ShuttleInfoContentView: View {
                 }
             }
             .buttonStyle(.bordered)
+            .foregroundStyle(isNotificationScheduled ? .red : .blue)
             .controlSize(.large)
             .padding()
             
