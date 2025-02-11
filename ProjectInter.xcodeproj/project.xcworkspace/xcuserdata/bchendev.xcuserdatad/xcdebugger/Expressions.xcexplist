@@ -3,17 +3,6 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "closure #2 in closure #1 in RouteListContentView.body.getter:RouteListContentView.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "route.label">
-            </PersistentString>
-            <PersistentString
-               value = "route.shuttles">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
          contextName = "closure #2 in RouteListContentView.body.getter:RouteListContentView.swift">
          <PersistentStrings>
             <PersistentString
@@ -26,6 +15,25 @@
          <PersistentStrings>
             <PersistentString
                value = "showingNestedSheet">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "ShuttleInfoContentView.isNotificationScheduled():ShuttleInfoContentView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "notificationSchedulingState.isNotificationScheduled(input)">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #2 in closure #1 in RouteListContentView.body.getter:RouteListContentView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "route.label">
+            </PersistentString>
+            <PersistentString
+               value = "route.shuttles">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
