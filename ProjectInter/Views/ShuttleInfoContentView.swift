@@ -55,21 +55,7 @@ struct ShuttleInfoContentView: View {
             
             Button(action: {
                 Task {
-                    guard let stopId = globalStopsState.selectedStop?.id,
-                          let shuttleId = globalDataState.selectedShuttleId,
-                          let deviceId = customAppDelegate.notificationTokenString
-                    else { return }
-                    
-                    let input = NotificationNetworkArguments(
-                        deviceId: deviceId,
-                        shuttleId: shuttleId,
-                        stopId: stopId
-                    )
-                    do {
-                        try await notificationSchedulingState.scheduleNotification(input)
-                    } catch {
-                        print(error)
-                    }
+                    await scheduleNotification()
                 }
             }) {
                 HStack {
@@ -135,6 +121,38 @@ struct ShuttleInfoContentView: View {
         }
         .onChange(of: globalDataState.selectedShuttleId) {
             restartDataUpdatesIfArgumentsExist()
+        }
+    }
+    
+    private func generateNetworkArguments() -> NotificationNetworkArguments? {
+        guard let stopId = globalStopsState.selectedStop?.id,
+              let shuttleId = globalDataState.selectedShuttleId,
+              let deviceId = customAppDelegate.notificationTokenString
+        else { return nil }
+        
+        let input = NotificationNetworkArguments(
+            deviceId: deviceId,
+            shuttleId: shuttleId,
+            stopId: stopId
+        )
+        return input
+    }
+    
+    private func scheduleNotification() async {
+        guard let input = generateNetworkArguments() else { return }
+        do {
+            try await notificationSchedulingState.scheduleNotification(input)
+        } catch {
+            print(error)
+        }
+    }
+    
+    private func cancelNotification() async {
+        guard let input = generateNetworkArguments() else { return }
+        do {
+            try await notificationSchedulingState.cancelNotification(input)
+        } catch {
+            print(error)
         }
     }
     
