@@ -9,11 +9,13 @@ import Foundation
 import Apollo
 import ProjectInterOperations
 
-struct NotificationNetworkArguments {
+struct NotificationNetworkArguments: Hashable {
     let deviceId: String
     let shuttleId: String
     let stopId: String
 }
+
+typealias NotificationInfo = NotificationNetworkArguments
 
 enum NotificationSchedulingFailedError: Error {
     case graphqlError
@@ -22,6 +24,7 @@ enum NotificationSchedulingFailedError: Error {
 
 class GlobalNotificationSchedulingModel: ObservableObject {
     var apolloClient: ApolloClientProtocol?
+    @Published private(set) var scheduledNotifications = Set<NotificationInfo>()
     
     init(apolloClient: ApolloClientProtocol? = nil) {
         self.apolloClient = apolloClient
@@ -40,7 +43,14 @@ class GlobalNotificationSchedulingModel: ObservableObject {
         return try await withCheckedThrowingContinuation { continuation in
             var continuationIsActive = true
             
+            // TODO: Sync this state with the server once it becomes available
             guard let apolloClient = apolloClient else {
+                continuationIsActive = false
+                continuation.resume()
+                return
+            }
+            
+            if scheduledNotifications.contains(arguments) {
                 continuationIsActive = false
                 continuation.resume()
                 return
@@ -63,8 +73,9 @@ class GlobalNotificationSchedulingModel: ObservableObject {
                     return
                 }
                 
-                continuation.resume()
+                self.scheduledNotifications.insert(arguments)
                 continuationIsActive = false
+                continuation.resume()
             }
             
         }
@@ -79,6 +90,7 @@ class GlobalNotificationSchedulingModel: ObservableObject {
                 continuation.resume()
                 return
             }
+            
             
             let notificationInput = generateNotificationInput(arguments)
             
@@ -97,9 +109,17 @@ class GlobalNotificationSchedulingModel: ObservableObject {
                     return
                 }
                 
+                if self.scheduledNotifications.contains(arguments) {
+                    self.scheduledNotifications.remove(arguments)
+                }
+
                 continuation.resume()
                 continuationIsActive = false
             }
         }
+    }
+    
+    func isNotificationScheduled(_ info: NotificationInfo) -> Bool {
+        return scheduledNotifications.contains(info)
     }
 }

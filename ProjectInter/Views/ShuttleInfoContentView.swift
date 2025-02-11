@@ -18,6 +18,15 @@ struct ShuttleInfoContentView: View {
     
     @EnvironmentObject var globalStopsState: GlobalStopsModel
     
+    @EnvironmentObject var notificationSchedulingState: GlobalNotificationSchedulingModel
+    
+    @EnvironmentObject var customAppDelegate: CustomAppDelegate
+    
+    var isNotificationScheduled: Bool {
+        guard let input = generateNetworkArguments() else { return false }
+        return notificationSchedulingState.scheduledNotifications.contains(input)
+    }
+    
     var shuttleInfoNetworkArguments: ShuttleInfoNetworkArguments? {
         guard let systemId = globalDataState.selectedSystem?.id,
               let shuttleId = globalDataState.selectedShuttleId,
@@ -47,6 +56,32 @@ struct ShuttleInfoContentView: View {
                     globalDataState.selectedShuttleId = nil
                 }
             }
+            .padding()
+            
+            Button(action: {
+                Task {
+                    if isNotificationScheduled {
+                        await cancelNotification()
+                    } else {
+                        await scheduleNotification()
+                    }
+                }
+            }) {
+                HStack {
+                    Spacer()
+                    if isNotificationScheduled {
+                        Image(systemName: "multiply")
+                        Text("Cancel notification")
+                    } else {
+                        Image(systemName: "bell.badge")
+                        Text("Notify me when nearby")
+                    }
+                    Spacer()
+                }
+            }
+            .buttonStyle(.bordered)
+            .foregroundStyle(isNotificationScheduled ? .red : .blue)
+            .controlSize(.large)
             .padding()
             
             // MARK: Upcoming stops
@@ -92,18 +127,6 @@ struct ShuttleInfoContentView: View {
             )
             .padding(.horizontal)
 
-            Button(action: {}) {
-                HStack {
-                    Spacer()
-                    Image(systemName: "bell.badge")
-                    Text("Notify me when nearby")
-                    Spacer()
-                }
-            }
-            .disabled(true)
-            .buttonStyle(.bordered)
-            .controlSize(.large)
-            .padding()
         }
         .onAppear {
             if let client = globalDataState.apolloClient {
@@ -113,6 +136,38 @@ struct ShuttleInfoContentView: View {
         }
         .onChange(of: globalDataState.selectedShuttleId) {
             restartDataUpdatesIfArgumentsExist()
+        }
+    }
+    
+    private func generateNetworkArguments() -> NotificationNetworkArguments? {
+        guard let stopId = globalStopsState.selectedStop?.id,
+              let shuttleId = globalDataState.selectedShuttleId,
+              let deviceId = customAppDelegate.notificationTokenString
+        else { return nil }
+        
+        let input = NotificationNetworkArguments(
+            deviceId: deviceId,
+            shuttleId: shuttleId,
+            stopId: stopId
+        )
+        return input
+    }
+    
+    private func scheduleNotification() async {
+        guard let input = generateNetworkArguments() else { return }
+        do {
+            try await notificationSchedulingState.scheduleNotification(input)
+        } catch {
+            print(error)
+        }
+    }
+    
+    private func cancelNotification() async {
+        guard let input = generateNetworkArguments() else { return }
+        do {
+            try await notificationSchedulingState.cancelNotification(input)
+        } catch {
+            print(error)
         }
     }
     
@@ -131,4 +186,6 @@ struct ShuttleInfoContentView: View {
     return ShuttleInfoContentView(viewModel: model)
         .environmentObject(GlobalDataModel())
         .environmentObject(GlobalStopsModel())
+        .environmentObject(GlobalNotificationSchedulingModel())
+        .environmentObject(CustomAppDelegate())
 }
