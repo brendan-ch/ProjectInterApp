@@ -24,7 +24,7 @@ enum NotificationSchedulingFailedError: Error {
 
 class GlobalNotificationSchedulingModel: ObservableObject {
     var apolloClient: ApolloClientProtocol?
-    var scheduledNotifications = Set<NotificationInfo>()
+    private var scheduledNotifications = Set<NotificationInfo>()
     
     init(apolloClient: ApolloClientProtocol? = nil) {
         self.apolloClient = apolloClient
@@ -43,9 +43,19 @@ class GlobalNotificationSchedulingModel: ObservableObject {
         return try await withCheckedThrowingContinuation { continuation in
             var continuationIsActive = true
             
+            // TODO: Sync this state with the server once it becomes available
+            defer {
+                if continuationIsActive {
+                    continuationIsActive = false
+                    continuation.resume()
+                }
+            }
+            
             guard let apolloClient = apolloClient else {
-                continuationIsActive = false
-                continuation.resume()
+                return
+            }
+            
+            if scheduledNotifications.contains(arguments) {
                 return
             }
             
@@ -66,8 +76,7 @@ class GlobalNotificationSchedulingModel: ObservableObject {
                     return
                 }
                 
-                continuation.resume()
-                continuationIsActive = false
+                self.scheduledNotifications.insert(arguments)
             }
             
         }
@@ -81,6 +90,10 @@ class GlobalNotificationSchedulingModel: ObservableObject {
                 continuationIsActive = false
                 continuation.resume()
                 return
+            }
+            
+            if scheduledNotifications.contains(arguments) {
+                scheduledNotifications.remove(arguments)
             }
             
             let notificationInput = generateNotificationInput(arguments)
