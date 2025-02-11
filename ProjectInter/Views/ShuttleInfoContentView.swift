@@ -22,6 +22,11 @@ struct ShuttleInfoContentView: View {
     
     @EnvironmentObject var customAppDelegate: CustomAppDelegate
     
+    var isNotificationScheduled: Bool {
+        guard let input = generateNetworkArguments() else { return false }
+        return notificationSchedulingState.scheduledNotifications.contains(input)
+    }
+    
     var shuttleInfoNetworkArguments: ShuttleInfoNetworkArguments? {
         guard let systemId = globalDataState.selectedSystem?.id,
               let shuttleId = globalDataState.selectedShuttleId,
@@ -55,13 +60,22 @@ struct ShuttleInfoContentView: View {
             
             Button(action: {
                 Task {
-                    await scheduleNotification()
+                    if isNotificationScheduled {
+                        await cancelNotification()
+                    } else {
+                        await scheduleNotification()
+                    }
                 }
             }) {
                 HStack {
                     Spacer()
-                    Image(systemName: "bell.badge")
-                    Text("Notify me when nearby")
+                    if isNotificationScheduled {
+                        Image(systemName: "multiply")
+                        Text("Cancel notification")
+                    } else {
+                        Image(systemName: "bell.badge")
+                        Text("Notify me when nearby")
+                    }
                     Spacer()
                 }
             }
