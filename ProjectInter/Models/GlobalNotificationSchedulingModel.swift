@@ -118,4 +118,8 @@ class GlobalNotificationSchedulingModel: ObservableObject {
             }
         }
     }
+    
+    func isNotificationScheduled(_ info: NotificationInfo) -> Bool {
+        return scheduledNotifications.contains(info)
+    }
 }
