@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct LocationPermissionsRequestView: View {
+    @EnvironmentObject var locationDataModel: GlobalLocationDataModel
+    
     var onContinue: () -> Void
     
     var body: some View {
@@ -15,16 +17,16 @@ struct LocationPermissionsRequestView: View {
         Text("Turn on location access to find your nearest stop.")
         
         Button {
-            // Request permissions
-            // Once completed, call onContinue
-            
-            onContinue()
+            locationDataModel.requestAuthorization()
         } label: {
             Spacer()
             
             Text("Enable location access")
             
             Spacer()
+        }
+        .onChange(of: locationDataModel.authorizationStatus) {
+            onContinue()
         }
         
         Button {
@@ -39,4 +41,5 @@ struct LocationPermissionsRequestView: View {
     LocationPermissionsRequestView {
         print("Continue pressed")
     }
+    .environmentObject(GlobalLocationDataModel())
 }
