@@ -28,13 +28,16 @@ struct WelcomeContentView: View {
                     LocationPermissionsRequestView {
                         path.append(WelcomeFlowView.NotificationPermissionsRequestView)
                     }
+                    .navigationBarBackButtonHidden(true)
                 case WelcomeFlowView.NotificationPermissionsRequestView:
                     NotificationPermissionsRequestView {
                         setupStateModel.completeSetup()
                     }
+                    .navigationBarBackButtonHidden(true)
                 }
                 
             }
+            .navigationBarBackButtonHidden(true)
         }
     }
 }
