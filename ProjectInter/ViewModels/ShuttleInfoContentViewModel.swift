@@ -40,6 +40,8 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
     
     @Published var etaListItems: [ShuttleInfoEtaListItem] = []
     
+    @Published private(set) var isNotificationScheduled: Bool = false
+    
     var apolloClient: ApolloClientProtocol?
     
     init(apolloClient: ApolloClientProtocol? = nil) {
