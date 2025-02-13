@@ -22,6 +22,8 @@ struct ShuttleInfoContentView: View {
     
     @EnvironmentObject var customAppDelegate: CustomAppDelegate
     
+    @State var showNotificationPermissionsNotGrantedAlert = false
+    
     var isNotificationScheduled: Bool {
         return viewModel.isNotificationScheduled
     }
@@ -29,15 +31,14 @@ struct ShuttleInfoContentView: View {
     var shuttleInfoNetworkArguments: ShuttleInfoNetworkArguments? {
         guard let systemId = globalDataState.selectedSystem?.id,
               let shuttleId = globalDataState.selectedShuttleId,
-              let stopId = globalStopsState.selectedStop?.id,
-              let deviceId = customAppDelegate.notificationTokenString
+              let stopId = globalStopsState.selectedStop?.id
             else { return nil }
         
         return ShuttleInfoNetworkArguments(
             systemId: systemId,
             stopId: stopId,
             shuttleId: shuttleId,
-            deviceId: deviceId
+            deviceId: customAppDelegate.notificationTokenString
         )
     }
     
@@ -60,6 +61,11 @@ struct ShuttleInfoContentView: View {
             .padding()
             
             Button(action: {
+                if customAppDelegate.notificationTokenString == nil {
+                    showNotificationPermissionsNotGrantedAlert = true
+                    return
+                }
+                
                 Task {
                     if isNotificationScheduled {
                         await cancelNotification()
@@ -84,6 +90,16 @@ struct ShuttleInfoContentView: View {
             .foregroundStyle(isNotificationScheduled ? .red : .blue)
             .controlSize(.large)
             .padding()
+            .alert("Turn on notifications", isPresented: $showNotificationPermissionsNotGrantedAlert) {
+                Button("Dismiss", role: .cancel) { }
+                Button("Open Settings") {
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(url)
+                        }
+                }
+            } message: {
+                Text("To schedule a notification, turn on app notifications.")
+            }
             
             // MARK: Upcoming stops
             // TODO: Display using the route's color
