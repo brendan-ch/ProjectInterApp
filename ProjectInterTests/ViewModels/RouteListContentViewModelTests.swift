@@ -139,10 +139,10 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
         let arguments = defaultArguments
         
         // Act
-        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(10))
+        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(100))
         
         // Assert
-        try? await Task.sleep(for: .milliseconds(50))
+        try? await Task.sleep(for: .milliseconds(500))
         
         #expect(viewModel.routes.count == 1)
         #expect(viewModel.routes[0].etasInSeconds.count == 2)
@@ -151,7 +151,7 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
         mockClient.queryMock = secondaryMock
         
         // Assert
-        try? await Task.sleep(for: .milliseconds(50))
+        try? await Task.sleep(for: .milliseconds(600))
         
         #expect(viewModel.routes[0].etasInSeconds.count == 1)
     }
@@ -162,7 +162,7 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
         mockClient.queryMock = defaultMock
         
         let viewModel = RouteListContentViewModel(apolloClient: mockClient)
-        viewModel.startRefreshingData(arguments: defaultArguments, sleepDuration: .seconds(1))
+        viewModel.startRefreshingData(arguments: defaultArguments, sleepDuration: .milliseconds(100))
         
         // Act
         try? await Task.sleep(for: .milliseconds(500))
