@@ -111,7 +111,7 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         let arguments = defaultArguments
         
         // Act
-        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(1000))
+        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(100))
         
         // Assert
         try? await Task.sleep(for: .milliseconds(500))
@@ -136,7 +136,7 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         mockClient.queryMock = defaultMock
         
         let viewModel = RouteInfoContentViewModel(apolloClient: mockClient)
-        viewModel.startRefreshingData(arguments: defaultArguments, sleepDuration: .seconds(1))
+        viewModel.startRefreshingData(arguments: defaultArguments, sleepDuration: .milliseconds(100))
         
         try? await Task.sleep(for: .milliseconds(500))
         
