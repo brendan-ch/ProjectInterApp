@@ -13,12 +13,18 @@ struct LocationPermissionsRequestView: View {
     var onContinue: () -> Void
     
     var body: some View {
-        VStack(alignment: .center, spacing: 8) {
+        VStack(alignment: .center, spacing: 16) {
             Spacer()
             
-            Text("Enable location access")
+            Image(systemName: "location")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 56)
+
+            Text("Turn on location access")
                 .font(.largeTitle)
                 .fontWeight(.bold)
+                .multilineTextAlignment(.center)
 
             Text("Turn on location access to find your nearest stop.")
                 .multilineTextAlignment(.center)

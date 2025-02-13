@@ -13,12 +13,19 @@ struct NotificationPermissionsRequestView: View {
     var onContinue: () -> Void
     
     var body: some View {
-        VStack(alignment: .center, spacing: 8) {
+        VStack(alignment: .center, spacing: 16) {
             Spacer()
-            Text("Enable notifications")
+            
+            Image(systemName: "bell.badge")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 56)
+            
+            Text("Turn on notifications")
                 .font(.largeTitle)
                 .fontWeight(.bold)
-            
+                .multilineTextAlignment(.center)
+
             Text("Turn on notifications to get notified when a shuttle arrives.")
                 .multilineTextAlignment(.center)
             

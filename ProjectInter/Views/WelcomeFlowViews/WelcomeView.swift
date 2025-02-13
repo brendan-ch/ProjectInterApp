@@ -11,12 +11,12 @@ struct WelcomeView: View {
     var onContinue: () -> Void
     
     var body: some View {
-        VStack(alignment: .center, spacing: 8) {
+        VStack(alignment: .center, spacing: 16) {
             Spacer()
             Text("Welcome to Interchange")
                 .font(.largeTitle)
                 .fontWeight(.bold)
-            
+                .multilineTextAlignment(.center)
             
             Text("View routes, shuttle locations, and estimated times for college transit.")
                 .multilineTextAlignment(.center)
