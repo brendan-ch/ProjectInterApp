@@ -8,11 +8,13 @@
 import SwiftUI
 
 struct WelcomeView: View {
+    var onContinue: () -> Void
+    
     var body: some View {
         Text("Welcome to Interchange")
-        Text("")
+        Text("View routes, shuttle locations, and estimated times for college transit.")
         Button {
-            
+            onContinue()
         } label: {
             Text("Continue")
         }
@@ -20,5 +22,7 @@ struct WelcomeView: View {
 }
 
 #Preview {
-    WelcomeView()
+    WelcomeView {
+        print("Continue button clicked")
+    }
 }

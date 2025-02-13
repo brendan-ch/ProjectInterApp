@@ -10,7 +10,7 @@ import SwiftUI
 struct WelcomeContentView: View {
     var body: some View {
         NavigationStack {
-            
+            WelcomeView(onContinue: {})
         }
     }
 }
