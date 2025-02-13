@@ -29,28 +29,33 @@ struct ProjectInterApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .task {
-                    await globalDataStateObject.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
-                    locationManagerStateObject.updateLocationOnce()
-                }
-                .onChange(of: globalDataStateObject.selectedSystem) {
-                    guard let systemId = globalDataStateObject.selectedSystem?.id else { return }
-                    
-                    Task {
-                        let stopsNetworkArguments = GlobalStopsNetworkArguments(
-                            systemId: systemId
-                        )
-                        await globalStopsStateObject.refreshDataOnce(arguments: stopsNetworkArguments)
+            let setupCompleted = UserDefaults.standard.bool(forKey: "setupCompleted")
+            if setupCompleted {
+                ContentView()
+                    .task {
+                        await globalDataStateObject.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
+                        locationManagerStateObject.updateLocationOnce()
                     }
-                }
-                .onChange(of: canAutomaticallySelectStop) {
-                    guard let location = locationManagerStateObject.lastUpdatedLocation else { return }
-                    
-                    if canAutomaticallySelectStop {
-                        globalStopsStateObject.selectClosestStopBasedOnLocation(location: location)
+                    .onChange(of: globalDataStateObject.selectedSystem) {
+                        guard let systemId = globalDataStateObject.selectedSystem?.id else { return }
+                        
+                        Task {
+                            let stopsNetworkArguments = GlobalStopsNetworkArguments(
+                                systemId: systemId
+                            )
+                            await globalStopsStateObject.refreshDataOnce(arguments: stopsNetworkArguments)
+                        }
                     }
-                }
+                    .onChange(of: canAutomaticallySelectStop) {
+                        guard let location = locationManagerStateObject.lastUpdatedLocation else { return }
+                        
+                        if canAutomaticallySelectStop {
+                            globalStopsStateObject.selectClosestStopBasedOnLocation(location: location)
+                        }
+                    }
+            } else {
+                WelcomeContentView()
+            }
         }
         .environmentObject(globalDataStateObject)
         .environmentObject(globalStopsStateObject)
