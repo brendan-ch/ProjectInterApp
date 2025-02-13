@@ -18,8 +18,7 @@ class CustomAppDelegate: NSObject, ObservableObject, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         Task {
-            await notificationCenterDelegate.requestAuthorization()
-            await registerForRemoteNotificationsIfPermissionGranted(application)
+            await requestNotificationAuthorizationAndRegisterIfGranted()
         }
         return true
     }
@@ -27,6 +26,11 @@ class CustomAppDelegate: NSObject, ObservableObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         notificationTokenString = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
         print(notificationTokenString ?? "No token assigned")
+    }
+    
+    func requestNotificationAuthorizationAndRegisterIfGranted() async {
+        await notificationCenterDelegate.requestAuthorization()
+        await registerForRemoteNotificationsIfPermissionGranted(UIApplication.shared)
     }
     
     private func registerForRemoteNotificationsIfPermissionGranted(_ application: UIApplication) async {
