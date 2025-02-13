@@ -30,13 +30,15 @@ struct ShuttleInfoContentView: View {
     var shuttleInfoNetworkArguments: ShuttleInfoNetworkArguments? {
         guard let systemId = globalDataState.selectedSystem?.id,
               let shuttleId = globalDataState.selectedShuttleId,
-              let stopId = globalStopsState.selectedStop?.id
+              let stopId = globalStopsState.selectedStop?.id,
+              let deviceId = customAppDelegate.notificationTokenString
             else { return nil }
         
         return ShuttleInfoNetworkArguments(
             systemId: systemId,
             stopId: stopId,
-            shuttleId: shuttleId
+            shuttleId: shuttleId,
+            deviceId: deviceId
         )
     }
     
