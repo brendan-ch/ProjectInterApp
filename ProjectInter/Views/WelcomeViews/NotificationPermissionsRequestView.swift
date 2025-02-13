@@ -8,12 +8,17 @@
 import SwiftUI
 
 struct NotificationPermissionsRequestView: View {
+    var onContinue: () -> Void
+    
     var body: some View {
         Text("Enable notifications")
         Text("Turn on notifications to get notified when a shuttle arrives.")
         
         Button {
+            // Request permissions
+            // Once completed, call onContinue
             
+            onContinue()
         } label: {
             Spacer()
             
@@ -23,7 +28,7 @@ struct NotificationPermissionsRequestView: View {
         }
         
         Button {
-            
+            onContinue()
         } label: {
             Text("Skip")
         }
@@ -31,5 +36,7 @@ struct NotificationPermissionsRequestView: View {
 }
 
 #Preview {
-    NotificationPermissionsRequestView()
+    NotificationPermissionsRequestView {
+        print("Continue pressed")
+    }
 }
