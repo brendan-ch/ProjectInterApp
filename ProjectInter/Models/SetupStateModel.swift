@@ -9,9 +9,14 @@ import SwiftUI
 
 /// Tracks whether to display the setup flow for the app.
 class SetupStateModel: ObservableObject {
-    @Published var setupCompleted: Bool
+    @Published private(set) var setupCompleted: Bool
     
     init() {
         setupCompleted = UserDefaults.standard.bool(forKey: "setupCompleted")
+    }
+    
+    func completeSetup() {
+        UserDefaults.standard.setValue(true, forKey: "setupCompleted")
+        setupCompleted = true
     }
 }

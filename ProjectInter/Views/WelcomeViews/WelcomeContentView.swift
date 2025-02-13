@@ -15,6 +15,8 @@ enum WelcomeFlowView {
 struct WelcomeContentView: View {
     @State private var path = NavigationPath()
     
+    @EnvironmentObject var setupStateModel: SetupStateModel
+    
     var body: some View {
         NavigationStack(path: $path) {
             WelcomeView(onContinue: {
@@ -28,7 +30,7 @@ struct WelcomeContentView: View {
                     }
                 case WelcomeFlowView.NotificationPermissionsRequestView:
                     NotificationPermissionsRequestView {
-                        
+                        setupStateModel.completeSetup()
                     }
                 }
                 
@@ -39,4 +41,5 @@ struct WelcomeContentView: View {
 
 #Preview {
     WelcomeContentView()
+        .environmentObject(SetupStateModel())
 }
