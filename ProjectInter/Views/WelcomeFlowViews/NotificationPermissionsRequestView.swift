@@ -21,7 +21,7 @@ struct NotificationPermissionsRequestView: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 56)
             
-            Text("Turn on notifications")
+            Text("Notifications")
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .multilineTextAlignment(.center)
@@ -40,7 +40,7 @@ struct NotificationPermissionsRequestView: View {
             } label: {
                 Spacer()
                 
-                Text("Enable notifications")
+                Text("Continue")
                     .bold()
                 
                 Spacer()

@@ -21,7 +21,7 @@ struct LocationPermissionsRequestView: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 56)
 
-            Text("Turn on location access")
+            Text("Location Access")
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .multilineTextAlignment(.center)
