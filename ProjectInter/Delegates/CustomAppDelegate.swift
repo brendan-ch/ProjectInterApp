@@ -17,6 +17,9 @@ class CustomAppDelegate: NSObject, ObservableObject, UIApplicationDelegate {
     private var notificationCenterDelegate = CustomNotificationCenterDelegate()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        Task {
+            await registerForRemoteNotificationsIfPermissionGranted(UIApplication.shared)
+        }
         return true
     }
     
