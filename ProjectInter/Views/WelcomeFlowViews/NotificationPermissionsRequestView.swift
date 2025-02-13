@@ -47,12 +47,6 @@ struct NotificationPermissionsRequestView: View {
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
-
-            Button {
-                onContinue()
-            } label: {
-                Text("Skip")
-            }
         }
         .padding()
     }
