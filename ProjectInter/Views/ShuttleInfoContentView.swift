@@ -22,6 +22,8 @@ struct ShuttleInfoContentView: View {
     
     @EnvironmentObject var customAppDelegate: CustomAppDelegate
     
+    @State var showNotificationPermissionsNotGrantedAlert = false
+    
     var isNotificationScheduled: Bool {
         return viewModel.isNotificationScheduled
     }
@@ -60,6 +62,11 @@ struct ShuttleInfoContentView: View {
             .padding()
             
             Button(action: {
+                if customAppDelegate.notificationTokenString == nil {
+                    showNotificationPermissionsNotGrantedAlert = true
+                    return
+                }
+                
                 Task {
                     if isNotificationScheduled {
                         await cancelNotification()
@@ -84,6 +91,16 @@ struct ShuttleInfoContentView: View {
             .foregroundStyle(isNotificationScheduled ? .red : .blue)
             .controlSize(.large)
             .padding()
+            .alert("Failed to schedule notification", isPresented: $showNotificationPermissionsNotGrantedAlert) {
+                Button("Dismiss", role: .cancel) { }
+                Button("Open Settings") {
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(url)
+                        }
+                }
+            } message: {
+                Text("Turn on notification permissions to use this feature.")
+            }
             
             // MARK: Upcoming stops
             // TODO: Display using the route's color
