@@ -1,4 +1,4 @@
-query GetShuttleInfoData($systemId: ID!, $shuttleId: ID!) {
+query GetShuttleInfoData($systemId: ID!, $shuttleId: ID!, $notificationInput: NotificationInput!) {
   system(id: $systemId) {
     shuttle(id: $shuttleId) {
       name
@@ -11,4 +11,5 @@ query GetShuttleInfoData($systemId: ID!, $shuttleId: ID!) {
       }
     }
   }
+  isNotificationScheduled(input: $notificationInput)
 }

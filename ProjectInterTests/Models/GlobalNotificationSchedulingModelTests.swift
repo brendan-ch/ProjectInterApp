@@ -45,8 +45,6 @@ class GlobalNotificationSchedulingModelTests {
         await #expect(throws: Never.self) {
             try await model.scheduleNotification(arguments)
         }
-        
-        #expect(model.isNotificationScheduled(arguments))
     }
     
     @Test func scheduleNotificationThrowsErrorIfFailing() async {
@@ -75,8 +73,6 @@ class GlobalNotificationSchedulingModelTests {
         await #expect(throws: Never.self) {
             try await model.cancelNotification(arguments)
         }
-        
-        #expect(!model.isNotificationScheduled(arguments))
     }
     
     @Test func cancelNotificationThrowsErrorIfFailing() async {

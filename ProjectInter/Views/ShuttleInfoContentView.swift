@@ -23,20 +23,21 @@ struct ShuttleInfoContentView: View {
     @EnvironmentObject var customAppDelegate: CustomAppDelegate
     
     var isNotificationScheduled: Bool {
-        guard let input = generateNetworkArguments() else { return false }
-        return notificationSchedulingState.scheduledNotifications.contains(input)
+        return viewModel.isNotificationScheduled
     }
     
     var shuttleInfoNetworkArguments: ShuttleInfoNetworkArguments? {
         guard let systemId = globalDataState.selectedSystem?.id,
               let shuttleId = globalDataState.selectedShuttleId,
-              let stopId = globalStopsState.selectedStop?.id
+              let stopId = globalStopsState.selectedStop?.id,
+              let deviceId = customAppDelegate.notificationTokenString
             else { return nil }
         
         return ShuttleInfoNetworkArguments(
             systemId: systemId,
             stopId: stopId,
-            shuttleId: shuttleId
+            shuttleId: shuttleId,
+            deviceId: deviceId
         )
     }
     
@@ -157,6 +158,7 @@ struct ShuttleInfoContentView: View {
         guard let input = generateNetworkArguments() else { return }
         do {
             try await notificationSchedulingState.scheduleNotification(input)
+            await refreshDataOnce()
         } catch {
             print(error)
         }
@@ -166,11 +168,18 @@ struct ShuttleInfoContentView: View {
         guard let input = generateNetworkArguments() else { return }
         do {
             try await notificationSchedulingState.cancelNotification(input)
+            await refreshDataOnce()
         } catch {
             print(error)
         }
     }
     
+    private func refreshDataOnce() async {
+        if let arguments = shuttleInfoNetworkArguments {
+            await viewModel.refreshDataOnce(arguments: arguments)
+        }
+    }
+
     private func restartDataUpdatesIfArgumentsExist() {
         if let arguments = shuttleInfoNetworkArguments {
             viewModel.stopRefreshingData()

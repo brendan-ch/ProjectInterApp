@@ -14,6 +14,7 @@ struct ShuttleInfoNetworkArguments {
     let systemId: String
     let stopId: String
     let shuttleId: String
+    let deviceId: String
 }
 
 /// Displays the ETA and seconds remaining for the currently open shuttle.
@@ -39,6 +40,8 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
     
     @Published var etaListItems: [ShuttleInfoEtaListItem] = []
     
+    @Published private(set) var isNotificationScheduled: Bool = false
+    
     var apolloClient: ApolloClientProtocol?
     
     init(apolloClient: ApolloClientProtocol? = nil) {
@@ -51,11 +54,12 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
         let systemId = arguments.systemId
         let stopId = arguments.stopId
         let shuttleId = arguments.shuttleId
+        let deviceId = arguments.deviceId
         
-        await refreshData(systemId: systemId, stopId: stopId, shuttleId: shuttleId)
+        await refreshData(systemId: systemId, stopId: stopId, shuttleId: shuttleId, deviceId: deviceId)
     }
     
-    private func refreshData(systemId: String, stopId: String, shuttleId: String) async {
+    private func refreshData(systemId: String, stopId: String, shuttleId: String, deviceId: String) async {
         return await withCheckedContinuation { continuation in
             var continuationIsActive = true
             guard let apolloClient = apolloClient else {
@@ -64,7 +68,9 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
                 return
             }
             
-            apolloClient.fetch(query: GetShuttleInfoDataQuery(systemId: systemId, shuttleId: shuttleId)) { result in
+            let notificationInput = NotificationInput(deviceId: deviceId, shuttleId: shuttleId, stopId: stopId)
+            
+            apolloClient.fetch(query: GetShuttleInfoDataQuery(systemId: systemId, shuttleId: shuttleId, notificationInput: notificationInput)) { result in
                 defer {
                     continuationIsActive = false
                     continuation.resume()
@@ -100,6 +106,10 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
                     self.etaListItems.sort {
                         $0.secondsRemaining < $1.secondsRemaining
                     }
+                }
+                
+                if let isNotificationScheduled = data.isNotificationScheduled {
+                    self.isNotificationScheduled = isNotificationScheduled
                 }
             }
         }

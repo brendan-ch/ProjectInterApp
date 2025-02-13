@@ -11,8 +11,9 @@ import ApolloTestSupport
 import ProjectInterTestMocks
 
 class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
-    let defaultArguments = ShuttleInfoNetworkArguments(systemId: "1", stopId: "1", shuttleId: "1")
+    let defaultArguments = ShuttleInfoNetworkArguments(systemId: "1", stopId: "1", shuttleId: "1", deviceId: "1")
     let defaultMock = Mock<Query>(
+        isNotificationScheduled: true,
         system: .init(
             shuttle: .init(
                 etas: [
@@ -37,6 +38,7 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     )
     
     let secondaryMock = Mock<Query>(
+        isNotificationScheduled: false,
         system: .init(
             shuttle: .init(
                 etas: [
@@ -77,6 +79,8 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.etaListItems.count == 2)
         #expect(viewModel.etaListItems[0].secondsRemaining == 20)
         #expect(viewModel.etaListItems[1].secondsRemaining == 125)
+        
+        #expect(viewModel.isNotificationScheduled)
     }
     
     func assertViewModelDataForSecondaryMock(viewModel: ShuttleInfoContentViewModel) {
@@ -88,6 +92,8 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.etaListItems.count == 2)
         #expect(viewModel.etaListItems[0].secondsRemaining == 205)
         #expect(viewModel.etaListItems[1].secondsRemaining == 306)
+        
+        #expect(!viewModel.isNotificationScheduled)
     }
     
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
