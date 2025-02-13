@@ -107,6 +107,10 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
                         $0.secondsRemaining < $1.secondsRemaining
                     }
                 }
+                
+                if let isNotificationScheduled = data.isNotificationScheduled {
+                    self.isNotificationScheduled = isNotificationScheduled
+                }
             }
         }
     }
