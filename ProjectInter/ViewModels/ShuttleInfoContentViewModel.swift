@@ -14,7 +14,7 @@ struct ShuttleInfoNetworkArguments {
     let systemId: String
     let stopId: String
     let shuttleId: String
-    let deviceId: String
+    let deviceId: String?
 }
 
 /// Displays the ETA and seconds remaining for the currently open shuttle.
@@ -56,7 +56,7 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
         let shuttleId = arguments.shuttleId
         let deviceId = arguments.deviceId
         
-        await refreshData(systemId: systemId, stopId: stopId, shuttleId: shuttleId, deviceId: deviceId)
+        await refreshData(systemId: systemId, stopId: stopId, shuttleId: shuttleId, deviceId: deviceId ?? "")
     }
     
     private func refreshData(systemId: String, stopId: String, shuttleId: String, deviceId: String) async {
