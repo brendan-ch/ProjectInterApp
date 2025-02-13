@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-// Class design subject to change
-
 // See https://medium.com/@jpmtech/your-complete-guide-to-push-notifications-in-swiftui-8a13f5588662
 // for example custom app delegate
 
