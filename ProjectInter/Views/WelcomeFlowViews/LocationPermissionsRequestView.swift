@@ -31,6 +31,7 @@ struct LocationPermissionsRequestView: View {
                 Spacer()
                 
                 Text("Enable location access")
+                    .bold()
                 
                 Spacer()
             }
