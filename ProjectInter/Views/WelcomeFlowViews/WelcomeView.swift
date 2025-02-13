@@ -11,13 +11,32 @@ struct WelcomeView: View {
     var onContinue: () -> Void
     
     var body: some View {
-        Text("Welcome to Interchange")
-        Text("View routes, shuttle locations, and estimated times for college transit.")
-        Button {
-            onContinue()
-        } label: {
-            Text("Continue")
+        VStack(alignment: .center, spacing: 8) {
+            Spacer()
+            Text("Welcome to Interchange")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+            
+            
+            Text("View routes, shuttle locations, and estimated times for college transit.")
+                .multilineTextAlignment(.center)
+            
+            Spacer()
+            
+            Button(action: {
+                onContinue()
+            }) {
+                HStack {
+                    Spacer()
+                    Text("Continue")
+                        .bold()
+                    Spacer()
+                }
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
         }
+        .padding()
     }
 }
 
