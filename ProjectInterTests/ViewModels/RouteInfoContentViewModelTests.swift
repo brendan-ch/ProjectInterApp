@@ -111,10 +111,10 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         let arguments = defaultArguments
         
         // Act
-        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(10))
+        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(100))
         
         // Assert
-        try? await Task.sleep(for: .milliseconds(50))
+        try? await Task.sleep(for: .milliseconds(500))
         
         #expect(viewModel.routeName == "Red Route")
         #expect(viewModel.routeNextStopName == "Panther Village")
@@ -123,7 +123,7 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         let updatedMock = secondaryMock
         mockClient.queryMock = updatedMock
         
-        try? await Task.sleep(for: .milliseconds(50))
+        try? await Task.sleep(for: .milliseconds(700))
         
         #expect(viewModel.routeName == "Grey Route")
         #expect(viewModel.routeNextStopName == "Chapman Grand")
@@ -136,7 +136,7 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         mockClient.queryMock = defaultMock
         
         let viewModel = RouteInfoContentViewModel(apolloClient: mockClient)
-        viewModel.startRefreshingData(arguments: defaultArguments, sleepDuration: .seconds(1))
+        viewModel.startRefreshingData(arguments: defaultArguments, sleepDuration: .milliseconds(100))
         
         try? await Task.sleep(for: .milliseconds(500))
         
@@ -144,7 +144,7 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         viewModel.stopRefreshingData()
         mockClient.queryMock = secondaryMock
         
-        try? await Task.sleep(for: .milliseconds(600))
+        try? await Task.sleep(for: .milliseconds(700))
         
         // Assert
         #expect(viewModel.routeName == "Red Route")

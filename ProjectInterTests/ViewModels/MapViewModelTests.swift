@@ -175,11 +175,11 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
         mockClient.queryMock = defaultMock
         
-        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(1000))
-        try? await Task.sleep(for: .milliseconds(200))
+        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(100))
+        try? await Task.sleep(for: .milliseconds(500))
         
         mockClient.queryMock = secondaryMock
-        try? await Task.sleep(for: .milliseconds(1000))
+        try? await Task.sleep(for: .milliseconds(600))
         
         assertViewModelDataForSecondaryMock(viewModel: viewModel)
     }
@@ -188,13 +188,13 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
         mockClient.queryMock = defaultMock
         
-        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(1000))
-        try? await Task.sleep(for: .milliseconds(1200))
+        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(100))
+        try? await Task.sleep(for: .milliseconds(500))
         
         viewModel.stopRefreshingData()
         
         mockClient.queryMock = secondaryMock
-        try? await Task.sleep(for: .milliseconds(200))
+        try? await Task.sleep(for: .milliseconds(600))
         
         assertViewModelDataForDefaultMock(viewModel: viewModel)
     }

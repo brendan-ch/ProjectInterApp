@@ -100,7 +100,7 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
         mockClient.queryMock = defaultMock
         
-        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(500))
+        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(1000))
         try? await Task.sleep(for: .milliseconds(200))
         
         assertViewModelDataForDefaultMock(viewModel: viewModel)
@@ -110,11 +110,11 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
         mockClient.queryMock = defaultMock
         
-        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(500))
-        try? await Task.sleep(for: .milliseconds(600))
+        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(100))
+        try? await Task.sleep(for: .milliseconds(500))
         
         mockClient.queryMock = secondaryMock
-        try? await Task.sleep(for: .milliseconds(500))
+        try? await Task.sleep(for: .milliseconds(600))
         
         assertViewModelDataForSecondaryMock(viewModel: viewModel)
     }
@@ -123,13 +123,13 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
         mockClient.queryMock = defaultMock
         
-        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(500))
+        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(100))
         try? await Task.sleep(for: .milliseconds(600))
         
         viewModel.stopRefreshingData()
         
         mockClient.queryMock = secondaryMock
-        try? await Task.sleep(for: .milliseconds(500))
+        try? await Task.sleep(for: .milliseconds(700))
 
         assertViewModelDataForDefaultMock(viewModel: viewModel)
     }
