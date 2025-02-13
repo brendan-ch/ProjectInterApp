@@ -13,28 +13,41 @@ struct NotificationPermissionsRequestView: View {
     var onContinue: () -> Void
     
     var body: some View {
-        Text("Enable notifications")
-        Text("Turn on notifications to get notified when a shuttle arrives.")
-        
-        Button {
-            Task {
-                await customAppDelegate.requestNotificationAuthorizationAndRegisterIfGranted()
-                
-                onContinue()
-            }
-        } label: {
+        VStack(alignment: .center, spacing: 8) {
             Spacer()
-            
             Text("Enable notifications")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+            
+            Text("Turn on notifications to get notified when a shuttle arrives.")
+                .multilineTextAlignment(.center)
             
             Spacer()
+            
+            Button {
+                Task {
+                    await customAppDelegate.requestNotificationAuthorizationAndRegisterIfGranted()
+                    
+                    onContinue()
+                }
+            } label: {
+                Spacer()
+                
+                Text("Enable notifications")
+                    .bold()
+                
+                Spacer()
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+
+            Button {
+                onContinue()
+            } label: {
+                Text("Skip")
+            }
         }
-        
-        Button {
-            onContinue()
-        } label: {
-            Text("Skip")
-        }
+        .padding()
     }
 }
 
