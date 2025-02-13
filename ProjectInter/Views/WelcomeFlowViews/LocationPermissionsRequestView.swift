@@ -26,7 +26,7 @@ struct LocationPermissionsRequestView: View {
                 .fontWeight(.bold)
                 .multilineTextAlignment(.center)
 
-            Text("Turn on location access to find your nearest stop.")
+            Text("Turn on location access to find your nearest stop. You may change this later in Settings.")
                 .multilineTextAlignment(.center)
 
             Spacer()

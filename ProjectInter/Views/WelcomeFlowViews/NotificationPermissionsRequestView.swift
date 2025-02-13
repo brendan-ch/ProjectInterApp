@@ -26,7 +26,7 @@ struct NotificationPermissionsRequestView: View {
                 .fontWeight(.bold)
                 .multilineTextAlignment(.center)
 
-            Text("Turn on notifications to get notified when a shuttle arrives.")
+            Text("Turn on notifications to get notified when a shuttle arrives. You may change this later in Settings.")
                 .multilineTextAlignment(.center)
             
             Spacer()
