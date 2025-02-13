@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct NotificationPermissionsRequestView: View {
+    @EnvironmentObject var customAppDelegate: CustomAppDelegate
+    
     var onContinue: () -> Void
     
     var body: some View {
@@ -15,10 +17,11 @@ struct NotificationPermissionsRequestView: View {
         Text("Turn on notifications to get notified when a shuttle arrives.")
         
         Button {
-            // Request permissions
-            // Once completed, call onContinue
-            
-            onContinue()
+            Task {
+                await customAppDelegate.requestNotificationAuthorizationAndRegisterIfGranted()
+                
+                onContinue()
+            }
         } label: {
             Spacer()
             
@@ -39,4 +42,5 @@ struct NotificationPermissionsRequestView: View {
     NotificationPermissionsRequestView {
         print("Continue pressed")
     }
+    .environmentObject(CustomAppDelegate())
 }

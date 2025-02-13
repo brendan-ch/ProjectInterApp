@@ -58,6 +58,7 @@ struct ProjectInterApp: App {
             } else {
                 WelcomeContentView()
                     .environmentObject(setupStateModel)
+                    .environmentObject(customAppDelegate)
             }
         }
         .environmentObject(globalDataStateObject)
