@@ -63,6 +63,8 @@ type Shuttle {
 type Query {
   systems: [System!]!
   system(id: ID): System
+
+  isNotificationScheduled(input: NotificationInput!): Boolean
 }
 
 # Mutations
