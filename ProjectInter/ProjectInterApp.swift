@@ -19,6 +19,8 @@ struct ProjectInterApp: App {
     
     @StateObject var globalNotificationsStateObject = GlobalNotificationSchedulingModel(apolloClient: ApolloClientHolderSingleton.shared.apolloClient)
     
+    @StateObject var setupStateModel = SetupStateModel()
+    
     @UIApplicationDelegateAdaptor(CustomAppDelegate.self) var customAppDelegate: CustomAppDelegate
     
     var canAutomaticallySelectStop: Bool {
@@ -29,7 +31,7 @@ struct ProjectInterApp: App {
     
     var body: some Scene {
         WindowGroup {
-            let setupCompleted = UserDefaults.standard.bool(forKey: "setupCompleted")
+            let setupCompleted = setupStateModel.setupCompleted
             if setupCompleted {
                 ContentView()
                     .task {
@@ -55,6 +57,7 @@ struct ProjectInterApp: App {
                     }
             } else {
                 WelcomeContentView()
+                    .environmentObject(setupStateModel)
             }
         }
         .environmentObject(globalDataStateObject)
