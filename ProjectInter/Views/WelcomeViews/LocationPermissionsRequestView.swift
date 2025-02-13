@@ -8,11 +8,35 @@
 import SwiftUI
 
 struct LocationPermissionsRequestView: View {
+    var onContinue: () -> Void
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Text("Enable location access")
+        Text("Turn on location access to find your nearest stop.")
+        
+        Button {
+            // Request permissions
+            // Once completed, call onContinue
+            
+            onContinue()
+        } label: {
+            Spacer()
+            
+            Text("Enable location access")
+            
+            Spacer()
+        }
+        
+        Button {
+            onContinue()
+        } label: {
+            Text("Skip")
+        }
     }
 }
 
 #Preview {
-    LocationPermissionsRequestView()
+    LocationPermissionsRequestView {
+        print("Continue pressed")
+    }
 }

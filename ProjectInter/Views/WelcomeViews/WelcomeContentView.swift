@@ -23,9 +23,12 @@ struct WelcomeContentView: View {
             .navigationDestination(for: WelcomeFlowView.self) { value in
                 switch value {
                 case WelcomeFlowView.LocationPermissionsRequestView:
-                    LocationPermissionsRequestView()
+                    LocationPermissionsRequestView {
+                        path.append(WelcomeFlowView.NotificationPermissionsRequestView)
+                    }
                 case WelcomeFlowView.NotificationPermissionsRequestView:
                     NotificationPermissionsRequestView {
+                        
                     }
                 }
                 
