@@ -32,6 +32,10 @@ struct LocationPermissionsRequestView: View {
             Spacer()
             
             Button {
+                if locationDataModel.authorizationStatus != .notDetermined {
+                    onContinue()
+                    return
+                }
                 locationDataModel.requestAuthorization()
             } label: {
                 Spacer()
