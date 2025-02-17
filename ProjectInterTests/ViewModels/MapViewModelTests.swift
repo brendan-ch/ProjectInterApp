@@ -12,140 +12,141 @@ import ApolloTestSupport
 import ProjectInterTestMocks
 
 // MARK: - Mock data
+class MapViewModelTestsMockData {
+    static let defaultRoute = Mock<ProjectInterTestMocks.Route>(
+        color: "#ffffff",
+        id: "1",
+        polylineCoordinates: [
+            Mock<Coordinates>(
+                latitude: 1,
+                longitude: 1
+            ),
+            Mock<Coordinates>(
+                latitude: 2,
+                longitude: 2
+            )
+        ]
+    )
 
-let defaultRoute = Mock<ProjectInterTestMocks.Route>(
-    color: "#ffffff",
-    id: "1",
-    polylineCoordinates: [
-        Mock<Coordinates>(
+    static let defaultShuttle = Mock<ProjectInterTestMocks.Shuttle>(
+        coordinates: Mock<Coordinates>(
             latitude: 1,
             longitude: 1
         ),
-        Mock<Coordinates>(
-            latitude: 2,
-            longitude: 2
-        )
-    ]
-)
-
-let defaultShuttle = Mock<ProjectInterTestMocks.Shuttle>(
-    coordinates: Mock<Coordinates>(
-        latitude: 1,
-        longitude: 1
-    ),
-    id: "1",
-    name: "Shuttle 1", route: Mock<Route>(
-        color: "#ffffff",
-        id: "1"
-    )
-)
-
-var defaultMock: Mock<Query> {
-    Mock<ProjectInterTestMocks.Query>(
-        system: Mock<ProjectInterTestMocks.System>(
-            routes: [
-                defaultRoute
-            ],
-            shuttles: [
-                defaultShuttle
-            ],
-            stops: [
-                .init(
-                    coordinates: .init(
-                        latitude: 1,
-                        longitude: 1
-                    ),
-                    id: "1", name: "Chapman Court"
-                ),
-                .init(
-                    coordinates: .init(
-                        latitude: 2,
-                        longitude: 2
-                    ),
-                    id: "2", name: "Panther Village"
-                )
-            ]
+        id: "1",
+        name: "Shuttle 1", route: Mock<Route>(
+            color: "#ffffff",
+            id: "1"
         )
     )
-}
 
-var secondaryMock: Mock<Query> {
-    Mock<ProjectInterTestMocks.Query>(
-        system: .init(
-            routes: [
-                .init(
-                    color: "#000000",
-                    id: "2",
-                    polylineCoordinates: [
-                        .init(
+    static var defaultMock: Mock<Query> {
+        Mock<ProjectInterTestMocks.Query>(
+            system: Mock<ProjectInterTestMocks.System>(
+                routes: [
+                    defaultRoute
+                ],
+                shuttles: [
+                    defaultShuttle
+                ],
+                stops: [
+                    .init(
+                        coordinates: .init(
+                            latitude: 1,
+                            longitude: 1
+                        ),
+                        id: "1", name: "Chapman Court"
+                    ),
+                    .init(
+                        coordinates: .init(
+                            latitude: 2,
+                            longitude: 2
+                        ),
+                        id: "2", name: "Panther Village"
+                    )
+                ]
+            )
+        )
+    }
+
+    static var secondaryMock: Mock<Query> {
+        Mock<ProjectInterTestMocks.Query>(
+            system: .init(
+                routes: [
+                    .init(
+                        color: "#000000",
+                        id: "2",
+                        polylineCoordinates: [
+                            .init(
+                                latitude: 3,
+                                longitude: 3
+                            ),
+                            .init(
+                                latitude: 4,
+                                longitude: 4
+                            )
+                        ]
+                    ),
+                    .init(
+                        color: "#111111",
+                        id: "3",
+                        polylineCoordinates: [
+                            .init(
+                                latitude: 5,
+                                longitude: 5
+                            ),
+                            .init(
+                                latitude: 6,
+                                longitude: 6
+                            )
+                        ]
+                    )
+                ],
+                shuttles: [
+                    .init(
+                        coordinates: Mock<Coordinates>(
                             latitude: 3,
                             longitude: 3
                         ),
-                        .init(
-                            latitude: 4,
-                            longitude: 4
+                        id: "2",
+                        name: "Shuttle 2",
+                        route: Mock<Route>(
+                            color: "#000000",
+                            id: "2"
                         )
-                    ]
-                ),
-                .init(
-                    color: "#111111",
-                    id: "3",
-                    polylineCoordinates: [
-                        .init(
+                    ),
+                    .init(
+                        coordinates: Mock<Coordinates>(
                             latitude: 5,
                             longitude: 5
                         ),
-                        .init(
-                            latitude: 6,
-                            longitude: 6
+                        id: "3",
+                        name: "Shuttle 3",
+                        route: Mock<Route>(
+                            color: "#111111",
+                            id: "3"
                         )
-                    ]
-                )
-            ],
-            shuttles: [
-                .init(
-                    coordinates: Mock<Coordinates>(
-                        latitude: 3,
-                        longitude: 3
-                    ),
-                    id: "2",
-                    name: "Shuttle 2",
-                    route: Mock<Route>(
-                        color: "#000000",
-                        id: "2"
                     )
-                ),
-                .init(
-                    coordinates: Mock<Coordinates>(
-                        latitude: 5,
-                        longitude: 5
-                    ),
-                    id: "3",
-                    name: "Shuttle 3",
-                    route: Mock<Route>(
-                        color: "#111111",
-                        id: "3"
+                ],
+                stops: [
+                    .init(
+                        coordinates: .init(
+                            latitude: 3,
+                            longitude: 3
+                        ),
+                        id: "3", name: "Schmid Gate"
                     )
-                )
-            ],
-            stops: [
-                .init(
-                    coordinates: .init(
-                        latitude: 3,
-                        longitude: 3
-                    ),
-                    id: "3", name: "Schmid Gate"
-                )
-            ]
+                ]
+            )
         )
-    )
+    }
 }
 
 // MARK: - Data model tests
 
 class MapViewRouteTests {
     @Test func mapViewRouteConstructsRouteFromApolloData() {
-        let data = GetMapDataQuery.Data.from(defaultMock)
+        let data = GetMapDataQuery.Data.from(MapViewModelTestsMockData.defaultMock)
         let routes = data.system!.routes!
         
         let constructedRoutes = routes.map(MapViewRoute.init)
@@ -163,7 +164,7 @@ class MapViewRouteTests {
 
 class MapViewStopTests {
     @Test func mapViewStopConstructsStopFromApolloData() {
-        let data = GetMapDataQuery.Data.from(defaultMock)
+        let data = GetMapDataQuery.Data.from(MapViewModelTestsMockData.defaultMock)
         let stops = data.system!.stops!
         
         let constructedStops = stops.map(MapViewStop.init)
@@ -184,7 +185,7 @@ class MapViewStopTests {
 
 class MapViewShuttleTests {
     @Test func mapViewShuttleConstructsShuttleFromApolloData() {
-        let data = GetMapDataQuery.Data.from(defaultMock)
+        let data = GetMapDataQuery.Data.from(MapViewModelTestsMockData.defaultMock)
         let shuttles = data.system!.shuttles!
         
         let constructedShuttles = shuttles.map(MapViewShuttle.init)
@@ -203,7 +204,6 @@ class MapViewShuttleTests {
 // MARK: - View model tests
 
 class MapViewModelTests: NetworkDataModelTestsProtocol {
-    
     func generateClientAndViewModelWithArguments() -> (MockApolloClient, MapViewModel, MapViewNetworkArguments) {
         let mockClient = MockApolloClient()
         
@@ -227,7 +227,7 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.queryMock = defaultMock
+        mockClient.queryMock = MapViewModelTestsMockData.defaultMock
         
         viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(1000))
         try? await Task.sleep(for: .milliseconds(200))
@@ -237,12 +237,12 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     
     @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.queryMock = defaultMock
+        mockClient.queryMock = MapViewModelTestsMockData.defaultMock
         
         viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(100))
         try? await Task.sleep(for: .milliseconds(500))
         
-        mockClient.queryMock = secondaryMock
+        mockClient.queryMock = MapViewModelTestsMockData.secondaryMock
         try? await Task.sleep(for: .milliseconds(600))
         
         assertViewModelDataForSecondaryMock(viewModel: viewModel)
@@ -250,14 +250,14 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     
     @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.queryMock = defaultMock
+        mockClient.queryMock = MapViewModelTestsMockData.defaultMock
         
         viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(100))
         try? await Task.sleep(for: .milliseconds(500))
         
         viewModel.stopRefreshingData()
         
-        mockClient.queryMock = secondaryMock
+        mockClient.queryMock = MapViewModelTestsMockData.secondaryMock
         try? await Task.sleep(for: .milliseconds(600))
         
         assertViewModelDataForDefaultMock(viewModel: viewModel)
@@ -265,7 +265,7 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     
     @Test func refreshDataOnceUpdatesData() async {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.queryMock = defaultMock
+        mockClient.queryMock = MapViewModelTestsMockData.defaultMock
         
         await viewModel.refreshDataOnce(arguments: arguments)
         
@@ -287,7 +287,7 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
         let mock = Mock<ProjectInterTestMocks.Query>(
             system: Mock<ProjectInterTestMocks.System>(
                 routes: [
-                    defaultRoute
+                    MapViewModelTestsMockData.defaultRoute
                 ]
             )
         )
@@ -304,7 +304,7 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
         let mock = Mock<ProjectInterTestMocks.Query>(
             system: Mock<ProjectInterTestMocks.System>(
                 shuttles: [
-                    defaultShuttle
+                    MapViewModelTestsMockData.defaultShuttle
                 ]
             )
         )
