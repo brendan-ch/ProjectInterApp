@@ -161,6 +161,27 @@ class MapViewRouteTests {
     }
 }
 
+class MapViewStopTests {
+    @Test func mapViewStopConstructsStopFromApolloData() {
+        let data = GetMapDataQuery.Data.from(defaultMock)
+        let stops = data.system!.stops!
+        
+        let constructedStops = stops.map(MapViewStop.init)
+        for i in 0..<constructedStops.count {
+            #expect(stops[i].id == constructedStops[i].id)
+            #expect(stops[i].name == constructedStops[i].name)
+            #expect(stops[i].coordinates.latitude == constructedStops[i].coordinates.latitude)
+            #expect(stops[i].coordinates.longitude == constructedStops[i].coordinates.longitude)
+            
+            if let orderedStops = stops[i].orderedStops {
+                for orderedStop in orderedStops {
+                    #expect(constructedStops[i].routeIds.contains(orderedStop.routeId))
+                }
+            }
+        }
+    }
+}
+
 // MARK: - View model tests
 
 class MapViewModelTests: NetworkDataModelTestsProtocol {

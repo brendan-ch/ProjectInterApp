@@ -21,7 +21,7 @@ struct MapViewRoute: Identifiable {
 
 /// Apollo initializer extension.
 extension MapViewRoute {
-    init(route: GetMapDataQuery.Data.System.Route) {
+    init(_ route: GetMapDataQuery.Data.System.Route) {
         self.id = route.id
         self.colorHex = route.color
         
@@ -61,6 +61,22 @@ struct MapViewStop: Identifiable {
     
     /// Set of route IDs associated with the stop.
     var routeIds: Set<String> = []
+}
+
+extension MapViewStop {
+    init(_ stop: GetMapDataQuery.Data.System.Stop) {
+        self.id = stop.id
+        self.name = stop.name
+        self.coordinates = CLLocationCoordinate2D(
+            latitude: stop.coordinates.latitude,
+            longitude: stop.coordinates.longitude
+        )
+        
+        self.routeIds = []
+        stop.orderedStops?.forEach { orderedStop in
+            self.routeIds.insert(orderedStop.routeId)
+        }
+    }
 }
 
 // MARK: - Network arguments
@@ -133,30 +149,13 @@ class MapViewModel: NetworkDataModelProtocol {
                 self.routes = []
                 let routes = data.system?.routes ?? []
                 for route in routes {
-                    self.routes.append(MapViewRoute(route: route))
+                    self.routes.append(MapViewRoute(route))
                 }
                 
                 self.stops = []
                 let stops = data.system?.stops ?? []
                 for stop in stops {
-                    var mapViewStop = MapViewStop(
-                        id: stop.id,
-                        name: stop.name,
-                        coordinates: CLLocationCoordinate2D(
-                            latitude: stop.coordinates.latitude,
-                            longitude: stop.coordinates.longitude
-                        )
-                    )
-                    
-                    if let orderedStops = stop.orderedStops {
-                        for orderedStop in orderedStops {
-                            mapViewStop.routeIds.insert(
-                                orderedStop.routeId
-                            )
-                        }
-                    }
-                    
-                    self.stops.append(mapViewStop)
+                    self.stops.append(MapViewStop(stop))
                 }
             }
         }
