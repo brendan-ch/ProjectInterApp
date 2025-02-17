@@ -52,7 +52,7 @@ struct MapView: View {
                 let shouldDisplayShuttle =
                     (globalDataState.selectedRouteId != nil && shuttle.routeId == globalDataState.selectedRouteId)
                      ||
-                    (globalDataState.selectedRouteId == nil && associatedStopForSelectedStop != nil && associatedStopForSelectedStop!.routeIds.contains(shuttle.routeId))
+                    (globalDataState.selectedRouteId == nil && associatedStopForSelectedStop != nil && associatedStopForSelectedStop!.routeIds.contains(shuttle.routeId ?? ""))
                 
                 if shouldDisplayShuttle {
                     Annotation(
@@ -161,7 +161,7 @@ struct ShuttleAnnotationView: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 100)
-                .fill(Color(hex: shuttle.routeColorHex))
+                .fill(Color(hex: shuttle.routeColorHex ?? "#000000"))
             RoundedRectangle(cornerRadius: 100)
                 .stroke(.white, lineWidth: 4)
             Image(systemName: "bus.fill")

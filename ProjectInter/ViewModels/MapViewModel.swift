@@ -39,13 +39,27 @@ struct MapViewShuttle: Identifiable {
     var id: String
     
     /// The route ID associated with the shuttle.
-    var routeId: String
+    var routeId: String?
     
     /// The color of the associated route, to display with the shuttle.
-    var routeColorHex: String
+    var routeColorHex: String?
     
     /// The current coordinates of the shuttle.
     var coordinates: CLLocationCoordinate2D
+}
+
+extension MapViewShuttle {
+    init(_ shuttle: GetMapDataQuery.Data.System.Shuttle) {
+        self.name = shuttle.name
+        self.id = shuttle.id
+        self.coordinates = CLLocationCoordinate2D(
+            latitude: shuttle.coordinates.latitude,
+            longitude: shuttle.coordinates.longitude
+        )
+        
+        self.routeId = shuttle.route?.id
+        self.routeColorHex = shuttle.route?.color
+    }
 }
 
 /// Represents a stop on the map.
