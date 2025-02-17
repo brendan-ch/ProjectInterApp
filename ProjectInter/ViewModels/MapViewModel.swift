@@ -148,29 +148,9 @@ class MapViewModel: NetworkDataModelProtocol {
                     return
                 }
                 
-                self.shuttles = []
-                let shuttles = data.system?.shuttles ?? []
-                for shuttle in shuttles {
-                    if let route = shuttle.route {
-                        let coordinates = CLLocationCoordinate2D(latitude: shuttle.coordinates.latitude, longitude: shuttle.coordinates.longitude)
-                        
-                        let mapViewShuttle = MapViewShuttle(name: shuttle.name, id: shuttle.id, routeId: route.id, routeColorHex: route.color, coordinates: coordinates)
-                        
-                        self.shuttles.append(mapViewShuttle)
-                    }
-                }
-                
-                self.routes = []
-                let routes = data.system?.routes ?? []
-                for route in routes {
-                    self.routes.append(MapViewRoute(route))
-                }
-                
-                self.stops = []
-                let stops = data.system?.stops ?? []
-                for stop in stops {
-                    self.stops.append(MapViewStop(stop))
-                }
+                self.shuttles = data.system?.shuttles?.map(MapViewShuttle.init) ?? []
+                self.routes = data.system?.routes?.map(MapViewRoute.init) ?? []
+                self.stops = data.system?.stops?.map(MapViewStop.init) ?? []
             }
         }
     }
