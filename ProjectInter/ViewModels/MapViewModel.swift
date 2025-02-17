@@ -19,6 +19,18 @@ struct MapViewRoute: Identifiable {
     var polylineCoordinates: [CLLocationCoordinate2D]
 }
 
+/// Apollo initializer extension.
+extension MapViewRoute {
+    init(route: GetMapDataQuery.Data.System.Route) {
+        self.id = route.id
+        self.colorHex = route.color
+        
+        self.polylineCoordinates = route.polylineCoordinates.map { coordinate in
+            CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        }
+    }
+}
+
 /// Represents a single shuttle to display on the map.
 struct MapViewShuttle: Identifiable {
     var name: String
@@ -121,14 +133,7 @@ class MapViewModel: NetworkDataModelProtocol {
                 self.routes = []
                 let routes = data.system?.routes ?? []
                 for route in routes {
-                    let polylineCoordinates = route.polylineCoordinates
-                    let mapViewRoutePolylineCoordinates = polylineCoordinates.map { coordinate in
-                        CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude)
-                    }
-                    
-                    let mapViewRoute = MapViewRoute(id: route.id, colorHex: route.color, polylineCoordinates: mapViewRoutePolylineCoordinates)
-                    
-                    self.routes.append(mapViewRoute)
+                    self.routes.append(MapViewRoute(route: route))
                 }
                 
                 self.stops = []
