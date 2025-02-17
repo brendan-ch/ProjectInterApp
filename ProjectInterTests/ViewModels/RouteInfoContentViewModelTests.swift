@@ -7,30 +7,14 @@
 
 import Testing
 @testable import ProjectInter
+import ProjectInterOperations
 import ApolloTestSupport
 import ProjectInterTestMocks
 
-/// Tests for ``RouteInfoContentViewShuttle``.
-class RouteInfoContentViewShuttleTests {
-    @Test func testEstimatedTimeAwayDisplayForNoData() {
-        let shuttle = RouteInfoContentViewShuttle(name: "Shuttle 1", id: "1")
-        #expect(shuttle.estimatedTimeAwayDisplay == "N/A")
-    }
-    
-    @Test func testEstimatedTimeAwayDisplayForUnderOneMinute() {
-        let shuttle = RouteInfoContentViewShuttle(name: "Shuttle 1", secondsRemaining: 20, id: "1")
-        #expect(shuttle.estimatedTimeAwayDisplay == "Less than 1 minute")
-    }
-    
-    @Test func testEstimatedTimeAwayDisplayForAboveOneMinute() {
-        let shuttle = RouteInfoContentViewShuttle(name: "Shuttle 1", secondsRemaining: 120, id: "1")
-        #expect(shuttle.estimatedTimeAwayDisplay == "2 min")
-    }
-}
+class RouteInfoContentViewModelTestsMockData {
+    static let defaultArguments = RouteInfoNetworkArguments(systemId: "1", stopId: "1", routeId: "1")
 
-class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
-    let defaultArguments = RouteInfoNetworkArguments(systemId: "1", stopId: "1", routeId: "1")
-    let defaultMock = Mock<ProjectInterTestMocks.Query>(
+    static let defaultMock = Mock<ProjectInterTestMocks.Query>(
         system: .init(
             route: .init(
                 name: "Red Route",
@@ -60,7 +44,8 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
             )
         )
     )
-    let secondaryMock = Mock<ProjectInterTestMocks.Query>(
+
+    static let secondaryMock = Mock<ProjectInterTestMocks.Query>(
         system: .init(
             route: .init(
                 name: "Grey Route",
@@ -84,6 +69,44 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         )
     )
 
+}
+
+/// Tests for ``RouteInfoContentViewShuttle``.
+class RouteInfoContentViewShuttleTests {
+    @Test func testEstimatedTimeAwayDisplayForNoData() {
+        let shuttle = RouteInfoContentViewShuttle(name: "Shuttle 1", id: "1")
+        #expect(shuttle.estimatedTimeAwayDisplay == "N/A")
+    }
+    
+    @Test func testEstimatedTimeAwayDisplayForUnderOneMinute() {
+        let shuttle = RouteInfoContentViewShuttle(name: "Shuttle 1", secondsRemaining: 20, id: "1")
+        #expect(shuttle.estimatedTimeAwayDisplay == "Less than 1 minute")
+    }
+    
+    @Test func testEstimatedTimeAwayDisplayForAboveOneMinute() {
+        let shuttle = RouteInfoContentViewShuttle(name: "Shuttle 1", secondsRemaining: 120, id: "1")
+        #expect(shuttle.estimatedTimeAwayDisplay == "2 min")
+    }
+    
+    @Test func testApolloDataInitializerInitializesData() {
+        let data = GetRouteInfoDataQuery.Data.from(RouteInfoContentViewModelTestsMockData.defaultMock)
+        let shuttles = data.system!.route!.shuttles!
+        
+        let constructedShuttles = shuttles.map(RouteInfoContentViewShuttle.init)
+        
+        for i in 0..<constructedShuttles.count {
+            #expect(shuttles[i].eta?.secondsRemaining == constructedShuttles[i].secondsRemaining)
+            #expect(shuttles[i].name == constructedShuttles[i].name)
+            #expect(shuttles[i].id == constructedShuttles[i].id)
+        }
+    }
+}
+
+class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
+    let defaultArguments = RouteInfoContentViewModelTestsMockData.defaultArguments
+    let defaultMock = RouteInfoContentViewModelTestsMockData.defaultMock
+    let secondaryMock = RouteInfoContentViewModelTestsMockData.secondaryMock
+    
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
         let mockClient = MockApolloClient()
         mockClient.queryMock = defaultMock
@@ -153,7 +176,7 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func refreshDataOnceUpdatesData() async {
-        let mock = defaultMock
+        let mock = RouteInfoContentViewModelTestsMockData.defaultMock
         let mockClient = MockApolloClient()
         mockClient.queryMock = mock
         

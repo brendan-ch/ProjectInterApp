@@ -29,6 +29,14 @@ struct RouteInfoContentViewShuttle: Identifiable {
     var id: String
 }
 
+extension RouteInfoContentViewShuttle {
+    init(_ shuttle: GetRouteInfoDataQuery.Data.System.Route.Shuttle) {
+        self.name = shuttle.name
+        self.id = shuttle.id
+        self.secondsRemaining = shuttle.eta?.secondsRemaining
+    }
+}
+
 // MARK: - Network arguments
 
 /// Information to pass into the network request for route info.
