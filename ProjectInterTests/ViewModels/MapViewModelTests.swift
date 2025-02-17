@@ -182,6 +182,24 @@ class MapViewStopTests {
     }
 }
 
+class MapViewShuttleTests {
+    @Test func mapViewShuttleConstructsShuttleFromApolloData() {
+        let data = GetMapDataQuery.Data.from(defaultMock)
+        let shuttles = data.system!.shuttles!
+        
+        let constructedShuttles = shuttles.map(MapViewShuttle.init)
+        for i in 0..<constructedShuttles.count {
+            #expect(shuttles[i].id == constructedShuttles[i].id)
+            #expect(shuttles[i].name == constructedShuttles[i].name)
+            #expect(shuttles[i].coordinates.latitude == constructedShuttles[i].coordinates.latitude)
+            #expect(shuttles[i].coordinates.longitude == constructedShuttles[i].coordinates.longitude)
+            
+            #expect(shuttles[i].route?.id == constructedShuttles[i].routeId)
+            #expect(shuttles[i].route?.color == constructedShuttles[i].routeColorHex)
+        }
+    }
+}
+
 // MARK: - View model tests
 
 class MapViewModelTests: NetworkDataModelTestsProtocol {
