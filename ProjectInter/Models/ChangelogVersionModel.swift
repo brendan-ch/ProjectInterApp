@@ -10,9 +10,12 @@ import Foundation
 class ChangelogVersionModel: ObservableObject {
     @Published var shouldShowNewUpdatesIndicator: Bool
     
-    init() {
+    private let bundle: Bundle
+    
+    init(bundle: Bundle = .main) {
         // TODO: initialize this variable
         shouldShowNewUpdatesIndicator = false
+        self.bundle = bundle
     }
     
     private func getCurrentAppMarketingVersion() -> String {
