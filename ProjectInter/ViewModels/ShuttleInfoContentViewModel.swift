@@ -108,11 +108,7 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
                             self.etaDisplay = "\(ETAFormatter.formatSecondsRemaining(eta.secondsRemaining)) to \(stop.name)"
                         }
                         
-                        self.etaListItems.append(ShuttleInfoEtaListItem(
-                            stopName: stop.name,
-                            secondsRemaining: eta.secondsRemaining,
-                            stopId: stop.id
-                        ))
+                        self.etaListItems.append(ShuttleInfoEtaListItem(eta))
                     }
                     self.etaListItems.sort {
                         $0.secondsRemaining < $1.secondsRemaining
