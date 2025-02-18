@@ -11,11 +11,19 @@ class MockUserDefaults: UserDefaults {
     var mockBoolResponse = false
     var mockStringResponse = ""
     
+    var lastKeySetTo: String?
+    var lastValueSetTo: Any?
+    
     override func bool(forKey defaultName: String) -> Bool {
         return mockBoolResponse
     }
     
     override func string(forKey defaultName: String) -> String? {
         return mockStringResponse
+    }
+    
+    override func setValue(_ value: Any?, forKey key: String) {
+        lastKeySetTo = key
+        lastValueSetTo = value
     }
 }
