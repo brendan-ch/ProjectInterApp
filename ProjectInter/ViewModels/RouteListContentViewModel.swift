@@ -59,6 +59,23 @@ struct RouteListContentViewRoute: Identifiable {
     }
 }
 
+extension RouteListContentViewRoute {
+    init(_ route: GetRouteListDataQuery.Data.System.Stop.OrderedStop.Route) {
+        self.id = route.id
+        self.name = route.name
+        self.colorHex = route.color
+        
+        clearEtas()
+        route.shuttles?.forEach { shuttle in
+            if let secondsRemaining = shuttle.eta?.secondsRemaining {
+                addEta(secondsRemaining)
+            }
+        }
+        
+        // Next stop name belongs on ordered stop, so not initialized here
+    }
+}
+
 // MARK: - Network arguments
 
 /// Information to pass into the route list network request.
