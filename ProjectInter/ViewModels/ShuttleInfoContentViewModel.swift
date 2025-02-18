@@ -19,12 +19,23 @@ struct ShuttleInfoNetworkArguments {
 
 /// Displays the ETA and seconds remaining for the currently open shuttle.
 struct ShuttleInfoEtaListItem {
-    let stopName: String
+    var stopName: String?
     let secondsRemaining: Double
-    let stopId: String
-    
+    var stopId: String?
+
     var estimatedTimeAwayDisplay: String {
         ETAFormatter.formatSecondsRemaining(secondsRemaining)
+    }
+}
+
+extension ShuttleInfoEtaListItem {
+    init(_ eta: GetShuttleInfoDataQuery.Data.System.Shuttle.Eta) {
+        self.secondsRemaining = eta.secondsRemaining
+        
+        if let stop = eta.stop {
+            self.stopName = stop.name
+            self.stopId = stop.id
+        }
     }
 }
 

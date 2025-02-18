@@ -131,7 +131,7 @@ struct ShuttleInfoContentView: View {
                                 .frame(width: 24, height: 12)
                                 .foregroundStyle(Color.blue)
                         }
-                        Text(etaListItem.stopName)
+                        Text(etaListItem.stopName ?? "N/A")
                         Spacer()
                         Text(etaListItem.estimatedTimeAwayDisplay)
                     }

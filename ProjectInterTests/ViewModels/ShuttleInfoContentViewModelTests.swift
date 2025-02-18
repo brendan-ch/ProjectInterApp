@@ -9,10 +9,10 @@ import Testing
 @testable import ProjectInter
 import ApolloTestSupport
 import ProjectInterTestMocks
+import ProjectInterOperations
 
-class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
-    let defaultArguments = ShuttleInfoNetworkArguments(systemId: "1", stopId: "1", shuttleId: "1", deviceId: "1")
-    let defaultMock = Mock<Query>(
+class ShuttleInfoContentViewModelMockData {
+    static let defaultMock = Mock<Query>(
         isNotificationScheduled: true,
         system: .init(
             shuttle: .init(
@@ -37,7 +37,7 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         )
     )
     
-    let secondaryMock = Mock<Query>(
+    static let secondaryMock = Mock<Query>(
         isNotificationScheduled: false,
         system: .init(
             shuttle: .init(
@@ -62,6 +62,27 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         )
     )
 
+}
+
+class ShuttleInfoEtaListItemTests {
+    @Test func apolloInitializerInitializesData() {
+        let data = GetShuttleInfoDataQuery.Data.from(ShuttleInfoContentViewModelMockData.defaultMock)
+        let etas = data.system!.shuttle!.etas!
+        
+        let constructedEtas = etas.map(ShuttleInfoEtaListItem.init)
+        for i in 0..<constructedEtas.count {
+            #expect(etas[i].secondsRemaining == constructedEtas[i].secondsRemaining)
+            #expect(etas[i].stop?.name == constructedEtas[i].stopName)
+            #expect(etas[i].stop?.id == constructedEtas[i].stopId)
+        }
+    }
+}
+
+class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
+    let defaultArguments = ShuttleInfoNetworkArguments(systemId: "1", stopId: "1", shuttleId: "1", deviceId: "1")
+    let defaultMock = ShuttleInfoContentViewModelMockData.defaultMock
+    let secondaryMock = ShuttleInfoContentViewModelMockData.secondaryMock
+    
     func generateClientAndViewModelWithArguments() -> (MockApolloClient, ShuttleInfoContentViewModel, ShuttleInfoNetworkArguments) {
         let mockClient = MockApolloClient()
         
