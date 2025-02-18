@@ -55,19 +55,10 @@ struct RouteListContentView: View {
             .padding()
             
             // Display location banner if not authorized
-            // TODO: fix the spacing
             if locationManagerState.authorizationStatus == .notDetermined {
-                GroupBox(label: Label("Enable Location Access", systemImage: "location")) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("See times for your closest stop, get notifications for shuttles, and more.")
-                        Button("Grant location access") {
-                            locationManagerState.requestAuthorization()
-                        }
-                    }
+                EnableLocationAccessGroupBoxView {
+                    locationManagerState.requestAuthorization()
                 }
-                .padding(.horizontal)
-                .padding(.bottom, 8)
-                .presentationBackground(.ultraThickMaterial)
             }
             
             ForEach(viewModel.routes) { route in
@@ -129,6 +120,24 @@ struct RouteListItem: View {
     }
 }
 
+struct EnableLocationAccessGroupBoxView: View {
+    var onPressGrant: () -> Void
+    
+    // TODO: fix the spacing
+    var body: some View {
+        GroupBox(label: Label("Enable Location Access", systemImage: "location")) {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("See times for your closest stop, get notifications for shuttles, and more.")
+                Button("Grant location access") {
+                    onPressGrant()
+                }
+            }
+        }
+        .padding(.horizontal)
+        .padding(.bottom, 8)
+        .presentationBackground(.ultraThickMaterial)
+    }
+}
 
 #Preview {
     let globalDataModelBuilder = GlobalDataModelPlaceholderBuilder()
