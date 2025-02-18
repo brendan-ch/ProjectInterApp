@@ -59,6 +59,23 @@ struct RouteListContentViewRoute: Identifiable {
     }
 }
 
+extension RouteListContentViewRoute {
+    init(_ route: GetRouteListDataQuery.Data.System.Stop.OrderedStop.Route) {
+        self.id = route.id
+        self.name = route.name
+        self.colorHex = route.color
+        
+        clearEtas()
+        route.shuttles?.forEach { shuttle in
+            if let secondsRemaining = shuttle.eta?.secondsRemaining {
+                addEta(secondsRemaining)
+            }
+        }
+        
+        // Next stop name belongs on ordered stop, so not initialized here
+    }
+}
+
 // MARK: - Network arguments
 
 /// Information to pass into the route list network request.
@@ -131,29 +148,15 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
         if let data = response.data {
             if let orderedStops = data.system?.stop?.orderedStops {
                 self.routes = []
-                for orderedStop in orderedStops {
-                    guard let route = orderedStop.route else { return }
-                    var routeListRoute = RouteListContentViewRoute(
-                        id: route.id,
-                        name: route.name,
-                        colorHex: route.color
-                    )
-                    
-                    if let nextStopName = orderedStop.nextStop?.stop?.name {
-                        routeListRoute.nextStopName = nextStopName
-                    } else {
-                        routeListRoute.nextStopName = "N/A"
-                    }
-                    
-                    if let shuttles = route.shuttles {
-                        for shuttle in shuttles {
-                            if let secondsRemaining = shuttle.eta?.secondsRemaining {
-                                routeListRoute.addEta(secondsRemaining)
-                            }
+                orderedStops.forEach { orderedStop in
+                    if let route = orderedStop.route {
+                        var constructedRoute = RouteListContentViewRoute(route)
+                        if let nextStop = orderedStop.nextStop?.stop {
+                            constructedRoute.nextStopName = nextStop.name
                         }
+                        
+                        self.routes.append(constructedRoute)
                     }
-                    
-                    self.routes.append(routeListRoute)
                 }
             }
         }

@@ -7,11 +7,13 @@
 
 import Testing
 @testable import ProjectInter
+import ProjectInterOperations
 import ApolloTestSupport
 import ProjectInterTestMocks
 
-class MapViewModelTests: NetworkDataModelTestsProtocol {
-    let defaultRoute = Mock<ProjectInterTestMocks.Route>(
+// MARK: - Mock data
+class MapViewModelTestsMockData {
+    static let defaultRoute = Mock<ProjectInterTestMocks.Route>(
         color: "#ffffff",
         id: "1",
         polylineCoordinates: [
@@ -25,9 +27,8 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
             )
         ]
     )
-            
-    
-    let defaultShuttle = Mock<ProjectInterTestMocks.Shuttle>(
+
+    static let defaultShuttle = Mock<ProjectInterTestMocks.Shuttle>(
         coordinates: Mock<Coordinates>(
             latitude: 1,
             longitude: 1
@@ -38,8 +39,8 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
             id: "1"
         )
     )
-    
-    var defaultMock: Mock<Query> {
+
+    static var defaultMock: Mock<Query> {
         Mock<ProjectInterTestMocks.Query>(
             system: Mock<ProjectInterTestMocks.System>(
                 routes: [
@@ -67,8 +68,8 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
             )
         )
     }
-    
-    var secondaryMock: Mock<Query> {
+
+    static var secondaryMock: Mock<Query> {
         Mock<ProjectInterTestMocks.Query>(
             system: .init(
                 routes: [
@@ -139,7 +140,70 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
             )
         )
     }
-    
+}
+
+// MARK: - Data model tests
+
+class MapViewRouteTests {
+    @Test func mapViewRouteConstructsRouteFromApolloData() {
+        let data = GetMapDataQuery.Data.from(MapViewModelTestsMockData.defaultMock)
+        let routes = data.system!.routes!
+        
+        let constructedRoutes = routes.map(MapViewRoute.init)
+        for i in 0..<constructedRoutes.count {
+            #expect(routes[i].color == constructedRoutes[i].colorHex)
+            #expect(routes[i].id == constructedRoutes[i].id)
+            
+            for j in 0..<constructedRoutes[i].polylineCoordinates.count {
+                #expect(constructedRoutes[i].polylineCoordinates[j].latitude == routes[i].polylineCoordinates[j].latitude)
+                #expect(constructedRoutes[i].polylineCoordinates[j].latitude == routes[i].polylineCoordinates[j].longitude)
+            }
+        }
+    }
+}
+
+class MapViewStopTests {
+    @Test func mapViewStopConstructsStopFromApolloData() {
+        let data = GetMapDataQuery.Data.from(MapViewModelTestsMockData.defaultMock)
+        let stops = data.system!.stops!
+        
+        let constructedStops = stops.map(MapViewStop.init)
+        for i in 0..<constructedStops.count {
+            #expect(stops[i].id == constructedStops[i].id)
+            #expect(stops[i].name == constructedStops[i].name)
+            #expect(stops[i].coordinates.latitude == constructedStops[i].coordinates.latitude)
+            #expect(stops[i].coordinates.longitude == constructedStops[i].coordinates.longitude)
+            
+            if let orderedStops = stops[i].orderedStops {
+                for orderedStop in orderedStops {
+                    #expect(constructedStops[i].routeIds.contains(orderedStop.routeId))
+                }
+            }
+        }
+    }
+}
+
+class MapViewShuttleTests {
+    @Test func mapViewShuttleConstructsShuttleFromApolloData() {
+        let data = GetMapDataQuery.Data.from(MapViewModelTestsMockData.defaultMock)
+        let shuttles = data.system!.shuttles!
+        
+        let constructedShuttles = shuttles.map(MapViewShuttle.init)
+        for i in 0..<constructedShuttles.count {
+            #expect(shuttles[i].id == constructedShuttles[i].id)
+            #expect(shuttles[i].name == constructedShuttles[i].name)
+            #expect(shuttles[i].coordinates.latitude == constructedShuttles[i].coordinates.latitude)
+            #expect(shuttles[i].coordinates.longitude == constructedShuttles[i].coordinates.longitude)
+            
+            #expect(shuttles[i].route?.id == constructedShuttles[i].routeId)
+            #expect(shuttles[i].route?.color == constructedShuttles[i].routeColorHex)
+        }
+    }
+}
+
+// MARK: - View model tests
+
+class MapViewModelTests: NetworkDataModelTestsProtocol {
     func generateClientAndViewModelWithArguments() -> (MockApolloClient, MapViewModel, MapViewNetworkArguments) {
         let mockClient = MockApolloClient()
         
@@ -163,7 +227,7 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.queryMock = defaultMock
+        mockClient.queryMock = MapViewModelTestsMockData.defaultMock
         
         viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(1000))
         try? await Task.sleep(for: .milliseconds(200))
@@ -173,12 +237,12 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     
     @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.queryMock = defaultMock
+        mockClient.queryMock = MapViewModelTestsMockData.defaultMock
         
         viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(100))
         try? await Task.sleep(for: .milliseconds(500))
         
-        mockClient.queryMock = secondaryMock
+        mockClient.queryMock = MapViewModelTestsMockData.secondaryMock
         try? await Task.sleep(for: .milliseconds(600))
         
         assertViewModelDataForSecondaryMock(viewModel: viewModel)
@@ -186,14 +250,14 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     
     @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.queryMock = defaultMock
+        mockClient.queryMock = MapViewModelTestsMockData.defaultMock
         
         viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(100))
         try? await Task.sleep(for: .milliseconds(500))
         
         viewModel.stopRefreshingData()
         
-        mockClient.queryMock = secondaryMock
+        mockClient.queryMock = MapViewModelTestsMockData.secondaryMock
         try? await Task.sleep(for: .milliseconds(600))
         
         assertViewModelDataForDefaultMock(viewModel: viewModel)
@@ -201,7 +265,7 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     
     @Test func refreshDataOnceUpdatesData() async {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.queryMock = defaultMock
+        mockClient.queryMock = MapViewModelTestsMockData.defaultMock
         
         await viewModel.refreshDataOnce(arguments: arguments)
         
@@ -223,7 +287,7 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
         let mock = Mock<ProjectInterTestMocks.Query>(
             system: Mock<ProjectInterTestMocks.System>(
                 routes: [
-                    defaultRoute
+                    MapViewModelTestsMockData.defaultRoute
                 ]
             )
         )
@@ -240,7 +304,7 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
         let mock = Mock<ProjectInterTestMocks.Query>(
             system: Mock<ProjectInterTestMocks.System>(
                 shuttles: [
-                    defaultShuttle
+                    MapViewModelTestsMockData.defaultShuttle
                 ]
             )
         )

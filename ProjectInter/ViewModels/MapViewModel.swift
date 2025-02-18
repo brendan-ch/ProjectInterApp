@@ -19,6 +19,18 @@ struct MapViewRoute: Identifiable {
     var polylineCoordinates: [CLLocationCoordinate2D]
 }
 
+/// Apollo initializer extension.
+extension MapViewRoute {
+    init(_ route: GetMapDataQuery.Data.System.Route) {
+        self.id = route.id
+        self.colorHex = route.color
+        
+        self.polylineCoordinates = route.polylineCoordinates.map { coordinate in
+            CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        }
+    }
+}
+
 /// Represents a single shuttle to display on the map.
 struct MapViewShuttle: Identifiable {
     var name: String
@@ -27,13 +39,27 @@ struct MapViewShuttle: Identifiable {
     var id: String
     
     /// The route ID associated with the shuttle.
-    var routeId: String
+    var routeId: String?
     
     /// The color of the associated route, to display with the shuttle.
-    var routeColorHex: String
+    var routeColorHex: String?
     
     /// The current coordinates of the shuttle.
     var coordinates: CLLocationCoordinate2D
+}
+
+extension MapViewShuttle {
+    init(_ shuttle: GetMapDataQuery.Data.System.Shuttle) {
+        self.name = shuttle.name
+        self.id = shuttle.id
+        self.coordinates = CLLocationCoordinate2D(
+            latitude: shuttle.coordinates.latitude,
+            longitude: shuttle.coordinates.longitude
+        )
+        
+        self.routeId = shuttle.route?.id
+        self.routeColorHex = shuttle.route?.color
+    }
 }
 
 /// Represents a stop on the map.
@@ -49,6 +75,22 @@ struct MapViewStop: Identifiable {
     
     /// Set of route IDs associated with the stop.
     var routeIds: Set<String> = []
+}
+
+extension MapViewStop {
+    init(_ stop: GetMapDataQuery.Data.System.Stop) {
+        self.id = stop.id
+        self.name = stop.name
+        self.coordinates = CLLocationCoordinate2D(
+            latitude: stop.coordinates.latitude,
+            longitude: stop.coordinates.longitude
+        )
+        
+        self.routeIds = []
+        stop.orderedStops?.forEach { orderedStop in
+            self.routeIds.insert(orderedStop.routeId)
+        }
+    }
 }
 
 // MARK: - Network arguments
@@ -106,53 +148,9 @@ class MapViewModel: NetworkDataModelProtocol {
                     return
                 }
                 
-                self.shuttles = []
-                let shuttles = data.system?.shuttles ?? []
-                for shuttle in shuttles {
-                    if let route = shuttle.route {
-                        let coordinates = CLLocationCoordinate2D(latitude: shuttle.coordinates.latitude, longitude: shuttle.coordinates.longitude)
-                        
-                        let mapViewShuttle = MapViewShuttle(name: shuttle.name, id: shuttle.id, routeId: route.id, routeColorHex: route.color, coordinates: coordinates)
-                        
-                        self.shuttles.append(mapViewShuttle)
-                    }
-                }
-                
-                self.routes = []
-                let routes = data.system?.routes ?? []
-                for route in routes {
-                    let polylineCoordinates = route.polylineCoordinates
-                    let mapViewRoutePolylineCoordinates = polylineCoordinates.map { coordinate in
-                        CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude)
-                    }
-                    
-                    let mapViewRoute = MapViewRoute(id: route.id, colorHex: route.color, polylineCoordinates: mapViewRoutePolylineCoordinates)
-                    
-                    self.routes.append(mapViewRoute)
-                }
-                
-                self.stops = []
-                let stops = data.system?.stops ?? []
-                for stop in stops {
-                    var mapViewStop = MapViewStop(
-                        id: stop.id,
-                        name: stop.name,
-                        coordinates: CLLocationCoordinate2D(
-                            latitude: stop.coordinates.latitude,
-                            longitude: stop.coordinates.longitude
-                        )
-                    )
-                    
-                    if let orderedStops = stop.orderedStops {
-                        for orderedStop in orderedStops {
-                            mapViewStop.routeIds.insert(
-                                orderedStop.routeId
-                            )
-                        }
-                    }
-                    
-                    self.stops.append(mapViewStop)
-                }
+                self.shuttles = data.system?.shuttles?.map(MapViewShuttle.init) ?? []
+                self.routes = data.system?.routes?.map(MapViewRoute.init) ?? []
+                self.stops = data.system?.stops?.map(MapViewStop.init) ?? []
             }
         }
     }

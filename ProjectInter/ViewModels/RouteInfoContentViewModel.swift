@@ -29,6 +29,14 @@ struct RouteInfoContentViewShuttle: Identifiable {
     var id: String
 }
 
+extension RouteInfoContentViewShuttle {
+    init(_ shuttle: GetRouteInfoDataQuery.Data.System.Route.Shuttle) {
+        self.name = shuttle.name
+        self.id = shuttle.id
+        self.secondsRemaining = shuttle.eta?.secondsRemaining
+    }
+}
+
 // MARK: - Network arguments
 
 /// Information to pass into the network request for route info.
@@ -105,20 +113,7 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
                     self.routeNextStopName = nextStopName
                 }
                 
-                self.shuttles = []
-                
-                // Add shuttles and calculate ETAs
-                if let shuttles = route.shuttles {
-                    for shuttle in shuttles {
-                        let routeInfoContentViewShuttle = RouteInfoContentViewShuttle(
-                            name: shuttle.name,
-                            secondsRemaining: shuttle.eta?.secondsRemaining,
-                            id: shuttle.id
-                        )
-                        
-                        self.shuttles.append(routeInfoContentViewShuttle)
-                    }
-                }
+                self.shuttles = route.shuttles?.map(RouteInfoContentViewShuttle.init) ?? []
                 
                 self.shuttles.sort {
                     if $0.secondsRemaining != nil {
