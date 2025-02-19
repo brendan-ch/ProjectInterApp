@@ -8,8 +8,8 @@
 import XCTest
 import Foundation
 
-final class BaseUITests: XCTestCase {
-    var app: XCUIApplication?
+class BaseUITests: XCTestCase {
+    var app: XCUIApplication = XCUIApplication()
 
     override func setUpWithError() throws {
         // In UI tests it is usually best to stop immediately when a failure occurs.
@@ -17,9 +17,6 @@ final class BaseUITests: XCTestCase {
 
         // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
         app = XCUIApplication()
-        // These launch arguments are automatically set in UserDefaults
-        // https://sarunw.com/posts/how-to-set-userdefaults-value-with-launch-arguments/
-        app?.launchArguments += ["-setupCompleted", "0"]
     }
     
 
