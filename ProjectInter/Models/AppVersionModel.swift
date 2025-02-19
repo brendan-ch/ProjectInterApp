@@ -7,7 +7,7 @@
 
 import Foundation
 
-class ChangelogVersionModel: ObservableObject {
+class AppVersionModel: ObservableObject {
     @Published var shouldShowNewUpdatesIndicator: Bool
     
     private let bundle: Bundle

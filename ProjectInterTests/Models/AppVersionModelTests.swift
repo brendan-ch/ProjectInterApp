@@ -9,14 +9,14 @@ import Foundation
 import Testing
 @testable import ProjectInter
 
-class ChangelogVersionModelTests {
-    func generateChangelogVersionModelWithMocks(mockActualVersion: String, mockStoredVersion: String) -> (ChangelogVersionModel, MockBundle, MockUserDefaults) {
+class AppVersionModelTests {
+    func generateChangelogVersionModelWithMocks(mockActualVersion: String, mockStoredVersion: String) -> (AppVersionModel, MockBundle, MockUserDefaults) {
         let mockBundle = MockBundle()
         mockBundle.mockedVersionNumber = mockActualVersion
         let mockUserDefaults = MockUserDefaults()
         mockUserDefaults.mockStringResponse = mockStoredVersion
         
-        let changelogVersionModel = ChangelogVersionModel(
+        let changelogVersionModel = AppVersionModel(
             bundle: mockBundle,
             userDefaults: mockUserDefaults
         )

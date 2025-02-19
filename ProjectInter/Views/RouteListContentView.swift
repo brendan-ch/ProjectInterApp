@@ -151,7 +151,7 @@ struct EnableLocationAccessGroupBoxView: View {
 }
 
 struct RouteListFooter: View {
-    @StateObject var changelogVersionModel = ChangelogVersionModel()
+    @StateObject var changelogVersionModel = AppVersionModel()
     
     var onChangelogButtonPress: () -> Void
     
