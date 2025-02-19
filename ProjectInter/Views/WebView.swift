@@ -10,9 +10,12 @@ import WebKit
 
 struct WebView: UIViewRepresentable {
     let url: URL
+    let accessibilityIdentifier: String
     
     func makeUIView(context: Context) -> WKWebView {
-        return WKWebView()
+        let webView = WKWebView()
+        webView.accessibilityIdentifier = accessibilityIdentifier
+        return webView
     }
     
     func updateUIView(_ uiView: WKWebView, context: Context) {

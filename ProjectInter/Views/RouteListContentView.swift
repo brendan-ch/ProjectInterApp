@@ -94,7 +94,7 @@ struct RouteListContentView: View {
         }
         .sheet(isPresented: $showChangelogView) {
             if let url = URL(string: "https://interchange.bchen.dev/changelog") {
-                WebView(url: url)
+                WebView(url: url, accessibilityIdentifier: "ChangelogWebView")
             }
         }
     }
