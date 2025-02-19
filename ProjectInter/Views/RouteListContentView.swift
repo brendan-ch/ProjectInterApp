@@ -151,13 +151,17 @@ struct EnableLocationAccessGroupBoxView: View {
 }
 
 struct RouteListFooter: View {
+    @StateObject var changelogVersionModel = ChangelogVersionModel()
+    
     var onChangelogButtonPress: () -> Void
     
     var body: some View {
         VStack {
-            Text("Interchange version")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+            if let marketingVersion = changelogVersionModel.getCurrentAppMarketingVersion() {
+                Text("Interchange version \(marketingVersion)")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
             
             Text("This app is a work in progress.")
                 .font(.footnote)
