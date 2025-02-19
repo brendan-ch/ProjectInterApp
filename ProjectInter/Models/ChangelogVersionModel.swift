@@ -14,23 +14,28 @@ class ChangelogVersionModel: ObservableObject {
     private let userDefaults: UserDefaults
     
     init(bundle: Bundle = .main, userDefaults: UserDefaults = .standard) {
-        // TODO: initialize this variable
-        shouldShowNewUpdatesIndicator = false
         self.bundle = bundle
         self.userDefaults = userDefaults
+        self.shouldShowNewUpdatesIndicator = false
+        
+        let currentVersion = getCurrentAppMarketingVersion()
+        let lastViewedVersion = getLastViewedChangelogVersion()
+        self.shouldShowNewUpdatesIndicator = currentVersion != lastViewedVersion
     }
     
-    private func getCurrentAppMarketingVersion() -> String {
-        // TODO: implement
-        return ""
+    private func getCurrentAppMarketingVersion() -> String? {
+        let marketingVersion = bundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
+        return marketingVersion
     }
     
-    private func getLastViewedChangelogVersion() -> String {
-        // TODO: implement
-        return ""
+    private func getLastViewedChangelogVersion() -> String? {
+        let lastViewedChangelogVersion = userDefaults.string(forKey: UserDefaults.lastViewedChangelogVersionKey) ?? ""
+        return lastViewedChangelogVersion
     }
     
     func updateLastViewedChangelogVersion() {
-        // TODO: Perform the update
+        let marketingVersion = getCurrentAppMarketingVersion()
+        userDefaults.setValue(marketingVersion, forKey: UserDefaults.lastViewedChangelogVersionKey)
+        shouldShowNewUpdatesIndicator = false
     }
 }
