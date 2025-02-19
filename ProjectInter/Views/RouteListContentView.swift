@@ -156,7 +156,7 @@ struct RouteListFooter: View {
     var onChangelogButtonPress: () -> Void
     
     var body: some View {
-        VStack {
+        VStack(alignment: .center, spacing: 4) {
             if let marketingVersion = changelogVersionModel.getCurrentAppMarketingVersion() {
                 Text("Interchange version \(marketingVersion)")
                     .font(.footnote)
@@ -167,8 +167,17 @@ struct RouteListFooter: View {
                 .font(.footnote)
                 .foregroundStyle(.secondary)
             
-            Button("See what's new") {
+            Button {
                 onChangelogButtonPress()
+                changelogVersionModel.updateLastViewedChangelogVersion()
+            } label: {
+                HStack(alignment: .center, spacing: 4) {
+                    Text("See what's new")
+                    if changelogVersionModel.shouldShowNewUpdatesIndicator {
+                        Circle()
+                            .frame(width: 8, height: 8)
+                    }
+                }
             }
             .font(.footnote)
         }
