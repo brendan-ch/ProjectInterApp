@@ -23,7 +23,7 @@ class ChangelogVersionModel: ObservableObject {
         self.shouldShowNewUpdatesIndicator = currentVersion != lastViewedVersion
     }
     
-    private func getCurrentAppMarketingVersion() -> String? {
+    func getCurrentAppMarketingVersion() -> String? {
         let marketingVersion = bundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
         return marketingVersion
     }
