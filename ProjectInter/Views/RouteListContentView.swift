@@ -22,6 +22,7 @@ struct RouteListContentView: View {
     // State that only has to do with presentation logic
     
     @State var showStopSelectionView: Bool = false
+    @State var showChangelogView: Bool = false
     
     var routeListNetworkArguments: RouteListNetworkArguments? {
         guard let stopId = globalStopsState.selectedStop?.id,
@@ -70,6 +71,11 @@ struct RouteListContentView: View {
                 
                 Divider()
             }
+            
+            RouteListFooter {
+                showChangelogView = true
+            }
+            .padding()
         }
         .onAppear {
             if let apolloClient = globalDataState.apolloClient {
@@ -85,6 +91,11 @@ struct RouteListContentView: View {
         }
         .sheet(isPresented: $showStopSelectionView) {
             StopSelectionView()
+        }
+        .sheet(isPresented: $showChangelogView) {
+            if let url = URL(string: "https://interchange.bchen.dev/changelog") {
+                WebView(url: url)
+            }
         }
     }
 }
@@ -136,6 +147,27 @@ struct EnableLocationAccessGroupBoxView: View {
         .padding(.horizontal)
         .padding(.bottom, 8)
         .presentationBackground(.ultraThickMaterial)
+    }
+}
+
+struct RouteListFooter: View {
+    var onChangelogButtonPress: () -> Void
+    
+    var body: some View {
+        VStack {
+            Text("Interchange version")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+            
+            Text("This app is a work in progress.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+            
+            Button("See what's new") {
+                onChangelogButtonPress()
+            }
+            .font(.footnote)
+        }
     }
 }
 
