@@ -22,6 +22,7 @@ struct RouteListContentView: View {
     // State that only has to do with presentation logic
     
     @State var showStopSelectionView: Bool = false
+    @State var showChangelogView: Bool = false
     
     var routeListNetworkArguments: RouteListNetworkArguments? {
         guard let stopId = globalStopsState.selectedStop?.id,
@@ -55,19 +56,10 @@ struct RouteListContentView: View {
             .padding()
             
             // Display location banner if not authorized
-            // TODO: fix the spacing
             if locationManagerState.authorizationStatus == .notDetermined {
-                GroupBox(label: Label("Enable Location Access", systemImage: "location")) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("See times for your closest stop, get notifications for shuttles, and more.")
-                        Button("Grant location access") {
-                            locationManagerState.requestAuthorization()
-                        }
-                    }
+                EnableLocationAccessGroupBoxView {
+                    locationManagerState.requestAuthorization()
                 }
-                .padding(.horizontal)
-                .padding(.bottom, 8)
-                .presentationBackground(.ultraThickMaterial)
             }
             
             ForEach(viewModel.routes) { route in
@@ -79,6 +71,11 @@ struct RouteListContentView: View {
                 
                 Divider()
             }
+            
+            RouteListFooter {
+                showChangelogView = true
+            }
+            .padding()
         }
         .onAppear {
             if let apolloClient = globalDataState.apolloClient {
@@ -94,6 +91,11 @@ struct RouteListContentView: View {
         }
         .sheet(isPresented: $showStopSelectionView) {
             StopSelectionView()
+        }
+        .sheet(isPresented: $showChangelogView) {
+            if let url = URL(string: "https://interchange.bchen.dev/changelog") {
+                WebView(url: url, accessibilityIdentifier: "ChangelogWebView")
+            }
         }
     }
 }
@@ -129,6 +131,58 @@ struct RouteListItem: View {
     }
 }
 
+struct EnableLocationAccessGroupBoxView: View {
+    var onPressGrant: () -> Void
+    
+    // TODO: fix the spacing
+    var body: some View {
+        GroupBox(label: Label("Enable Location Access", systemImage: "location")) {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("See times for your closest stop, get notifications for shuttles, and more.")
+                Button("Grant location access") {
+                    onPressGrant()
+                }
+            }
+        }
+        .padding(.horizontal)
+        .padding(.bottom, 8)
+        .presentationBackground(.ultraThickMaterial)
+    }
+}
+
+struct RouteListFooter: View {
+    @StateObject var changelogVersionModel = AppVersionModel()
+    
+    var onChangelogButtonPress: () -> Void
+    
+    var body: some View {
+        VStack(alignment: .center, spacing: 4) {
+            if let marketingVersion = changelogVersionModel.getCurrentAppMarketingVersion() {
+                Text("Interchange version \(marketingVersion)")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+            
+            Text("This app is a work in progress.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+            
+            Button {
+                onChangelogButtonPress()
+                changelogVersionModel.updateLastViewedChangelogVersion()
+            } label: {
+                HStack(alignment: .center, spacing: 4) {
+                    Text("See what's new")
+                    if changelogVersionModel.shouldShowNewUpdatesIndicator {
+                        Circle()
+                            .frame(width: 8, height: 8)
+                    }
+                }
+            }
+            .font(.footnote)
+        }
+    }
+}
 
 #Preview {
     let globalDataModelBuilder = GlobalDataModelPlaceholderBuilder()

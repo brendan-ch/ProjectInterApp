@@ -1,0 +1,29 @@
+//
+//  MockUserDefaults.swift
+//  ProjectInter
+//
+//  Created by Brendan Chen on 2025.02.18.
+//
+
+import Foundation
+
+class MockUserDefaults: UserDefaults {
+    var mockBoolResponse = false
+    var mockStringResponse = ""
+    
+    var lastKeySetTo: String?
+    var lastValueSetTo: Any?
+    
+    override func bool(forKey defaultName: String) -> Bool {
+        return mockBoolResponse
+    }
+    
+    override func string(forKey defaultName: String) -> String? {
+        return mockStringResponse
+    }
+    
+    override func setValue(_ value: Any?, forKey key: String) {
+        lastKeySetTo = key
+        lastValueSetTo = value
+    }
+}

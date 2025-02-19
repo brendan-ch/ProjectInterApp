@@ -12,11 +12,11 @@ class SetupStateModel: ObservableObject {
     @Published private(set) var setupCompleted: Bool
     
     init() {
-        setupCompleted = UserDefaults.standard.bool(forKey: "setupCompleted")
+        setupCompleted = UserDefaults.standard.bool(forKey: UserDefaults.setupCompletedKey)
     }
     
     func completeSetup() {
-        UserDefaults.standard.setValue(true, forKey: "setupCompleted")
+        UserDefaults.standard.setValue(true, forKey: UserDefaults.setupCompletedKey)
         setupCompleted = true
     }
 }
