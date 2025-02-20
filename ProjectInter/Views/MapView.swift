@@ -61,6 +61,7 @@ struct MapView: View {
                         anchor: .center
                     ) {
                         ShuttleAnnotationView(shuttle: shuttle)
+                            .accessibilityLabel("Shuttle annotation")
                     }
                     .annotationTitles(
                         globalDataState.selectedShuttleId == shuttle.id ? .visible : .hidden
