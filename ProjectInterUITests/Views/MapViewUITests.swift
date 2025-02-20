@@ -30,6 +30,27 @@ final class MapViewUITests: BaseUITests {
     
     func testRouteIsShownWhenRouteIsSelected() {
         app.launch()
+        
+        executeCallbackForEachStop {
+            let routes = app.buttons.containing(NSPredicate(format: "label CONTAINS 'Route'"))
+            
+            if routes.allElementsBoundByIndex.isEmpty {
+                return false
+            }
+            
+            for route in routes.allElementsBoundByIndex {
+                route.tap()
+                
+                let screenshot = XCUIScreen.main.screenshot()
+                let attachment = XCTAttachment(screenshot: screenshot)
+                attachment.lifetime = .keepAlways
+                add(attachment)
+                
+                app.buttons["Close"].tap()
+            }
+            
+            return true
+        }
     }
     
     func testUnrelatedShuttlesAreHiddenWhenRouteIsSelected() {
