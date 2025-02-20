@@ -56,6 +56,32 @@ final class MapViewUITests: BaseUITests {
     func testUnrelatedShuttlesAreHiddenWhenRouteIsSelected() {
         app.launch()
         
+        executeCallbackForEachStop {
+            var shuttleCounts: [Int] = []
+            let totalShuttleCount = app.otherElements.buttons.matching(identifier: "Shuttle").allElementsBoundByIndex.count
+            
+            let routes = app.buttons.containing(NSPredicate(format: "label CONTAINS 'Route'"))
+            if routes.count == 0 {
+                return false
+            }
+            
+            for route in routes.allElementsBoundByIndex {
+                route.tap()
+                
+                let shuttleCount = app.otherElements.buttons.matching(identifier: "Shuttle").allElementsBoundByIndex.count
+                shuttleCounts.append(shuttleCount)
+                
+                app.buttons["Close"].tap()
+            }
+            
+            var calculatedShuttleCount = 0
+            for count in shuttleCounts {
+                calculatedShuttleCount += count
+            }
+            XCTAssert(totalShuttleCount == calculatedShuttleCount)
+            
+            return true
+        }
     }
     
     func testTapOnShuttleOpensShuttleInfo() {
