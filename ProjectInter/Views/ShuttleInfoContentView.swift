@@ -49,6 +49,7 @@ struct ShuttleInfoContentView: View {
                     Text(viewModel.name)
                         .font(.title2)
                         .bold()
+                        .accessibilityLabel("Shuttle name")
                     Text(viewModel.etaDisplay)
                         .font(.callout)
                         .foregroundStyle(.secondary)

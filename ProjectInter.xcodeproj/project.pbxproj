@@ -34,6 +34,7 @@
 /* Begin PBXFileReference section */
 		205077102D1B78EF004CAA04 /* apollo-codegen-config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "apollo-codegen-config.json"; sourceTree = "<group>"; };
 		208238552D2E730D00DA9820 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		2093DAAD2D67EB7200FC4512 /* ProjectInter.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = ProjectInter.xctestplan; sourceTree = "<group>"; };
 		20FA7B742D10E11E00D4EAD1 /* ProjectInter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProjectInter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		20FA7B842D10E11F00D4EAD1 /* ProjectInterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProjectInterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		20FA7B8E2D10E11F00D4EAD1 /* ProjectInterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProjectInterUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -122,6 +123,7 @@
 		20FA7B6B2D10E11E00D4EAD1 = {
 			isa = PBXGroup;
 			children = (
+				2093DAAD2D67EB7200FC4512 /* ProjectInter.xctestplan */,
 				208238552D2E730D00DA9820 /* README.md */,
 				205077102D1B78EF004CAA04 /* apollo-codegen-config.json */,
 				20FA7B762D10E11E00D4EAD1 /* ProjectInter */,

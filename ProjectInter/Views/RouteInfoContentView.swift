@@ -40,9 +40,12 @@ struct RouteInfoContentView: View {
                         .foregroundStyle(.secondary)
                 }
                 Spacer()
-                Button("Close") {
-                    globalDataState.selectedRouteId = nil
-                    globalDataState.selectedShuttleId = nil
+                
+                if globalDataState.selectedShuttleId == nil {
+                    Button("Close") {
+                        globalDataState.selectedRouteId = nil
+                        globalDataState.selectedShuttleId = nil
+                    }
                 }
             }
             .padding()
