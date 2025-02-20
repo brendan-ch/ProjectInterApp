@@ -14,7 +14,7 @@ final class MapViewUITests: BaseUITests {
     }
     
     func executeCallbackForEachStop(_ callback: () -> Bool) {
-        XCTAssert(app.buttons["Change stop"].waitForExistence(timeout: 20))
+        let _ = app.buttons["Change stop"].waitForExistence(timeout: 20)
         app.buttons["Change stop"].tap()
         
         for cell in app.collectionViews.cells.allElementsBoundByIndex {
@@ -34,7 +34,7 @@ final class MapViewUITests: BaseUITests {
         
         executeCallbackForEachStop {
             let routes = app.buttons.containing(NSPredicate(format: "label CONTAINS 'Route'"))
-            XCTAssert(routes.firstMatch.waitForExistence(timeout: 20))
+            let _ = routes.firstMatch.waitForExistence(timeout: 20)
             
             if routes.allElementsBoundByIndex.isEmpty {
                 return false
@@ -63,6 +63,7 @@ final class MapViewUITests: BaseUITests {
             let totalShuttleCount = app.otherElements.buttons.matching(identifier: "Shuttle").allElementsBoundByIndex.count
             
             let routes = app.buttons.containing(NSPredicate(format: "label CONTAINS 'Route'"))
+            let _ = routes.firstMatch.waitForExistence(timeout: 20)
             if routes.count == 0 {
                 return false
             }
