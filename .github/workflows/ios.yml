@@ -29,30 +29,24 @@ jobs:
           token: ${{ secrets.GH_PAT }}
           path: server
 
-      - name: Change to server directory
-        run: |
-          echo $GITHUB_WORKSPACE
-          echo ${{ github.workspace }}
-          cd ${{ github.workspace }}/server
-
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+        working-directory: server
+
       - name: Run backend server
         run: |
           npm run build:dev
           npm run start:dev integration-testing
-
-      - name: Switch back to original directotry
-        run: |
-          cd ${{ github.workspace }}/app
+        working-directory: server
 
       - name: Set Xcode version
         run: |
           # See https://github.com/actions/runner-images/blob/main/images/macos/macos-14-arm64-Readme.md
           sudo xcode-select -s /Applications/Xcode_16.1.app
+        working-directory: app
 
       - name: Generate ProjectInterOperations Library
         env:
@@ -62,6 +56,7 @@ jobs:
           tar -xzf apollo-ios-cli.tar.gz
           chmod +x apollo-ios-cli
           ./apollo-ios-cli generate
+        working-directory: app
 
       - name: Set default scheme
         run: |
@@ -70,6 +65,7 @@ jobs:
           default=$(echo $scheme_list | ruby -e "require 'json'; puts JSON.parse(STDIN.gets)['project']['targets'][0]")
           echo $default | cat >default
           echo Using default scheme: $default
+        working-directory: app
 
       - name: Build
         env:
@@ -82,6 +78,7 @@ jobs:
           if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then filetype_parameter="workspace" && file_to_build="`ls -A | grep -i \\.xcworkspace\$`"; else filetype_parameter="project" && file_to_build="`ls -A | grep -i \\.xcodeproj\$`"; fi
           file_to_build=`echo $file_to_build | awk '{$1=$1;print}'`
           xcodebuild build-for-testing -scheme "$scheme" -"$filetype_parameter" "$file_to_build" -destination "platform=$platform,name=$device"
+        working-directory: app
 
       - name: Test
         env:
@@ -94,4 +91,5 @@ jobs:
           if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then filetype_parameter="workspace" && file_to_build="`ls -A | grep -i \\.xcworkspace\$`"; else filetype_parameter="project" && file_to_build="`ls -A | grep -i \\.xcodeproj\$`"; fi
           file_to_build=`echo $file_to_build | awk '{$1=$1;print}'`
           xcodebuild test-without-building -scheme "$scheme" -"$filetype_parameter" "$file_to_build" -destination "platform=$platform,name=$device"
+        working-directory: app
 
