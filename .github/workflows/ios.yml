@@ -18,18 +18,21 @@ jobs:
     steps:
       - name: Checkout current repository
         uses: actions/checkout@v4
-
-      - name: Switch to server directory
-        run: |
-          cd ..
-          mkdir backend && cd backend
+        with:
+          path: app
 
       - name: Checkout server repository
         uses: actions/checkout@v4
         with:
           # See https://github.com/actions/checkout for other parameters
           repository: 'brendan-ch/project-inter-server'
-          
+          token: ${{ secrets.GH_PAT }}
+          path: server
+
+      - name: Change to server directory
+        run: |
+          cd $GITHUB_WORKSPACE/server
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
@@ -42,7 +45,7 @@ jobs:
 
       - name: Switch back to original directotry
         run: |
-          cd -
+          cd $GITHUB_WORKSPACE/app
 
       - name: Set Xcode version
         run: |
