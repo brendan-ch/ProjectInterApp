@@ -13,11 +13,36 @@ final class MapViewUITests: BaseUITests {
         app.launchArguments += ["-setupCompleted", "1"]
     }
     
-    func testRoutesAndShuttlesAreVisible() {
-        
+    func testRouteIsShownWhenRouteIsSelected() {
+        app.launch()
+    }
+    
+    func testUnrelatedShuttlesAreHiddenWhenRouteIsSelected() {
+        app.launch()
     }
     
     func testTapOnShuttleOpensShuttleInfo() {
+        app.launch()
         
+        var shuttleButtonTapped = false
+        
+        app.buttons["Change stop"].tap()
+        for cell in app.collectionViews.cells.allElementsBoundByIndex {
+            cell.tap()
+            
+            let firstMatch = app.otherElements.images["Shuttle button"].firstMatch
+            if firstMatch.waitForExistence(timeout: 5) {
+                firstMatch.tap()
+                XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 5))
+                shuttleButtonTapped = true
+                return
+            }
+            
+            app.buttons["Change stop"].tap()
+        }
+        
+        if !shuttleButtonTapped {
+            XCTFail("No shuttle buttons found.")
+        }
     }
 }
