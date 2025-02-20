@@ -172,5 +172,9 @@ struct ShuttleAnnotationView: View {
                 .padding(6)
                 .foregroundStyle(Color.white)
         }
+        .accessibilityLabel("Shuttle")
+        .accessibilityValue(shuttle.id)
+        .accessibilityAddTraits(.isButton)
+        .accessibilityHint("Tap to view info about this shuttle.")
     }
 }

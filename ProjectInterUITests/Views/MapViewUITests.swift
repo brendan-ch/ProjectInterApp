@@ -64,7 +64,7 @@ final class MapViewUITests: BaseUITests {
         var shuttleButtonTapped = false
         
         executeCallbackForEachStop {
-            let firstMatch = app.otherElements.images["Shuttle button"].firstMatch
+            let firstMatch = app.otherElements.buttons["Shuttle"].firstMatch
             
             if firstMatch.waitForExistence(timeout: 5) {
                 firstMatch.tap()
