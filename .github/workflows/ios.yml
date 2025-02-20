@@ -40,7 +40,8 @@ jobs:
         working-directory: server
         run: |
           npm run build:dev
-          npm run start:dev integration-testing
+          # Use & to send to the background
+          npm run start:dev integration-testing &
 
       - name: Set Xcode version
         working-directory: app
