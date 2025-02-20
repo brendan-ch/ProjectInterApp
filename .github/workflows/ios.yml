@@ -16,16 +16,19 @@ jobs:
         node-version: [20.x]
 
     steps:
-      - name: Checkout
+      - name: Checkout current repository
         uses: actions/checkout@v4
 
-      - name: Clone backend server
+      - name: Switch to server directory
         run: |
           cd ..
           mkdir backend && cd backend
 
-          # Clone server into current repo
-          git clone https://github.com/brendan-ch/project-inter-server .
+      - name: Checkout server repository
+        uses: actions/checkout@v4
+        with:
+          # See https://github.com/actions/checkout for other parameters
+          repository: 'brendan-ch/project-inter-server'
           
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
