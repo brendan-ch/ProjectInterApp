@@ -11,10 +11,32 @@ jobs:
     name: Build and Test on iOS
     runs-on: macos-15
 
+    strategy:
+      matrix:
+        node-version: [20.x]
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set Xcode Version
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - name: Run backend server
+        run: |
+          cd ..
+          mkdir backend && cd backend
+
+          # Clone server into current repo
+          git clone https://github.com/your-org/your-server-repo.git .
+          
+          npm run build:dev
+          npm run start:dev integration-testing
+
+          # Change back to the original directory
+          cd -
+      - name: Set Xcode version
         run: |
           # See https://github.com/actions/runner-images/blob/main/images/macos/macos-14-arm64-Readme.md
           sudo xcode-select -s /Applications/Xcode_16.1.app
@@ -26,7 +48,7 @@ jobs:
           tar -xzf apollo-ios-cli.tar.gz
           chmod +x apollo-ios-cli
           ./apollo-ios-cli generate
-      - name: Set Default Scheme
+      - name: Set default scheme
         run: |
           # See https://stackoverflow.com/questions/79029884/how-to-install-apollo-ios-cli-from-the-swirt-package-using-the-command-line
           scheme_list=$(xcodebuild -list -json | tr -d "\n")
