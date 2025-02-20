@@ -13,12 +13,28 @@ final class MapViewUITests: BaseUITests {
         app.launchArguments += ["-setupCompleted", "1"]
     }
     
+    func executeCallbackForEachStop(_ callback: () -> Bool) {
+        app.buttons["Change stop"].tap()
+        
+        for cell in app.collectionViews.cells.allElementsBoundByIndex {
+            cell.tap()
+            
+            let shouldExit = callback()
+            if shouldExit {
+                return
+            }
+            
+            app.buttons["Change stop"].tap()
+        }
+    }
+    
     func testRouteIsShownWhenRouteIsSelected() {
         app.launch()
     }
     
     func testUnrelatedShuttlesAreHiddenWhenRouteIsSelected() {
         app.launch()
+        
     }
     
     func testTapOnShuttleOpensShuttleInfo() {
@@ -26,19 +42,17 @@ final class MapViewUITests: BaseUITests {
         
         var shuttleButtonTapped = false
         
-        app.buttons["Change stop"].tap()
-        for cell in app.collectionViews.cells.allElementsBoundByIndex {
-            cell.tap()
-            
+        executeCallbackForEachStop {
             let firstMatch = app.otherElements.images["Shuttle button"].firstMatch
+            
             if firstMatch.waitForExistence(timeout: 5) {
                 firstMatch.tap()
                 XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 5))
                 shuttleButtonTapped = true
-                return
+                return true
             }
             
-            app.buttons["Change stop"].tap()
+            return false
         }
         
         if !shuttleButtonTapped {
