@@ -27,7 +27,6 @@ final class MapViewUITests: BaseUITests {
                 return
             }
             
-            print(app.debugDescription)
             app.buttons["Change stop"].tap()
         }
     }
