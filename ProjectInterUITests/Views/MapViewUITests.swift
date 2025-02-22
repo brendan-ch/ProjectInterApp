@@ -25,6 +25,7 @@ final class MapViewUITests: BaseUITests {
                 return
             }
             
+            print(app.debugDescription)
             app.buttons["Change stop"].tap()
         }
     }
@@ -97,8 +98,10 @@ final class MapViewUITests: BaseUITests {
             
             if firstMatch.waitForExistence(timeout: 20) {
                 firstMatch.tap()
-                let _ = app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 5)
-                print(app.debugDescription)
+                let shuttleTextExists = app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 5)
+                if !shuttleTextExists {
+                    firstMatch.tap()
+                }
                 XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
                 shuttleButtonTapped = true
                 return true
