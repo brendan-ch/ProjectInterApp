@@ -80,6 +80,7 @@ struct MapView: View {
                             anchor: .center
                         ) {
                             StopAnnotationView()
+                                .allowsHitTesting(false)
                         }
                         .annotationTitles(globalStopsModel.selectedStop?.id == stop.id ? .visible : .hidden)
                     }
@@ -97,6 +98,7 @@ struct MapView: View {
                         anchor: .center
                     ) {
                         StopAnnotationView()
+                            .allowsHitTesting(false)
                     }
                     .annotationTitles(.visible)
                 }
