@@ -101,10 +101,10 @@ final class MapViewUITests: BaseUITests {
                 return false
             }
             
-            app.otherElements.buttons["Shuttle"].firstMatch.tap()
+            app.buttons["Shuttle"].firstMatch.tap()
             let shuttleTextExists = app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 5)
             if !shuttleTextExists {
-                app.otherElements.buttons["Shuttle"].firstMatch.tap()
+                app.buttons["Shuttle"].firstMatch.tap()
             }
             XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
             shuttleButtonTapped = true
