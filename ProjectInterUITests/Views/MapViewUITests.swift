@@ -50,6 +50,7 @@ final class MapViewUITests: BaseUITests {
                 attachment.lifetime = .keepAlways
                 add(attachment)
                 
+                let _ = app.buttons["Close"].waitForExistence(timeout: 5)
                 app.buttons["Close"].tap()
             }
             
@@ -76,6 +77,7 @@ final class MapViewUITests: BaseUITests {
                 let shuttleCount = app.otherElements.buttons.matching(identifier: "Shuttle").allElementsBoundByIndex.count
                 shuttleCounts.append(shuttleCount)
                 
+                let _ = app.buttons["Close"].waitForExistence(timeout: 5)
                 app.buttons["Close"].tap()
             }
             
