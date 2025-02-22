@@ -17,6 +17,8 @@ final class MapViewUITests: BaseUITests {
         let _ = app.buttons["Change stop"].waitForExistence(timeout: 20)
         app.buttons["Change stop"].tap()
         
+        XCTAssert(app.collectionViews.cells.staticTexts["No stops found."].waitForNonExistence(timeout: 5))
+        
         for cell in app.collectionViews.cells.allElementsBoundByIndex {
             cell.tap()
             
@@ -94,20 +96,19 @@ final class MapViewUITests: BaseUITests {
         var shuttleButtonTapped = false
         
         executeCallbackForEachStop {
-            let firstMatch = app.otherElements.buttons["Shuttle"].firstMatch
-            
-            if firstMatch.waitForExistence(timeout: 20) {
-                firstMatch.tap()
-                let shuttleTextExists = app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 5)
-                if !shuttleTextExists {
-                    firstMatch.tap()
-                }
-                XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
-                shuttleButtonTapped = true
-                return true
+            let firstMatchExists = app.otherElements.buttons["Shuttle"].waitForExistence(timeout: 20)
+            if !firstMatchExists {
+                return false
             }
             
-            return false
+            app.otherElements.buttons["Shuttle"].firstMatch.tap()
+            let shuttleTextExists = app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 5)
+            if !shuttleTextExists {
+                app.otherElements.buttons["Shuttle"].firstMatch.tap()
+            }
+            XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
+            shuttleButtonTapped = true
+            return true
         }
         
         if !shuttleButtonTapped {
