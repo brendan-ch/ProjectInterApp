@@ -15,6 +15,8 @@ struct StopSelectionView: View {
     
     @Environment(\.dismiss) var dismiss
     
+    @EnvironmentObject var globalDataModel: GlobalDataModel
+    
     var searchResults: [Stop] {
         if searchText.isEmpty {
             return globalStopsModel.stops
@@ -46,6 +48,14 @@ struct StopSelectionView: View {
                 prompt: Text("Search for a stop")
             )
         }
+        .task {
+            guard let systemId = globalDataModel.selectedSystem?.id else { return }
+            
+            let stopsNetworkArguments = GlobalStopsNetworkArguments(
+                systemId: systemId
+            )
+            await globalStopsModel.refreshDataOnce(arguments: stopsNetworkArguments)
+        }
     }
 }
 
@@ -55,4 +65,5 @@ struct StopSelectionView: View {
     
     StopSelectionView()
         .environmentObject(globalStopsModel)
+        .environmentObject(GlobalDataModelPlaceholderBuilder().build())
 }
