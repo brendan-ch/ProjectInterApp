@@ -22,13 +22,6 @@
         "identifier" : "20FA7B832D10E11F00D4EAD1",
         "name" : "ProjectInterTests"
       }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:ProjectInter.xcodeproj",
-        "identifier" : "20FA7B8D2D10E11F00D4EAD1",
-        "name" : "ProjectInterUITests"
-      }
     }
   ],
   "version" : 1
