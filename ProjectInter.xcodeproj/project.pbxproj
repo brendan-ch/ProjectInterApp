@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		20045CAD2D6ABDBA00A7B6FA /* ProjectInterUITests.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 20045CAC2D6ABDBA00A7B6FA /* ProjectInterUITests.xctestplan */; };
 		2050766A2D1B46B5004CAA04 /* Apollo in Frameworks */ = {isa = PBXBuildFile; productRef = 205076692D1B46B5004CAA04 /* Apollo */; };
 		205077112D1B78EF004CAA04 /* apollo-codegen-config.json in Resources */ = {isa = PBXBuildFile; fileRef = 205077102D1B78EF004CAA04 /* apollo-codegen-config.json */; };
 		205077142D1B79FC004CAA04 /* ProjectInterOperations in Frameworks */ = {isa = PBXBuildFile; productRef = 205077132D1B79FC004CAA04 /* ProjectInterOperations */; };
@@ -32,9 +33,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		20045CAC2D6ABDBA00A7B6FA /* ProjectInterUITests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = ProjectInterUITests.xctestplan; sourceTree = "<group>"; };
 		205077102D1B78EF004CAA04 /* apollo-codegen-config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "apollo-codegen-config.json"; sourceTree = "<group>"; };
 		208238552D2E730D00DA9820 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		2093DAAD2D67EB7200FC4512 /* ProjectInter.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = ProjectInter.xctestplan; sourceTree = "<group>"; };
+		2093DAAD2D67EB7200FC4512 /* ProjectInterTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = ProjectInterTests.xctestplan; sourceTree = "<group>"; };
 		20FA7B742D10E11E00D4EAD1 /* ProjectInter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProjectInter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		20FA7B842D10E11F00D4EAD1 /* ProjectInterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProjectInterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		20FA7B8E2D10E11F00D4EAD1 /* ProjectInterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProjectInterUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -123,7 +125,8 @@
 		20FA7B6B2D10E11E00D4EAD1 = {
 			isa = PBXGroup;
 			children = (
-				2093DAAD2D67EB7200FC4512 /* ProjectInter.xctestplan */,
+				20045CAC2D6ABDBA00A7B6FA /* ProjectInterUITests.xctestplan */,
+				2093DAAD2D67EB7200FC4512 /* ProjectInterTests.xctestplan */,
 				208238552D2E730D00DA9820 /* README.md */,
 				205077102D1B78EF004CAA04 /* apollo-codegen-config.json */,
 				20FA7B762D10E11E00D4EAD1 /* ProjectInter */,
@@ -270,6 +273,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				20045CAD2D6ABDBA00A7B6FA /* ProjectInterUITests.xctestplan in Resources */,
 				205077112D1B78EF004CAA04 /* apollo-codegen-config.json in Resources */,
 				208238562D2E730D00DA9820 /* README.md in Resources */,
 			);

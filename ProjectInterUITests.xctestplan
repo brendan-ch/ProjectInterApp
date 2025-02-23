@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "A5BAD3B8-DF66-427C-8331-8F129A3F76EE",
+      "name" : "Test Scheme Target",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:ProjectInter.xcodeproj",
+        "identifier" : "20FA7B8D2D10E11F00D4EAD1",
+        "name" : "ProjectInterUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
