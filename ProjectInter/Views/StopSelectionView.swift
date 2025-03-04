@@ -47,6 +47,15 @@ struct StopSelectionView: View {
                 placement: .automatic,
                 prompt: Text("Search for a stop")
             )
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("Close")
+                    }
+                }
+            }
         }
         .task {
             guard let systemId = globalDataModel.selectedSystem?.id else { return }
