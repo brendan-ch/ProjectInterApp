@@ -54,13 +54,13 @@ class GlobalStopsModelTests {
     }
     
     @Test func selectStopBasedOnClosestLocation() async throws {
-        let stops: [ProjectInter.Stop] = [
-            ProjectInter.Stop(
+        let stops: [ProjectInter.GlobalStopsModelStop] = [
+            ProjectInter.GlobalStopsModelStop(
                 name: "Panther Village",
                 id: "1",
                 coordinates: RawCoordinates(latitude: 33.789730, longitude: -117.886539)
             ),
-            ProjectInter.Stop(
+            ProjectInter.GlobalStopsModelStop(
                 name: "Schmid Gate",
                 id: "2",
                 coordinates: RawCoordinates(latitude: 33.793316, longitude: -117.852825)
