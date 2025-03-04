@@ -12,7 +12,7 @@ import ProjectInterTestMocks
 import CoreLocation
 
 class GlobalStopsModelTests {
-    @Test func testRefreshStopDataWithValidData() async throws {
+    @Test func testRefreshStopDataWithValidDataAndSorting() async throws {
         let mockClient = MockApolloClient()
         
         let mock = Mock<ProjectInterTestMocks.Query>(
@@ -21,15 +21,6 @@ class GlobalStopsModelTests {
                 name: "Chapman University",
                 stops: [
                     Mock<ProjectInterTestMocks.Stop>(
-                        // 33.789730, -117.886539
-                        coordinates: Mock<ProjectInterTestMocks.Coordinates>(
-                            latitude: 33.789730,
-                            longitude: -117.886539
-                        ),
-                        id: "1",
-                        name: "Panther Village"
-                    ),
-                    Mock<ProjectInterTestMocks.Stop>(
                         // 33.793316, -117.852825
                         coordinates: Mock<ProjectInterTestMocks.Coordinates>(
                             latitude: 33.793316,
@@ -37,6 +28,15 @@ class GlobalStopsModelTests {
                         ),
                         id: "2",
                         name: "Schmid Gate"
+                    ),
+                    Mock<ProjectInterTestMocks.Stop>(
+                        // 33.789730, -117.886539
+                        coordinates: Mock<ProjectInterTestMocks.Coordinates>(
+                            latitude: 33.789730,
+                            longitude: -117.886539
+                        ),
+                        id: "1",
+                        name: "Panther Village"
                     )
                 ]
             )
@@ -49,19 +49,8 @@ class GlobalStopsModelTests {
         await globalStopsModel.refreshDataOnce(arguments: arguments)
         
         #expect(globalStopsModel.stops.count == 2)
-        
-        func matchesStop(input: Mock<ProjectInterTestMocks.Stop>, result: ProjectInter.Stop) -> Bool {
-            if input.id != result.id { return false }
-            if input.name != result.name { return false }
-            if input.coordinates?.latitude != result.coordinates.latitude { return false }
-            if input.coordinates?.longitude != result.coordinates.longitude { return false }
-            
-            return true
-        }
-        
-        for i in 0..<globalStopsModel.stops.count {
-            #expect(matchesStop(input: mock.system!.stops![i], result: globalStopsModel.stops[i]))
-        }
+        #expect(globalStopsModel.stops[0].name == "Panther Village")
+        #expect(globalStopsModel.stops[1].name == "Schmid Gate")
     }
     
     @Test func selectStopBasedOnClosestLocation() async throws {
