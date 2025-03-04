@@ -76,11 +76,7 @@ class GlobalStopsModel: NetworkDataModelProtocol {
                     return
                 }
                 
-                self.stops = stops.map { stop in
-                    let coordinates = RawCoordinates(latitude: stop.coordinates.latitude, longitude: stop.coordinates.longitude)
-                    
-                    return GlobalStopsModelStop(name: stop.name, id: stop.id, coordinates: coordinates)
-                }
+                self.stops = stops.map(GlobalStopsModelStop.init)
                 self.stops.sort { $0.name < $1.name }
                 
                 continuation.resume()
