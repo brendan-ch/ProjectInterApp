@@ -56,6 +56,7 @@ struct StopSelectionView: View {
                     }
                 }
             }
+            .accessibilityIdentifier("StopSelectionCollectionView")
         }
         .task {
             guard let systemId = globalDataModel.selectedSystem?.id else { return }
