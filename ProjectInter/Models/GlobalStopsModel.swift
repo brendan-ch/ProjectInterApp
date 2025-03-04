@@ -17,10 +17,19 @@ struct GlobalStopsNetworkArguments {
 }
 
 /// Represents a single stop available as part of the selected system.
-struct Stop: Identifiable, Equatable {
+struct GlobalStopsModelStop: Identifiable, Equatable {
     var name: String
     var id: String
     var coordinates: RawCoordinates
+}
+
+extension GlobalStopsModelStop {
+    init(_ stop: GetAllStopsBySystemIdQuery.Data.System.Stop) {
+        self.coordinates = RawCoordinates(latitude: stop.coordinates.latitude, longitude: stop.coordinates.longitude)
+        
+        self.name = stop.name
+        self.id = stop.id
+    }
 }
 
 // MARK: - Data model implementation
@@ -33,8 +42,8 @@ class GlobalStopsModel: NetworkDataModelProtocol {
     
     var dataRefreshLoopTask: Task<Void, any Error>?
     
-    @Published var stops: [Stop] = []
-    @Published var selectedStop: Stop? = nil
+    @Published var stops: [GlobalStopsModelStop] = []
+    @Published var selectedStop: GlobalStopsModelStop? = nil
     
     init(apolloClient: ApolloClientProtocol? = nil) {
         self.apolloClient = apolloClient
@@ -67,11 +76,8 @@ class GlobalStopsModel: NetworkDataModelProtocol {
                     return
                 }
                 
-                self.stops = stops.map { stop in
-                    let coordinates = RawCoordinates(latitude: stop.coordinates.latitude, longitude: stop.coordinates.longitude)
-                    
-                    return Stop(name: stop.name, id: stop.id, coordinates: coordinates)
-                }
+                self.stops = stops.map(GlobalStopsModelStop.init)
+                self.stops.sort { $0.name < $1.name }
                 
                 continuation.resume()
             }
@@ -112,8 +118,8 @@ class GlobalStopsModelPlaceholderBuilder: PlaceholderBuilderProtocol {
         let newModel = GlobalStopsModel()
         
         newModel.stops = [
-            Stop(name: "Chapman Court", id: "1", coordinates: RawCoordinates(latitude: 33.796796, longitude: -117.889293)),
-            Stop(name: "Schmid Gate", id: "2", coordinates: RawCoordinates(latitude: 33.793292, longitude: -117.852904))
+            GlobalStopsModelStop(name: "Chapman Court", id: "1", coordinates: RawCoordinates(latitude: 33.796796, longitude: -117.889293)),
+            GlobalStopsModelStop(name: "Schmid Gate", id: "2", coordinates: RawCoordinates(latitude: 33.793292, longitude: -117.852904))
         ]
         newModel.selectedStop = newModel.stops.first
         

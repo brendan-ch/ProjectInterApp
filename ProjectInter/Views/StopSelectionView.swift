@@ -17,7 +17,7 @@ struct StopSelectionView: View {
     
     @EnvironmentObject var globalDataModel: GlobalDataModel
     
-    var searchResults: [Stop] {
+    var searchResults: [GlobalStopsModelStop] {
         if searchText.isEmpty {
             return globalStopsModel.stops
         } else {
@@ -47,6 +47,16 @@ struct StopSelectionView: View {
                 placement: .automatic,
                 prompt: Text("Search for a stop")
             )
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("Close")
+                    }
+                }
+            }
+            .accessibilityIdentifier("StopSelectionCollectionView")
         }
         .task {
             guard let systemId = globalDataModel.selectedSystem?.id else { return }
