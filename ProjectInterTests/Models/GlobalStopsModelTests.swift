@@ -9,38 +9,59 @@ import Testing
 @testable import ProjectInter
 import ApolloTestSupport
 import ProjectInterTestMocks
+import ProjectInterOperations
 import CoreLocation
 
+class GlobalStopsModelTestsMockData {
+    static let defaultMock = Mock<ProjectInterTestMocks.Query>(
+        system: Mock<ProjectInterTestMocks.System>(
+            id: "1",
+            name: "Chapman University",
+            stops: [
+                Mock<ProjectInterTestMocks.Stop>(
+                    // 33.793316, -117.852825
+                    coordinates: Mock<ProjectInterTestMocks.Coordinates>(
+                        latitude: 33.793316,
+                        longitude: -117.852825
+                    ),
+                    id: "2",
+                    name: "Schmid Gate"
+                ),
+                Mock<ProjectInterTestMocks.Stop>(
+                    // 33.789730, -117.886539
+                    coordinates: Mock<ProjectInterTestMocks.Coordinates>(
+                        latitude: 33.789730,
+                        longitude: -117.886539
+                    ),
+                    id: "1",
+                    name: "Panther Village"
+                )
+            ]
+        )
+    )
+}
+
+class GlobalStopsModelStopTests {
+    @Test func apolloInitializerInitializesData() {
+        let data = GetAllStopsBySystemIdQuery.Data.from(GlobalStopsModelTestsMockData.defaultMock)
+        let stops = data.system!.stops!
+        
+        let constructedStops = stops.map(GlobalStopsModelStop.init)
+        for i in 0..<constructedStops.count {
+            #expect(stops[i].name == constructedStops[i].name)
+            #expect(stops[i].id == constructedStops[i].id)
+            #expect(stops[i].coordinates.latitude == constructedStops[i].coordinates.latitude)
+            #expect(stops[i].coordinates.longitude == constructedStops[i].coordinates.longitude)
+        }
+    }
+}
+
 class GlobalStopsModelTests {
+    let mock = GlobalStopsModelTestsMockData.defaultMock
+
     @Test func testRefreshStopDataWithValidDataAndSorting() async throws {
         let mockClient = MockApolloClient()
         
-        let mock = Mock<ProjectInterTestMocks.Query>(
-            system: Mock<ProjectInterTestMocks.System>(
-                id: "1",
-                name: "Chapman University",
-                stops: [
-                    Mock<ProjectInterTestMocks.Stop>(
-                        // 33.793316, -117.852825
-                        coordinates: Mock<ProjectInterTestMocks.Coordinates>(
-                            latitude: 33.793316,
-                            longitude: -117.852825
-                        ),
-                        id: "2",
-                        name: "Schmid Gate"
-                    ),
-                    Mock<ProjectInterTestMocks.Stop>(
-                        // 33.789730, -117.886539
-                        coordinates: Mock<ProjectInterTestMocks.Coordinates>(
-                            latitude: 33.789730,
-                            longitude: -117.886539
-                        ),
-                        id: "1",
-                        name: "Panther Village"
-                    )
-                ]
-            )
-        )
         mockClient.queryMock = mock
 
         let globalStopsModel = GlobalStopsModel(apolloClient: mockClient)

@@ -23,6 +23,15 @@ struct GlobalStopsModelStop: Identifiable, Equatable {
     var coordinates: RawCoordinates
 }
 
+extension GlobalStopsModelStop {
+    init(_ stop: GetAllStopsBySystemIdQuery.Data.System.Stop) {
+        self.coordinates = RawCoordinates(latitude: stop.coordinates.latitude, longitude: stop.coordinates.longitude)
+        
+        self.name = stop.name
+        self.id = stop.id
+    }
+}
+
 // MARK: - Data model implementation
 
 class GlobalStopsModel: NetworkDataModelProtocol {
