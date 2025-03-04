@@ -72,6 +72,7 @@ class GlobalStopsModel: NetworkDataModelProtocol {
                     
                     return Stop(name: stop.name, id: stop.id, coordinates: coordinates)
                 }
+                self.stops.sort { $0.name < $1.name }
                 
                 continuation.resume()
             }
