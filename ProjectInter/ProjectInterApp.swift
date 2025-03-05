@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import WebKit
 import Apollo
 
 @main
@@ -27,6 +28,18 @@ struct ProjectInterApp: App {
         globalStopsStateObject.selectedStop == nil
         && locationManagerStateObject.lastUpdatedLocation != nil
         && globalStopsStateObject.stops.count > 0
+    }
+    
+    init() {
+        clearWebViewCache()
+    }
+    
+    private func clearWebViewCache() {
+        let dataStore = WKWebsiteDataStore.default()
+        let types = WKWebsiteDataStore.allWebsiteDataTypes()
+        dataStore.removeData(ofTypes: types, modifiedSince: Date.distantPast) {
+            print("WebView cache cleared")
+        }
     }
     
     var body: some Scene {
