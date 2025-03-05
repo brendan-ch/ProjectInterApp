@@ -30,23 +30,14 @@ struct ProjectInterApp: App {
         && globalStopsStateObject.stops.count > 0
     }
     
-    init() {
-        clearWebViewCache()
-    }
-    
-    private func clearWebViewCache() {
-        let dataStore = WKWebsiteDataStore.default()
-        let types = WKWebsiteDataStore.allWebsiteDataTypes()
-        dataStore.removeData(ofTypes: types, modifiedSince: Date.distantPast) {
-            print("WebView cache cleared")
-        }
-    }
-    
     var body: some Scene {
         WindowGroup {
             let setupCompleted = setupStateModel.setupCompleted
             if setupCompleted {
                 ContentView()
+                    .task {
+                        await WebViewCacheClearer.clearWebViewCache()
+                    }
                     .task {
                         await globalDataStateObject.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
                         locationManagerStateObject.updateLocationOnce()
