@@ -8,7 +8,7 @@
 import SwiftUI
 import WebKit
 
-struct WebView: UIViewRepresentable {
+struct NonPersistentWebView: UIViewRepresentable {
     let url: URL
     let accessibilityIdentifier: String
     
