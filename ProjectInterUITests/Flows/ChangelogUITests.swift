@@ -7,7 +7,7 @@
 
 import XCTest
 
-final class RouteListContentViewUITests: BaseUITests {
+final class ChangelogUITests: BaseUITests {
     override func setUpWithError() throws {
         try super.setUpWithError()
         
@@ -26,5 +26,8 @@ final class RouteListContentViewUITests: BaseUITests {
         
         // Assert WebView is displayed
         XCTAssertTrue(webView.waitForExistence(timeout: 5), "WebView did not launch")
+        
+        let text = webView.staticTexts.firstMatch
+        XCTAssertTrue(text.waitForExistence(timeout: 10), "Page did not load")
     }
 }

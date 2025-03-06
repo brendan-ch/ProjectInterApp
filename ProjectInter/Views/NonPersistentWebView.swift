@@ -8,12 +8,15 @@
 import SwiftUI
 import WebKit
 
-struct WebView: UIViewRepresentable {
+struct NonPersistentWebView: UIViewRepresentable {
     let url: URL
     let accessibilityIdentifier: String
     
     func makeUIView(context: Context) -> WKWebView {
-        let webView = WKWebView()
+        let config = WKWebViewConfiguration()
+        config.websiteDataStore = WKWebsiteDataStore.nonPersistent()
+        
+        let webView = WKWebView(frame: .zero, configuration: config)
         webView.accessibilityIdentifier = accessibilityIdentifier
         return webView
     }
