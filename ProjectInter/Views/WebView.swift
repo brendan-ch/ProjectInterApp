@@ -15,7 +15,10 @@ struct WebView: UIViewRepresentable {
     let isFile = false
     
     func makeUIView(context: Context) -> WKWebView {
-        let webView = WKWebView()
+        let config = WKWebViewConfiguration()
+        config.websiteDataStore = WKWebsiteDataStore.nonPersistent()
+        
+        let webView = WKWebView(frame: .zero, configuration: config)
         webView.accessibilityIdentifier = accessibilityIdentifier
         return webView
     }

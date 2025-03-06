@@ -36,9 +36,6 @@ struct ProjectInterApp: App {
             if setupCompleted {
                 ContentView()
                     .task {
-                        await WebViewCacheClearer.clearWebViewCache()
-                    }
-                    .task {
                         await globalDataStateObject.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
                         locationManagerStateObject.updateLocationOnce()
                     }
