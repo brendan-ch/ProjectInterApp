@@ -12,6 +12,8 @@ struct WebView: UIViewRepresentable {
     let url: URL
     let accessibilityIdentifier: String
     
+    let isFile = false
+    
     func makeUIView(context: Context) -> WKWebView {
         let webView = WKWebView()
         webView.accessibilityIdentifier = accessibilityIdentifier
@@ -20,6 +22,11 @@ struct WebView: UIViewRepresentable {
     
     func updateUIView(_ uiView: WKWebView, context: Context) {
         let request = URLRequest(url: url)
-        uiView.load(request)
+        
+        if isFile {
+            uiView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
+        } else {
+            uiView.load(request)
+        }
     }
 }
