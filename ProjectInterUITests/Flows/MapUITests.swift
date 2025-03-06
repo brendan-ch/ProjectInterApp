@@ -7,7 +7,7 @@
 
 import XCTest
 
-final class MapViewUITests: BaseUITests {
+final class MapUITests: BaseUITests {
     override func setUpWithError() throws {
         try super.setUpWithError()
         app.launchArguments += ["-setupCompleted", "1"]

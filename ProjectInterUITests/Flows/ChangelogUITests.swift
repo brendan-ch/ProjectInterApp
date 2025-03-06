@@ -7,7 +7,7 @@
 
 import XCTest
 
-final class RouteListContentViewUITests: BaseUITests {
+final class ChangelogUITests: BaseUITests {
     override func setUpWithError() throws {
         try super.setUpWithError()
         
