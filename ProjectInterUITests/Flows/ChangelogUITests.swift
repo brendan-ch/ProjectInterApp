@@ -26,5 +26,8 @@ final class ChangelogUITests: BaseUITests {
         
         // Assert WebView is displayed
         XCTAssertTrue(webView.waitForExistence(timeout: 5), "WebView did not launch")
+        
+        let text = webView.staticTexts.firstMatch
+        XCTAssertTrue(text.waitForExistence(timeout: 10), "Page did not load")
     }
 }
