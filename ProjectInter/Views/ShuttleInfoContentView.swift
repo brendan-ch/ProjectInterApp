@@ -126,7 +126,7 @@ struct ShuttleInfoContentView: View {
                     HStack {
                         ZStack {
                             Rectangle()
-                                .frame(width: 2, height: 40)
+                                .frame(minWidth: 2, idealWidth: 2, maxWidth: 2, minHeight: 40, idealHeight: 40, maxHeight: .infinity)
                                 .foregroundStyle(Color.blue)
                             Circle()
                                 .frame(width: 24, height: 12)
@@ -135,6 +135,7 @@ struct ShuttleInfoContentView: View {
                         Text(etaListItem.stopName ?? "N/A")
                         Spacer()
                         Text(etaListItem.estimatedTimeAwayDisplay)
+                            .multilineTextAlignment(.trailing)
                     }
                     .padding(.horizontal)
                 }
