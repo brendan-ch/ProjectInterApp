@@ -52,12 +52,12 @@ struct ProjectInterApp: App {
                     .task {
                         updateGlobalStopsStateAutomaticState()
                     }
+                    .onChange(of: globalStopsStateObject.stops) {
+                        // Run on startup in addition to location changes
+                        tryAutomaticallySelectStop()
+                    }
                     .onChange(of: locationManagerStateObject.lastUpdatedLocation) {
-                        guard let location = locationManagerStateObject.lastUpdatedLocation else { return }
-                        
-                        if canAutomaticallySelectStop {
-                            globalStopsStateObject.selectClosestStopBasedOnLocation(location: location)
-                        }
+                        tryAutomaticallySelectStop()
                     }
             } else {
                 WelcomeContentView()
@@ -76,6 +76,14 @@ struct ProjectInterApp: App {
             if locationManagerStateObject.authorizationStatus == .authorizedAlways || locationManagerStateObject.authorizationStatus == .authorizedWhenInUse {
                 globalStopsStateObject.isAutomaticWhenLocationIsAvailable = true
             }
+        }
+    }
+    
+    func tryAutomaticallySelectStop() {
+        guard let location = locationManagerStateObject.lastUpdatedLocation else { return }
+        
+        if canAutomaticallySelectStop {
+            globalStopsStateObject.selectClosestStopBasedOnLocation(location: location)
         }
     }
 }
