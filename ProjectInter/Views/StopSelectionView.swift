@@ -44,6 +44,7 @@ struct StopSelectionView: View {
                             dismiss()
                         } label: {
                             Text(stop.name)
+                                .accessibilityIdentifier("StopSelectionCollectionSearchResultItem \(stop.id)")
                         }
                         .tint(Color.primary)
                     }
@@ -67,7 +68,6 @@ struct StopSelectionView: View {
                     }
                 }
             }
-            .accessibilityIdentifier("StopSelectionCollectionView")
         }
         .task {
             guard let systemId = globalDataModel.selectedSystem?.id else { return }

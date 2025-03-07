@@ -19,7 +19,10 @@ final class MapUITests: BaseUITests {
         
         XCTAssert(app.collectionViews.cells.staticTexts["No stops found."].waitForNonExistence(timeout: 5))
         
-        for cell in app.collectionViews.cells.allElementsBoundByIndex {
+        let predicate = NSPredicate(format: "identifier BEGINSWITH 'StopSelectionCollectionSearchResultItem'")
+        let sectionElements = app.buttons.matching(predicate).allElementsBoundByIndex
+        
+        for cell in sectionElements {
             cell.tap()
             
             let shouldExit = callback()
