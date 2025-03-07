@@ -37,7 +37,6 @@ struct ProjectInterApp: App {
                 ContentView()
                     .task {
                         await globalDataStateObject.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
-                        locationManagerStateObject.updateLocationOnce()
                     }
                     .onChange(of: globalDataStateObject.selectedSystem) {
                         guard let systemId = globalDataStateObject.selectedSystem?.id else { return }

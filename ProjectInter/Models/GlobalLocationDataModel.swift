@@ -26,6 +26,8 @@ class GlobalLocationDataModel: NSObject, ObservableObject, CLLocationManagerDele
         self.locationManager = locationManager
         locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
         locationManager.delegate = self
+        
+        startUpdatingLocation()
     }
     
     func requestAuthorization() {
@@ -33,7 +35,9 @@ class GlobalLocationDataModel: NSObject, ObservableObject, CLLocationManagerDele
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        // Also runs when the manager is first created
         authorizationStatus = status
+        startUpdatingLocation()
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -42,20 +46,20 @@ class GlobalLocationDataModel: NSObject, ObservableObject, CLLocationManagerDele
             latitude: mostRecentLocation.coordinate.latitude,
             longitude: mostRecentLocation.coordinate.longitude
         )
+        
+#if DEBUG
+        print("Location updated: \(mostRecentLocation)")
+#endif
+        
         locationIsUpdating = false
+    }
+    
+    private func startUpdatingLocation() {
+        locationManager?.startUpdatingLocation()
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
         print(error)
         locationIsUpdating = false
-    }
-    
-    func updateLocationOnce() {
-        if locationIsUpdating {
-            return
-        }
-        
-        locationIsUpdating = true
-        locationManager?.requestLocation()
     }
 }
