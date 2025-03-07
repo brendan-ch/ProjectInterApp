@@ -12,6 +12,8 @@ import CoreLocation
 class GlobalLocationDataModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     var locationManager: CLLocationManager?
     
+    /// Updated once when the app is first started.
+    @Published var authorizationStatusInitialized: Bool = false
     @Published var authorizationStatus: CLAuthorizationStatus?
     @Published var lastUpdatedLocation: CLLocationCoordinate2D?
     
@@ -36,6 +38,7 @@ class GlobalLocationDataModel: NSObject, ObservableObject, CLLocationManagerDele
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         // Also runs when the manager is first created
+        authorizationStatusInitialized = true
         authorizationStatus = status
         startUpdatingLocation()
     }

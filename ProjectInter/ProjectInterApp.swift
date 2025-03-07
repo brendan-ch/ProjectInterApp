@@ -25,8 +25,7 @@ struct ProjectInterApp: App {
     @UIApplicationDelegateAdaptor(CustomAppDelegate.self) var customAppDelegate: CustomAppDelegate
     
     var canAutomaticallySelectStop: Bool {
-        globalStopsStateObject.selectedStop == nil
-        && locationManagerStateObject.lastUpdatedLocation != nil
+        globalStopsStateObject.isAutomaticWhenLocationIsAvailable
         && globalStopsStateObject.stops.count > 0
     }
     
@@ -36,9 +35,11 @@ struct ProjectInterApp: App {
             if setupCompleted {
                 ContentView()
                     .task {
+                        // Perform overall global data refresh
                         await globalDataStateObject.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
                     }
                     .onChange(of: globalDataStateObject.selectedSystem) {
+                        // Grab the available stops for the system
                         guard let systemId = globalDataStateObject.selectedSystem?.id else { return }
                         
                         Task {
@@ -48,7 +49,10 @@ struct ProjectInterApp: App {
                             await globalStopsStateObject.refreshDataOnce(arguments: stopsNetworkArguments)
                         }
                     }
-                    .onChange(of: canAutomaticallySelectStop) {
+                    .task {
+                        updateGlobalStopsStateAutomaticState()
+                    }
+                    .onChange(of: locationManagerStateObject.lastUpdatedLocation) {
                         guard let location = locationManagerStateObject.lastUpdatedLocation else { return }
                         
                         if canAutomaticallySelectStop {
@@ -65,6 +69,14 @@ struct ProjectInterApp: App {
         .environmentObject(globalStopsStateObject)
         .environmentObject(locationManagerStateObject)
         .environmentObject(globalNotificationsStateObject)
+    }
+    
+    func updateGlobalStopsStateAutomaticState() {
+        if locationManagerStateObject.authorizationStatusInitialized {
+            if locationManagerStateObject.authorizationStatus == .authorizedAlways || locationManagerStateObject.authorizationStatus == .authorizedWhenInUse {
+                globalStopsStateObject.isAutomaticWhenLocationIsAvailable = true
+            }
+        }
     }
 }
 
