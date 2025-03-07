@@ -21,7 +21,7 @@ struct StopSelectionView: View {
         if searchText.isEmpty {
             return globalStopsModel.stops
         } else {
-            return globalStopsModel.stops.filter { $0.name.contains(searchText) }
+            return globalStopsModel.stops.filter { $0.name.lowercased().contains(searchText.lowercased()) }
         }
     }
     
