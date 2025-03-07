@@ -52,7 +52,7 @@ struct ProjectInterApp: App {
                     .task {
                         updateGlobalStopsStateAutomaticState()
                     }
-                    .onChange(of: globalStopsStateObject.stops) {
+                    .onChange(of: canAutomaticallySelectStop) {
                         // Run on startup in addition to location changes
                         tryAutomaticallySelectStop()
                     }
