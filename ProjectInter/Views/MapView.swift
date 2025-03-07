@@ -139,7 +139,7 @@ struct MapView: View {
     let stopToSelectFromViewModel = viewModel.stops.first!
     
     let globalStopsModel = GlobalStopsModel()
-    globalStopsModel.selectedStop = .init(name: stopToSelectFromViewModel.name, id: stopToSelectFromViewModel.id, coordinates: .init(latitude: stopToSelectFromViewModel.coordinates.latitude, longitude: stopToSelectFromViewModel.coordinates.longitude))
+    globalStopsModel.selectStopManually(.init(name: stopToSelectFromViewModel.name, id: stopToSelectFromViewModel.id, coordinates: .init(latitude: stopToSelectFromViewModel.coordinates.latitude, longitude: stopToSelectFromViewModel.coordinates.longitude)))
     
     return MapView(viewModel: viewModel)
         .environmentObject(GlobalDataModel())

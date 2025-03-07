@@ -9,7 +9,7 @@ import Testing
 @testable import ProjectInter
 
 class GlobalLocationDataModelTests {
-    @Test func testRequestAuthorizationSetsAuthorizationStatus() async {
+    @Test func requestAuthorizationSetsAuthorizationStatusAndLocation() async {
         let locationManager = MockCLLocationManager()
         locationManager.authorizationStatusToGrant = .authorizedWhenInUse
         let locationDataModel = GlobalLocationDataModel(locationManager: locationManager)
@@ -17,31 +17,22 @@ class GlobalLocationDataModelTests {
         locationDataModel.requestAuthorization()
         
         #expect(locationDataModel.authorizationStatus == .authorizedWhenInUse)
+        #expect(locationDataModel.lastUpdatedLocation != nil)
     }
     
-    @Test func updateLocationOnceUpdatesLocationsIfAccessGranted() async {
+    @Test func creatingDataModelUpdatesLocationIfAuthorized() async {
         let locationManager = MockCLLocationManager()
         locationManager.authorizationStatusToGrant = .authorizedWhenInUse
         let locationDataModel = GlobalLocationDataModel(locationManager: locationManager)
         
-        #expect(locationDataModel.lastUpdatedLocation == nil)
-
-        locationDataModel.requestAuthorization()
-        
-        locationDataModel.updateLocationOnce()
-        
         #expect(locationDataModel.lastUpdatedLocation != nil)
-        #expect(locationDataModel.locationIsUpdating == false)
     }
     
-    @Test func updateLocationOnceResetsLocationIsUpdatingIfDeniedError() async {
+    @Test func creatingDataModelDoesNotUpdateLocationIfNotAuthorized() async {
         let locationManager = MockCLLocationManager()
         locationManager.authorizationStatusToGrant = .denied
         let locationDataModel = GlobalLocationDataModel(locationManager: locationManager)
         
-        locationDataModel.requestAuthorization()
-        locationDataModel.updateLocationOnce()
-        
-        #expect(locationDataModel.locationIsUpdating == false)
+        #expect(locationDataModel.lastUpdatedLocation == nil)
     }
 }

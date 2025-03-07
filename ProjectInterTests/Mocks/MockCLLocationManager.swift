@@ -32,4 +32,8 @@ class MockCLLocationManager: CLLocationManager {
         
         delegate?.locationManager?(self, didUpdateLocations: locations)
     }
+    
+    override func startUpdatingLocation() {
+        requestLocation()
+    }
 }

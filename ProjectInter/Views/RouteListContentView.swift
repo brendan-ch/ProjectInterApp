@@ -41,10 +41,16 @@ struct RouteListContentView: View {
                     Text("Routes")
                         .font(.title2)
                         .bold()
-                    HStack(spacing: 0) {
+                    HStack(spacing: 4) {
                         Text("Current stop: \(globalStopsState.selectedStop?.name ?? "")")
-                        if locationManagerState.locationIsUpdating {
+                        if locationManagerState.locationIsUpdating,
+                           globalStopsState.selectedStop == nil {
                             Text("Loading...")
+                        }
+                        
+                        if globalStopsState.isAutomaticWhenLocationIsAvailable {
+                            Image(systemName: "location.fill")
+                                .accessibilityLabel("Automatic selection enabled")
                         }
                     }
                     Button("Change stop") {

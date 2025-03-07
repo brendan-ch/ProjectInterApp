@@ -13,6 +13,8 @@ struct StopSelectionView: View {
     
     @EnvironmentObject var globalStopsModel: GlobalStopsModel
     
+    @EnvironmentObject var locationModel: GlobalLocationDataModel
+    
     @Environment(\.dismiss) var dismiss
     
     @EnvironmentObject var globalDataModel: GlobalDataModel
@@ -21,25 +23,46 @@ struct StopSelectionView: View {
         if searchText.isEmpty {
             return globalStopsModel.stops
         } else {
-            return globalStopsModel.stops.filter { $0.name.contains(searchText) }
+            return globalStopsModel.stops.filter { $0.name.lowercased().contains(searchText.lowercased()) }
         }
     }
     
     var body: some View {
         NavigationStack {
             List {
-                ForEach(searchResults) { stop in
+                Section {
                     Button {
-                        globalStopsModel.selectedStop = stop
+                        globalStopsModel.isAutomaticWhenLocationIsAvailable = true
                         dismiss()
                     } label: {
-                        Text(stop.name)
+                        HStack {
+                            Image(systemName: "location.fill")
+                            
+                            if locationModel.isAuthorized {
+                                Text("Automatic")
+                            } else {
+                                Text("No location access")
+                            }
+                        }
                     }
                     .tint(Color.primary)
+                    .disabled(!locationModel.isAuthorized)
                 }
-                
-                if searchResults.isEmpty {
-                    Text("No stops found.")
+                Section(header: Text("All stops")) {
+                    ForEach(searchResults) { stop in
+                        Button {
+                            globalStopsModel.selectStopManually(stop)
+                            dismiss()
+                        } label: {
+                            Text(stop.name)
+                                .accessibilityIdentifier("StopSelectionCollectionSearchResultItem \(stop.id)")
+                        }
+                        .tint(Color.primary)
+                    }
+                    
+                    if searchResults.isEmpty {
+                        Text("No stops found.")
+                    }
                 }
             }
             .searchable(
@@ -56,7 +79,6 @@ struct StopSelectionView: View {
                     }
                 }
             }
-            .accessibilityIdentifier("StopSelectionCollectionView")
         }
         .task {
             guard let systemId = globalDataModel.selectedSystem?.id else { return }
@@ -76,4 +98,5 @@ struct StopSelectionView: View {
     StopSelectionView()
         .environmentObject(globalStopsModel)
         .environmentObject(GlobalDataModelPlaceholderBuilder().build())
+        .environmentObject(GlobalLocationDataModel())
 }
