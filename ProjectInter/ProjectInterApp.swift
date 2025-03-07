@@ -73,7 +73,7 @@ struct ProjectInterApp: App {
     
     func updateGlobalStopsStateAutomaticState() {
         if locationManagerStateObject.authorizationStatusInitialized {
-            if locationManagerStateObject.authorizationStatus == .authorizedAlways || locationManagerStateObject.authorizationStatus == .authorizedWhenInUse {
+            if locationManagerStateObject.isAuthorized {
                 globalStopsStateObject.isAutomaticWhenLocationIsAvailable = true
             }
         }

@@ -13,6 +13,8 @@ struct StopSelectionView: View {
     
     @EnvironmentObject var globalStopsModel: GlobalStopsModel
     
+    @EnvironmentObject var locationModel: GlobalLocationDataModel
+    
     @Environment(\.dismiss) var dismiss
     
     @EnvironmentObject var globalDataModel: GlobalDataModel
@@ -35,10 +37,16 @@ struct StopSelectionView: View {
                     } label: {
                         HStack {
                             Image(systemName: "location.fill")
-                            Text("Automatic")
+                            
+                            if locationModel.isAuthorized {
+                                Text("Automatic")
+                            } else {
+                                Text("No location access")
+                            }
                         }
                     }
                     .tint(Color.primary)
+                    .disabled(!locationModel.isAuthorized)
                 }
                 Section(header: Text("All stops")) {
                     ForEach(searchResults) { stop in
@@ -90,4 +98,5 @@ struct StopSelectionView: View {
     StopSelectionView()
         .environmentObject(globalStopsModel)
         .environmentObject(GlobalDataModelPlaceholderBuilder().build())
+        .environmentObject(GlobalLocationDataModel())
 }

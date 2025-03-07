@@ -17,6 +17,11 @@ class GlobalLocationDataModel: NSObject, ObservableObject, CLLocationManagerDele
     @Published var authorizationStatus: CLAuthorizationStatus?
     @Published var lastUpdatedLocation: CLLocationCoordinate2D?
     
+    var isAuthorized: Bool {
+        authorizationStatus == .authorizedAlways
+        || authorizationStatus == .authorizedWhenInUse
+    }
+    
     @Published private(set) var locationIsUpdating: Bool = false
     
     convenience override init() {
