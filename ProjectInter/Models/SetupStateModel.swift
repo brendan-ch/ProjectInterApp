@@ -11,12 +11,19 @@ import SwiftUI
 class SetupStateModel: ObservableObject {
     @Published private(set) var setupCompleted: Bool
     
-    init() {
-        setupCompleted = UserDefaults.standard.bool(forKey: UserDefaults.setupCompletedKey)
+    let userDefaults: UserDefaults
+    
+    convenience init() {
+        self.init(userDefaults: UserDefaults.standard)
+    }
+    
+    init(userDefaults: UserDefaults) {
+        self.userDefaults = userDefaults
+        setupCompleted = self.userDefaults.bool(forKey: UserDefaults.setupCompletedKey)
     }
     
     func completeSetup() {
-        UserDefaults.standard.setValue(true, forKey: UserDefaults.setupCompletedKey)
+        userDefaults.setValue(true, forKey: UserDefaults.setupCompletedKey)
         setupCompleted = true
     }
 }
