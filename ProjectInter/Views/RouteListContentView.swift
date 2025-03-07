@@ -43,7 +43,8 @@ struct RouteListContentView: View {
                         .bold()
                     HStack(spacing: 0) {
                         Text("Current stop: \(globalStopsState.selectedStop?.name ?? "")")
-                        if locationManagerState.locationIsUpdating {
+                        if locationManagerState.locationIsUpdating,
+                           globalStopsState.selectedStop == nil {
                             Text("Loading...")
                         }
                     }
