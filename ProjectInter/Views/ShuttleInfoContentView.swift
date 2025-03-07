@@ -135,6 +135,7 @@ struct ShuttleInfoContentView: View {
                         Text(etaListItem.stopName ?? "N/A")
                         Spacer()
                         Text(etaListItem.estimatedTimeAwayDisplay)
+                            .multilineTextAlignment(.trailing)
                     }
                     .padding(.horizontal)
                 }
