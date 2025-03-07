@@ -28,18 +28,29 @@ struct StopSelectionView: View {
     var body: some View {
         NavigationStack {
             List {
-                ForEach(searchResults) { stop in
+                Section {
                     Button {
-                        globalStopsModel.selectStopManually(stop)
+                        globalStopsModel.isAutomaticWhenLocationIsAvailable = true
                         dismiss()
                     } label: {
-                        Text(stop.name)
+                        Text("Automatic")
                     }
                     .tint(Color.primary)
                 }
-                
-                if searchResults.isEmpty {
-                    Text("No stops found.")
+                Section(header: Text("All stops")) {
+                    ForEach(searchResults) { stop in
+                        Button {
+                            globalStopsModel.selectStopManually(stop)
+                            dismiss()
+                        } label: {
+                            Text(stop.name)
+                        }
+                        .tint(Color.primary)
+                    }
+                    
+                    if searchResults.isEmpty {
+                        Text("No stops found.")
+                    }
                 }
             }
             .searchable(
