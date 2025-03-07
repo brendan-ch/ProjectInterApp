@@ -33,7 +33,10 @@ struct StopSelectionView: View {
                         globalStopsModel.isAutomaticWhenLocationIsAvailable = true
                         dismiss()
                     } label: {
-                        Text("Automatic")
+                        HStack {
+                            Image(systemName: "location.fill")
+                            Text("Automatic")
+                        }
                     }
                     .tint(Color.primary)
                 }
