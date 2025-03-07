@@ -43,7 +43,13 @@ class GlobalStopsModel: NetworkDataModelProtocol {
     var dataRefreshLoopTask: Task<Void, any Error>?
     
     @Published var stops: [GlobalStopsModelStop] = []
-    @Published var selectedStop: GlobalStopsModelStop? = nil
+    @Published private(set) var selectedStop: GlobalStopsModelStop? = nil
+    
+    /// Indicates whether the stop is automatically being selected via location
+    /// (via coordination with ``GlobalLocationDataModel``). Manual
+    /// selection of a stop by calling ``selectStopManually(stop:)``
+    /// sets this to false.
+    @Published var isAutomaticWhenLocationIsAvailable: Bool = false
     
     init(apolloClient: ApolloClientProtocol? = nil) {
         self.apolloClient = apolloClient
@@ -84,6 +90,11 @@ class GlobalStopsModel: NetworkDataModelProtocol {
         }
     }
     
+    func selectStopManually(_ stop: GlobalStopsModelStop) {
+        selectedStop = stop
+        isAutomaticWhenLocationIsAvailable = false
+    }
+    
     /// From the currently saved stops, select the one that is closest to the provided location.
     func selectClosestStopBasedOnLocation(location: CLLocationCoordinate2D) {
         guard var closest = stops.first else { return }
@@ -121,7 +132,7 @@ class GlobalStopsModelPlaceholderBuilder: PlaceholderBuilderProtocol {
             GlobalStopsModelStop(name: "Chapman Court", id: "1", coordinates: RawCoordinates(latitude: 33.796796, longitude: -117.889293)),
             GlobalStopsModelStop(name: "Schmid Gate", id: "2", coordinates: RawCoordinates(latitude: 33.793292, longitude: -117.852904))
         ]
-        newModel.selectedStop = newModel.stops.first
+        newModel.selectStopManually(newModel.stops.first!)
         
         return newModel
     }

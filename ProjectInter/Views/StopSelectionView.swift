@@ -30,7 +30,7 @@ struct StopSelectionView: View {
             List {
                 ForEach(searchResults) { stop in
                     Button {
-                        globalStopsModel.selectedStop = stop
+                        globalStopsModel.selectStopManually(stop)
                         dismiss()
                     } label: {
                         Text(stop.name)
