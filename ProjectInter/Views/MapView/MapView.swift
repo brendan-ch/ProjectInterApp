@@ -87,11 +87,18 @@ struct MapView: UIViewRepresentable {
         if let routeId = globalDataState.selectedRouteId {
             for stop in viewModel.stops where stop.routeIds.contains(routeId) {
                 let annotation = StopAnnotation(stop: stop)
+                
+                if let selectedStop = globalStopsModel.selectedStop,
+                   selectedStop.id == stop.id {
+                    annotation.shouldShowTitle = true
+                }
+                
                 uiView.addAnnotation(annotation)
             }
         } else if let selectedStop = globalStopsModel.selectedStop,
                   let stopToRender = viewModel.stops.first(where: { $0.id == selectedStop.id }) {
             let annotation = StopAnnotation(stop: stopToRender)
+            annotation.shouldShowTitle = true
             uiView.addAnnotation(annotation)
         }
     }

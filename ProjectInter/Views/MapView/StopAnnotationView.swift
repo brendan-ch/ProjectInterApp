@@ -11,6 +11,7 @@ class StopAnnotation: NSObject, MKAnnotation {
     let stop: MapViewStop
     var coordinate: CLLocationCoordinate2D
     var title: String?
+    var shouldShowTitle: Bool = false
     
     init(stop: MapViewStop) {
         self.stop = stop
@@ -33,7 +34,11 @@ class StopAnnotationView: MKAnnotationView {
         frame = CGRect(x: 0, y: 0, width: 16, height: 16)
         
         if let stopAnnotation = annotation as? StopAnnotation {
-            label.text = stopAnnotation.title ?? ""
+            if stopAnnotation.shouldShowTitle {
+                label.text = stopAnnotation.title ?? ""
+            } else {
+                label.text = ""
+            }
         }
         
         setupView()
