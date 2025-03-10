@@ -8,16 +8,20 @@
 import SwiftUI
 import MapKit
 
+class NewMapViewPreviousSelectionState: ObservableObject {
+    var previousSystem: System?
+    var previousRouteId: String?
+    var previousShuttleId: String?
+}
+
 struct NewMapView: UIViewRepresentable {
     @EnvironmentObject var globalDataState: GlobalDataModel
     @EnvironmentObject var globalStopsModel: GlobalStopsModel
     @ObservedObject var viewModel = MapViewModel()
     
-    var mapViewNetworkArguments: MapViewNetworkArguments? {
-        guard let systemId = globalDataState.selectedSystem?.id else { return nil }
-        
-        return MapViewNetworkArguments(systemId: systemId)
-    }
+    @StateObject var previousSelectionState = NewMapViewPreviousSelectionState()
+    
+    // Track changes for data updates and map positioning
     
     func makeCoordinator() -> NewMapViewCoordinator {
         NewMapViewCoordinator(self)
@@ -31,6 +35,8 @@ struct NewMapView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: MKMapView, context: Context) {
+        checkForStateChangesToRestartDataUpdates()
+        
         // Update polylines
         uiView.removeOverlays(uiView.overlays)
         if let routeId = globalDataState.selectedRouteId {
@@ -92,6 +98,39 @@ struct NewMapView: UIViewRepresentable {
             //                uiView.setRegion(region, animated: true)
             //            }
             //        }
+        }
+    }
+}
+
+extension NewMapView {
+    var mapViewNetworkArguments: MapViewNetworkArguments? {
+        guard let systemId = globalDataState.selectedSystem?.id else { return nil }
+        
+        return MapViewNetworkArguments(systemId: systemId)
+    }
+    
+    private func checkForStateChangesToRestartDataUpdates() {
+        guard let client = globalDataState.apolloClient else {
+            return
+        }
+        
+        viewModel.apolloClient = client
+        
+        guard let selectedSystem = globalDataState.selectedSystem else {
+            return
+        }
+
+        if previousSelectionState.previousSystem != selectedSystem {
+            restartDataUpdatesIfArgumentsExist()
+            
+            previousSelectionState.previousSystem = selectedSystem
+        }
+    }
+    
+    private func restartDataUpdatesIfArgumentsExist() {
+        if let arguments = mapViewNetworkArguments {
+            viewModel.stopRefreshingData()
+            viewModel.startRefreshingData(arguments: arguments)
         }
     }
 }
