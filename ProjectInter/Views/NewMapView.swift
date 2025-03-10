@@ -153,7 +153,7 @@ class NewMapViewCoordinator: NSObject, MKMapViewDelegate {
             let renderer = MKPolylineRenderer(polyline: polyline)
             if let routeId = parent.globalDataState.selectedRouteId,
                let route = parent.viewModel.routes.first(where: { $0.id == routeId }) {
-//                renderer.strokeColor = UIColor(hex: route.colorHex)
+                renderer.strokeColor = UIColor(hex: route.colorHex)
                 renderer.lineWidth = 5
             }
             return renderer
