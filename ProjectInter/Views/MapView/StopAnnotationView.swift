@@ -39,8 +39,15 @@ class StopAnnotationView: MKAnnotationView {
         setupView()
         addSubview(label)
         
-        let labelWidth = 200
-        label.frame = CGRect(x: -200/2 + bounds.width/2, y: bounds.height + 2, width: 200, height: 20)
+        let labelWidth: CGFloat = 200
+        label.frame = CGRect(
+            // Centers the label relative to the circle
+            x: -labelWidth / 2 + bounds.width / 2,
+            y: bounds.height + 2,
+            width: labelWidth,
+            height: 20
+        )
+
     }
     
     required init?(coder aDecoder: NSCoder) {
