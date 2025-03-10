@@ -21,10 +21,26 @@ class StopAnnotation: NSObject, MKAnnotation {
 }
 
 class StopAnnotationView: MKAnnotationView {
+    private let label: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 12, weight: .bold)
+        return label
+    }()
+    
     override init(annotation: MKAnnotation?, reuseIdentifier: String?) {
         super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
-        frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+        frame = CGRect(x: 0, y: 0, width: 16, height: 16)
+        
+        if let stopAnnotation = annotation as? StopAnnotation {
+            label.text = stopAnnotation.title ?? ""
+        }
+        
         setupView()
+        addSubview(label)
+        
+        let labelWidth = 200
+        label.frame = CGRect(x: -200/2 + bounds.width/2, y: bounds.height + 2, width: 200, height: 20)
     }
     
     required init?(coder aDecoder: NSCoder) {
