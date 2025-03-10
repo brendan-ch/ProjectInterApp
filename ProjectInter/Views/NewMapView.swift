@@ -164,13 +164,80 @@ class NewMapViewCoordinator: NSObject, MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         switch annotation {
-//        case is ShuttleAnnotation:
-//            return ShuttleAnnotationView(annotation: annotation, reuseIdentifier: "shuttle")
-//        case is StopAnnotation:
-//            return StopAnnotationView(annotation: annotation, reuseIdentifier: "stop")
+        case is ShuttleAnnotation:
+            return NewShuttleAnnotationView(annotation: annotation, reuseIdentifier: "shuttle")
+        case is StopAnnotation:
+            return NewStopAnnotationView(annotation: annotation, reuseIdentifier: "stop")
         default:
             return nil
         }
+    }
+}
+
+// MARK: - Annotation views
+class NewStopAnnotationView: MKAnnotationView {
+    override init(annotation: MKAnnotation?, reuseIdentifier: String?) {
+        super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
+        frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+        setupView()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        setupView()
+    }
+    
+    private func setupView() {
+        backgroundColor = .clear
+        
+        let circleView = UIView(frame: bounds)
+        circleView.backgroundColor = .white
+        circleView.layer.cornerRadius = bounds.width / 2
+        circleView.layer.borderWidth = 2
+        circleView.layer.borderColor = UIColor.black.cgColor
+        
+        addSubview(circleView)
+    }
+}
+
+class NewShuttleAnnotationView: MKAnnotationView {
+    override init(annotation: MKAnnotation?, reuseIdentifier: String?) {
+        super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
+        frame = CGRect(x: 0, y: 0, width: 32, height: 32)
+        setupView()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        setupView()
+    }
+    
+    private func setupView() {
+        backgroundColor = .clear
+        
+        guard let shuttleAnnotation = annotation as? ShuttleAnnotation else { return }
+        
+        let backgroundView = UIView(frame: bounds)
+        backgroundView.backgroundColor = UIColor(hex: shuttleAnnotation.shuttle.routeColorHex ?? "#000000")
+        backgroundView.layer.cornerRadius = bounds.width / 2
+        backgroundView.layer.borderWidth = 4
+        backgroundView.layer.borderColor = UIColor.white.cgColor
+        
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 16)
+        let busImage = UIImageView(image: UIImage(systemName: "bus.fill", withConfiguration: imageConfig))
+        busImage.tintColor = .white
+        busImage.frame = bounds.insetBy(dx: 6, dy: 6)
+        busImage.contentMode = .scaleAspectFit
+        
+        addSubview(backgroundView)
+        addSubview(busImage)
+        
+        // Accessibility
+        isAccessibilityElement = true
+        accessibilityLabel = "Shuttle"
+        accessibilityValue = shuttleAnnotation.shuttle.id
+        accessibilityTraits = .button
+        accessibilityHint = "Tap to view info about this shuttle."
     }
 }
 
