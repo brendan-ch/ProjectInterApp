@@ -179,6 +179,13 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
         self.parent = parent
     }
     
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        if let annotation = view.annotation as? ShuttleAnnotation {
+            // TODO: Do stuff.
+            print(annotation.shuttle.id)
+        }
+    }
+    
     func mapView(_ mapView: MKMapView, didAdd views: [MKAnnotationView]) {
         for view in views {
             if view.annotation is ShuttleAnnotation {
