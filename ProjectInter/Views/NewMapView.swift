@@ -48,9 +48,10 @@ struct NewMapView: UIViewRepresentable {
             }
             
             if let routeToDisplay = routeToDisplay {
-                let polyline = MKPolyline(coordinates: routeToDisplay.polylineCoordinates,
+                let polyline = RoutePolyline(coordinates: routeToDisplay.polylineCoordinates,
                     count: routeToDisplay.polylineCoordinates.count
                 )
+                polyline.route = routeToDisplay
                 
                 uiView.addOverlay(polyline)
             }
@@ -149,10 +150,10 @@ class NewMapViewCoordinator: NSObject, MKMapViewDelegate {
     }
     
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
-        if let polyline = overlay as? MKPolyline {
+        if let polyline = overlay as? RoutePolyline {
             let renderer = MKPolylineRenderer(polyline: polyline)
             if let routeId = parent.globalDataState.selectedRouteId,
-               let route = parent.viewModel.routes.first(where: { $0.id == routeId }) {
+               let route = polyline.route {
                 renderer.strokeColor = UIColor(hex: route.colorHex)
                 renderer.lineWidth = 5
             }
@@ -171,6 +172,11 @@ class NewMapViewCoordinator: NSObject, MKMapViewDelegate {
             return nil
         }
     }
+}
+
+// MARK: - Map polyline subclass to hold associated route data
+class RoutePolyline: MKPolyline {
+    var route: MapViewRoute?
 }
 
 // MARK: - Map annotation objects
