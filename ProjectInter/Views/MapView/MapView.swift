@@ -179,6 +179,16 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
         self.parent = parent
     }
     
+    func mapView(_ mapView: MKMapView, didAdd views: [MKAnnotationView]) {
+        for view in views {
+            if view.annotation is ShuttleAnnotation {
+                view.superview?.bringSubviewToFront(view)
+            } else {
+                view.superview?.sendSubviewToBack(view)
+            }
+        }
+    }
+    
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         if let polyline = overlay as? RoutePolyline {
             let renderer = MKPolylineRenderer(polyline: polyline)
