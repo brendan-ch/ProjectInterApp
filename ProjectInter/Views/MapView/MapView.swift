@@ -38,10 +38,15 @@ struct MapView: UIViewRepresentable {
     func updateUIView(_ uiView: MKMapView, context: Context) {
         checkForStateChangesToRestartDataUpdates()
         
+        updateRoutePolyline(uiView, context: context)
+        updateAnnotations(uiView, context: context)
+        updatePositioning(uiView, context: context)
+    }
+    
+    private func updateRoutePolyline(_ uiView: MKMapView, context: Context) {
         // Update polylines
         uiView.removeOverlays(uiView.overlays)
         
-        // MARK: Route polyline
         if let routeId = globalDataState.selectedRouteId {
             let routeToDisplay = viewModel.routes.first { route in
                 route.id == routeId
@@ -55,10 +60,10 @@ struct MapView: UIViewRepresentable {
                 
                 uiView.addOverlay(polyline)
             }
-
         }
-        
-        // MARK: Annotations
+    }
+    
+    private func updateAnnotations(_ uiView: MKMapView, context: Context) {
         uiView.removeAnnotations(uiView.annotations)
         
         // Add shuttle annotations
@@ -89,7 +94,9 @@ struct MapView: UIViewRepresentable {
             let annotation = StopAnnotation(stop: stopToRender)
             uiView.addAnnotation(annotation)
         }
-        
+    }
+    
+    private func updatePositioning(_ uiView: MKMapView, context: Context) {
         // Handle position changes
         if viewModel.position == .automatic {
             // Get all the points in the map view
