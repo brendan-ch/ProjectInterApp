@@ -8,7 +8,7 @@
 import SwiftUI
 import MapKit
 
-class NewMapViewPreviousSelectionState: ObservableObject {
+class NewMapViewPreviousSelectionState {
     var previousSystem: System?
     var previousRouteId: String?
     var previousShuttleId: String?
@@ -19,7 +19,7 @@ struct NewMapView: UIViewRepresentable {
     @EnvironmentObject var globalStopsModel: GlobalStopsModel
     @ObservedObject var viewModel = MapViewModel()
     
-    @StateObject var previousSelectionState = NewMapViewPreviousSelectionState()
+    var previousSelectionState = NewMapViewPreviousSelectionState()
     
     // Track changes for data updates and map positioning
     
