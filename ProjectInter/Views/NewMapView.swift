@@ -14,6 +14,7 @@ class NewMapViewPreviousSelectionState {
     var previousShuttleId: String?
 }
 
+// MARK: - UIViewRepresentable
 struct NewMapView: UIViewRepresentable {
     @EnvironmentObject var globalDataState: GlobalDataModel
     @EnvironmentObject var globalStopsModel: GlobalStopsModel
@@ -39,6 +40,8 @@ struct NewMapView: UIViewRepresentable {
         
         // Update polylines
         uiView.removeOverlays(uiView.overlays)
+        
+        // MARK: Route polyline
         if let routeId = globalDataState.selectedRouteId {
             let routeToDisplay = viewModel.routes.first { route in
                 route.id == routeId
@@ -51,57 +54,59 @@ struct NewMapView: UIViewRepresentable {
                 
                 uiView.addOverlay(polyline)
             }
-            
-            // Update annotations
-            uiView.removeAnnotations(uiView.annotations)
-            
-            // Add shuttle annotations
-            for shuttle in viewModel.shuttles {
-                let associatedStopForSelectedStop = viewModel.stops.first { stop in
-                    stop.id == globalStopsModel.selectedStop?.id
-                }
-                let shouldDisplayShuttle =
-                (globalDataState.selectedRouteId != nil && shuttle.routeId == globalDataState.selectedRouteId)
-                ||
-                (globalDataState.selectedRouteId == nil && associatedStopForSelectedStop != nil
-                 && associatedStopForSelectedStop!.routeIds.contains(shuttle.routeId ?? ""))
-                
-                if shouldDisplayShuttle {
-                    let annotation = ShuttleAnnotation(shuttle: shuttle)
-                    uiView.addAnnotation(annotation)
-                }
+
+        }
+        
+        // MARK: Annotations
+        uiView.removeAnnotations(uiView.annotations)
+        
+        // Add shuttle annotations
+        for shuttle in viewModel.shuttles {
+            let associatedStopForSelectedStop = viewModel.stops.first { stop in
+                stop.id == globalStopsModel.selectedStop?.id
             }
+            let shouldDisplayShuttle =
+            (globalDataState.selectedRouteId != nil && shuttle.routeId == globalDataState.selectedRouteId)
+            ||
+            (globalDataState.selectedRouteId == nil && associatedStopForSelectedStop != nil
+             && associatedStopForSelectedStop!.routeIds.contains(shuttle.routeId ?? ""))
             
-            // Add stop annotations
-            if let routeId = globalDataState.selectedRouteId {
-                for stop in viewModel.stops where stop.routeIds.contains(routeId) {
-                    let annotation = StopAnnotation(stop: stop)
-                    uiView.addAnnotation(annotation)
-                }
-            } else if let selectedStop = globalStopsModel.selectedStop,
-                      let stopToRender = viewModel.stops.first(where: { $0.id == selectedStop.id }) {
-                let annotation = StopAnnotation(stop: stopToRender)
+            if shouldDisplayShuttle {
+                let annotation = ShuttleAnnotation(shuttle: shuttle)
                 uiView.addAnnotation(annotation)
             }
-            
-            // Handle position changes
-            //        if viewModel.position == .automatic {
-            //            // Calculate the region that encompasses all visible annotations
-            //            var points: [CLLocationCoordinate2D] = []
-            //            points.append(contentsOf: uiView.annotations.map { $0.coordinate })
-            //            if let polyline = uiView.overlays.first as? MKPolyline {
-            //                points.append(contentsOf: polyline.coordinates)
-            //            }
-            //
-            //            if !points.isEmpty {
-            //                let region = MKCoordinateRegion(coordinates: points)
-            //                uiView.setRegion(region, animated: true)
-            //            }
-            //        }
         }
+        
+        // Add stop annotations
+        if let routeId = globalDataState.selectedRouteId {
+            for stop in viewModel.stops where stop.routeIds.contains(routeId) {
+                let annotation = StopAnnotation(stop: stop)
+                uiView.addAnnotation(annotation)
+            }
+        } else if let selectedStop = globalStopsModel.selectedStop,
+                  let stopToRender = viewModel.stops.first(where: { $0.id == selectedStop.id }) {
+            let annotation = StopAnnotation(stop: stopToRender)
+            uiView.addAnnotation(annotation)
+        }
+        
+        // Handle position changes
+        //        if viewModel.position == .automatic {
+        //            // Calculate the region that encompasses all visible annotations
+        //            var points: [CLLocationCoordinate2D] = []
+        //            points.append(contentsOf: uiView.annotations.map { $0.coordinate })
+        //            if let polyline = uiView.overlays.first as? MKPolyline {
+        //                points.append(contentsOf: polyline.coordinates)
+        //            }
+        //
+        //            if !points.isEmpty {
+        //                let region = MKCoordinateRegion(coordinates: points)
+        //                uiView.setRegion(region, animated: true)
+        //            }
+        //        }
     }
 }
 
+// MARK: - Networking extension for map view
 extension NewMapView {
     var mapViewNetworkArguments: MapViewNetworkArguments? {
         guard let systemId = globalDataState.selectedSystem?.id else { return nil }
@@ -135,6 +140,7 @@ extension NewMapView {
     }
 }
     
+// MARK: - Coordinator class
 class NewMapViewCoordinator: NSObject, MKMapViewDelegate {
     var parent: NewMapView
     
@@ -167,6 +173,7 @@ class NewMapViewCoordinator: NSObject, MKMapViewDelegate {
     }
 }
 
+// MARK: - Map annotation objects
 class ShuttleAnnotation: NSObject, MKAnnotation {
     let shuttle: MapViewShuttle
     var coordinate: CLLocationCoordinate2D
