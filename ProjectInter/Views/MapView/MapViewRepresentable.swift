@@ -16,17 +16,18 @@ class MapViewPreviousSelectionState {
 
 // MARK: - UIViewRepresentable
 struct MapViewRepresentable: UIViewRepresentable {
+    // Using @EnvironmentObject ensures that our map view
+    // gets the same objects every time, no matter how many times
+    // it's re-rendered by SwiftUI
     @EnvironmentObject var globalDataState: GlobalDataModel
     @EnvironmentObject var globalStopsModel: GlobalStopsModel
     @EnvironmentObject var viewModel: MapViewModel
-//    @ObservedObject var viewModel = MapViewModel()
-    
-    var previousSelectionState = MapViewPreviousSelectionState()
     
     // Track changes for data updates and map positioning
+    var previousSelectionState = MapViewPreviousSelectionState()
     
     func makeCoordinator() -> MapViewCoordinator {
-        MapViewCoordinator(self)
+        MapViewCoordinator(globalDataState: globalDataState, viewModel: viewModel)
     }
     
     func makeUIView(context: Context) -> MKMapView {
@@ -138,16 +139,18 @@ struct MapViewRepresentable: UIViewRepresentable {
 
 // MARK: - Coordinator class
 class MapViewCoordinator: NSObject, MKMapViewDelegate {
-    var parent: MapViewRepresentable
+    var globalDataState: GlobalDataModel
+    var viewModel: MapViewModel
     
-    init(_ parent: MapViewRepresentable) {
-        self.parent = parent
+    init(globalDataState: GlobalDataModel, viewModel: MapViewModel) {
+        self.globalDataState = globalDataState
+        self.viewModel = viewModel
     }
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         if let annotation = view.annotation as? ShuttleAnnotation {
             // TODO: Do stuff.
-            print(parent.viewModel.stops)
+            print(viewModel.shuttles.count)
             print(annotation.shuttle.id)
         }
     }
@@ -165,7 +168,7 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         if let polyline = overlay as? RoutePolyline {
             let renderer = MKPolylineRenderer(polyline: polyline)
-            if let routeId = parent.globalDataState.selectedRouteId,
+            if let routeId = globalDataState.selectedRouteId,
                let route = polyline.route {
                 renderer.strokeColor = UIColor(hex: route.colorHex)
                 renderer.lineWidth = 5
