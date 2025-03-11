@@ -15,7 +15,7 @@ class MapViewPreviousSelectionState {
 }
 
 // MARK: - UIViewRepresentable
-struct MapView: UIViewRepresentable {
+struct MapViewRepresentable: UIViewRepresentable {
     @EnvironmentObject var globalDataState: GlobalDataModel
     @EnvironmentObject var globalStopsModel: GlobalStopsModel
     @ObservedObject var viewModel = MapViewModel()
@@ -138,7 +138,7 @@ struct MapView: UIViewRepresentable {
 }
 
 // MARK: - Networking extension for map view
-extension MapView {
+extension MapViewRepresentable {
     var mapViewNetworkArguments: MapViewNetworkArguments? {
         guard let systemId = globalDataState.selectedSystem?.id else { return nil }
         
@@ -173,9 +173,9 @@ extension MapView {
     
 // MARK: - Coordinator class
 class MapViewCoordinator: NSObject, MKMapViewDelegate {
-    var parent: MapView
+    var parent: MapViewRepresentable
     
-    init(_ parent: MapView) {
+    init(_ parent: MapViewRepresentable) {
         self.parent = parent
     }
     

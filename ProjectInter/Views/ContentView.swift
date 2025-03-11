@@ -83,7 +83,7 @@ struct ContentView: View {
         ZStack(alignment: .bottom) {
             Group {
 //                MapView()
-                MapView()
+                MapViewRepresentable()
                     .safeAreaPadding(EdgeInsets(top: 0, leading: 0, bottom: currentSheetHeight, trailing: 0))
             }
         }
