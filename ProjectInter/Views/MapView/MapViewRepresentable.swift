@@ -149,9 +149,7 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         if let annotation = view.annotation as? ShuttleAnnotation {
-            // TODO: Do stuff.
-            print(viewModel.shuttles.count)
-            print(annotation.shuttle.id)
+            globalDataState.selectedShuttleId = annotation.shuttle.id
         }
     }
     
