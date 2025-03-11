@@ -18,7 +18,8 @@ class MapViewPreviousSelectionState {
 struct MapViewRepresentable: UIViewRepresentable {
     @EnvironmentObject var globalDataState: GlobalDataModel
     @EnvironmentObject var globalStopsModel: GlobalStopsModel
-    @ObservedObject var viewModel = MapViewModel()
+    @EnvironmentObject var viewModel: MapViewModel
+//    @ObservedObject var viewModel = MapViewModel()
     
     var previousSelectionState = MapViewPreviousSelectionState()
     
@@ -36,8 +37,6 @@ struct MapViewRepresentable: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: MKMapView, context: Context) {
-        checkForStateChangesToRestartDataUpdates()
-        
         updateRoutePolyline(uiView, context: context)
         updateAnnotations(uiView, context: context)
         updatePositioning(uiView, context: context)
@@ -137,40 +136,6 @@ struct MapViewRepresentable: UIViewRepresentable {
     }
 }
 
-// MARK: - Networking extension for map view
-extension MapViewRepresentable {
-    var mapViewNetworkArguments: MapViewNetworkArguments? {
-        guard let systemId = globalDataState.selectedSystem?.id else { return nil }
-        
-        return MapViewNetworkArguments(systemId: systemId)
-    }
-    
-    private func checkForStateChangesToRestartDataUpdates() {
-        guard let client = globalDataState.apolloClient else {
-            return
-        }
-        
-        viewModel.apolloClient = client
-        
-        guard let selectedSystem = globalDataState.selectedSystem else {
-            return
-        }
-
-        if previousSelectionState.previousSystem != selectedSystem {
-            restartDataUpdatesIfArgumentsExist()
-            
-            previousSelectionState.previousSystem = selectedSystem
-        }
-    }
-    
-    private func restartDataUpdatesIfArgumentsExist() {
-        if let arguments = mapViewNetworkArguments {
-            viewModel.stopRefreshingData()
-            viewModel.startRefreshingData(arguments: arguments)
-        }
-    }
-}
-    
 // MARK: - Coordinator class
 class MapViewCoordinator: NSObject, MKMapViewDelegate {
     var parent: MapViewRepresentable
@@ -182,6 +147,7 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         if let annotation = view.annotation as? ShuttleAnnotation {
             // TODO: Do stuff.
+            print(parent.viewModel.stops)
             print(annotation.shuttle.id)
         }
     }
