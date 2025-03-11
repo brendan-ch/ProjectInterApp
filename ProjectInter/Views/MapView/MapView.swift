@@ -22,6 +22,7 @@ struct MapView: View {
     
     var body: some View {
         MapViewRepresentable()
+            .ignoresSafeArea(edges: .top)
             .environmentObject(viewModel)
             .onAppear {
                 if let client = globalDataState.apolloClient {
