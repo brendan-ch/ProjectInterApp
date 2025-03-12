@@ -139,8 +139,8 @@ struct MapViewRepresentable: UIViewRepresentable {
 
 // MARK: - Coordinator class
 class MapViewCoordinator: NSObject, MKMapViewDelegate {
-    var globalDataState: GlobalDataModel
-    var viewModel: MapViewModel
+    weak var globalDataState: GlobalDataModel?
+    weak var viewModel: MapViewModel?
     
     init(globalDataState: GlobalDataModel, viewModel: MapViewModel) {
         self.globalDataState = globalDataState
@@ -149,7 +149,7 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         if let annotation = view.annotation as? ShuttleAnnotation {
-            globalDataState.selectedShuttleId = annotation.shuttle.id
+            globalDataState?.selectedShuttleId = annotation.shuttle.id
         } else if let annotation = view.annotation as? StopAnnotation {
             mapView.deselectAnnotation(view.annotation, animated: false)
         }
@@ -171,7 +171,7 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         if let polyline = overlay as? RoutePolyline {
             let renderer = MKPolylineRenderer(polyline: polyline)
-            if let routeId = globalDataState.selectedRouteId,
+            if let routeId = globalDataState?.selectedRouteId,
                let route = polyline.route {
                 renderer.strokeColor = UIColor(hex: route.colorHex)
                 renderer.lineWidth = 5
