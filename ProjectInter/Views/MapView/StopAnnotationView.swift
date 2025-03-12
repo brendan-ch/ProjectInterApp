@@ -33,15 +33,32 @@ class StopAnnotationView: MKAnnotationView {
         super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
         frame = CGRect(x: 0, y: 0, width: 16, height: 16)
         
-        if let stopAnnotation = annotation as? StopAnnotation {
-            if stopAnnotation.shouldShowTitle {
-                label.text = stopAnnotation.title ?? ""
-            } else {
-                label.text = ""
-            }
-        }
-        
         setupView()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        setupView()
+    }
+    
+    private func setupView() {
+        setupImageView()
+        setupLabelView()
+    }
+    
+    private func setupImageView() {
+        backgroundColor = .clear
+        
+        let circleView = UIView(frame: bounds)
+        circleView.backgroundColor = .white
+        circleView.layer.cornerRadius = bounds.width / 2
+        circleView.layer.borderWidth = 2
+        circleView.layer.borderColor = UIColor.black.cgColor
+        
+        addSubview(circleView)
+    }
+    
+    private func setupLabelView() {
         addSubview(label)
         
         let labelWidth: CGFloat = 200
@@ -52,23 +69,17 @@ class StopAnnotationView: MKAnnotationView {
             width: labelWidth,
             height: 20
         )
-
+        
+        updateLabelView()
     }
     
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        setupView()
-    }
-    
-    private func setupView() {
-        backgroundColor = .clear
-        
-        let circleView = UIView(frame: bounds)
-        circleView.backgroundColor = .white
-        circleView.layer.cornerRadius = bounds.width / 2
-        circleView.layer.borderWidth = 2
-        circleView.layer.borderColor = UIColor.black.cgColor
-        
-        addSubview(circleView)
+    private func updateLabelView() {
+        if let stopAnnotation = annotation as? StopAnnotation {
+            if stopAnnotation.shouldShowTitle {
+                label.text = stopAnnotation.title ?? ""
+            } else {
+                label.text = ""
+            }
+        }
     }
 }

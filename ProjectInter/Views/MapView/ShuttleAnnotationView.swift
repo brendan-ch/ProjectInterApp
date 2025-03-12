@@ -32,7 +32,7 @@ class ShuttleAnnotationView: MKAnnotationView {
     // of the view
     private var shuttleIsSelected: Bool = false {
         didSet {
-            updateView()
+            updateLabelView()
         }
     }
     
@@ -48,7 +48,7 @@ class ShuttleAnnotationView: MKAnnotationView {
         
         // Call manually because didSet does nothing
         // until after initialization
-        updateView()
+        updateLabelView()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -107,7 +107,7 @@ class ShuttleAnnotationView: MKAnnotationView {
         accessibilityHint = "Tap to view info about this shuttle."
     }
     
-    private func updateView() {
+    private func updateLabelView() {
         guard let shuttleAnnotation = annotation as? ShuttleAnnotation else {
             return
         }
