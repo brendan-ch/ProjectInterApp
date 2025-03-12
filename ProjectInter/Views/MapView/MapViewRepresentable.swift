@@ -66,23 +66,6 @@ struct MapViewRepresentable: UIViewRepresentable {
     private func updateAnnotations(_ uiView: MKMapView, context: Context) {
         uiView.removeAnnotations(uiView.annotations)
         
-        // Add shuttle annotations
-        for shuttle in viewModel.shuttles {
-            let associatedStopForSelectedStop = viewModel.stops.first { stop in
-                stop.id == globalStopsModel.selectedStop?.id
-            }
-            let shouldDisplayShuttle =
-            (globalDataState.selectedRouteId != nil && shuttle.routeId == globalDataState.selectedRouteId)
-            ||
-            (globalDataState.selectedRouteId == nil && associatedStopForSelectedStop != nil
-             && associatedStopForSelectedStop!.routeIds.contains(shuttle.routeId ?? ""))
-            
-            if shouldDisplayShuttle {
-                let annotation = ShuttleAnnotation(shuttle: shuttle)
-                uiView.addAnnotation(annotation)
-            }
-        }
-        
         // Add stop annotations
         if let routeId = globalDataState.selectedRouteId {
             for stop in viewModel.stops where stop.routeIds.contains(routeId) {
@@ -100,6 +83,23 @@ struct MapViewRepresentable: UIViewRepresentable {
             let annotation = StopAnnotation(stop: stopToRender)
             annotation.shouldShowTitle = true
             uiView.addAnnotation(annotation)
+        }
+        
+        // Add shuttle annotations
+        for shuttle in viewModel.shuttles {
+            let associatedStopForSelectedStop = viewModel.stops.first { stop in
+                stop.id == globalStopsModel.selectedStop?.id
+            }
+            let shouldDisplayShuttle =
+            (globalDataState.selectedRouteId != nil && shuttle.routeId == globalDataState.selectedRouteId)
+            ||
+            (globalDataState.selectedRouteId == nil && associatedStopForSelectedStop != nil
+             && associatedStopForSelectedStop!.routeIds.contains(shuttle.routeId ?? ""))
+            
+            if shouldDisplayShuttle {
+                let annotation = ShuttleAnnotation(shuttle: shuttle)
+                uiView.addAnnotation(annotation)
+            }
         }
     }
     
@@ -150,7 +150,12 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         if let annotation = view.annotation as? ShuttleAnnotation {
             globalDataState.selectedShuttleId = annotation.shuttle.id
+        } else if let annotation = view.annotation as? StopAnnotation {
+            mapView.deselectAnnotation(view.annotation, animated: false)
         }
+    }
+    
+    func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
     }
     
     func mapView(_ mapView: MKMapView, didAdd views: [MKAnnotationView]) {
