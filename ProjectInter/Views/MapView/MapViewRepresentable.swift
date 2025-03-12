@@ -184,12 +184,21 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         switch annotation {
         case is ShuttleAnnotation:
+            if let annotation = annotation as? ShuttleAnnotation,
+               checkIfShuttleIsSelected(annotation.shuttle.id) {
+                return ShuttleAnnotationView(annotation: annotation, reuseIdentifier: "shuttle", isSelected: true)
+            }
             return ShuttleAnnotationView(annotation: annotation, reuseIdentifier: "shuttle")
         case is StopAnnotation:
             return StopAnnotationView(annotation: annotation, reuseIdentifier: "stop")
         default:
             return nil
         }
+    }
+    
+    private func checkIfShuttleIsSelected(_ shuttleId: String) -> Bool {
+        guard let selectedShuttleId = globalDataState?.selectedShuttleId else { return false }
+        return selectedShuttleId == shuttleId
     }
 }
 

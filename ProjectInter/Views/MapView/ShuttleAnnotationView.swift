@@ -21,10 +21,29 @@ class ShuttleAnnotation: NSObject, MKAnnotation {
 }
 
 class ShuttleAnnotationView: MKAnnotationView {
-    override init(annotation: MKAnnotation?, reuseIdentifier: String?) {
+    private let label: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 12, weight: .bold)
+        return label
+    }()
+    
+    var shuttleIsSelected: Bool = false {
+        didSet {
+            updateView()
+        }
+    }
+    
+    override init(annotation: MKAnnotation?, reuseIdentifier: String? = "shuttle") {
         super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
         frame = CGRect(x: 0, y: 0, width: 32, height: 32)
         setupView()
+    }
+    
+    convenience init(annotation: MKAnnotation?, reuseIdentifier: String? = "shuttle", isSelected: Bool = false) {
+        self.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
+        self.shuttleIsSelected = isSelected
+        updateView()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -35,6 +54,12 @@ class ShuttleAnnotationView: MKAnnotationView {
     private func setupView() {
         backgroundColor = .clear
         
+        setupImageView()
+        setupLabelView()
+        setupAccessibilityElements()
+    }
+    
+    private func setupImageView() {
         guard let shuttleAnnotation = annotation as? ShuttleAnnotation else { return }
         
         let backgroundView = UIView(frame: bounds)
@@ -51,12 +76,43 @@ class ShuttleAnnotationView: MKAnnotationView {
         
         addSubview(backgroundView)
         addSubview(busImage)
+    }
+    
+    private func setupLabelView() {
+        addSubview(label)
         
-        // Accessibility
+        let labelWidth: CGFloat = 200
+        
+        label.frame = CGRect(
+            // Centers the label relative to the circle
+            x: -labelWidth / 2 + bounds.width / 2,
+            y: bounds.height + 2,
+            width: labelWidth,
+            height: 20
+        )
+    }
+    
+    private func setupAccessibilityElements() {
+        guard let shuttleAnnotation = annotation as? ShuttleAnnotation else { return }
+        
         isAccessibilityElement = true
         accessibilityLabel = "Shuttle"
         accessibilityValue = shuttleAnnotation.shuttle.id
         accessibilityTraits = .button
         accessibilityHint = "Tap to view info about this shuttle."
+    }
+    
+    private func updateView() {
+        guard let shuttleAnnotation = annotation as? ShuttleAnnotation else {
+            return
+        }
+        
+        if shuttleIsSelected {
+            // Add the label and/or styling
+            label.text = shuttleAnnotation.shuttle.name
+        } else {
+            // Remove the label and/or styling
+            label.text = ""
+        }
     }
 }
