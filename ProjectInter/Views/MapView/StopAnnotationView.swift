@@ -11,7 +11,6 @@ class StopAnnotation: NSObject, MKAnnotation {
     let stop: MapViewStop
     var coordinate: CLLocationCoordinate2D
     var title: String?
-    var shouldShowTitle: Bool = false
     
     init(stop: MapViewStop) {
         self.stop = stop
@@ -29,11 +28,26 @@ class StopAnnotationView: MKAnnotationView {
         return label
     }()
     
+    private var shouldShowLabel: Bool = false {
+        didSet {
+            updateLabelView()
+        }
+    }
+    
     override init(annotation: MKAnnotation?, reuseIdentifier: String?) {
         super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
         frame = CGRect(x: 0, y: 0, width: 16, height: 16)
         
         setupView()
+    }
+    
+    convenience init(annotation: MKAnnotation?, reuseIdentifier: String?, shouldShowLabel: Bool = false) {
+        self.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
+        self.shouldShowLabel = shouldShowLabel
+        
+        // Call manually because didSet does nothing
+        // until after initialization
+        updateLabelView()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -75,7 +89,7 @@ class StopAnnotationView: MKAnnotationView {
     
     private func updateLabelView() {
         if let stopAnnotation = annotation as? StopAnnotation {
-            if stopAnnotation.shouldShowTitle {
+            if shouldShowLabel {
                 label.text = stopAnnotation.title ?? ""
             } else {
                 label.text = ""

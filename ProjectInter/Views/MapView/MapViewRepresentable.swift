@@ -27,7 +27,7 @@ struct MapViewRepresentable: UIViewRepresentable {
     var previousSelectionState = MapViewPreviousSelectionState()
     
     func makeCoordinator() -> MapViewCoordinator {
-        MapViewCoordinator(globalDataState: globalDataState, viewModel: viewModel)
+        MapViewCoordinator(globalDataState: globalDataState, globalStopsState: globalStopsModel, viewModel: viewModel)
     }
     
     func makeUIView(context: Context) -> MKMapView {
@@ -71,17 +71,11 @@ struct MapViewRepresentable: UIViewRepresentable {
             for stop in viewModel.stops where stop.routeIds.contains(routeId) {
                 let annotation = StopAnnotation(stop: stop)
                 
-                if let selectedStop = globalStopsModel.selectedStop,
-                   selectedStop.id == stop.id {
-                    annotation.shouldShowTitle = true
-                }
-                
                 uiView.addAnnotation(annotation)
             }
         } else if let selectedStop = globalStopsModel.selectedStop,
                   let stopToRender = viewModel.stops.first(where: { $0.id == selectedStop.id }) {
             let annotation = StopAnnotation(stop: stopToRender)
-            annotation.shouldShowTitle = true
             uiView.addAnnotation(annotation)
         }
         
@@ -140,11 +134,13 @@ struct MapViewRepresentable: UIViewRepresentable {
 // MARK: - Coordinator class
 class MapViewCoordinator: NSObject, MKMapViewDelegate {
     weak var globalDataState: GlobalDataModel?
+    weak var globalStopsModel: GlobalStopsModel?
     weak var viewModel: MapViewModel?
     
-    init(globalDataState: GlobalDataModel, viewModel: MapViewModel) {
+    init(globalDataState: GlobalDataModel, globalStopsState: GlobalStopsModel, viewModel: MapViewModel) {
         self.globalDataState = globalDataState
         self.viewModel = viewModel
+        self.globalStopsModel = globalStopsState
     }
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
@@ -182,23 +178,36 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
     }
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        switch annotation {
-        case is ShuttleAnnotation:
-            if let annotation = annotation as? ShuttleAnnotation,
-               checkIfShuttleIsSelected(annotation.shuttle.id) {
-                return ShuttleAnnotationView(annotation: annotation, reuseIdentifier: "shuttle", isSelected: true)
+        if let annotation = annotation as? ShuttleAnnotation {
+            if checkIfShuttleIsSelected(annotation.shuttle.id) {
+                return ShuttleAnnotationView(annotation: annotation, reuseIdentifier: "shuttle", shouldShowLabel: true)
             }
+            
             return ShuttleAnnotationView(annotation: annotation, reuseIdentifier: "shuttle")
-        case is StopAnnotation:
-            return StopAnnotationView(annotation: annotation, reuseIdentifier: "stop")
-        default:
-            return nil
         }
+        
+        if let annotation = annotation as? StopAnnotation {
+            if checkIfStopIsSelected(annotation.stop.id) {
+                return StopAnnotationView(annotation: annotation, reuseIdentifier: "stop", shouldShowLabel: true)
+            }
+            
+            return StopAnnotationView(annotation: annotation, reuseIdentifier: "stop")
+        }
+        
+        return nil
     }
     
     private func checkIfShuttleIsSelected(_ shuttleId: String) -> Bool {
         guard let selectedShuttleId = globalDataState?.selectedShuttleId else { return false }
         return selectedShuttleId == shuttleId
+    }
+    
+    private func checkIfStopIsSelected(_ stopId: String) -> Bool {
+        guard let selectedStopId = globalStopsModel?.selectedStop?.id else {
+            return false
+        }
+        
+        return selectedStopId == stopId
     }
 }
 

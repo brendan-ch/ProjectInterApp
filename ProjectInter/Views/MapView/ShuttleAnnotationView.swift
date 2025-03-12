@@ -30,7 +30,7 @@ class ShuttleAnnotationView: MKAnnotationView {
     
     // Limit to private setting to enforce disposability
     // of the view
-    private var shuttleIsSelected: Bool = false {
+    private var shouldShowLabel: Bool = false {
         didSet {
             updateLabelView()
         }
@@ -42,9 +42,9 @@ class ShuttleAnnotationView: MKAnnotationView {
         setupView()
     }
     
-    convenience init(annotation: MKAnnotation?, reuseIdentifier: String? = "shuttle", isSelected: Bool = false) {
+    convenience init(annotation: MKAnnotation?, reuseIdentifier: String? = "shuttle", shouldShowLabel: Bool = false) {
         self.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
-        self.shuttleIsSelected = isSelected
+        self.shouldShowLabel = shouldShowLabel
         
         // Call manually because didSet does nothing
         // until after initialization
@@ -112,7 +112,7 @@ class ShuttleAnnotationView: MKAnnotationView {
             return
         }
         
-        if shuttleIsSelected {
+        if shouldShowLabel {
             // Add the label and/or styling
             label.text = shuttleAnnotation.shuttle.name
         } else {
