@@ -53,8 +53,6 @@ struct ContentView: View {
     @State var routeInfoSheetSelectedDetent: PresentationDetent = .height(360)
     @State var shuttleInfoSheetSelectedDetent: PresentationDetent = .height(360)
     
-    /// The height of the currently displayed sheet.
-    /// Used to adjust the nested ``MapView`` height.
     @State var currentSheetHeight: CGFloat = 360
     
     var body: some View {
@@ -78,24 +76,35 @@ struct ContentView: View {
                 RouteInfoContentView()
                     .sheet(isPresented: .constant(showShuttleInfoOverRouteInfo)) {
                         ShuttleInfoContentView()
-                            .presentationDetents([.height(120), .height(360), .large], selection: $shuttleInfoSheetSelectedDetent)
+                            .presentationDetents([.height(120), .height(360), .height(720)], selection: $shuttleInfoSheetSelectedDetent)
                             .presentationBackgroundInteraction(.enabled)
                             .interactiveDismissDisabled()
                     }
-                    .presentationDetents([.height(120), .height(360), .large], selection: $routeInfoSheetSelectedDetent)
+                    .presentationDetents([.height(120), .height(360), .height(720)], selection: $routeInfoSheetSelectedDetent)
                     .presentationBackgroundInteraction(.enabled)
                     .interactiveDismissDisabled()
             }
             .sheet(isPresented: .constant(showShuttleInfoOverRouteList)) {
                 ShuttleInfoContentView()
-                    .presentationDetents([.height(120), .height(360), .large], selection: $shuttleInfoSheetSelectedDetent)
+                    .presentationDetents([.height(120), .height(360), .height(720)], selection: $shuttleInfoSheetSelectedDetent)
                     .presentationBackgroundInteraction(.enabled)
                     .interactiveDismissDisabled()
             }
-            .opacity(showRouteInfo || showShuttleInfoOverRouteList ? 0 : 1)
-            .presentationDetents([.height(120), .height(360), .large], selection: $routeListSheetSelectedDetent)
+            .presentationDetents([.height(120), .height(360), .height(720)], selection: $routeListSheetSelectedDetent)
             .presentationBackgroundInteraction(.enabled)
             .interactiveDismissDisabled()
+            .background {
+                // This changes for all the sheets, not just
+                // the currently selected one
+                GeometryReader { proxy in
+                    Color.clear
+                        .onChange(of: proxy.size.height) {
+                            if proxy.size.height <= 360 {
+                                currentSheetHeight = proxy.size.height
+                            }
+                        }
+                }
+            }
     }
 }
 
