@@ -9,14 +9,14 @@ import SwiftUI
 import SwiftData
 import MapKit
 
-
 struct SheetViewModifier: ViewModifier {
-    var showSheet: Bool
+    let detentSelection: Binding<PresentationDetent>
+    let standardPresentationDetents: Set<PresentationDetent> = [.height(120), .height(360), .height(720)]
     
     func body(content: Content) -> some View {
         content
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            .presentationDetents([.height(180), .height(360), .large], selection: .constant(showSheet ? .height(360) : .height(180)))
+            .presentationDetents(standardPresentationDetents, selection: detentSelection)
             .presentationBackground(.ultraThickMaterial)
             .presentationBackgroundInteraction(.enabled)
             .interactiveDismissDisabled()
@@ -24,8 +24,8 @@ struct SheetViewModifier: ViewModifier {
 }
 
 extension View {
-    func sheetViewModifier(showSheet: Bool) -> some View {
-        self.modifier(SheetViewModifier(showSheet: showSheet))
+    func sheetViewModifier(detentSelection: Binding<PresentationDetent>) -> some View {
+        self.modifier(SheetViewModifier(detentSelection: detentSelection))
     }
 }
 
@@ -49,6 +49,7 @@ struct ContentView: View {
     @EnvironmentObject var globalDataState: GlobalDataModel
     @EnvironmentObject var locationManagerState: GlobalLocationDataModel
     
+    // Not actually used to set anything, just to provide default values
     @State var routeListSheetSelectedDetent: PresentationDetent = .height(360)
     @State var routeInfoSheetSelectedDetent: PresentationDetent = .height(360)
     @State var shuttleInfoSheetSelectedDetent: PresentationDetent = .height(360)
@@ -76,23 +77,15 @@ struct ContentView: View {
                 RouteInfoContentView()
                     .sheet(isPresented: .constant(showShuttleInfoOverRouteInfo)) {
                         ShuttleInfoContentView()
-                            .presentationDetents([.height(120), .height(360), .height(720)], selection: $shuttleInfoSheetSelectedDetent)
-                            .presentationBackgroundInteraction(.enabled)
-                            .interactiveDismissDisabled()
+                            .sheetViewModifier(detentSelection: $shuttleInfoSheetSelectedDetent)
                     }
-                    .presentationDetents([.height(120), .height(360), .height(720)], selection: $routeInfoSheetSelectedDetent)
-                    .presentationBackgroundInteraction(.enabled)
-                    .interactiveDismissDisabled()
+                    .sheetViewModifier(detentSelection: $routeInfoSheetSelectedDetent)
             }
             .sheet(isPresented: .constant(showShuttleInfoOverRouteList)) {
                 ShuttleInfoContentView()
-                    .presentationDetents([.height(120), .height(360), .height(720)], selection: $shuttleInfoSheetSelectedDetent)
-                    .presentationBackgroundInteraction(.enabled)
-                    .interactiveDismissDisabled()
+                    .sheetViewModifier(detentSelection: $shuttleInfoSheetSelectedDetent)
             }
-            .presentationDetents([.height(120), .height(360), .height(720)], selection: $routeListSheetSelectedDetent)
-            .presentationBackgroundInteraction(.enabled)
-            .interactiveDismissDisabled()
+            .sheetViewModifier(detentSelection: $routeListSheetSelectedDetent)
             .background {
                 // This changes for all the sheets, not just
                 // the currently selected one
