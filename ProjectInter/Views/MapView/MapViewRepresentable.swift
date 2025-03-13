@@ -7,12 +7,7 @@
 
 import SwiftUI
 import MapKit
-
-class MapViewPreviousSelectionState {
-    var previousSystem: System?
-    var previousRouteId: String?
-    var previousShuttleId: String?
-}
+import Combine
 
 // MARK: - UIViewRepresentable
 struct MapViewRepresentable: UIViewRepresentable {
@@ -30,9 +25,6 @@ struct MapViewRepresentable: UIViewRepresentable {
     var actualLayoutMarginBottomValue: CGFloat {
         layoutMarginBottomValue + heightDiffForAttributionText
     }
-    
-    // Track changes for data updates and map positioning
-    var previousSelectionState = MapViewPreviousSelectionState()
     
     func makeCoordinator() -> MapViewCoordinator {
         MapViewCoordinator(globalDataState: globalDataState, globalStopsState: globalStopsModel, viewModel: viewModel)
@@ -57,7 +49,6 @@ struct MapViewRepresentable: UIViewRepresentable {
         )
         updateRoutePolyline(uiView, context: context)
         updateAnnotations(uiView, context: context)
-        updatePositioning(uiView, context: context)
     }
     
     private func updateRoutePolyline(_ uiView: MKMapView, context: Context) {
@@ -114,7 +105,7 @@ struct MapViewRepresentable: UIViewRepresentable {
         }
     }
     
-    private func updatePositioning(_ uiView: MKMapView, context: Context) {
+    private func updatePositioning(_ uiView: MKMapView) {
         // Handle position changes
         if viewModel.position == .automatic {
             // Get all the points in the map view
