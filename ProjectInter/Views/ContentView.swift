@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import MapKit
+import Combine
 
 struct SheetViewModifier: ViewModifier {
     let detentSelection: Binding<PresentationDetent>
@@ -54,7 +55,13 @@ struct ContentView: View {
     @State var routeInfoSheetSelectedDetent: PresentationDetent = .height(360)
     @State var shuttleInfoSheetSelectedDetent: PresentationDetent = .height(360)
     
+    
+    // Controls the map height
     @State var currentSheetHeight: CGFloat = 360
+    
+    // Used to implement debounce for map height updates
+    @State private var heightPublisher = PassthroughSubject<CGFloat, Never>()
+    @State private var cancellable: AnyCancellable?
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -86,14 +93,24 @@ struct ContentView: View {
                     .sheetViewModifier(detentSelection: $shuttleInfoSheetSelectedDetent)
             }
             .sheetViewModifier(detentSelection: $routeListSheetSelectedDetent)
+            .onAppear {
+                cancellable = heightPublisher
+                    .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+                    .sink { height in
+                        withAnimation {
+                            currentSheetHeight = height
+                        }
+                    }
+            }
             .background {
                 // This changes for all the sheets, not just
                 // the currently selected one
+                // https://stackoverflow.com/questions/74423799/how-to-size-content-for-presentation-detents-in-swiftui
                 GeometryReader { proxy in
                     Color.clear
                         .onChange(of: proxy.size.height) {
                             if proxy.size.height <= 360 {
-                                currentSheetHeight = proxy.size.height
+                                heightPublisher.send(proxy.size.height)
                             }
                         }
                 }
