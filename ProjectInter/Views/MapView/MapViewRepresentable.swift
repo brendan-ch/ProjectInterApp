@@ -23,6 +23,14 @@ struct MapViewRepresentable: UIViewRepresentable {
     @EnvironmentObject var globalStopsModel: GlobalStopsModel
     @EnvironmentObject var viewModel: MapViewModel
     
+    var layoutMarginBottomValue: CGFloat = 0
+    
+    // Surely there's a better solution for this
+    let heightDiffForAttributionText: CGFloat = 36
+    var actualLayoutMarginBottomValue: CGFloat {
+        layoutMarginBottomValue + heightDiffForAttributionText
+    }
+    
     // Track changes for data updates and map positioning
     var previousSelectionState = MapViewPreviousSelectionState()
     
@@ -34,10 +42,19 @@ struct MapViewRepresentable: UIViewRepresentable {
         let mapView = MKMapView()
         mapView.delegate = context.coordinator
         mapView.showsUserLocation = true
+        
+        mapView.layoutMargins = UIEdgeInsets(
+            top: 0, left: 0, bottom: actualLayoutMarginBottomValue, right: 0
+        )
+        mapView.insetsLayoutMarginsFromSafeArea = false
+        
         return mapView
     }
     
     func updateUIView(_ uiView: MKMapView, context: Context) {
+        uiView.layoutMargins = UIEdgeInsets(
+            top: 0, left: 0, bottom: actualLayoutMarginBottomValue, right: 0
+        )
         updateRoutePolyline(uiView, context: context)
         updateAnnotations(uiView, context: context)
         updatePositioning(uiView, context: context)

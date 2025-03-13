@@ -66,8 +66,7 @@ struct ContentView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             Group {
-                MapView()
-                    .safeAreaPadding(EdgeInsets(top: 0, leading: 0, bottom: currentSheetHeight, trailing: 0))
+                MapView(layoutMarginBottomValue: currentSheetHeight)
             }
         }
         .task {

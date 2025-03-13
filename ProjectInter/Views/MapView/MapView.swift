@@ -14,6 +14,8 @@ struct MapView: View {
     @EnvironmentObject var globalDataState: GlobalDataModel
     @StateObject var viewModel = MapViewModel()
     
+    var layoutMarginBottomValue: CGFloat = 0
+    
     var mapViewNetworkArguments: MapViewNetworkArguments? {
         guard let systemId = globalDataState.selectedSystem?.id else { return nil }
         
@@ -21,8 +23,8 @@ struct MapView: View {
     }
     
     var body: some View {
-        MapViewRepresentable()
-            .ignoresSafeArea(edges: .top)
+        MapViewRepresentable(layoutMarginBottomValue: layoutMarginBottomValue)
+            .ignoresSafeArea()
             .environmentObject(viewModel)
             .onAppear {
                 if let client = globalDataState.apolloClient {
