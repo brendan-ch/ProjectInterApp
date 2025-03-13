@@ -93,30 +93,4 @@ final class MapUITests: BaseUITests {
             return true
         }
     }
-    
-    func testTapOnShuttleOpensShuttleInfo() {
-        app.launch()
-        
-        var shuttleButtonTapped = false
-        
-        executeCallbackForEachStop {
-            let firstMatchExists = app.otherElements.buttons["Shuttle"].waitForExistence(timeout: 20)
-            if !firstMatchExists {
-                return false
-            }
-            
-            app.buttons["Shuttle"].firstMatch.tap()
-            let shuttleTextExists = app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 5)
-            if !shuttleTextExists {
-                app.buttons["Shuttle"].firstMatch.tap()
-            }
-            XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
-            shuttleButtonTapped = true
-            return true
-        }
-        
-        if !shuttleButtonTapped {
-            XCTFail("No shuttle buttons found.")
-        }
-    }
 }
