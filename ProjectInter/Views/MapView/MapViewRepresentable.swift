@@ -49,6 +49,7 @@ struct MapViewRepresentable: UIViewRepresentable {
         )
         updateRoutePolyline(uiView, context: context)
         updateAnnotations(uiView, context: context)
+        updatePositioning(uiView)
     }
     
     private func updateRoutePolyline(_ uiView: MKMapView, context: Context) {

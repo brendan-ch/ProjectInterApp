@@ -59,10 +59,6 @@ struct ContentView: View {
     // Controls the map height
     @State var currentSheetHeight: CGFloat = 360
     
-    // Used to implement debounce for map height updates
-    @State private var heightPublisher = PassthroughSubject<CGFloat, Never>()
-    @State private var cancellable: AnyCancellable?
-    
     var body: some View {
         ZStack(alignment: .bottom) {
             Group {
@@ -92,15 +88,6 @@ struct ContentView: View {
                     .sheetViewModifier(detentSelection: $shuttleInfoSheetSelectedDetent)
             }
             .sheetViewModifier(detentSelection: $routeListSheetSelectedDetent)
-            .onAppear {
-                cancellable = heightPublisher
-                    .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-                    .sink { height in
-                        withAnimation {
-                            currentSheetHeight = height
-                        }
-                    }
-            }
             .background {
                 // This changes for all the sheets, not just
                 // the currently selected one
@@ -109,7 +96,7 @@ struct ContentView: View {
                     Color.clear
                         .onChange(of: proxy.size.height) {
                             if proxy.size.height <= 360 {
-                                heightPublisher.send(proxy.size.height)
+                                currentSheetHeight = proxy.size.height
                             }
                         }
                 }
