@@ -104,9 +104,6 @@ struct MapViewNetworkArguments {
 
 /// Backing view model for ``MapView``.
 class MapViewModel: NetworkDataModelProtocol {
-    /// Position of the map camera on the associated Map view.
-    @Published var position: MapCameraPosition = .automatic
-    
     @Published var routes: [MapViewRoute] = []
     @Published var shuttles: [MapViewShuttle] = []
     @Published var stops: [MapViewStop] = []

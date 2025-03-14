@@ -108,34 +108,32 @@ struct MapViewRepresentable: UIViewRepresentable {
     
     private func updatePositioning(_ uiView: MKMapView) {
         // Handle position changes
-        if viewModel.position == .automatic {
-            // Get all the points in the map view
-            var points: [CLLocationCoordinate2D] = []
-            points.append(contentsOf: uiView.annotations.map { $0.coordinate })
-            
-            if let polyline = uiView.overlays.first as? MKPolyline {
-                var polylinePoints = Array(repeating: CLLocationCoordinate2D(), count: polyline.pointCount)
-                polyline.getCoordinates(&polylinePoints, range: NSRange(location: 0, length: polyline.pointCount))
-                points.append(contentsOf: polylinePoints)
+        // Get all the points in the map view
+        var points: [CLLocationCoordinate2D] = []
+        points.append(contentsOf: uiView.annotations.map { $0.coordinate })
+        
+        if let polyline = uiView.overlays.first as? MKPolyline {
+            var polylinePoints = Array(repeating: CLLocationCoordinate2D(), count: polyline.pointCount)
+            polyline.getCoordinates(&polylinePoints, range: NSRange(location: 0, length: polyline.pointCount))
+            points.append(contentsOf: polylinePoints)
+        }
+        
+        if !points.isEmpty {
+            let rect = points.reduce(MKMapRect.null) { rect, point in
+                let pointRect = MKMapRect(origin: MKMapPoint(point), size: MKMapSize(width: 0, height: 0))
+                return rect.union(pointRect)
             }
             
-            if !points.isEmpty {
-                let rect = points.reduce(MKMapRect.null) { rect, point in
-                    let pointRect = MKMapRect(origin: MKMapPoint(point), size: MKMapSize(width: 0, height: 0))
-                    return rect.union(pointRect)
-                }
-                
-                var region = MKCoordinateRegion(rect)
-                region = MKCoordinateRegion(
-                    center: region.center,
-                    span: MKCoordinateSpan(
-                        latitudeDelta: region.span.latitudeDelta * 1.4,
-                        longitudeDelta: region.span.longitudeDelta * 1.4
-                    )
+            var region = MKCoordinateRegion(rect)
+            region = MKCoordinateRegion(
+                center: region.center,
+                span: MKCoordinateSpan(
+                    latitudeDelta: region.span.latitudeDelta * 1.4,
+                    longitudeDelta: region.span.longitudeDelta * 1.4
                 )
-                
-                uiView.setRegion(region, animated: true)
-            }
+            )
+            
+            uiView.setRegion(region, animated: true)
         }
     }
 }

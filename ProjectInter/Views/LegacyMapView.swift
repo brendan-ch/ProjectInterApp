@@ -20,6 +20,9 @@ struct LegacyMapView: View {
     /// Backing view model.
     @StateObject var viewModel = MapViewModel()
     
+    /// Position of the map camera on the associated Map view.
+    @State var position: MapCameraPosition = .automatic
+    
     var mapViewNetworkArguments: MapViewNetworkArguments? {
         guard let systemId = globalDataState.selectedSystem?.id else { return nil }
         
@@ -27,7 +30,7 @@ struct LegacyMapView: View {
     }
     
     var body: some View {
-        Map(position: $viewModel.position, selection: $globalDataState.selectedShuttleId) {
+        Map(position: $position, selection: $globalDataState.selectedShuttleId) {
             UserAnnotation()
             
             // MARK: Polyline rendering
@@ -116,11 +119,11 @@ struct LegacyMapView: View {
         }
         // Reset the map position if the user selects something
         .onChange(of: globalDataState.selectedRouteId) {
-            viewModel.position = .automatic
+            position = .automatic
         }
         .onChange(of: globalDataState.selectedShuttleId) {
             // TODO: center the map around the selected shuttle
-            viewModel.position = .automatic
+            position = .automatic
         }
     }
     
