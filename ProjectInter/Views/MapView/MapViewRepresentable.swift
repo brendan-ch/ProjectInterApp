@@ -130,7 +130,8 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
     
     func mapViewDidFinishRenderingMap(_ mapView: MKMapView, fullyRendered: Bool) {
         mapHasFinishedRendering = true
-        updatePositioning(mapView)
+        // Force a position update
+        updatePositionBasedOnLastComputedRegion(mapView)
     }
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
@@ -177,7 +178,7 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
                 updateLastComputedPosition(mapView)
                 
                 if shouldUpdatePositionProgrammatically {
-                    updatePositioning(mapView)
+                    updatePositionBasedOnLastComputedRegion(mapView)
                 }
                 
             }
@@ -231,7 +232,6 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
     }
     
     private func updateLastComputedPosition(_ uiView: MKMapView) {
-        // Handle position changes
         // Get all the points in the map view
         var points: [CLLocationCoordinate2D] = []
         points.append(contentsOf: uiView.annotations.map { $0.coordinate })
@@ -261,9 +261,8 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
         }
     }
     
-    private func updatePositioning(_ uiView: MKMapView) {
+    private func updatePositionBasedOnLastComputedRegion(_ uiView: MKMapView) {
         if let region = lastComputedRegion {
-            print("New region set")
             uiView.setRegion(region, animated: true)
             positionChangedProgrammatically = true
         }
