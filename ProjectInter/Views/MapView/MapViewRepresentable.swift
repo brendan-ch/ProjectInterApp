@@ -119,7 +119,9 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
     var lastComputedRegion: MKCoordinateRegion?
     
     var userHasMovedRegion: Bool {
-        currentRegion != lastComputedRegion
+        currentRegion != nil &&
+        lastComputedRegion != nil &&
+        currentRegion?.center != lastComputedRegion?.center
     }
     
     var shouldUpdateCurrentRegionOnNextAnnotationRender = true
