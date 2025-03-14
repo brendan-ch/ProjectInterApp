@@ -118,10 +118,23 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
     var currentRegion: MKCoordinateRegion?
     var lastComputedRegion: MKCoordinateRegion?
     
+    var userHasMovedRegion: Bool {
+        currentRegion != lastComputedRegion
+    }
+    
+    var shouldUpdateCurrentRegionOnNextAnnotationRender = true
+    
+    var mapHasFinishedRendering = false
+    
     init(globalDataState: GlobalDataModel, globalStopsState: GlobalStopsModel, viewModel: MapViewModel) {
         self.globalDataState = globalDataState
         self.viewModel = viewModel
         self.globalStopsModel = globalStopsState
+    }
+    
+    func mapViewDidFinishRenderingMap(_ mapView: MKMapView, fullyRendered: Bool) {
+        mapHasFinishedRendering = true
+        updatePositioning(mapView)
     }
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
@@ -136,7 +149,15 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
     }
     
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-        self.currentRegion = mapView.region
+        if !mapHasFinishedRendering {
+            return
+        }
+        print("Updating current region")
+        currentRegion = mapView.region
+        
+        if userHasMovedRegion {
+            shouldUpdateCurrentRegionOnNextAnnotationRender = false
+        }
     }
     
     func mapView(_ mapView: MKMapView, didAdd views: [MKAnnotationView]) {
@@ -152,10 +173,16 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
             if viewModel.shuttles.count > 0 ||
                 viewModel.routes.count > 0 ||
                 viewModel.stops.count > 0 {
+                
+                updateLastComputedPosition(mapView)
+                
+                if shouldUpdateCurrentRegionOnNextAnnotationRender {
+                    currentRegion = lastComputedRegion
+                }
+                
                 updatePositioning(mapView)
             }
         }
-        
     }
     
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
@@ -204,7 +231,7 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
         return selectedStopId == stopId
     }
     
-    private func updatePositioning(_ uiView: MKMapView) {
+    private func updateLastComputedPosition(_ uiView: MKMapView) {
         // Handle position changes
         // Get all the points in the map view
         var points: [CLLocationCoordinate2D] = []
@@ -231,10 +258,16 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
                 )
             )
             
-            uiView.setRegion(region, animated: true)
+            lastComputedRegion = region
         }
-        
-        lastComputedRegion = uiView.region
+    }
+    
+    private func updatePositioning(_ uiView: MKMapView) {
+        if let region = lastComputedRegion {
+            if !mapHasFinishedRendering || !userHasMovedRegion {
+                uiView.setRegion(region, animated: true)
+            }
+        }
     }
 }
 
