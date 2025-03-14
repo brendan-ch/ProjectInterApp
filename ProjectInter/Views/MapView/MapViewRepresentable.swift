@@ -115,18 +115,12 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
     weak var globalStopsModel: GlobalStopsModel?
     weak var viewModel: MapViewModel?
     
-    var currentRegion: MKCoordinateRegion?
     var lastComputedRegion: MKCoordinateRegion?
     
-    var userHasMovedRegion: Bool {
-        currentRegion != nil &&
-        lastComputedRegion != nil &&
-        currentRegion?.center != lastComputedRegion?.center
-    }
-    
-    var shouldUpdateCurrentRegionOnNextAnnotationRender = true
+    var shouldUpdatePositionProgrammatically = true
     
     var mapHasFinishedRendering = false
+    var positionChangedProgrammatically = false
     
     init(globalDataState: GlobalDataModel, globalStopsState: GlobalStopsModel, viewModel: MapViewModel) {
         self.globalDataState = globalDataState
@@ -154,12 +148,16 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
         if !mapHasFinishedRendering {
             return
         }
-        print("Updating current region")
-        currentRegion = mapView.region
         
-        if userHasMovedRegion {
-            shouldUpdateCurrentRegionOnNextAnnotationRender = false
+        if positionChangedProgrammatically {
+            positionChangedProgrammatically = false
+        } else {
+            shouldUpdatePositionProgrammatically = false
         }
+    }
+    
+    func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
+
     }
     
     func mapView(_ mapView: MKMapView, didAdd views: [MKAnnotationView]) {
@@ -178,11 +176,10 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
                 
                 updateLastComputedPosition(mapView)
                 
-                if shouldUpdateCurrentRegionOnNextAnnotationRender {
-                    currentRegion = lastComputedRegion
+                if shouldUpdatePositionProgrammatically {
+                    updatePositioning(mapView)
                 }
                 
-                updatePositioning(mapView)
             }
         }
     }
@@ -266,9 +263,9 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
     
     private func updatePositioning(_ uiView: MKMapView) {
         if let region = lastComputedRegion {
-            if !mapHasFinishedRendering || !userHasMovedRegion {
-                uiView.setRegion(region, animated: true)
-            }
+            print("New region set")
+            uiView.setRegion(region, animated: true)
+            positionChangedProgrammatically = true
         }
     }
 }
