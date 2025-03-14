@@ -49,7 +49,6 @@ struct MapViewRepresentable: UIViewRepresentable {
         )
         updateRoutePolyline(uiView, context: context)
         updateAnnotations(uiView, context: context)
-        updatePositioning(uiView)
     }
     
     private func updateRoutePolyline(_ uiView: MKMapView, context: Context) {
@@ -73,19 +72,18 @@ struct MapViewRepresentable: UIViewRepresentable {
     }
     
     private func updateAnnotations(_ uiView: MKMapView, context: Context) {
-        uiView.removeAnnotations(uiView.annotations)
-        
+        var annotations: [MKAnnotation] = []
         // Add stop annotations
         if let routeId = globalDataState.selectedRouteId {
             for stop in viewModel.stops where stop.routeIds.contains(routeId) {
                 let annotation = StopAnnotation(stop: stop)
                 
-                uiView.addAnnotation(annotation)
+                annotations.append(annotation)
             }
         } else if let selectedStop = globalStopsModel.selectedStop,
                   let stopToRender = viewModel.stops.first(where: { $0.id == selectedStop.id }) {
             let annotation = StopAnnotation(stop: stopToRender)
-            uiView.addAnnotation(annotation)
+            annotations.append(annotation)
         }
         
         // Add shuttle annotations
@@ -101,40 +99,13 @@ struct MapViewRepresentable: UIViewRepresentable {
             
             if shouldDisplayShuttle {
                 let annotation = ShuttleAnnotation(shuttle: shuttle)
-                uiView.addAnnotation(annotation)
+                
+                annotations.append(annotation)
             }
         }
-    }
-    
-    private func updatePositioning(_ uiView: MKMapView) {
-        // Handle position changes
-        // Get all the points in the map view
-        var points: [CLLocationCoordinate2D] = []
-        points.append(contentsOf: uiView.annotations.map { $0.coordinate })
         
-        if let polyline = uiView.overlays.first as? MKPolyline {
-            var polylinePoints = Array(repeating: CLLocationCoordinate2D(), count: polyline.pointCount)
-            polyline.getCoordinates(&polylinePoints, range: NSRange(location: 0, length: polyline.pointCount))
-            points.append(contentsOf: polylinePoints)
-        }
-        
-        if !points.isEmpty {
-            let rect = points.reduce(MKMapRect.null) { rect, point in
-                let pointRect = MKMapRect(origin: MKMapPoint(point), size: MKMapSize(width: 0, height: 0))
-                return rect.union(pointRect)
-            }
-            
-            var region = MKCoordinateRegion(rect)
-            region = MKCoordinateRegion(
-                center: region.center,
-                span: MKCoordinateSpan(
-                    latitudeDelta: region.span.latitudeDelta * 1.4,
-                    longitudeDelta: region.span.longitudeDelta * 1.4
-                )
-            )
-            
-            uiView.setRegion(region, animated: true)
-        }
+        uiView.removeAnnotations(uiView.annotations)
+        uiView.addAnnotations(annotations)
     }
 }
 
@@ -143,6 +114,9 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
     weak var globalDataState: GlobalDataModel?
     weak var globalStopsModel: GlobalStopsModel?
     weak var viewModel: MapViewModel?
+    
+    var currentRegion: MKCoordinateRegion?
+    var lastComputedRegion: MKCoordinateRegion?
     
     init(globalDataState: GlobalDataModel, globalStopsState: GlobalStopsModel, viewModel: MapViewModel) {
         self.globalDataState = globalDataState
@@ -162,7 +136,7 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
     }
     
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-        print("Region changed")
+        self.currentRegion = mapView.region
     }
     
     func mapView(_ mapView: MKMapView, didAdd views: [MKAnnotationView]) {
@@ -173,6 +147,15 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
                 view.superview?.sendSubviewToBack(view)
             }
         }
+        
+        if let viewModel = viewModel {
+            if viewModel.shuttles.count > 0 ||
+                viewModel.routes.count > 0 ||
+                viewModel.stops.count > 0 {
+                updatePositioning(mapView)
+            }
+        }
+        
     }
     
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
@@ -219,6 +202,39 @@ class MapViewCoordinator: NSObject, MKMapViewDelegate {
         }
         
         return selectedStopId == stopId
+    }
+    
+    private func updatePositioning(_ uiView: MKMapView) {
+        // Handle position changes
+        // Get all the points in the map view
+        var points: [CLLocationCoordinate2D] = []
+        points.append(contentsOf: uiView.annotations.map { $0.coordinate })
+        
+        if let polyline = uiView.overlays.first as? MKPolyline {
+            var polylinePoints = Array(repeating: CLLocationCoordinate2D(), count: polyline.pointCount)
+            polyline.getCoordinates(&polylinePoints, range: NSRange(location: 0, length: polyline.pointCount))
+            points.append(contentsOf: polylinePoints)
+        }
+        
+        if !points.isEmpty {
+            let rect = points.reduce(MKMapRect.null) { rect, point in
+                let pointRect = MKMapRect(origin: MKMapPoint(point), size: MKMapSize(width: 0, height: 0))
+                return rect.union(pointRect)
+            }
+            
+            var region = MKCoordinateRegion(rect)
+            region = MKCoordinateRegion(
+                center: region.center,
+                span: MKCoordinateSpan(
+                    latitudeDelta: region.span.latitudeDelta * 1.4,
+                    longitudeDelta: region.span.longitudeDelta * 1.4
+                )
+            )
+            
+            uiView.setRegion(region, animated: true)
+        }
+        
+        lastComputedRegion = uiView.region
     }
 }
 
