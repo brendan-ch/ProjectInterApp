@@ -199,12 +199,14 @@ class MapViewModelPlaceholderBuilder: PlaceholderBuilderProtocol {
             MapViewStop(
                 id: "1",
                 name: "Chapman Court",
-                coordinates: CLLocationCoordinate2D(latitude: 33.796464, longitude: -117.889352)
+                coordinates: CLLocationCoordinate2D(latitude: 33.796464, longitude: -117.889352),
+                routeIds: Set(["1"])
             ),
             MapViewStop(
                 id: "2",
                 name: "Schmid Gate",
-                coordinates: CLLocationCoordinate2D(latitude: 33.793255, longitude: -117.852755)
+                coordinates: CLLocationCoordinate2D(latitude: 33.793255, longitude: -117.852755),
+                routeIds: Set(["1"])
             )
         ]
 
