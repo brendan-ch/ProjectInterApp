@@ -57,6 +57,7 @@ type Shuttle {
   routeId: ID!
   etas: [ETA!]
   eta(forStopId: ID): ETA
+  orientationInDegrees: Float!
 }
 
 # Queries
