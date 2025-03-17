@@ -132,20 +132,6 @@ struct MapView: View {
     }
 }
 
-#Preview {
-    let builder = MapViewModelPlaceholderBuilder()
-    let viewModel = builder.build()
-    
-    let stopToSelectFromViewModel = viewModel.stops.first!
-    
-    let globalStopsModel = GlobalStopsModel()
-    globalStopsModel.selectStopManually(.init(name: stopToSelectFromViewModel.name, id: stopToSelectFromViewModel.id, coordinates: .init(latitude: stopToSelectFromViewModel.coordinates.latitude, longitude: stopToSelectFromViewModel.coordinates.longitude)))
-    
-    return MapView(viewModel: viewModel)
-        .environmentObject(GlobalDataModel())
-        .environmentObject(globalStopsModel)
-}
-
 struct StopAnnotationView: View {
     var body: some View {
         ZStack {
@@ -178,3 +164,24 @@ struct ShuttleAnnotationView: View {
         .accessibilityHint("Tap to view info about this shuttle.")
     }
 }
+
+#Preview {
+    let builder = MapViewModelPlaceholderBuilder()
+    let viewModel = builder.build()
+    
+    let stopToSelectFromViewModel = viewModel.stops.first!
+    
+    let globalStopsModel = GlobalStopsModel()
+    globalStopsModel.selectStopManually(
+        .init(name: stopToSelectFromViewModel.name, id: stopToSelectFromViewModel.id, coordinates: .init(latitude: stopToSelectFromViewModel.coordinates.latitude, longitude: stopToSelectFromViewModel.coordinates.longitude))
+    )
+    
+    let globalDataModel = GlobalDataModel()
+    let routeToSelect = viewModel.routes.first!
+    globalDataModel.selectedRouteId = routeToSelect.id
+    
+    return MapView(viewModel: viewModel)
+        .environmentObject(globalDataModel)
+        .environmentObject(globalStopsModel)
+}
+
