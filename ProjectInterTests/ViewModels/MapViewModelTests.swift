@@ -201,6 +201,7 @@ class MapViewShuttleTests {
             
             #expect(shuttles[i].route?.id == constructedShuttles[i].routeId)
             #expect(shuttles[i].route?.color == constructedShuttles[i].routeColorHex)
+            #expect(shuttles[i].orientationInDegrees == constructedShuttles[i].orientationInDegrees)
         }
     }
 }
