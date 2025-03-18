@@ -144,6 +144,8 @@ struct StopAnnotationView: View {
 }
 
 struct ShuttleAnnotationView: View {
+    @Environment(\.colorScheme) var colorScheme
+    
     var shuttle: MapViewShuttle
     
     var body: some View {
@@ -157,6 +159,13 @@ struct ShuttleAnnotationView: View {
                 .frame(width: 16, height: 16)
                 .padding(6)
                 .foregroundStyle(Color.white)
+            
+            // Direction arrow
+            Triangle()
+                .fill(colorScheme == .dark ? Color.white : Color.black)
+                .frame(width: 6, height: 6)
+                .offset(y: -21)
+                .rotationEffect(.degrees(shuttle.orientationInDegrees))
         }
         .accessibilityLabel("Shuttle")
         .accessibilityValue(shuttle.id)
