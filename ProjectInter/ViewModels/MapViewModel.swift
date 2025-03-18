@@ -46,6 +46,9 @@ struct MapViewShuttle: Identifiable {
     
     /// The current coordinates of the shuttle.
     var coordinates: CLLocationCoordinate2D
+    
+    /// Direction the shuttle is facing in degrees, starting from 0.
+    var orientationInDegrees: Double
 }
 
 extension MapViewShuttle {
@@ -59,6 +62,7 @@ extension MapViewShuttle {
         
         self.routeId = shuttle.route?.id
         self.routeColorHex = shuttle.route?.color
+        self.orientationInDegrees = shuttle.orientationInDegrees
     }
 }
 
@@ -184,14 +188,16 @@ class MapViewModelPlaceholderBuilder: PlaceholderBuilderProtocol {
                 id: "1",
                 routeId: "1",
                 routeColorHex: "#db2316",
-                coordinates: CLLocationCoordinate2D(latitude: 33.79964, longitude: -117.89328)
+                coordinates: CLLocationCoordinate2D(latitude: 33.79964, longitude: -117.89328),
+                orientationInDegrees: 172.98
             ),
             MapViewShuttle(
                 name: "Red Shuttle 5",
                 id: "2",
                 routeId: "1",
                 routeColorHex: "#db2316",
-                coordinates: CLLocationCoordinate2D(latitude: 33.78788, longitude: -117.85921)
+                coordinates: CLLocationCoordinate2D(latitude: 33.78788, longitude: -117.85921),
+                orientationInDegrees: 129.92
             )
         ]
         
@@ -199,12 +205,14 @@ class MapViewModelPlaceholderBuilder: PlaceholderBuilderProtocol {
             MapViewStop(
                 id: "1",
                 name: "Chapman Court",
-                coordinates: CLLocationCoordinate2D(latitude: 33.796464, longitude: -117.889352)
+                coordinates: CLLocationCoordinate2D(latitude: 33.796464, longitude: -117.889352),
+                routeIds: Set(["1"])
             ),
             MapViewStop(
                 id: "2",
                 name: "Schmid Gate",
-                coordinates: CLLocationCoordinate2D(latitude: 33.793255, longitude: -117.852755)
+                coordinates: CLLocationCoordinate2D(latitude: 33.793255, longitude: -117.852755),
+                routeIds: Set(["1"])
             )
         ]
 

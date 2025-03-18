@@ -34,7 +34,9 @@ class MapViewModelTestsMockData {
             longitude: 1
         ),
         id: "1",
-        name: "Shuttle 1", route: Mock<Route>(
+        name: "Shuttle 1",
+        orientationInDegrees: 90.00,
+        route: Mock<Route>(
             color: "#ffffff",
             id: "1"
         )
@@ -110,6 +112,7 @@ class MapViewModelTestsMockData {
                         ),
                         id: "2",
                         name: "Shuttle 2",
+                        orientationInDegrees: 60.92,
                         route: Mock<Route>(
                             color: "#000000",
                             id: "2"
@@ -122,6 +125,7 @@ class MapViewModelTestsMockData {
                         ),
                         id: "3",
                         name: "Shuttle 3",
+                        orientationInDegrees: 70.25,
                         route: Mock<Route>(
                             color: "#111111",
                             id: "3"
@@ -197,6 +201,7 @@ class MapViewShuttleTests {
             
             #expect(shuttles[i].route?.id == constructedShuttles[i].routeId)
             #expect(shuttles[i].route?.color == constructedShuttles[i].routeColorHex)
+            #expect(shuttles[i].orientationInDegrees == constructedShuttles[i].orientationInDegrees)
         }
     }
 }

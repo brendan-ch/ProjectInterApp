@@ -8,6 +8,8 @@
 import SwiftUI
 import MapKit
 
+// MARK: - Map view
+
 /// MapKit `Map` wrapper which displays relevant information
 /// on a map.
 struct MapView: View {
@@ -46,21 +48,18 @@ struct MapView: View {
             // MARK: Shuttle rendering
             
             ForEach(viewModel.shuttles) { shuttle in
-                let associatedStopForSelectedStop = viewModel.stops.first { stop in
-                    stop.id == globalStopsModel.selectedStop?.id
-                }
-                let shouldDisplayShuttle =
-                    (globalDataState.selectedRouteId != nil && shuttle.routeId == globalDataState.selectedRouteId)
-                     ||
-                    (globalDataState.selectedRouteId == nil && associatedStopForSelectedStop != nil && associatedStopForSelectedStop!.routeIds.contains(shuttle.routeId ?? ""))
+                let associatedStop = getAssociatedStop(for: shuttle, in: viewModel.stops)
                 
-                if shouldDisplayShuttle {
+                if shouldDisplayShuttleOnMap(shuttle, associatedStop: associatedStop) {
                     Annotation(
                         shuttle.name,
                         coordinate: shuttle.coordinates,
                         anchor: .center
                     ) {
-                        ShuttleAnnotationView(shuttle: shuttle)
+                        ShuttleAnnotationView(
+                            shuttle: shuttle,
+                            shouldDisplayOrientation: shouldDisplayOrientation(for: shuttle)
+                        )
                     }
                     .annotationTitles(
                         globalDataState.selectedShuttleId == shuttle.id ? .visible : .hidden
@@ -132,20 +131,25 @@ struct MapView: View {
     }
 }
 
-#Preview {
-    let builder = MapViewModelPlaceholderBuilder()
-    let viewModel = builder.build()
+// MARK: - Conditional shuttle rendering methods
+extension MapView {
+    private func getAssociatedStop(for shuttle: MapViewShuttle, in stops: [MapViewStop]) -> MapViewStop? {
+        stops.first { $0.id == globalStopsModel.selectedStop?.id }
+    }
     
-    let stopToSelectFromViewModel = viewModel.stops.first!
+    private func shouldDisplayShuttleOnMap(_ shuttle: MapViewShuttle, associatedStop: MapViewStop?) -> Bool {
+        (globalDataState.selectedRouteId != nil && shuttle.routeId == globalDataState.selectedRouteId)
+        ||
+        (globalDataState.selectedRouteId == nil && associatedStop != nil && associatedStop!.routeIds.contains(shuttle.routeId ?? ""))
+    }
     
-    let globalStopsModel = GlobalStopsModel()
-    globalStopsModel.selectStopManually(.init(name: stopToSelectFromViewModel.name, id: stopToSelectFromViewModel.id, coordinates: .init(latitude: stopToSelectFromViewModel.coordinates.latitude, longitude: stopToSelectFromViewModel.coordinates.longitude)))
-    
-    return MapView(viewModel: viewModel)
-        .environmentObject(GlobalDataModel())
-        .environmentObject(globalStopsModel)
+    private func shouldDisplayOrientation(for shuttle: MapViewShuttle) -> Bool {
+        globalDataState.selectedShuttleId == shuttle.id ||
+        (globalDataState.selectedShuttleId == nil && shuttle.routeId == globalDataState.selectedRouteId)
+    }
 }
 
+// MARK: - Annotations
 struct StopAnnotationView: View {
     var body: some View {
         ZStack {
@@ -158,7 +162,11 @@ struct StopAnnotationView: View {
 }
 
 struct ShuttleAnnotationView: View {
+    @Environment(\.colorScheme) var colorScheme
+    
     var shuttle: MapViewShuttle
+    
+    var shouldDisplayOrientation = false
     
     var body: some View {
         ZStack {
@@ -171,6 +179,15 @@ struct ShuttleAnnotationView: View {
                 .frame(width: 16, height: 16)
                 .padding(6)
                 .foregroundStyle(Color.white)
+            
+            if shouldDisplayOrientation {
+                // Direction arrow
+                Triangle()
+                    .fill(colorScheme == .dark ? Color.white : Color.black)
+                    .frame(width: 6, height: 6)
+                    .offset(y: -21)
+                    .rotationEffect(.degrees(shuttle.orientationInDegrees))
+            }
         }
         .accessibilityLabel("Shuttle")
         .accessibilityValue(shuttle.id)
@@ -178,3 +195,25 @@ struct ShuttleAnnotationView: View {
         .accessibilityHint("Tap to view info about this shuttle.")
     }
 }
+
+// MARK: - Preview
+#Preview {
+    let builder = MapViewModelPlaceholderBuilder()
+    let viewModel = builder.build()
+    
+    let stopToSelectFromViewModel = viewModel.stops.first!
+    
+    let globalStopsModel = GlobalStopsModel()
+    globalStopsModel.selectStopManually(
+        .init(name: stopToSelectFromViewModel.name, id: stopToSelectFromViewModel.id, coordinates: .init(latitude: stopToSelectFromViewModel.coordinates.latitude, longitude: stopToSelectFromViewModel.coordinates.longitude))
+    )
+    
+    let globalDataModel = GlobalDataModel()
+    let routeToSelect = viewModel.routes.first!
+    globalDataModel.selectedRouteId = routeToSelect.id
+    
+    return MapView(viewModel: viewModel)
+        .environmentObject(globalDataModel)
+        .environmentObject(globalStopsModel)
+}
+
