@@ -55,12 +55,14 @@ struct MapView: View {
                     (globalDataState.selectedRouteId == nil && associatedStopForSelectedStop != nil && associatedStopForSelectedStop!.routeIds.contains(shuttle.routeId ?? ""))
                 
                 if shouldDisplayShuttle {
+                    let shouldDisplayOrientation = globalDataState.selectedShuttleId == shuttle.id || (globalDataState.selectedShuttleId == nil && shuttle.routeId == globalDataState.selectedRouteId)
+                    
                     Annotation(
                         shuttle.name,
                         coordinate: shuttle.coordinates,
                         anchor: .center
                     ) {
-                        ShuttleAnnotationView(shuttle: shuttle)
+                        ShuttleAnnotationView(shuttle: shuttle, shouldDisplayOrientation: shouldDisplayOrientation)
                     }
                     .annotationTitles(
                         globalDataState.selectedShuttleId == shuttle.id ? .visible : .hidden
@@ -148,6 +150,8 @@ struct ShuttleAnnotationView: View {
     
     var shuttle: MapViewShuttle
     
+    var shouldDisplayOrientation = false
+    
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 100)
@@ -160,12 +164,14 @@ struct ShuttleAnnotationView: View {
                 .padding(6)
                 .foregroundStyle(Color.white)
             
-            // Direction arrow
-            Triangle()
-                .fill(colorScheme == .dark ? Color.white : Color.black)
-                .frame(width: 6, height: 6)
-                .offset(y: -21)
-                .rotationEffect(.degrees(shuttle.orientationInDegrees))
+            if shouldDisplayOrientation {
+                // Direction arrow
+                Triangle()
+                    .fill(colorScheme == .dark ? Color.white : Color.black)
+                    .frame(width: 6, height: 6)
+                    .offset(y: -21)
+                    .rotationEffect(.degrees(shuttle.orientationInDegrees))
+            }
         }
         .accessibilityLabel("Shuttle")
         .accessibilityValue(shuttle.id)
