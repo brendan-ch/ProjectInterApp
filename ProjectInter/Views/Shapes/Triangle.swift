@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// https://codingwithrashid.com/how-to-create-triangle-shape-in-swiftui/
+
 struct Triangle: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
