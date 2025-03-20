@@ -28,6 +28,8 @@ struct MapView: View {
         return MapViewNetworkArguments(systemId: systemId)
     }
     
+    @State var mapHeading = 0.0
+    
     var body: some View {
         Map(position: $viewModel.position, selection: $globalDataState.selectedShuttleId) {
             UserAnnotation()
@@ -58,7 +60,8 @@ struct MapView: View {
                     ) {
                         ShuttleAnnotationView(
                             shuttle: shuttle,
-                            shouldDisplayOrientation: shouldDisplayOrientation(for: shuttle)
+                            shouldDisplayOrientation: shouldDisplayOrientation(for: shuttle),
+                            mapHeading: mapHeading
                         )
                     }
                     .annotationTitles(
@@ -121,6 +124,9 @@ struct MapView: View {
             // TODO: center the map around the selected shuttle
             viewModel.position = .automatic
         }
+        .onMapCameraChange(frequency: .continuous) { cameraContext in
+            mapHeading = cameraContext.camera.heading
+        }
     }
     
     private func restartDataUpdatesIfArgumentsExist() {
@@ -168,6 +174,8 @@ struct ShuttleAnnotationView: View {
     
     var shouldDisplayOrientation = false
     
+    var mapHeading: Double
+    
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 100)
@@ -186,7 +194,7 @@ struct ShuttleAnnotationView: View {
                     .fill(colorScheme == .dark ? Color.white : Color.black)
                     .frame(width: 6, height: 6)
                     .offset(y: -21)
-                    .rotationEffect(.degrees(shuttle.orientationInDegrees))
+                    .rotationEffect(.degrees(shuttle.orientationInDegrees - mapHeading))
             }
         }
         .accessibilityLabel("Shuttle")
