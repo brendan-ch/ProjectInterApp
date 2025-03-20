@@ -25,7 +25,15 @@ class GlobalStopsModelTestsMockData {
                         longitude: -117.852825
                     ),
                     id: "2",
-                    name: "Schmid Gate"
+                    name: "Schmid Gate",
+                    orderedStops: [
+                        .init(
+                            routeId: "1"
+                        ),
+                        .init(
+                            routeId: "2"
+                        )
+                    ]
                 ),
                 Mock<ProjectInterTestMocks.Stop>(
                     // 33.789730, -117.886539
@@ -34,7 +42,15 @@ class GlobalStopsModelTestsMockData {
                         longitude: -117.886539
                     ),
                     id: "1",
-                    name: "Panther Village"
+                    name: "Panther Village",
+                    orderedStops: [
+                        .init(
+                            routeId: "1"
+                        ),
+                        .init(
+                            routeId: "2"
+                        )
+                    ]
                 )
             ]
         )
@@ -52,6 +68,11 @@ class GlobalStopsModelStopTests {
             #expect(stops[i].id == constructedStops[i].id)
             #expect(stops[i].coordinates.latitude == constructedStops[i].coordinates.latitude)
             #expect(stops[i].coordinates.longitude == constructedStops[i].coordinates.longitude)
+            
+            guard let orderedStops = stops[i].orderedStops else { continue }
+            for orderedStop in orderedStops {
+                #expect(constructedStops[i].routeIds.contains(orderedStop.routeId))
+            }
         }
     }
 }

@@ -21,6 +21,7 @@ struct GlobalStopsModelStop: Identifiable, Equatable {
     var name: String
     var id: String
     var coordinates: RawCoordinates
+    var routeIds: Set<String> = []
 }
 
 extension GlobalStopsModelStop {
