@@ -140,6 +140,22 @@ struct MapView: View {
     }
 }
 
+// MARK: - Conditional stop rendering methods
+extension MapView {
+    private func stopCanBeReachedFromCurrentlySelectedStop(_ stop: MapViewStop) -> Bool {
+        guard let selectedStop = globalStopsModel.selectedStop else {
+            return false
+        }
+        for routeId in selectedStop.routeIds {
+            if stop.routeIds.contains(routeId) {
+                return true
+            }
+        }
+        
+        return false
+    }
+}
+
 // MARK: - Conditional shuttle rendering methods
 extension MapView {
     private func getAssociatedStop(for shuttle: MapViewShuttle, in stops: [MapViewStop]) -> MapViewStop? {
