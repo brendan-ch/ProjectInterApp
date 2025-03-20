@@ -31,7 +31,7 @@ struct MapView: View {
     @State var mapHeading = 0.0
     
     var body: some View {
-        Map(position: $viewModel.position, selection: $globalDataState.selectedShuttleId) {
+        Map(position: $viewModel.position, interactionModes: [.pan, .zoom, .rotate], selection: $globalDataState.selectedShuttleId) {
             UserAnnotation()
             
             // MARK: Polyline rendering
