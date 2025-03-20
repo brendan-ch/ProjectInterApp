@@ -30,6 +30,11 @@ extension GlobalStopsModelStop {
         
         self.name = stop.name
         self.id = stop.id
+        
+        guard let orderedStops = stop.orderedStops else { return }
+        for orderedStop in orderedStops {
+            self.routeIds.insert(orderedStop.routeId)
+        }
     }
 }
 
