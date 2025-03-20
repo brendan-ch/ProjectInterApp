@@ -106,6 +106,9 @@ struct MapView: View {
                 }
             }
         }
+        .mapControls {
+            MapUserLocationButton()
+        }
         .onAppear {
             if let client = globalDataState.apolloClient {
                 viewModel.apolloClient = client
