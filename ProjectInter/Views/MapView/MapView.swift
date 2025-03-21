@@ -36,14 +36,23 @@ struct MapView: View {
             
             // MARK: Polyline rendering
             
-            if let routeId = globalDataState.selectedRouteId {
+            if let selectedRouteId = globalDataState.selectedRouteId {
                 let routeToDisplay = viewModel.routes.first { route in
-                    route.id == routeId
+                    route.id == selectedRouteId
                 }
                 
                 if let routeToDisplay = routeToDisplay {
                     MapPolyline(coordinates: routeToDisplay.polylineCoordinates)
                         .stroke(Color(hex: routeToDisplay.colorHex), lineWidth: 5)
+                }
+            } else {
+                ForEach(viewModel.routes) { route in
+                    if let selectedStop = globalStopsModel.selectedStop {
+                        if selectedStop.routeIds.contains(route.id) {
+                            MapPolyline(coordinates: route.polylineCoordinates)
+                                .stroke(Color(hex: route.colorHex).opacity(0.2), lineWidth: 5)
+                        }
+                    }
                 }
             }
             
