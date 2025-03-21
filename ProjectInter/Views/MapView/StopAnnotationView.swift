@@ -15,5 +15,7 @@ struct StopAnnotationView: View {
             RoundedRectangle(cornerRadius: 100)
                 .stroke(.black, lineWidth: 2)
         }
+        .accessibilityLabel("Stop")
+        .accessibilityAddTraits(.isButton)
     }
 }
