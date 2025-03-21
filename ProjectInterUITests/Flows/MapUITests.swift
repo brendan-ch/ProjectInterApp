@@ -42,12 +42,12 @@ final class MapUITests: BaseUITests {
         
         sleep(5)
         
-        app.buttons["Shuttle"].firstMatch.tap()
+        app.buttons["Shuttle"].firstMatch.forceTapElement()
         let shuttleTextExists = app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 5)
         if !shuttleTextExists {
             // Handle cases where the selected stop may be blocking the shuttle,
             // in which case the map should handle the correct selection the second time
-            app.buttons["Shuttle"].firstMatch.tap()
+            app.buttons["Shuttle"].firstMatch.forceTapElement()
         }
         
         return true
@@ -148,6 +148,9 @@ final class MapUITests: BaseUITests {
                 return false
             }
             
+            XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
+            shuttleButtonTapped = true
+
             app.buttons["Stop"].firstMatch.tap()
             XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForNonExistence(timeout: 20))
             
@@ -155,7 +158,7 @@ final class MapUITests: BaseUITests {
         }
         
         if !shuttleButtonTapped {
-            
+            XCTFail("No shuttle buttons found.")
         }
     }
 }
