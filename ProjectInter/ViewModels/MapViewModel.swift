@@ -178,6 +178,15 @@ class MapViewModelPlaceholderBuilder: PlaceholderBuilderProtocol {
                     CLLocationCoordinate2D(latitude: 33.78791, longitude: -117.85638),
                     CLLocationCoordinate2D(latitude: 33.78793, longitude: -117.88079),
                     CLLocationCoordinate2D(latitude: 33.78800, longitude: -117.88347),
+                    CLLocationCoordinate2D(latitude: 33.788959, longitude: -117.885639),
+                    CLLocationCoordinate2D(latitude: 33.789549, longitude: -117.888271),
+                    CLLocationCoordinate2D(latitude: 33.789068, longitude: -117.890686),
+                    CLLocationCoordinate2D(latitude: 33.792672, longitude: -117.889588),
+                    CLLocationCoordinate2D(latitude: 33.794914, longitude: -117.889112),
+                    CLLocationCoordinate2D(latitude: 33.799663, longitude: -117.889088),
+                    CLLocationCoordinate2D(latitude: 33.799785, longitude: -117.890652),
+                    CLLocationCoordinate2D(latitude: 33.797799, longitude: -117.890627),
+                    CLLocationCoordinate2D(latitude: 33.797839, longitude: -117.889289)
                 ]
             )
         ]
@@ -188,8 +197,8 @@ class MapViewModelPlaceholderBuilder: PlaceholderBuilderProtocol {
                 id: "1",
                 routeId: "1",
                 routeColorHex: "#db2316",
-                coordinates: CLLocationCoordinate2D(latitude: 33.79964, longitude: -117.89328),
-                orientationInDegrees: 172.98
+                coordinates: CLLocationCoordinate2D(latitude: 33.794334, longitude: -117.889150),
+                orientationInDegrees: 10.12
             ),
             MapViewShuttle(
                 name: "Red Shuttle 5",
@@ -197,7 +206,7 @@ class MapViewModelPlaceholderBuilder: PlaceholderBuilderProtocol {
                 routeId: "1",
                 routeColorHex: "#db2316",
                 coordinates: CLLocationCoordinate2D(latitude: 33.78788, longitude: -117.85921),
-                orientationInDegrees: 129.92
+                orientationInDegrees: 90.5
             )
         ]
         
