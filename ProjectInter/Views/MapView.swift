@@ -89,18 +89,20 @@ struct MapView: View {
                 }
             }
             else if let selectedStop = globalStopsModel.selectedStop {
-                ForEach(viewModel.stops) { stop in
-                    if stopCanBeReachedFromCurrentlySelectedStop(stop) {
-                        Annotation(
-                            stop.name,
-                            coordinate: stop.coordinates,
-                            anchor: .center
-                        ) {
-                            StopAnnotationView()
-                                .allowsHitTesting(false)
-                        }
-                        .annotationTitles(globalStopsModel.selectedStop?.id == stop.id ? .visible : .hidden)
+                let stopToRender = viewModel.stops.first { element in
+                    element.id == selectedStop.id
+                }
+                
+                if let stopToRender = stopToRender {
+                    Annotation(
+                        stopToRender.name,
+                        coordinate: stopToRender.coordinates,
+                        anchor: .center
+                    ) {
+                        StopAnnotationView()
+                            .allowsHitTesting(false)
                     }
+                    .annotationTitles(.visible)
                 }
             }
         }
