@@ -94,31 +94,31 @@ final class MapUITests: BaseUITests {
         }
     }
     
-    // TODO: Find a more effective way to test annotation interactions
-    
-//    func testTapOnShuttleOpensShuttleInfo() {
-//        app.launch()
-//        
-//        var shuttleButtonTapped = false
-//        
-//        executeCallbackForEachStop {
-//            let firstMatchExists = app.otherElements.buttons["Shuttle"].waitForExistence(timeout: 20)
-//            if !firstMatchExists {
-//                return false
-//            }
-//            
-//            app.buttons["Shuttle"].firstMatch.tap()
-//            let shuttleTextExists = app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 5)
-//            if !shuttleTextExists {
-//                app.buttons["Shuttle"].firstMatch.tap()
-//            }
-//            XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
-//            shuttleButtonTapped = true
-//            return true
-//        }
-//        
-//        if !shuttleButtonTapped {
-//            XCTFail("No shuttle buttons found.")
-//        }
-//    }
+    func testTapOnShuttleOpensShuttleInfo() {
+        app.launch()
+        
+        var shuttleButtonTapped = false
+        
+        executeCallbackForEachStop {
+            let firstMatchExists = app.otherElements.buttons["Shuttle"].waitForExistence(timeout: 20)
+            if !firstMatchExists {
+                return false
+            }
+            
+            app.buttons["Shuttle"].firstMatch.tap()
+            let shuttleTextExists = app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 5)
+            if !shuttleTextExists {
+                // Handle cases where the selected stop may be blocking the shuttle,
+                // in which case the map should handle the correct selection the second time
+                app.buttons["Shuttle"].firstMatch.tap()
+            }
+            XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
+            shuttleButtonTapped = true
+            return true
+        }
+        
+        if !shuttleButtonTapped {
+            XCTFail("No shuttle buttons found.")
+        }
+    }
 }
