@@ -132,7 +132,7 @@ extension MapView {
     }
 }
 
-// MARK: - Conditional shuttle rendering methods
+// MARK: - Shuttle rendering
 extension MapView {
     func buildShuttleAnnotation(shuttle: MapViewShuttle) -> some MapContent {
         Annotation(
@@ -168,7 +168,7 @@ extension MapView {
     }
 }
 
-// MARK: - Annotations
+// MARK: - Annotation views
 struct StopAnnotationView: View {
     var body: some View {
         ZStack {
