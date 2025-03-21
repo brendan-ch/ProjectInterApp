@@ -40,6 +40,8 @@ final class MapUITests: BaseUITests {
             return false
         }
         
+        sleep(5)
+        
         app.buttons["Shuttle"].firstMatch.tap()
         let shuttleTextExists = app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 5)
         if !shuttleTextExists {
