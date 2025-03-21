@@ -115,13 +115,26 @@ struct MapView: View {
         .onChange(of: globalDataState.selectedShuttleId) {
             // TODO: center the map around the selected shuttle
             viewModel.position = .automatic
+            
+            if let selectedShuttleId = globalDataState.selectedShuttleId {
+                selectedTag = .init(id: selectedShuttleId, type: .shuttle)
+            }
         }
         .onMapCameraChange(frequency: .continuous) { cameraContext in
             mapHeading = cameraContext.camera.heading
         }
         .onChange(of: selectedTag) {
-            // TODO: sync state with global objects
-            print(selectedTag ?? "")
+            guard let selectedTag = selectedTag else {
+                return
+            }
+            
+            if selectedTag.type == .shuttle {
+                globalStopsModel.selectedStopIdOnMap = nil
+                globalDataState.selectedShuttleId = selectedTag.id
+            } else {
+                globalStopsModel.selectedStopIdOnMap = selectedTag.id
+                globalDataState.selectedShuttleId = nil
+            }
         }
     }
     

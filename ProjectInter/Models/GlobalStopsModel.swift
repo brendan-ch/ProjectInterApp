@@ -50,6 +50,7 @@ class GlobalStopsModel: NetworkDataModelProtocol {
     
     @Published var stops: [GlobalStopsModelStop] = []
     @Published private(set) var selectedStop: GlobalStopsModelStop? = nil
+    @Published var selectedStopIdOnMap: String? = nil
     
     /// Indicates whether the stop is automatically being selected via location
     /// (via coordination with ``GlobalLocationDataModel``). Manual
