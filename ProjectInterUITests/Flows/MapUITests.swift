@@ -34,6 +34,23 @@ final class MapUITests: BaseUITests {
         }
     }
     
+    func attemptToSelectShuttleButton() -> Bool {
+        let firstMatchExists = app.otherElements.buttons["Shuttle"].waitForExistence(timeout: 20)
+        if !firstMatchExists {
+            return false
+        }
+        
+        app.buttons["Shuttle"].firstMatch.tap()
+        let shuttleTextExists = app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 5)
+        if !shuttleTextExists {
+            // Handle cases where the selected stop may be blocking the shuttle,
+            // in which case the map should handle the correct selection the second time
+            app.buttons["Shuttle"].firstMatch.tap()
+        }
+        
+        return true
+    }
+    
     func testRouteIsShownWhenRouteIsSelected() {
         app.launch()
         
@@ -100,18 +117,10 @@ final class MapUITests: BaseUITests {
         var shuttleButtonTapped = false
         
         executeCallbackForEachStop {
-            let firstMatchExists = app.otherElements.buttons["Shuttle"].waitForExistence(timeout: 20)
-            if !firstMatchExists {
+            if !attemptToSelectShuttleButton() {
                 return false
             }
             
-            app.buttons["Shuttle"].firstMatch.tap()
-            let shuttleTextExists = app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 5)
-            if !shuttleTextExists {
-                // Handle cases where the selected stop may be blocking the shuttle,
-                // in which case the map should handle the correct selection the second time
-                app.buttons["Shuttle"].firstMatch.tap()
-            }
             XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
             shuttleButtonTapped = true
             return true
@@ -119,6 +128,32 @@ final class MapUITests: BaseUITests {
         
         if !shuttleButtonTapped {
             XCTFail("No shuttle buttons found.")
+        }
+    }
+    
+    func testTapOnStopDeselectsShuttleAndHidesInfo() {
+        app.launch()
+        
+        var shuttleButtonTapped = false
+        
+        executeCallbackForEachStop {
+            if !attemptToSelectShuttleButton() {
+                return false
+            }
+
+            let firstMatchStopButtonExists = app.otherElements.buttons["Stop"].waitForExistence(timeout: 20)
+            if !firstMatchStopButtonExists {
+                return false
+            }
+            
+            app.buttons["Stop"].firstMatch.tap()
+            XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForNonExistence(timeout: 20))
+            
+            return true
+        }
+        
+        if !shuttleButtonTapped {
+            
         }
     }
 }
