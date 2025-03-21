@@ -21,6 +21,7 @@ struct GlobalStopsModelStop: Identifiable, Equatable {
     var name: String
     var id: String
     var coordinates: RawCoordinates
+    var routeIds: Set<String> = []
 }
 
 extension GlobalStopsModelStop {
@@ -29,6 +30,11 @@ extension GlobalStopsModelStop {
         
         self.name = stop.name
         self.id = stop.id
+        
+        guard let orderedStops = stop.orderedStops else { return }
+        for orderedStop in orderedStops {
+            self.routeIds.insert(orderedStop.routeId)
+        }
     }
 }
 
@@ -44,6 +50,7 @@ class GlobalStopsModel: NetworkDataModelProtocol {
     
     @Published var stops: [GlobalStopsModelStop] = []
     @Published private(set) var selectedStop: GlobalStopsModelStop? = nil
+    @Published var selectedStopIdOnMap: String? = nil
     
     /// Indicates whether the stop is automatically being selected via location
     /// (via coordination with ``GlobalLocationDataModel``). Manual

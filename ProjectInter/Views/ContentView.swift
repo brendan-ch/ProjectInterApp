@@ -9,14 +9,14 @@ import SwiftUI
 import SwiftData
 import MapKit
 
-
 struct SheetViewModifier: ViewModifier {
-    var showSheet: Bool
+    let detentSelection: Binding<PresentationDetent>
+    let standardPresentationDetents: Set<PresentationDetent> = [.height(120), .height(360), .height(720)]
     
     func body(content: Content) -> some View {
         content
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            .presentationDetents([.height(180), .height(360), .large], selection: .constant(showSheet ? .height(360) : .height(180)))
+            .presentationDetents(standardPresentationDetents, selection: detentSelection)
             .presentationBackground(.ultraThickMaterial)
             .presentationBackgroundInteraction(.enabled)
             .interactiveDismissDisabled()
@@ -24,33 +24,8 @@ struct SheetViewModifier: ViewModifier {
 }
 
 extension View {
-    func sheetViewModifier(showSheet: Bool) -> some View {
-        self.modifier(SheetViewModifier(showSheet: showSheet))
-    }
-}
-
-/// View which wraps the passed sheet view with a `GeometryReader`,
-/// reporting height changes through a binding.
-struct GeometryReaderSheetWrapperView<Content: View>: View {
-    /// The height of the given sheet.
-    @Binding var height: CGFloat
-    
-    /// Controls whether the view should pass updates to the binding.
-    var shouldUpdate: Bool
-    
-    /// The content to display within the `GeometryReader`.
-    @ViewBuilder let content: Content
-    
-    var body: some View {
-        GeometryReader { geometry in
-            content
-                .onChange(of: geometry.size) {
-                    let newHeight = geometry.size.height
-                    if shouldUpdate && newHeight <= 360 {
-                        height = newHeight
-                    }
-                }
-        }
+    func sheetViewModifier(detentSelection: Binding<PresentationDetent>) -> some View {
+        self.modifier(SheetViewModifier(detentSelection: detentSelection))
     }
 }
 
@@ -59,24 +34,28 @@ struct GeometryReaderSheetWrapperView<Content: View>: View {
 struct ContentView: View {
     /// Whether the root-level sheet should be showing.
     @State var showSheet = false
+    var showShuttleInfoOverRouteList: Bool {
+        globalDataState.selectedShuttleId != nil
+        && globalDataState.selectedRouteId == nil
+    }
+    var showRouteInfo: Bool {
+        globalDataState.selectedRouteId != nil
+    }
+    var showShuttleInfoOverRouteInfo: Bool {
+        globalDataState.selectedRouteId != nil
+        && globalDataState.selectedShuttleId != nil
+    }
     
     @EnvironmentObject var globalDataState: GlobalDataModel
     @EnvironmentObject var locationManagerState: GlobalLocationDataModel
     
-    /// Nesting level of the currently displayed sheet.
-    /// Determines which sheet propogates updates to ``currentSheetHeight``
-    /// and the presentation detent level.
-    var nestedSheetLevel: Int {
-        if globalDataState.selectedRouteId != nil && globalDataState.selectedShuttleId != nil {
-            return 2
-        } else if globalDataState.selectedRouteId != nil || globalDataState.selectedShuttleId != nil {
-            return 1
-        }
-        return 0
-    }
+    // Not actually used to set anything, just to provide default values
+    @State var routeListSheetSelectedDetent: PresentationDetent = .height(360)
+    @State var routeInfoSheetSelectedDetent: PresentationDetent = .height(360)
+    @State var shuttleInfoSheetSelectedDetent: PresentationDetent = .height(360)
     
-    /// The height of the currently displayed sheet.
-    /// Used to adjust the nested ``MapView`` height.
+    
+    // Controls the map height
     @State var currentSheetHeight: CGFloat = 360
     
     var body: some View {
@@ -95,28 +74,33 @@ struct ContentView: View {
     }
     
     var sheetContent: some View {
-        GeometryReaderSheetWrapperView(height: $currentSheetHeight, shouldUpdate: nestedSheetLevel == 0) {
-            RouteListContentView()
-                .sheet(isPresented: .constant(globalDataState.selectedRouteId != nil) ) {
-                    GeometryReaderSheetWrapperView(height: $currentSheetHeight, shouldUpdate: nestedSheetLevel == 1) {
-                        RouteInfoContentView()
-                            .sheet(isPresented: .constant(globalDataState.selectedShuttleId != nil)) {
-                                GeometryReaderSheetWrapperView(height: $currentSheetHeight, shouldUpdate: nestedSheetLevel == 2) {
-                                    ShuttleInfoContentView()
-                                        .sheetViewModifier(showSheet: nestedSheetLevel == 2)
-                                }
-                            }
-                            .sheetViewModifier(showSheet: nestedSheetLevel == 1)
-                    }
-                }
-                .sheet(isPresented: .constant(globalDataState.selectedShuttleId != nil && globalDataState.selectedRouteId == nil)) {
-                    GeometryReaderSheetWrapperView(height: $currentSheetHeight, shouldUpdate: nestedSheetLevel == 1) {
+        RouteListContentView()
+            .sheet(isPresented: .constant(showRouteInfo)) {
+                RouteInfoContentView()
+                    .sheet(isPresented: .constant(showShuttleInfoOverRouteInfo)) {
                         ShuttleInfoContentView()
-                            .sheetViewModifier(showSheet: nestedSheetLevel == 1)
+                            .sheetViewModifier(detentSelection: $shuttleInfoSheetSelectedDetent)
                     }
+                    .sheetViewModifier(detentSelection: $routeInfoSheetSelectedDetent)
+            }
+            .sheet(isPresented: .constant(showShuttleInfoOverRouteList)) {
+                ShuttleInfoContentView()
+                    .sheetViewModifier(detentSelection: $shuttleInfoSheetSelectedDetent)
+            }
+            .sheetViewModifier(detentSelection: $routeListSheetSelectedDetent)
+            .background {
+                // This changes for all the sheets, not just
+                // the currently selected one
+                // https://stackoverflow.com/questions/74423799/how-to-size-content-for-presentation-detents-in-swiftui
+                GeometryReader { proxy in
+                    Color.clear
+                        .onChange(of: proxy.size.height) {
+                            if proxy.size.height <= 360 {
+                                currentSheetHeight = proxy.size.height
+                            }
+                        }
                 }
-                .sheetViewModifier(showSheet: nestedSheetLevel == 0)
-        }
+            }
     }
 }
 

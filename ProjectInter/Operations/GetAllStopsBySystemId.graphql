@@ -7,6 +7,9 @@ query GetAllStopsBySystemId($systemId: ID!) {
         latitude
         longitude
       }
+      orderedStops {
+        routeId
+      }
     }
   }
 }
