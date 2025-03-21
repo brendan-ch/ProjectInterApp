@@ -46,6 +46,12 @@ struct ContentView: View {
         && globalDataState.selectedShuttleId != nil
     }
     
+    // For dependency injection in previews
+    var mapViewModel: MapViewModel?
+    var routeListContentViewModel: RouteListContentViewModel?
+    var routeInfoContentViewModel: RouteInfoContentViewModel?
+    var shuttleInfoContentViewModel: ShuttleInfoContentViewModel?
+    
     @EnvironmentObject var globalDataState: GlobalDataModel
     @EnvironmentObject var locationManagerState: GlobalLocationDataModel
     
@@ -61,7 +67,7 @@ struct ContentView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             Group {
-                MapView()
+                buildMapView()
                     .safeAreaPadding(EdgeInsets(top: 0, leading: 0, bottom: currentSheetHeight, trailing: 0))
             }
         }
@@ -69,22 +75,22 @@ struct ContentView: View {
             showSheet = true
         }
         .sheet(isPresented: $showSheet) {
-            sheetContent
+            buildSheetContent()
         }
     }
     
-    var sheetContent: some View {
-        RouteListContentView()
+    func buildSheetContent() -> some View {
+        buildRouteListView()
             .sheet(isPresented: .constant(showRouteInfo)) {
-                RouteInfoContentView()
+                buildRouteInfoView()
                     .sheet(isPresented: .constant(showShuttleInfoOverRouteInfo)) {
-                        ShuttleInfoContentView()
+                        buildShuttleInfoView()
                             .sheetViewModifier(detentSelection: $shuttleInfoSheetSelectedDetent)
                     }
                     .sheetViewModifier(detentSelection: $routeInfoSheetSelectedDetent)
             }
             .sheet(isPresented: .constant(showShuttleInfoOverRouteList)) {
-                ShuttleInfoContentView()
+                buildShuttleInfoView()
                     .sheetViewModifier(detentSelection: $shuttleInfoSheetSelectedDetent)
             }
             .sheetViewModifier(detentSelection: $routeListSheetSelectedDetent)
@@ -102,11 +108,62 @@ struct ContentView: View {
                 }
             }
     }
+    
+    func buildMapView() -> some View {
+        if let mapViewModel = mapViewModel {
+            return MapView(viewModel: mapViewModel)
+        }
+        return MapView()
+    }
+    
+    func buildRouteListView() -> some View {
+        if let routeListContentViewModel = routeListContentViewModel {
+            return RouteListContentView(viewModel: routeListContentViewModel)
+        }
+        return RouteListContentView()
+    }
+    
+    func buildRouteInfoView() -> some View {
+        if let routeInfoContentViewModel = routeInfoContentViewModel {
+            return RouteInfoContentView(viewModel: routeInfoContentViewModel)
+        }
+        return RouteInfoContentView()
+    }
+    
+    func buildShuttleInfoView() -> some View {
+        if let shuttleInfoContentViewModel = shuttleInfoContentViewModel {
+            return ShuttleInfoContentView(viewModel: shuttleInfoContentViewModel)
+        }
+        return ShuttleInfoContentView()
+    }
 }
 
 #Preview {
-    return ContentView()
-        .environmentObject(GlobalDataModel())
-        .environmentObject(GlobalStopsModel())
+    let globalDataModelBuilder = GlobalDataModelPlaceholderBuilder()
+    let globalDataModel = globalDataModelBuilder.build()
+    
+    let globalStopsModelBuilder = GlobalStopsModelPlaceholderBuilder()
+    let globalStopsModel = globalStopsModelBuilder.build()
+    
+    let mapViewModelBuilder = MapViewModelPlaceholderBuilder()
+    let mapViewModel = mapViewModelBuilder.build()
+    
+    let routeListContentViewModelBuilder = RouteListContentViewModelPlaceholderBuilder()
+    let routeListContentViewModel = routeListContentViewModelBuilder.build()
+    
+    let routeInfoContentViewModelBuilder = RouteInfoContentViewModelPlaceholderBuilder()
+    let routeInfoContentViewModel = routeInfoContentViewModelBuilder.build()
+    
+    let shuttleInfoContentViewModelBuilder = ShuttleInfoContentViewModelPlaceholderBuilder()
+    let shuttleInfoContentViewModel = shuttleInfoContentViewModelBuilder.build()
+    
+    return ContentView(
+        mapViewModel: mapViewModel,
+        routeListContentViewModel: routeListContentViewModel,
+        routeInfoContentViewModel: routeInfoContentViewModel,
+        shuttleInfoContentViewModel: shuttleInfoContentViewModel
+    )
+        .environmentObject(globalDataModel)
+        .environmentObject(globalStopsModel)
         .environmentObject(GlobalLocationDataModel())
 }

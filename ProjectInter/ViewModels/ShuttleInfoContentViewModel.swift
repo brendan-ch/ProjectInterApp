@@ -123,22 +123,3 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
     }
 }
 
-class ShuttleInfoContentViewModelPlaceholderBuilder: PlaceholderBuilderProtocol {
-    typealias PlaceholderType = ShuttleInfoContentViewModel
-    
-    func build() -> ShuttleInfoContentViewModel {
-        let model = ShuttleInfoContentViewModel()
-        model.name = "Red Shuttle 17"
-        model.etaDisplay = "5 min away"
-        
-        model.etaListItems = [
-            .init(stopName: "Chapman Court", secondsRemaining: 20, stopId: "0"),
-            .init(stopName: "Schmid Gate", secondsRemaining: 125, stopId: "1"),
-            .init(stopName: "Panther Village", secondsRemaining: 300, stopId: "2"),
-            .init(stopName: "Chapman Grand", secondsRemaining: 1430, stopId: "3")
-        ]
-        
-        return model
-    }
-}
-
