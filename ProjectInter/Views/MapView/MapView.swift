@@ -81,6 +81,7 @@ struct MapView: View {
         }
         .mapControls {
             MapUserLocationButton()
+            MapCompass()
         }
         .mapStyle(.standard(emphasis: .muted, pointsOfInterest: []))
         .onAppear {
