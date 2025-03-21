@@ -53,21 +53,7 @@ struct MapView: View {
                 let associatedStop = getAssociatedStop(for: shuttle, in: viewModel.stops)
                 
                 if shouldDisplayShuttleOnMap(shuttle, associatedStop: associatedStop) {
-                    Annotation(
-                        shuttle.name,
-                        coordinate: shuttle.coordinates,
-                        anchor: .center
-                    ) {
-                        ShuttleAnnotationView(
-                            shuttle: shuttle,
-                            shouldDisplayOrientation: shouldDisplayOrientation(for: shuttle),
-                            mapHeading: mapHeading
-                        )
-                    }
-                    .annotationTitles(
-                        globalDataState.selectedShuttleId == shuttle.id ? .visible : .hidden
-                    )
-                    .tag(shuttle.id)
+                    buildShuttleAnnotation(shuttle: shuttle)
                 }
             }
             
@@ -76,34 +62,12 @@ struct MapView: View {
             if let routeId = globalDataState.selectedRouteId {
                 ForEach(viewModel.stops) { stop in
                     if stop.routeIds.contains(routeId) {
-                        Annotation(
-                            stop.name,
-                            coordinate: stop.coordinates,
-                            anchor: .center
-                        ) {
-                            StopAnnotationView()
-                                .allowsHitTesting(false)
-                        }
-                        .annotationTitles(globalStopsModel.selectedStop?.id == stop.id ? .visible : .hidden)
+                        buildStopAnnotation(stop: stop)
                     }
                 }
-            }
-            else if let selectedStop = globalStopsModel.selectedStop {
-                let stopToRender = viewModel.stops.first { element in
-                    element.id == selectedStop.id
-                }
-                
-                if let stopToRender = stopToRender {
-                    Annotation(
-                        stopToRender.name,
-                        coordinate: stopToRender.coordinates,
-                        anchor: .center
-                    ) {
-                        StopAnnotationView()
-                            .allowsHitTesting(false)
-                    }
-                    .annotationTitles(.visible)
-                }
+            } else if let selectedStop = globalStopsModel.selectedStop,
+                      let stopToRender = viewModel.stops.first(where: { $0.id == selectedStop.id }) {
+                buildStopAnnotation(stop: stopToRender)
             }
         }
         .mapControls {
@@ -141,8 +105,19 @@ struct MapView: View {
     }
 }
 
-// MARK: - Conditional stop rendering methods
+// MARK: - Stop rendering
 extension MapView {
+    func buildStopAnnotation(stop: MapViewStop) -> some MapContent {
+        Annotation(
+            stop.name,
+            coordinate: stop.coordinates,
+            anchor: .center
+        ) {
+            StopAnnotationView()
+        }
+        .annotationTitles(globalStopsModel.selectedStop?.id == stop.id ? .visible : .hidden)
+    }
+    
     private func stopCanBeReachedFromCurrentlySelectedStop(_ stop: MapViewStop) -> Bool {
         guard let selectedStop = globalStopsModel.selectedStop else {
             return false
@@ -159,6 +134,24 @@ extension MapView {
 
 // MARK: - Conditional shuttle rendering methods
 extension MapView {
+    func buildShuttleAnnotation(shuttle: MapViewShuttle) -> some MapContent {
+        Annotation(
+            shuttle.name,
+            coordinate: shuttle.coordinates,
+            anchor: .center
+        ) {
+            ShuttleAnnotationView(
+                shuttle: shuttle,
+                shouldDisplayOrientation: shouldDisplayOrientation(for: shuttle),
+                mapHeading: mapHeading
+            )
+        }
+        .annotationTitles(
+            globalDataState.selectedShuttleId == shuttle.id ? .visible : .hidden
+        )
+        .tag(shuttle.id)
+    }
+    
     private func getAssociatedStop(for shuttle: MapViewShuttle, in stops: [MapViewStop]) -> MapViewStop? {
         stops.first { $0.id == globalStopsModel.selectedStop?.id }
     }
