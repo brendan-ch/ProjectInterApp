@@ -8,6 +8,18 @@
 import SwiftUI
 import MapKit
 
+// MARK: - Annotation tag structs
+
+enum AnnotationType: Int {
+    case shuttle = 0
+    case stop = 1
+}
+
+struct AnnotationTag: Hashable {
+    let id: String
+    let type: AnnotationType
+}
+
 // MARK: - Map view
 
 /// MapKit `Map` wrapper which displays relevant information
@@ -30,8 +42,10 @@ struct MapView: View {
     
     @State var mapHeading = 0.0
     
+    @State var selectedTag: AnnotationTag?
+    
     var body: some View {
-        Map(position: $viewModel.position, interactionModes: [.pan, .zoom, .rotate], selection: $globalDataState.selectedShuttleId) {
+        Map(position: $viewModel.position, interactionModes: [.pan, .zoom, .rotate], selection: $selectedTag) {
             UserAnnotation()
             
             // MARK: Polyline rendering
@@ -105,6 +119,10 @@ struct MapView: View {
         .onMapCameraChange(frequency: .continuous) { cameraContext in
             mapHeading = cameraContext.camera.heading
         }
+        .onChange(of: selectedTag) {
+            // TODO: sync state with global objects
+            print(selectedTag ?? "")
+        }
     }
     
     private func restartDataUpdatesIfArgumentsExist() {
@@ -126,6 +144,9 @@ extension MapView {
             StopAnnotationView()
         }
         .annotationTitles(globalStopsModel.selectedStop?.id == stop.id ? .visible : .hidden)
+        .tag(
+            AnnotationTag(id: stop.id, type: .stop)
+        )
     }
     
     private func stopCanBeReachedFromCurrentlySelectedStop(_ stop: MapViewStop) -> Bool {
@@ -160,7 +181,9 @@ extension MapView {
         .annotationTitles(
             globalDataState.selectedShuttleId == shuttle.id ? .visible : .hidden
         )
-        .tag(shuttle.id)
+        .tag(
+            AnnotationTag(id: shuttle.id, type: .shuttle)
+        )
     }
     
     private func getAssociatedStop(for shuttle: MapViewShuttle, in stops: [MapViewStop]) -> MapViewStop? {
