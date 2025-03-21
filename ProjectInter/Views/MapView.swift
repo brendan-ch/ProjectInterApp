@@ -107,6 +107,7 @@ struct MapView: View {
         .mapControls {
             MapUserLocationButton()
         }
+        .mapStyle(.standard(pointsOfInterest: []))
         .onAppear {
             if let client = globalDataState.apolloClient {
                 viewModel.apolloClient = client
