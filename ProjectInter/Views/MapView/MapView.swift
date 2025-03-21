@@ -124,17 +124,21 @@ struct MapView: View {
             mapHeading = cameraContext.camera.heading
         }
         .onChange(of: selectedTag) {
-            guard let selectedTag = selectedTag else {
-                return
-            }
-            
-            if selectedTag.type == .shuttle {
-                globalStopsModel.selectedStopIdOnMap = nil
-                globalDataState.selectedShuttleId = selectedTag.id
-            } else {
-                globalStopsModel.selectedStopIdOnMap = selectedTag.id
-                globalDataState.selectedShuttleId = nil
-            }
+            updateGlobalSelectionStatesFromSelectedTag()
+        }
+    }
+    
+    private func updateGlobalSelectionStatesFromSelectedTag() {
+        guard let selectedTag = selectedTag else {
+            return
+        }
+        
+        if selectedTag.type == .shuttle {
+            globalStopsModel.selectedStopIdOnMap = nil
+            globalDataState.selectedShuttleId = selectedTag.id
+        } else {
+            globalStopsModel.selectedStopIdOnMap = selectedTag.id
+            globalDataState.selectedShuttleId = nil
         }
     }
     
