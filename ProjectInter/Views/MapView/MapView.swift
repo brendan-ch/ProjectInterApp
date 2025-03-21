@@ -152,7 +152,7 @@ extension MapView {
             ShuttleAnnotationView(
                 shuttle: shuttle,
                 shouldDisplayOrientation: shouldDisplayOrientation(for: shuttle),
-                shouldBeTransparent: (globalDataState.selectedShuttleId != nil && globalDataState.selectedShuttleId != shuttle.id),
+                shouldBeTransparent: shouldBeTransparent(for: shuttle),
                 mapHeading: mapHeading
             )
         }
@@ -175,6 +175,10 @@ extension MapView {
     private func shouldDisplayOrientation(for shuttle: MapViewShuttle) -> Bool {
         globalDataState.selectedShuttleId == shuttle.id ||
         (globalDataState.selectedShuttleId == nil && shuttle.routeId == globalDataState.selectedRouteId)
+    }
+    
+    private func shouldBeTransparent(for shuttle: MapViewShuttle) -> Bool {
+        globalDataState.selectedShuttleId != nil && globalDataState.selectedShuttleId != shuttle.id
     }
 }
 
