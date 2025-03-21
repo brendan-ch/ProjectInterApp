@@ -152,6 +152,7 @@ extension MapView {
             ShuttleAnnotationView(
                 shuttle: shuttle,
                 shouldDisplayOrientation: shouldDisplayOrientation(for: shuttle),
+                shouldBeTransparent: (globalDataState.selectedShuttleId != nil && globalDataState.selectedShuttleId != shuttle.id),
                 mapHeading: mapHeading
             )
         }

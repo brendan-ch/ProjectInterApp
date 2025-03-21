@@ -14,6 +14,8 @@ struct ShuttleAnnotationView: View {
     
     var shouldDisplayOrientation = false
     
+    var shouldBeTransparent = false
+    
     var mapHeading: Double
     
     var body: some View {
@@ -37,6 +39,7 @@ struct ShuttleAnnotationView: View {
                     .rotationEffect(.degrees(shuttle.orientationInDegrees - mapHeading))
             }
         }
+        .opacity(shouldBeTransparent ? 0.5 : 1.0)
         .accessibilityLabel("Shuttle")
         .accessibilityValue(shuttle.id)
         .accessibilityAddTraits(.isButton)
