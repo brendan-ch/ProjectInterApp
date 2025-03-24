@@ -36,7 +36,7 @@ final class MapUITests: BaseUITests {
     func testRouteIsShownWhenRouteIsSelected() {
         app.launch()
         
-        executeCallbackForEachStop {
+        executeCallbackForEachStop(shouldExitCallbackLoop: {
             let routes = app.buttons.containing(NSPredicate(format: "label CONTAINS 'Route'"))
             let _ = routes.firstMatch.waitForExistence(timeout: 20)
             
@@ -57,13 +57,13 @@ final class MapUITests: BaseUITests {
             }
             
             return true
-        }
+        })
     }
     
     func testUnrelatedShuttlesAreHiddenWhenRouteIsSelected() {
         app.launch()
         
-        executeCallbackForEachStop {
+        executeCallbackForEachStop(shouldExitCallbackLoop: {
             var shuttleCounts: [Int] = []
             let totalShuttleCount = app.otherElements.buttons.matching(identifier: "Shuttle").allElementsBoundByIndex.count
             
@@ -90,7 +90,7 @@ final class MapUITests: BaseUITests {
             XCTAssert(totalShuttleCount == calculatedShuttleCount)
             
             return true
-        }
+        })
     }
     
     func testTapOnShuttleOpensShuttleInfo() {
@@ -98,7 +98,7 @@ final class MapUITests: BaseUITests {
         
         var shuttleButtonTapped = false
         
-        executeCallbackForEachStop {
+        executeCallbackForEachStop(shouldExitCallbackLoop: {
             if !attemptToSelectShuttleButton() {
                 return false
             }
@@ -106,7 +106,7 @@ final class MapUITests: BaseUITests {
             XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
             shuttleButtonTapped = true
             return true
-        }
+        })
         
         if !shuttleButtonTapped {
             XCTFail("No shuttle buttons found.")
@@ -118,7 +118,7 @@ final class MapUITests: BaseUITests {
         
         var shuttleButtonTapped = false
         
-        executeCallbackForEachStop {
+        executeCallbackForEachStop(shouldExitCallbackLoop: {
             if !attemptToSelectShuttleButton() {
                 return false
             }
@@ -135,7 +135,7 @@ final class MapUITests: BaseUITests {
             XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForNonExistence(timeout: 20))
             
             return true
-        }
+        })
         
         if !shuttleButtonTapped {
             XCTFail("No shuttle buttons found.")

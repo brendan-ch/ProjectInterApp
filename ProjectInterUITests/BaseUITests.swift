@@ -24,7 +24,7 @@ class BaseUITests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
     
-    func executeCallbackForEachStop(_ callback: () -> Bool) {
+    func executeCallbackForEachStop(shouldExitCallbackLoop: () -> Bool) {
         let _ = app.buttons["Change stop"].waitForExistence(timeout: 20)
         app.buttons["Change stop"].tap()
         
@@ -36,7 +36,7 @@ class BaseUITests: XCTestCase {
         for cell in sectionElements {
             cell.tap()
             
-            let shouldExit = callback()
+            let shouldExit = shouldExitCallbackLoop()
             if shouldExit {
                 return
             }
