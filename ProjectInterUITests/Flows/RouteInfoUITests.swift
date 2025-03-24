@@ -50,5 +50,32 @@ final class RouteInfoUITests: BaseUITests {
     
     func testRouteInfoIsClosedWhenCloseButtonTapped() {
         app.launch()
+        
+        var routeTapped = false
+        
+        executeCallbackForEachStop(shouldExitCallbackLoop: {
+            if !checkIfRoutesExist() {
+                return false
+            }
+            
+            executeCallbackForEachRoute(shouldExitCallbackLoop: {
+                routeTapped = true
+                
+                // Exit immediately to test the close button
+                return true
+            })
+            
+            let _ = app.buttons["Close"].waitForExistence(timeout: 5)
+            app.buttons["Close"].tap()
+            
+            let routeInfoShuttlesNoLongerExist = app.buttons["Shuttle label in route info page"].waitForNonExistence(timeout: 5)
+            XCTAssert(routeInfoShuttlesNoLongerExist)
+            
+            return true
+        })
+        
+        if !routeTapped {
+            XCTFail("No routes found in test data")
+        }
     }
 }
