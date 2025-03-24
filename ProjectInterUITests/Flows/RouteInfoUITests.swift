@@ -16,7 +16,36 @@ final class RouteInfoUITests: BaseUITests {
     func testShuttleInfoIsShownWhenTapped() {
         app.launch()
         
+        var shuttleInfoTapped = false
         
+        executeCallbackForEachStop(shouldExitCallbackLoop: {
+            if !checkIfRoutesExist() {
+                return false
+            }
+            
+            executeCallbackForEachRoute(shouldExitCallbackLoop: {
+                let routeInfoShuttlesExist = app.buttons["Shuttle label in route info page"].waitForExistence(timeout: 5)
+                if !routeInfoShuttlesExist {
+                    return false
+                }
+                
+                app.buttons["Shuttle label in route info page"].firstMatch.tap()
+                
+                XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 5))
+                shuttleInfoTapped = true
+                
+                return true
+            })
+            
+            if !shuttleInfoTapped {
+                return false
+            }
+            return true
+        })
+        
+        if !shuttleInfoTapped {
+            XCTFail("No shuttles found in test data")
+        }
     }
     
     func testRouteInfoIsClosedWhenCloseButtonTapped() {
