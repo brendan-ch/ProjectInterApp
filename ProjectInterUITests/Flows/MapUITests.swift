@@ -13,26 +13,6 @@ final class MapUITests: BaseUITests {
         app.launchArguments += ["-setupCompleted", "1"]
     }
     
-    func executeCallbackForEachStop(_ callback: () -> Bool) {
-        let _ = app.buttons["Change stop"].waitForExistence(timeout: 20)
-        app.buttons["Change stop"].tap()
-        
-        XCTAssert(app.collectionViews.cells.staticTexts["No stops found."].waitForNonExistence(timeout: 5))
-        
-        let predicate = NSPredicate(format: "identifier BEGINSWITH 'StopSelectionCollectionSearchResultItem'")
-        let sectionElements = app.buttons.matching(predicate).allElementsBoundByIndex
-        
-        for cell in sectionElements {
-            cell.tap()
-            
-            let shouldExit = callback()
-            if shouldExit {
-                return
-            }
-            
-            app.buttons["Change stop"].tap()
-        }
-    }
     
     func attemptToSelectShuttleButton() -> Bool {
         let firstMatchExists = app.otherElements.buttons["Shuttle"].waitForExistence(timeout: 20)
