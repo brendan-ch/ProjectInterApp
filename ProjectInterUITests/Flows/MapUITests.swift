@@ -13,26 +13,6 @@ final class MapUITests: BaseUITests {
         app.launchArguments += ["-setupCompleted", "1"]
     }
     
-    func executeCallbackForEachStop(_ callback: () -> Bool) {
-        let _ = app.buttons["Change stop"].waitForExistence(timeout: 20)
-        app.buttons["Change stop"].tap()
-        
-        XCTAssert(app.collectionViews.cells.staticTexts["No stops found."].waitForNonExistence(timeout: 5))
-        
-        let predicate = NSPredicate(format: "identifier BEGINSWITH 'StopSelectionCollectionSearchResultItem'")
-        let sectionElements = app.buttons.matching(predicate).allElementsBoundByIndex
-        
-        for cell in sectionElements {
-            cell.tap()
-            
-            let shouldExit = callback()
-            if shouldExit {
-                return
-            }
-            
-            app.buttons["Change stop"].tap()
-        }
-    }
     
     func attemptToSelectShuttleButton() -> Bool {
         let firstMatchExists = app.otherElements.buttons["Shuttle"].waitForExistence(timeout: 20)
@@ -56,52 +36,42 @@ final class MapUITests: BaseUITests {
     func testRouteIsShownWhenRouteIsSelected() {
         app.launch()
         
-        executeCallbackForEachStop {
-            let routes = app.buttons.containing(NSPredicate(format: "label CONTAINS 'Route'"))
-            let _ = routes.firstMatch.waitForExistence(timeout: 20)
-            
-            if routes.allElementsBoundByIndex.isEmpty {
+        executeCallbackForEachStop(shouldExitCallbackLoop: {
+            if !checkIfRoutesExist() {
                 return false
             }
             
-            for route in routes.allElementsBoundByIndex {
-                route.tap()
-                
+            executeCallbackForEachRoute(shouldExitCallbackLoop: {
                 let screenshot = XCUIScreen.main.screenshot()
                 let attachment = XCTAttachment(screenshot: screenshot)
                 attachment.lifetime = .keepAlways
                 add(attachment)
                 
-                let _ = app.buttons["Close"].waitForExistence(timeout: 5)
-                app.buttons["Close"].tap()
-            }
+                // Run for every route
+                return false
+            })
             
             return true
-        }
+        })
     }
     
     func testUnrelatedShuttlesAreHiddenWhenRouteIsSelected() {
         app.launch()
         
-        executeCallbackForEachStop {
+        executeCallbackForEachStop(shouldExitCallbackLoop: {
             var shuttleCounts: [Int] = []
             let totalShuttleCount = app.otherElements.buttons.matching(identifier: "Shuttle").allElementsBoundByIndex.count
             
-            let routes = app.buttons.containing(NSPredicate(format: "label CONTAINS 'Route'"))
-            let _ = routes.firstMatch.waitForExistence(timeout: 20)
-            if routes.count == 0 {
+            if !checkIfRoutesExist() {
                 return false
             }
             
-            for route in routes.allElementsBoundByIndex {
-                route.tap()
-                
+            executeCallbackForEachRoute(shouldExitCallbackLoop: {
                 let shuttleCount = app.otherElements.buttons.matching(identifier: "Shuttle").allElementsBoundByIndex.count
                 shuttleCounts.append(shuttleCount)
                 
-                let _ = app.buttons["Close"].waitForExistence(timeout: 5)
-                app.buttons["Close"].tap()
-            }
+                return false
+            })
             
             var calculatedShuttleCount = 0
             for count in shuttleCounts {
@@ -110,7 +80,7 @@ final class MapUITests: BaseUITests {
             XCTAssert(totalShuttleCount == calculatedShuttleCount)
             
             return true
-        }
+        })
     }
     
     func testTapOnShuttleOpensShuttleInfo() {
@@ -118,7 +88,7 @@ final class MapUITests: BaseUITests {
         
         var shuttleButtonTapped = false
         
-        executeCallbackForEachStop {
+        executeCallbackForEachStop(shouldExitCallbackLoop: {
             if !attemptToSelectShuttleButton() {
                 return false
             }
@@ -126,7 +96,7 @@ final class MapUITests: BaseUITests {
             XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
             shuttleButtonTapped = true
             return true
-        }
+        })
         
         if !shuttleButtonTapped {
             XCTFail("No shuttle buttons found.")
@@ -138,7 +108,7 @@ final class MapUITests: BaseUITests {
         
         var shuttleButtonTapped = false
         
-        executeCallbackForEachStop {
+        executeCallbackForEachStop(shouldExitCallbackLoop: {
             if !attemptToSelectShuttleButton() {
                 return false
             }
@@ -155,7 +125,7 @@ final class MapUITests: BaseUITests {
             XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForNonExistence(timeout: 20))
             
             return true
-        }
+        })
         
         if !shuttleButtonTapped {
             XCTFail("No shuttle buttons found.")

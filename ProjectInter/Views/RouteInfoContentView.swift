@@ -58,6 +58,8 @@ struct RouteInfoContentView: View {
                         RouteInfoShuttleViewItem(shuttle: upcomingDeparture) { shuttle in
                             globalDataState.selectedShuttleId = shuttle.id
                         }
+                        .accessibilityLabel("Shuttle label in route info page")
+                        .accessibilityIdentifier(upcomingDeparture.id)
                         .buttonStyle(.plain)
                         .padding(.horizontal)
                         
