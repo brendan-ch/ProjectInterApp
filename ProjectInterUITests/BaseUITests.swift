@@ -44,5 +44,31 @@ class BaseUITests: XCTestCase {
             app.buttons["Change stop"].tap()
         }
     }
+    
+    func checkIfRoutesExist() -> Bool {
+        let routes = app.buttons.containing(NSPredicate(format: "label CONTAINS 'Route'"))
+        let _ = routes.firstMatch.waitForExistence(timeout: 20)
+        
+        if !routes.allElementsBoundByIndex.isEmpty {
+            return true
+        }
+        
+        return false
+    }
+    
+    func executeCallbackForEachRoute(shouldExitCallbackLoop: () -> Bool) {
+        let routes = app.buttons.containing(NSPredicate(format: "label CONTAINS 'Route'"))
+        for route in routes.allElementsBoundByIndex {
+            route.tap()
+            
+            let shouldExit = shouldExitCallbackLoop()
+            if shouldExit {
+                return
+            }
+            
+            let _ = app.buttons["Close"].waitForExistence(timeout: 5)
+            app.buttons["Close"].tap()
+        }
+    }
 
 }

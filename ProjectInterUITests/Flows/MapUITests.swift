@@ -37,24 +37,19 @@ final class MapUITests: BaseUITests {
         app.launch()
         
         executeCallbackForEachStop(shouldExitCallbackLoop: {
-            let routes = app.buttons.containing(NSPredicate(format: "label CONTAINS 'Route'"))
-            let _ = routes.firstMatch.waitForExistence(timeout: 20)
-            
-            if routes.allElementsBoundByIndex.isEmpty {
+            if !checkIfRoutesExist() {
                 return false
             }
             
-            for route in routes.allElementsBoundByIndex {
-                route.tap()
-                
+            executeCallbackForEachRoute(shouldExitCallbackLoop: {
                 let screenshot = XCUIScreen.main.screenshot()
                 let attachment = XCTAttachment(screenshot: screenshot)
                 attachment.lifetime = .keepAlways
                 add(attachment)
                 
-                let _ = app.buttons["Close"].waitForExistence(timeout: 5)
-                app.buttons["Close"].tap()
-            }
+                // Run for every route
+                return false
+            })
             
             return true
         })
@@ -67,21 +62,16 @@ final class MapUITests: BaseUITests {
             var shuttleCounts: [Int] = []
             let totalShuttleCount = app.otherElements.buttons.matching(identifier: "Shuttle").allElementsBoundByIndex.count
             
-            let routes = app.buttons.containing(NSPredicate(format: "label CONTAINS 'Route'"))
-            let _ = routes.firstMatch.waitForExistence(timeout: 20)
-            if routes.count == 0 {
+            if !checkIfRoutesExist() {
                 return false
             }
             
-            for route in routes.allElementsBoundByIndex {
-                route.tap()
-                
+            executeCallbackForEachRoute(shouldExitCallbackLoop: {
                 let shuttleCount = app.otherElements.buttons.matching(identifier: "Shuttle").allElementsBoundByIndex.count
                 shuttleCounts.append(shuttleCount)
                 
-                let _ = app.buttons["Close"].waitForExistence(timeout: 5)
-                app.buttons["Close"].tap()
-            }
+                return false
+            })
             
             var calculatedShuttleCount = 0
             for count in shuttleCounts {
