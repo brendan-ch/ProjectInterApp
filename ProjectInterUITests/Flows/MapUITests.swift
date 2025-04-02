@@ -103,6 +103,35 @@ final class MapUITests: BaseUITests {
         }
     }
     
+    func testTapOnShuttleAfterDeselectOpensShuttleInfo() {
+        app.launch()
+        
+        var shuttleButtonTapped = false
+        
+        executeCallbackForEachStop(shouldExitCallbackLoop: {
+            if !attemptToSelectShuttleButton() {
+                return false
+            }
+            
+            XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
+            shuttleButtonTapped = true
+            
+            app.buttons["Close"].tap()
+            
+            if !attemptToSelectShuttleButton() {
+                return false
+            }
+            
+            XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
+
+            return true
+        })
+        
+        if !shuttleButtonTapped {
+            XCTFail("No shuttle buttons found.")
+        }
+    }
+    
     func testTapOnStopDeselectsShuttleAndHidesInfo() {
         app.launch()
         
