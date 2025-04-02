@@ -167,7 +167,9 @@ struct ShuttleInfoContentView: View {
         let input = NotificationNetworkArguments(
             deviceId: deviceId,
             shuttleId: shuttleId,
-            stopId: stopId
+            stopId: stopId,
+            // TODO: build out a menu to select seconds threshold
+            secondsThreshold: 180
         )
         return input
     }

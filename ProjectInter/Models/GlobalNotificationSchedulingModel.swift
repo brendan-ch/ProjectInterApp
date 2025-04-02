@@ -13,6 +13,7 @@ struct NotificationNetworkArguments: Hashable {
     let deviceId: String
     let shuttleId: String
     let stopId: String
+    let secondsThreshold: Int
 }
 
 typealias NotificationInfo = NotificationNetworkArguments
@@ -33,16 +34,17 @@ class GlobalNotificationSchedulingModel: ObservableObject {
         let notificationInput = NotificationInput(
             deviceId: arguments.deviceId,
             shuttleId: arguments.shuttleId,
-            stopId: arguments.stopId
+            stopId: arguments.stopId,
+            secondsThreshold: GraphQLNullable<Int>(integerLiteral: arguments.secondsThreshold)
         )
         
         return notificationInput
     }
+    
     func scheduleNotification(_ arguments: NotificationNetworkArguments) async throws {
         return try await withCheckedThrowingContinuation { continuation in
             var continuationIsActive = true
             
-            // TODO: Sync this state with the server once it becomes available
             guard let apolloClient = apolloClient else {
                 continuationIsActive = false
                 continuation.resume()
