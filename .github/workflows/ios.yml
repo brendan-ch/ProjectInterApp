@@ -92,10 +92,19 @@ jobs:
           token: ${{ secrets.GH_PAT }}
           path: server
 
-      - name: Build and run server with Docker Compose
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: server/package-lock.json
+        
+      - name: Run backend server
         working-directory: server
         run: |
-          docker compose run app-integration-test
+          npm run build:dev
+          # Use & to send to the background
+          npm run start:dev integration-testing &
 
       - name: Set Xcode version
         working-directory: app
