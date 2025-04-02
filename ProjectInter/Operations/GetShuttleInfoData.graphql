@@ -11,5 +11,5 @@ query GetShuttleInfoData($systemId: ID!, $shuttleId: ID!, $notificationInput: No
       }
     }
   }
-  isNotificationScheduled(input: $notificationInput)
+  secondsThresholdForNotification(input: $notificationInput)
 }
