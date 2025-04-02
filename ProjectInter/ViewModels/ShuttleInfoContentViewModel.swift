@@ -51,7 +51,10 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
     
     @Published var etaListItems: [ShuttleInfoEtaListItem] = []
     
-    @Published private(set) var isNotificationScheduled: Bool = false
+    @Published private(set) var secondsThresholdForNotification: Int? = nil
+    var isNotificationScheduled: Bool {
+        return secondsThresholdForNotification != nil
+    }
     
     var apolloClient: ApolloClientProtocol?
     
@@ -115,9 +118,7 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
                     }
                 }
                 
-                if let isNotificationScheduled = data.isNotificationScheduled {
-                    self.isNotificationScheduled = isNotificationScheduled
-                }
+                self.secondsThresholdForNotification = data.secondsThresholdForNotification
             }
         }
     }
