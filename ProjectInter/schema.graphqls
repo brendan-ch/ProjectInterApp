@@ -66,6 +66,7 @@ type Query {
   system(id: ID): System
 
   isNotificationScheduled(input: NotificationInput!): Boolean
+  secondsThresholdForNotification(input: NotificationInput!): Int
 }
 
 # Mutations
@@ -78,6 +79,7 @@ input NotificationInput {
   deviceId: ID!
   shuttleId: ID!
   stopId: ID!
+  secondsThreshold: Int
 }
 
 type NotificationResponse {
@@ -90,4 +92,5 @@ type Notification {
   deviceId: ID!
   shuttleId: ID!
   stopId: ID!
+  secondsThreshold: Int
 }
