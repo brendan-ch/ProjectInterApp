@@ -118,6 +118,8 @@ struct MapView: View {
             
             if let selectedShuttleId = globalDataState.selectedShuttleId {
                 selectedTag = .init(id: selectedShuttleId, type: .shuttle)
+            } else {
+                selectedTag = nil
             }
         }
         .onMapCameraChange(frequency: .continuous) { cameraContext in
