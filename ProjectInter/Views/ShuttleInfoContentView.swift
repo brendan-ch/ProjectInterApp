@@ -77,6 +77,11 @@ struct ShuttleInfoContentView: View {
             }) {
                 HStack {
                     Spacer()
+                    if isNotificationScheduled {
+                        Image(systemName: "multiply")
+                    } else {
+                        Image(systemName: "bell.badge")
+                    }
                     Text(viewModel.notificationButtonText)
                     Spacer()
                 }
