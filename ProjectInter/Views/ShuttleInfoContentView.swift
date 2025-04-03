@@ -22,7 +22,8 @@ struct ShuttleInfoContentView: View {
     
     @EnvironmentObject var customAppDelegate: CustomAppDelegate
     
-    @State var showNotificationPermissionsNotGrantedAlert = false
+    @State var showingNotificationPermissionsNotGrantedAlert = false
+    @State var showingNotificationConfirmationDialog = false
     
     var isNotificationScheduled: Bool {
         return viewModel.isNotificationScheduled
@@ -63,17 +64,16 @@ struct ShuttleInfoContentView: View {
             
             Button(action: {
                 if customAppDelegate.notificationTokenString == nil {
-                    showNotificationPermissionsNotGrantedAlert = true
+                    showingNotificationPermissionsNotGrantedAlert = true
                     return
+                } else if isNotificationScheduled {
+                    Task {
+                        await cancelNotification()
+                    }
+                } else {
+                    showingNotificationConfirmationDialog = true
                 }
                 
-                Task {
-                    if isNotificationScheduled {
-                        await cancelNotification()
-                    } else {
-                        await scheduleNotification()
-                    }
-                }
             }) {
                 HStack {
                     Spacer()
@@ -90,7 +90,7 @@ struct ShuttleInfoContentView: View {
             .foregroundStyle(isNotificationScheduled ? .red : .blue)
             .controlSize(.large)
             .padding()
-            .alert("Turn on notifications", isPresented: $showNotificationPermissionsNotGrantedAlert) {
+            .alert("Turn on notifications", isPresented: $showingNotificationPermissionsNotGrantedAlert) {
                 Button("Dismiss", role: .cancel) { }
                 Button("Open Settings") {
                     if let url = URL(string: UIApplication.openSettingsURLString) {
@@ -99,6 +99,18 @@ struct ShuttleInfoContentView: View {
                 }
             } message: {
                 Text("To schedule a notification, turn on app notifications.")
+            }
+            .confirmationDialog("Select a timeframe", isPresented: $showingNotificationConfirmationDialog, titleVisibility: .visible) {
+                ForEach([2, 5, 10], id: \.self) { minutes in
+                    Button("\(minutes) minutes") {
+                        Task {
+                            if !isNotificationScheduled {
+                                let secondsThreshold = (minutes * 60)
+                                await scheduleNotification(secondsThreshold: secondsThreshold)
+                            }
+                        }
+                    }
+                }
             }
             
             // MARK: Upcoming stops
@@ -167,14 +179,14 @@ struct ShuttleInfoContentView: View {
             deviceId: deviceId,
             shuttleId: shuttleId,
             stopId: stopId,
-            // TODO: build out a menu to select seconds threshold
-            secondsThreshold: 180
+            secondsThreshold: nil
         )
         return input
     }
     
-    private func scheduleNotification() async {
-        guard let input = generateNetworkArguments() else { return }
+    private func scheduleNotification(secondsThreshold: Int) async {
+        guard var input = generateNetworkArguments() else { return }
+        input.secondsThreshold = secondsThreshold
         do {
             try await notificationSchedulingState.scheduleNotification(input)
             await refreshDataOnce()

@@ -13,7 +13,7 @@ struct NotificationNetworkArguments: Hashable {
     let deviceId: String
     let shuttleId: String
     let stopId: String
-    let secondsThreshold: Int
+    var secondsThreshold: Int?
 }
 
 typealias NotificationInfo = NotificationNetworkArguments
@@ -31,12 +31,15 @@ class GlobalNotificationSchedulingModel: ObservableObject {
     }
     
     func generateNotificationInput(_ arguments: NotificationNetworkArguments) -> NotificationInput {
-        let notificationInput = NotificationInput(
+        var notificationInput = NotificationInput(
             deviceId: arguments.deviceId,
             shuttleId: arguments.shuttleId,
-            stopId: arguments.stopId,
-            secondsThreshold: GraphQLNullable<Int>(integerLiteral: arguments.secondsThreshold)
+            stopId: arguments.stopId
         )
+        
+        if let secondsThreshold = arguments.secondsThreshold {
+            notificationInput.secondsThreshold = GraphQLNullable<Int>(integerLiteral: secondsThreshold)
+        }
         
         return notificationInput
     }
