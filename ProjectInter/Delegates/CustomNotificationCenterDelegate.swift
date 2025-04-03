@@ -9,7 +9,7 @@ import Foundation
 import UserNotifications
 import UIKit
 
-class CustomNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
+class CustomNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate, ObservableObject {
     private var notificationCenter: UNUserNotificationCenterProtocol
     
     override init() {
@@ -37,5 +37,10 @@ class CustomNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelega
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
         return .banner
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
+        // TODO: Set selected shuttle ID in this delegate so that the global data model can be updated
+        // See https://www.notion.so/bchendev/Navigate-user-to-selected-shuttle-on-notification-click-1ca07b1035c680c0a109d5c80df2cac1?pvs=4
     }
 }

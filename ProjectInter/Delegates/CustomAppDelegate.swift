@@ -12,7 +12,7 @@ import SwiftUI
 
 class CustomAppDelegate: NSObject, ObservableObject, UIApplicationDelegate {
     @Published var notificationTokenString: String?
-    private var notificationCenterDelegate = CustomNotificationCenterDelegate()
+    @Published var notificationCenterDelegate = CustomNotificationCenterDelegate()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         Task {
