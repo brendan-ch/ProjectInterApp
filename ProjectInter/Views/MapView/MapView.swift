@@ -112,12 +112,16 @@ struct MapView: View {
         .onChange(of: globalDataState.selectedRouteId) {
             viewModel.position = .automatic
         }
-        .onChange(of: globalDataState.selectedShuttleId) {
+        .onChange(of: [globalDataState.selectedShuttleId, globalStopsModel.selectedStopIdOnMap]) {
             // TODO: center the map around the selected shuttle
             viewModel.position = .automatic
             
             if let selectedShuttleId = globalDataState.selectedShuttleId {
                 selectedTag = .init(id: selectedShuttleId, type: .shuttle)
+            } else if let selectedStopId = globalStopsModel.selectedStopIdOnMap {
+                selectedTag = .init(id: selectedStopId, type: .stop)
+            } else {
+                selectedTag = nil
             }
         }
         .onMapCameraChange(frequency: .continuous) { cameraContext in
