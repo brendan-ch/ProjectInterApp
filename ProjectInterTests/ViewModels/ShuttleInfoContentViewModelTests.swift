@@ -13,7 +13,7 @@ import ProjectInterOperations
 
 class ShuttleInfoContentViewModelMockData {
     static let defaultMock = Mock<Query>(
-        secondsThresholdForNotification: 240,
+        secondsThresholdForNotification: 239,
         system: .init(
             shuttle: .init(
                 etas: [
@@ -102,7 +102,9 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.etaListItems[1].secondsRemaining == 125)
         
         #expect(viewModel.isNotificationScheduled)
-        #expect(viewModel.secondsThresholdForNotification == 240)
+        #expect(viewModel.secondsThresholdForNotification == 239)
+        
+        #expect(viewModel.notificationButtonText == "Cancel 3-minute notification")
     }
     
     func assertViewModelDataForSecondaryMock(viewModel: ShuttleInfoContentViewModel) {
@@ -117,6 +119,8 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         
         #expect(!viewModel.isNotificationScheduled)
         #expect(viewModel.secondsThresholdForNotification == nil)
+        
+        #expect(viewModel.notificationButtonText == "Notify me when nearby")
     }
     
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
