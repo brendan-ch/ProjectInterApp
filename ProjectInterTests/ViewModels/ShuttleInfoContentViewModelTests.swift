@@ -202,7 +202,7 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         await viewModel.refreshDataOnce(arguments: arguments)
         
         #expect(viewModel.name == "")
-        #expect(viewModel.etaDisplay == "")
+        #expect(viewModel.etaDisplay == "No data available")
     }
     
     @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
@@ -212,6 +212,6 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         await viewModel.refreshDataOnce(arguments: arguments)
         
         #expect(viewModel.name == "")
-        #expect(viewModel.etaDisplay == "")
+        #expect(viewModel.etaDisplay == "No data available")
     }
 }

@@ -46,8 +46,18 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
     /// Name of the shuttle to display.
     @Published var name: String = ""
     
+    @Published var etaSecondsRemaining: Double? = nil
+    @Published var nameOfStop: String? = nil
+    
     /// Text representing the ETA of the shuttle relative to the user's selected stop.
-    @Published var etaDisplay = ""
+    var etaDisplay: String {
+        if let nameOfStop = nameOfStop,
+           let etaSecondsRemaining = etaSecondsRemaining {
+            return "\(ETAFormatter.formatSecondsRemaining(etaSecondsRemaining)) to \(nameOfStop)"
+        }
+        
+        return "No data available"
+    }
     
     @Published var etaListItems: [ShuttleInfoEtaListItem] = []
     
@@ -116,7 +126,8 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
                     for eta in etas {
                         guard let stop = eta.stop else { return }
                         if stop.id == stopId {
-                            self.etaDisplay = "\(ETAFormatter.formatSecondsRemaining(eta.secondsRemaining)) to \(stop.name)"
+                            self.etaSecondsRemaining = eta.secondsRemaining
+                            self.nameOfStop = stop.name
                         }
                         
                         self.etaListItems.append(ShuttleInfoEtaListItem(eta))
