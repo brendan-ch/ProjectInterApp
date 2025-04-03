@@ -34,4 +34,8 @@ class CustomNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelega
         var settings = await notificationCenter.notificationSettings()
         return settings.authorizationStatus
     }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
+        return .banner
+    }
 }
