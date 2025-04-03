@@ -55,6 +55,14 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
     var isNotificationScheduled: Bool {
         return secondsThresholdForNotification != nil
     }
+    var notificationButtonText: String {
+        if let secondsThresholdForNotification = secondsThresholdForNotification {
+            let minutesRemaining = Int(secondsThresholdForNotification / 60)
+            return "Cancel \(minutesRemaining)-minute notification"
+        } else {
+            return "Notify me when nearby"
+        }
+    }
     
     var apolloClient: ApolloClientProtocol?
     

@@ -77,13 +77,7 @@ struct ShuttleInfoContentView: View {
             }) {
                 HStack {
                     Spacer()
-                    if isNotificationScheduled {
-                        Image(systemName: "multiply")
-                        Text("Cancel notification")
-                    } else {
-                        Image(systemName: "bell.badge")
-                        Text("Notify me when nearby")
-                    }
+                    Text(viewModel.notificationButtonText)
                     Spacer()
                 }
             }
