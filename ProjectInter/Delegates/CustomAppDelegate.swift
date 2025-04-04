@@ -17,11 +17,8 @@ class CustomAppDelegate: NSObject, ObservableObject, UIApplicationDelegate {
     override init() {
         super.init()
         
-        // This is the jankiest solution ever
-        
-        let isRunningUITests = UserDefaults.standard.bool(forKey: UserDefaults.uiTestsKey)
-        print(isRunningUITests)
-        if isRunningUITests {
+        let shouldUseMockToken = UserDefaults.standard.bool(forKey: UserDefaults.mockNotificationsTokenKey)
+        if shouldUseMockToken {
             notificationTokenString = "mock-device"
         }
     }

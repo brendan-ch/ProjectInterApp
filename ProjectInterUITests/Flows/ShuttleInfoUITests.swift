@@ -36,6 +36,7 @@ final class ShuttleInfoUITests: BaseUITests {
     }
     
     func testNotificationMenuButtonsAndCancelButtonResultInButtonTextUpdate() {
+        useMockNotificationsToken()
         app.launch()
         
         var shuttleButtonSelected = false
