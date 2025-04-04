@@ -59,15 +59,5 @@ final class ShuttleInfoUITests: BaseUITests {
         notifyMeWhenNearbyStaticText.tap()
         
         assertButtonsInNotificationTimeframeSheetResultInUIUpdate()
-        
-                
-    }
-    
-    func testNotificationMenuButtonIsHiddenIfShuttleIsNearby() {
-        
-    }
-    
-    func testNotificationButtonIsDisabledIfShuttleIsNearby() {
-        
     }
 }
