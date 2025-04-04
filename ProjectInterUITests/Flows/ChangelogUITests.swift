@@ -10,10 +10,7 @@ import XCTest
 final class ChangelogUITests: BaseUITests {
     override func setUpWithError() throws {
         try super.setUpWithError()
-        
-        // These launch arguments are automatically set in UserDefaults
-        // https://sarunw.com/posts/how-to-set-userdefaults-value-with-launch-arguments/
-        app.launchArguments += ["-setupCompleted", "1"]
+        skipSetupFlow()
     }
     
     func testOpenChangelogOpensTheWebView() {

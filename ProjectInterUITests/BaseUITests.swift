@@ -19,6 +19,12 @@ class BaseUITests: XCTestCase {
         app = XCUIApplication()
     }
     
+    func skipSetupFlow() {
+        // These launch arguments are automatically set in UserDefaults
+        // https://sarunw.com/posts/how-to-set-userdefaults-value-with-launch-arguments/
+        app.launchArguments += ["-setupCompleted", "1"]
+    }
+    
 
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
