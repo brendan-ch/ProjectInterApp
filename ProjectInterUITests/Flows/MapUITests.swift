@@ -70,7 +70,7 @@ final class MapUITests: BaseUITests {
         var shuttleButtonTapped = false
         
         executeCallbackForEachStop(shouldExitCallbackLoop: {
-            if !attemptToSelectShuttleButtonOnMap() {
+            if !attemptToSelectShuttleButton() {
                 return false
             }
             
@@ -90,7 +90,7 @@ final class MapUITests: BaseUITests {
         var shuttleButtonTapped = false
         
         executeCallbackForEachStop(shouldExitCallbackLoop: {
-            if !attemptToSelectShuttleButtonOnMap() {
+            if !attemptToSelectShuttleButton() {
                 return false
             }
 

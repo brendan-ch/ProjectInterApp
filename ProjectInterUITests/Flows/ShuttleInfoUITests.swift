@@ -42,7 +42,7 @@ final class ShuttleInfoUITests: BaseUITests {
         var shuttleButtonSelected = false
         
         executeCallbackForEachStop(shouldExitCallbackLoop: {
-            if !attemptToSelectShuttleButtonOnMap() {
+            if !attemptToSelectShuttleButton() {
                 return false
             }
             shuttleButtonSelected = true

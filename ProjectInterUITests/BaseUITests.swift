@@ -71,7 +71,7 @@ class BaseUITests: XCTestCase {
         }
     }
 
-    func attemptToSelectShuttleButtonOnMap() -> Bool {
+    func attemptToSelectShuttleButton() -> Bool {
         let firstMatchExists = app.otherElements.buttons["Shuttle"].waitForExistence(timeout: 20)
         if !firstMatchExists {
             return false
