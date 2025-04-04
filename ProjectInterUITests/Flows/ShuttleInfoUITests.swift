@@ -11,7 +11,7 @@ final class ShuttleInfoUITests: BaseUITests {
     override func setUpWithError() throws {
         try super.setUpWithError()
         
-        app.launchArguments += ["setupCompleted", "1"]
+        app.launchArguments += ["-setupCompleted", "1"]
     }
     
     func assertButtonsInNotificationTimeframeSheetResultInUIUpdate() {
