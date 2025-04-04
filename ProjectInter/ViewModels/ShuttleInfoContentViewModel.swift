@@ -56,7 +56,7 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
             return "\(ETAFormatter.formatSecondsRemaining(etaSecondsRemaining)) to \(nameOfStop)"
         }
         
-        return "No data available"
+        return "ETA currently not available"
     }
     
     @Published var etaListItems: [ShuttleInfoEtaListItem] = []
