@@ -14,6 +14,18 @@ class CustomAppDelegate: NSObject, ObservableObject, UIApplicationDelegate {
     @Published var notificationTokenString: String?
     @Published var notificationCenterDelegate = CustomNotificationCenterDelegate()
     
+    override init() {
+        super.init()
+        
+        // This is the jankiest solution ever
+        
+        let isRunningUITests = UserDefaults.standard.bool(forKey: UserDefaults.uiTestsKey)
+        print(isRunningUITests)
+        if isRunningUITests {
+            notificationTokenString = "mock-device"
+        }
+    }
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         Task {
             await registerForRemoteNotificationsIfPermissionGranted(UIApplication.shared)
