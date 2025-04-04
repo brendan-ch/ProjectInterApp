@@ -10,4 +10,5 @@ import Foundation
 extension UserDefaults {
     static var setupCompletedKey: String { "setupCompleted" }
     static var lastViewedChangelogVersionKey: String { "lastViewedChangelogVersion" }
+    static var uiTestsKey: String { "uiTests" }
 }
