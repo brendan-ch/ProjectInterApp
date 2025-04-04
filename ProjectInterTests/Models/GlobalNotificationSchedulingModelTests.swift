@@ -30,7 +30,8 @@ class GlobalNotificationSchedulingModelTests {
     let arguments = NotificationNetworkArguments(
         deviceId: "1",
         shuttleId: "1",
-        stopId: "1"
+        stopId: "1",
+        secondsThreshold: 240
     )
     
     @Test func scheduleNotificationSchedulesNotificationWithApollo() async throws {

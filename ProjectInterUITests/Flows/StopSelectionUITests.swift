@@ -10,8 +10,7 @@ import XCTest
 final class StopSelectionUITests: BaseUITests {
     override func setUpWithError() throws {
         try super.setUpWithError()
-        
-        app.launchArguments += ["-setupCompleted", "1"]
+        skipSetupFlow()
     }
     
     func testOpenAndClosingFlow() {

@@ -13,7 +13,7 @@ import ProjectInterOperations
 
 class ShuttleInfoContentViewModelMockData {
     static let defaultMock = Mock<Query>(
-        isNotificationScheduled: true,
+        secondsThresholdForNotification: 239,
         system: .init(
             shuttle: .init(
                 etas: [
@@ -38,7 +38,7 @@ class ShuttleInfoContentViewModelMockData {
     )
     
     static let secondaryMock = Mock<Query>(
-        isNotificationScheduled: false,
+        secondsThresholdForNotification: nil,
         system: .init(
             shuttle: .init(
                 etas: [
@@ -102,6 +102,9 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.etaListItems[1].secondsRemaining == 125)
         
         #expect(viewModel.isNotificationScheduled)
+        #expect(viewModel.secondsThresholdForNotification == 239)
+        
+        #expect(viewModel.notificationButtonText == "Cancel 3-minute notification")
     }
     
     func assertViewModelDataForSecondaryMock(viewModel: ShuttleInfoContentViewModel) {
@@ -115,6 +118,9 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.etaListItems[1].secondsRemaining == 306)
         
         #expect(!viewModel.isNotificationScheduled)
+        #expect(viewModel.secondsThresholdForNotification == nil)
+        
+        #expect(viewModel.notificationButtonText == "Notify me when nearby")
     }
     
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
@@ -196,7 +202,7 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         await viewModel.refreshDataOnce(arguments: arguments)
         
         #expect(viewModel.name == "")
-        #expect(viewModel.etaDisplay == "")
+        #expect(viewModel.etaDisplay == "ETA currently not available")
     }
     
     @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
@@ -206,6 +212,6 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         await viewModel.refreshDataOnce(arguments: arguments)
         
         #expect(viewModel.name == "")
-        #expect(viewModel.etaDisplay == "")
+        #expect(viewModel.etaDisplay == "ETA currently not available")
     }
 }

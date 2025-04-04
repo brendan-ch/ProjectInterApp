@@ -10,28 +10,9 @@ import XCTest
 final class MapUITests: BaseUITests {
     override func setUpWithError() throws {
         try super.setUpWithError()
-        app.launchArguments += ["-setupCompleted", "1"]
+        skipSetupFlow()
     }
     
-    
-    func attemptToSelectShuttleButton() -> Bool {
-        let firstMatchExists = app.otherElements.buttons["Shuttle"].waitForExistence(timeout: 20)
-        if !firstMatchExists {
-            return false
-        }
-        
-        sleep(5)
-        
-        app.buttons["Shuttle"].firstMatch.forceTapElement()
-        let shuttleTextExists = app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 5)
-        if !shuttleTextExists {
-            // Handle cases where the selected stop may be blocking the shuttle,
-            // in which case the map should handle the correct selection the second time
-            app.buttons["Shuttle"].firstMatch.forceTapElement()
-        }
-        
-        return true
-    }
     
     func testRouteIsShownWhenRouteIsSelected() {
         app.launch()

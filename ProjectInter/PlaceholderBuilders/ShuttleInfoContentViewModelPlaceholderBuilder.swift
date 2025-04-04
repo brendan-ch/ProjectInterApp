@@ -11,7 +11,8 @@ class ShuttleInfoContentViewModelPlaceholderBuilder: PlaceholderBuilderProtocol 
     func build() -> ShuttleInfoContentViewModel {
         let model = ShuttleInfoContentViewModel()
         model.name = "Red Shuttle 17"
-        model.etaDisplay = "5 min away"
+        model.nameOfStop = "Chapman Court"
+        model.etaSecondsRemaining = 20
         
         model.etaListItems = [
             .init(stopName: "Chapman Court", secondsRemaining: 20, stopId: "0"),

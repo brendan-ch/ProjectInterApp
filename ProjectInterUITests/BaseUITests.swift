@@ -17,6 +17,18 @@ class BaseUITests: XCTestCase {
 
         // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
         app = XCUIApplication()
+        
+        app.launchArguments += ["-uiTests", "1"]
+    }
+    
+    func skipSetupFlow() {
+        // These launch arguments are automatically set in UserDefaults
+        // https://sarunw.com/posts/how-to-set-userdefaults-value-with-launch-arguments/
+        app.launchArguments += ["-setupCompleted", "1"]
+    }
+    
+    func useMockNotificationsToken() {
+        app.launchArguments += ["-mockNotificationsToken", "1"]
     }
     
 
@@ -71,4 +83,22 @@ class BaseUITests: XCTestCase {
         }
     }
 
+    func attemptToSelectShuttleButton() -> Bool {
+        let firstMatchExists = app.otherElements.buttons["Shuttle"].waitForExistence(timeout: 20)
+        if !firstMatchExists {
+            return false
+        }
+        
+        sleep(5)
+        
+        app.buttons["Shuttle"].firstMatch.forceTapElement()
+        let shuttleTextExists = app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 5)
+        if !shuttleTextExists {
+            // Handle cases where the selected stop may be blocking the shuttle,
+            // in which case the map should handle the correct selection the second time
+            app.buttons["Shuttle"].firstMatch.forceTapElement()
+        }
+        
+        return true
+    }
 }

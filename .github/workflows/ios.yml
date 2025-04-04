@@ -32,6 +32,7 @@ jobs:
           tar -xzf apollo-ios-cli.tar.gz
           chmod +x apollo-ios-cli
           ./apollo-ios-cli generate
+          ./apollo-ios-cli generate
 
       - name: Set default scheme
         working-directory: app
@@ -120,6 +121,7 @@ jobs:
           curl -L $CLI_URL -o apollo-ios-cli.tar.gz
           tar -xzf apollo-ios-cli.tar.gz
           chmod +x apollo-ios-cli
+          ./apollo-ios-cli generate
           ./apollo-ios-cli generate
 
       - name: Set default scheme

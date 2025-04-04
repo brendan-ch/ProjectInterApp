@@ -46,12 +46,33 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
     /// Name of the shuttle to display.
     @Published var name: String = ""
     
+    @Published var etaSecondsRemaining: Double? = nil
+    @Published var nameOfStop: String? = nil
+    
     /// Text representing the ETA of the shuttle relative to the user's selected stop.
-    @Published var etaDisplay = ""
+    var etaDisplay: String {
+        if let nameOfStop = nameOfStop,
+           let etaSecondsRemaining = etaSecondsRemaining {
+            return "\(ETAFormatter.formatSecondsRemaining(etaSecondsRemaining)) to \(nameOfStop)"
+        }
+        
+        return "ETA currently not available"
+    }
     
     @Published var etaListItems: [ShuttleInfoEtaListItem] = []
     
-    @Published private(set) var isNotificationScheduled: Bool = false
+    @Published private(set) var secondsThresholdForNotification: Int? = nil
+    var isNotificationScheduled: Bool {
+        return secondsThresholdForNotification != nil
+    }
+    var notificationButtonText: String {
+        if let secondsThresholdForNotification = secondsThresholdForNotification {
+            let minutesRemaining = Int(secondsThresholdForNotification / 60)
+            return "Cancel \(minutesRemaining)-minute notification"
+        } else {
+            return "Notify me when nearby"
+        }
+    }
     
     var apolloClient: ApolloClientProtocol?
     
@@ -105,7 +126,8 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
                     for eta in etas {
                         guard let stop = eta.stop else { return }
                         if stop.id == stopId {
-                            self.etaDisplay = "\(ETAFormatter.formatSecondsRemaining(eta.secondsRemaining)) to \(stop.name)"
+                            self.etaSecondsRemaining = eta.secondsRemaining
+                            self.nameOfStop = stop.name
                         }
                         
                         self.etaListItems.append(ShuttleInfoEtaListItem(eta))
@@ -115,9 +137,7 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
                     }
                 }
                 
-                if let isNotificationScheduled = data.isNotificationScheduled {
-                    self.isNotificationScheduled = isNotificationScheduled
-                }
+                self.secondsThresholdForNotification = data.secondsThresholdForNotification
             }
         }
     }
