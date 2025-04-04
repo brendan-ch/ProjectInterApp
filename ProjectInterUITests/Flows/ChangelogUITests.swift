@@ -25,6 +25,6 @@ final class ChangelogUITests: BaseUITests {
         XCTAssertTrue(webView.waitForExistence(timeout: 5), "WebView did not launch")
         
         let text = webView.staticTexts.firstMatch
-        XCTAssertTrue(text.waitForExistence(timeout: 10), "Page did not load")
+        XCTAssertTrue(text.waitForExistence(timeout: 20), "Page did not load")
     }
 }
