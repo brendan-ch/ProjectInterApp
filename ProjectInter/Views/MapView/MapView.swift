@@ -34,6 +34,8 @@ struct MapView: View {
     /// Backing view model.
     @StateObject var viewModel = MapViewModel()
     
+    var tabSelection: Tabs
+    
     var mapViewNetworkArguments: MapViewNetworkArguments? {
         guard let systemId = globalDataState.selectedSystem?.id else { return nil }
         
@@ -243,7 +245,7 @@ extension MapView {
     let routeToSelect = viewModel.routes.first!
     globalDataModel.selectedRouteId = routeToSelect.id
     
-    return MapView(viewModel: viewModel)
+    return MapView(viewModel: viewModel, tabSelection: .shuttles)
         .environmentObject(globalDataModel)
         .environmentObject(globalStopsModel)
 }

@@ -137,9 +137,9 @@ struct ContentView: View {
     
     func buildMapView() -> some View {
         if let mapViewModel = mapViewModel {
-            return MapView(viewModel: mapViewModel)
+            return MapView(viewModel: mapViewModel, tabSelection: tabSelection)
         }
-        return MapView()
+        return MapView(tabSelection: tabSelection)
     }
     
     func buildRouteListView() -> some View {
