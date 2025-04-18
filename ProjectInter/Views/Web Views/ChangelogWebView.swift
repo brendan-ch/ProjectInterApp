@@ -8,11 +8,24 @@
 import SwiftUI
 
 struct ChangelogWebView: View {
+    @Environment(\.dismiss) var dismiss
+    
     let url = URL(string: "https://interchange.bchen.dev/changelog")
     
     var body: some View {
-        if let url = url {
-            NonPersistentWebView(url: url, accessibilityIdentifier: "ChangelogWebView")
+        NavigationStack {
+            if let url = url {
+                NonPersistentWebView(url: url, accessibilityIdentifier: "ChangelogWebView")
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button {
+                                dismiss()
+                            } label: {
+                                Text("Close")
+                            }
+                        }
+                    }
+            }
         }
     }
 }
