@@ -26,7 +26,7 @@ struct SettingsContentView: View {
                             showChangelogView = true
                             changelogVersionModel.updateLastViewedChangelogVersion()
                         } label: {
-                            Text("View changelog")
+                            Text("See what's new")
                         }
                     }
                     .frame(
