@@ -121,7 +121,24 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
     }
     
     @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
+        let mockClient = MockApolloClient()
+        mockClient.queryMock = defaultMock
         
+        let viewModel = ParkingStructuresListContentViewModel(apolloClient: mockClient)
+        
+        let networkArguments = defaultArguments
+        viewModel.startRefreshingData(arguments: networkArguments, sleepDuration: .milliseconds(100))
+        
+        try? await Task.sleep(for: .milliseconds(500))
+        
+        assertViewModelDataForDefaultMock(viewModel: viewModel)
+        
+        let updatedMock = secondaryMock
+        mockClient.queryMock = updatedMock
+        
+        try? await Task.sleep(for: .milliseconds(500))
+        
+        assertViewModelDataForSecondaryMock(viewModel: viewModel)
     }
     
     @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
