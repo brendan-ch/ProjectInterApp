@@ -8,15 +8,23 @@
 import SwiftUI
 
 struct SettingsContentView: View {
+    @State private var showChangelogView = false
+    @StateObject var changelogVersionModel = AppVersionModel()
+    
     var body: some View {
         RootSheetContentView(title: "Settings") {
             VStack(spacing: 0) {
                 GroupBox(label: Text("Version")) {
                     VStack(alignment: .leading) {
-                        Text("App version: 1.0.0")
+                        if let marketingVersion = changelogVersionModel.getCurrentAppMarketingVersion() {
+                            Text("App version: \(marketingVersion)")
+                        } else {
+                            Text("App version: N/A")
+                        }
                         
                         Button {
-                            
+                            showChangelogView = true
+                            changelogVersionModel.updateLastViewedChangelogVersion()
                         } label: {
                             Text("View changelog")
                         }
@@ -47,6 +55,9 @@ struct SettingsContentView: View {
                 }
                 .padding()
             }
+        }
+        .sheet(isPresented: $showChangelogView) {
+            ChangelogWebView()
         }
     }
 }

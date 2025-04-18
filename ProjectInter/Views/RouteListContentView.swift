@@ -68,11 +68,6 @@ struct RouteListContentView: NetworkView {
                 
                 Divider()
             }
-            
-            RouteListFooter {
-                showChangelogView = true
-            }
-            .padding()
         }
         .onAppear {
             restartDataUpdates()
@@ -85,9 +80,6 @@ struct RouteListContentView: NetworkView {
         }
         .sheet(isPresented: $showStopSelectionView) {
             StopSelectionView()
-        }
-        .sheet(isPresented: $showChangelogView) {
-            ChangelogWebView()
         }
     }
 }
@@ -119,40 +111,6 @@ struct RouteListItem: View {
             }
             .listRowBackground(Color.clear)
             .contentShape(Rectangle())
-        }
-    }
-}
-
-struct RouteListFooter: View {
-    @StateObject var changelogVersionModel = AppVersionModel()
-    
-    var onChangelogButtonPress: () -> Void
-    
-    var body: some View {
-        VStack(alignment: .center, spacing: 4) {
-            if let marketingVersion = changelogVersionModel.getCurrentAppMarketingVersion() {
-                Text("Interchange version \(marketingVersion)")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            }
-            
-            Text("This app is a work in progress.")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-            
-            Button {
-                onChangelogButtonPress()
-                changelogVersionModel.updateLastViewedChangelogVersion()
-            } label: {
-                HStack(alignment: .center, spacing: 4) {
-                    Text("See what's new")
-                    if changelogVersionModel.shouldShowNewUpdatesIndicator {
-                        Circle()
-                            .frame(width: 8, height: 8)
-                    }
-                }
-            }
-            .font(.footnote)
         }
     }
 }
