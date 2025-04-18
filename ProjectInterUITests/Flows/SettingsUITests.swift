@@ -7,7 +7,7 @@
 
 import XCTest
 
-final class ChangelogUITests: BaseUITests {
+final class SettingsUITests: BaseUITests {
     override func setUpWithError() throws {
         try super.setUpWithError()
         skipSetupFlow()
@@ -15,6 +15,11 @@ final class ChangelogUITests: BaseUITests {
     
     func testOpenChangelogOpensTheWebView() {
         app.launch()
+        
+        let tabButton = app.tabBars.buttons["Settings"]
+        let tabButtonExists = tabButton.waitForExistence(timeout: 10)
+        XCTAssert(tabButtonExists)
+        tabButton.tap()
         
         let changelogButton = app.buttons["See what's new"]
         changelogButton.tap()

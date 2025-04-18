@@ -109,7 +109,7 @@ struct ContentView: View {
                 buildParkingStructuresView()
             }
             Tab("Settings", systemImage: "gear", value: .settings) {
-                Text("Settings")
+                buildSettingsView()
             }
         }
         .sheetViewModifier(detentSelection: $routeListSheetSelectedDetent)
@@ -126,6 +126,10 @@ struct ContentView: View {
                     }
             }
         }
+    }
+    
+    func buildSettingsView() -> some View {
+        return SettingsContentView()
     }
     
     func buildParkingStructuresView() -> some View {

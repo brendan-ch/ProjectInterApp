@@ -35,58 +35,38 @@ struct RouteListContentView: NetworkView {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            HStack(alignment: .top) {
+        RootSheetContentView(title: "Routes") {
+            HStack {
                 VStack(alignment: .leading) {
-                    Text("Routes")
-                        .font(.title2)
-                        .bold()
+                    HStack(spacing: 4) {
+                        Text("Current stop: \(globalStopsState.selectedStop?.name ?? "")")
+                        if locationManagerState.locationIsUpdating,
+                           globalStopsState.selectedStop == nil {
+                            Text("Loading...")
+                        }
+                        
+                        if globalStopsState.isAutomaticWhenLocationIsAvailable {
+                            Image(systemName: "location.fill")
+                                .accessibilityLabel("Automatic selection enabled")
+                        }
+                    }
+                    Button("Change stop") {
+                        showStopSelectionView = true
+                    }
                 }
                 Spacer()
             }
-            .padding(EdgeInsets(top: 16, leading: 16, bottom: 8, trailing: 16))
+            .padding(.horizontal)
             
             Divider()
-                .padding(EdgeInsets(top: 0, leading: 0, bottom: 8, trailing: 0))
-
-            ScrollView {
-                HStack {
-                    VStack(alignment: .leading) {
-                        HStack(spacing: 4) {
-                            Text("Current stop: \(globalStopsState.selectedStop?.name ?? "")")
-                            if locationManagerState.locationIsUpdating,
-                               globalStopsState.selectedStop == nil {
-                                Text("Loading...")
-                            }
-                            
-                            if globalStopsState.isAutomaticWhenLocationIsAvailable {
-                                Image(systemName: "location.fill")
-                                    .accessibilityLabel("Automatic selection enabled")
-                            }
-                        }
-                        Button("Change stop") {
-                            showStopSelectionView = true
-                        }
-                    }
-                    Spacer()
+            ForEach(viewModel.routes) { route in
+                RouteListItem(route: route) { selectedRoute in
+                    globalDataModel.selectedRouteId = route.id
                 }
                 .padding(.horizontal)
+                .buttonStyle(.plain)
                 
                 Divider()
-                ForEach(viewModel.routes) { route in
-                    RouteListItem(route: route) { selectedRoute in
-                        globalDataModel.selectedRouteId = route.id
-                    }
-                    .padding(.horizontal)
-                    .buttonStyle(.plain)
-                    
-                    Divider()
-                }
-                
-                RouteListFooter {
-                    showChangelogView = true
-                }
-                .padding()
             }
         }
         .onAppear {
@@ -100,9 +80,6 @@ struct RouteListContentView: NetworkView {
         }
         .sheet(isPresented: $showStopSelectionView) {
             StopSelectionView()
-        }
-        .sheet(isPresented: $showChangelogView) {
-            ChangelogWebView()
         }
     }
 }
@@ -134,40 +111,6 @@ struct RouteListItem: View {
             }
             .listRowBackground(Color.clear)
             .contentShape(Rectangle())
-        }
-    }
-}
-
-struct RouteListFooter: View {
-    @StateObject var changelogVersionModel = AppVersionModel()
-    
-    var onChangelogButtonPress: () -> Void
-    
-    var body: some View {
-        VStack(alignment: .center, spacing: 4) {
-            if let marketingVersion = changelogVersionModel.getCurrentAppMarketingVersion() {
-                Text("Interchange version \(marketingVersion)")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            }
-            
-            Text("This app is a work in progress.")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-            
-            Button {
-                onChangelogButtonPress()
-                changelogVersionModel.updateLastViewedChangelogVersion()
-            } label: {
-                HStack(alignment: .center, spacing: 4) {
-                    Text("See what's new")
-                    if changelogVersionModel.shouldShowNewUpdatesIndicator {
-                        Circle()
-                            .frame(width: 8, height: 8)
-                    }
-                }
-            }
-            .font(.footnote)
         }
     }
 }

@@ -7,7 +7,7 @@
 
 import XCTest
 
-final class TabNavigationUITests: BaseUITests {
+final class ParkingStructuresUITests: BaseUITests {
     override func setUpWithError() throws {
         try super.setUpWithError()
         skipSetupFlow()
