@@ -50,5 +50,30 @@ class ParkingStructuresListContentViewModel: NetworkDataModelProtocol {
     
     func refreshDataOnce(arguments: ParkingStructuresNetworkingArguments) async {
         guard let apolloClient = apolloClient else { return }
+        
+        return await withCheckedContinuation { continuation in
+            var continuationIsActive = true
+            apolloClient.fetch(
+                query: GetParkingStructuresListDataQuery(systemId: arguments.systemId)
+            ) { result in
+                if !continuationIsActive {
+                    return
+                }
+                
+                switch result {
+                case .failure(let error):
+                    // TODO: migrate to Logger instead of print
+                    // https://www.reddit.com/r/Xcode/comments/1862x8h/remove_warnings_and_runtime_issues_from_xc15/
+                    print("Error fetching parking structures list data: \(error)")
+                case .success(let result):
+                    if let structures = result.data?.system?.parkingSystem?.parkingStructures {
+                        self.structures = structures.map(ParkingStructuresListParkingStructure.init)
+                    }
+                }
+                
+                continuationIsActive = false
+                continuation.resume()
+            }
+        }
     }
 }
