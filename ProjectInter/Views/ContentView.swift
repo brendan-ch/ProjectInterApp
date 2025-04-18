@@ -17,7 +17,6 @@ struct SheetViewModifier: ViewModifier {
         content
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .presentationDetents(standardPresentationDetents, selection: detentSelection)
-            .presentationBackground(.ultraThickMaterial)
             .presentationBackgroundInteraction(.enabled)
             .interactiveDismissDisabled()
     }
