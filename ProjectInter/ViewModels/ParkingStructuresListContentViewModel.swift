@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Apollo
 import ProjectInterOperations
 
 // MARK: - Models
@@ -41,7 +42,13 @@ class ParkingStructuresListContentViewModel: NetworkDataModelProtocol {
     
     var dataRefreshLoopTask: Task<Void, any Error>?
     
+    var apolloClient: ApolloClientProtocol?
+    
+    init(apolloClient: ApolloClientProtocol? = nil) {
+        self.apolloClient = apolloClient
+    }
+    
     func refreshDataOnce(arguments: ParkingStructuresNetworkingArguments) async {
-        // TODO: Implement this method
+        guard let apolloClient = apolloClient else { return }
     }
 }
