@@ -50,49 +50,53 @@ struct MapView: View {
         Map(position: $viewModel.position, interactionModes: [.pan, .zoom, .rotate], selection: $selectedTag) {
             UserAnnotation()
             
-            // MARK: Polyline rendering
-            
-            if let selectedRouteId = globalDataState.selectedRouteId {
-                let routeToDisplay = viewModel.routes.first { route in
-                    route.id == selectedRouteId
-                }
+            if tabSelection == .shuttles {
+                // MARK: Polyline rendering
                 
-                if let routeToDisplay = routeToDisplay {
-                    MapPolyline(coordinates: routeToDisplay.polylineCoordinates)
-                        .stroke(Color(hex: routeToDisplay.colorHex), lineWidth: 5)
-                }
-            } else {
-                ForEach(viewModel.routes) { route in
-                    if let selectedStop = globalStopsModel.selectedStop {
-                        if selectedStop.routeIds.contains(route.id) {
-                            MapPolyline(coordinates: route.polylineCoordinates)
-                                .stroke(Color(hex: route.colorHex).opacity(0.2), lineWidth: 5)
+                if let selectedRouteId = globalDataState.selectedRouteId {
+                    let routeToDisplay = viewModel.routes.first { route in
+                        route.id == selectedRouteId
+                    }
+                    
+                    if let routeToDisplay = routeToDisplay {
+                        MapPolyline(coordinates: routeToDisplay.polylineCoordinates)
+                            .stroke(Color(hex: routeToDisplay.colorHex), lineWidth: 5)
+                    }
+                } else {
+                    ForEach(viewModel.routes) { route in
+                        if let selectedStop = globalStopsModel.selectedStop {
+                            if selectedStop.routeIds.contains(route.id) {
+                                MapPolyline(coordinates: route.polylineCoordinates)
+                                    .stroke(Color(hex: route.colorHex).opacity(0.2), lineWidth: 5)
+                            }
                         }
                     }
                 }
-            }
-            
-            // MARK: Shuttle rendering
-            
-            ForEach(viewModel.shuttles) { shuttle in
-                let associatedStop = getAssociatedStop(for: shuttle, in: viewModel.stops)
                 
-                if shouldDisplayShuttleOnMap(shuttle, associatedStop: associatedStop) {
-                    buildShuttleAnnotation(shuttle: shuttle)
-                }
-            }
-            
-            // MARK: Stop rendering
-            
-            if let routeId = globalDataState.selectedRouteId {
-                ForEach(viewModel.stops) { stop in
-                    if stop.routeIds.contains(routeId) {
-                        buildStopAnnotation(stop: stop)
+                // MARK: Shuttle rendering
+                
+                ForEach(viewModel.shuttles) { shuttle in
+                    let associatedStop = getAssociatedStop(for: shuttle, in: viewModel.stops)
+                    
+                    if shouldDisplayShuttleOnMap(shuttle, associatedStop: associatedStop) {
+                        buildShuttleAnnotation(shuttle: shuttle)
                     }
                 }
-            } else if let selectedStop = globalStopsModel.selectedStop,
-                      let stopToRender = viewModel.stops.first(where: { $0.id == selectedStop.id }) {
-                buildStopAnnotation(stop: stopToRender)
+                
+                // MARK: Stop rendering
+                
+                if let routeId = globalDataState.selectedRouteId {
+                    ForEach(viewModel.stops) { stop in
+                        if stop.routeIds.contains(routeId) {
+                            buildStopAnnotation(stop: stop)
+                        }
+                    }
+                } else if let selectedStop = globalStopsModel.selectedStop,
+                          let stopToRender = viewModel.stops.first(where: { $0.id == selectedStop.id }) {
+                    buildStopAnnotation(stop: stopToRender)
+                }
+            } else if tabSelection == .parking {
+                // TODO: render a different set of content
             }
         }
         .mapControls {
