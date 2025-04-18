@@ -41,27 +41,37 @@ struct RouteListContentView: View {
                     Text("Routes")
                         .font(.title2)
                         .bold()
-                    HStack(spacing: 4) {
-                        Text("Current stop: \(globalStopsState.selectedStop?.name ?? "")")
-                        if locationManagerState.locationIsUpdating,
-                           globalStopsState.selectedStop == nil {
-                            Text("Loading...")
-                        }
-                        
-                        if globalStopsState.isAutomaticWhenLocationIsAvailable {
-                            Image(systemName: "location.fill")
-                                .accessibilityLabel("Automatic selection enabled")
-                        }
-                    }
-                    Button("Change stop") {
-                        showStopSelectionView = true
-                    }
                 }
                 Spacer()
             }
-            .padding()
+            .padding(EdgeInsets(top: 16, leading: 16, bottom: 8, trailing: 16))
             
+            Divider()
+                .padding(EdgeInsets(top: 0, leading: 0, bottom: 8, trailing: 0))
+
             ScrollView {
+                HStack {
+                    VStack(alignment: .leading) {
+                        HStack(spacing: 4) {
+                            Text("Current stop: \(globalStopsState.selectedStop?.name ?? "")")
+                            if locationManagerState.locationIsUpdating,
+                               globalStopsState.selectedStop == nil {
+                                Text("Loading...")
+                            }
+                            
+                            if globalStopsState.isAutomaticWhenLocationIsAvailable {
+                                Image(systemName: "location.fill")
+                                    .accessibilityLabel("Automatic selection enabled")
+                            }
+                        }
+                        Button("Change stop") {
+                            showStopSelectionView = true
+                        }
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal)
+                
                 // Display location banner if not authorized
                 if locationManagerState.authorizationStatus == .notDetermined {
                     EnableLocationAccessGroupBoxView {
@@ -69,6 +79,7 @@ struct RouteListContentView: View {
                     }
                 }
                 
+                Divider()
                 ForEach(viewModel.routes) { route in
                     RouteListItem(route: route) { selectedRoute in
                         globalDataState.selectedRouteId = route.id
