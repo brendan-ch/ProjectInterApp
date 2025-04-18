@@ -80,33 +80,40 @@ struct ContentView: View {
     }
     
     func buildSheetContent() -> some View {
-        buildRouteListView()
-            .sheet(isPresented: .constant(showRouteInfo)) {
-                buildRouteInfoView()
-                    .sheet(isPresented: .constant(showShuttleInfoOverRouteInfo)) {
+        TabView {
+            Tab("Shuttles", systemImage: "bus.fill") {
+                buildRouteListView()
+                    .sheet(isPresented: .constant(showRouteInfo)) {
+                        buildRouteInfoView()
+                            .sheet(isPresented: .constant(showShuttleInfoOverRouteInfo)) {
+                                buildShuttleInfoView()
+                                    .sheetViewModifier(detentSelection: $shuttleInfoSheetSelectedDetent)
+                            }
+                            .sheetViewModifier(detentSelection: $routeInfoSheetSelectedDetent)
+                    }
+                    .sheet(isPresented: .constant(showShuttleInfoOverRouteList)) {
                         buildShuttleInfoView()
                             .sheetViewModifier(detentSelection: $shuttleInfoSheetSelectedDetent)
                     }
-                    .sheetViewModifier(detentSelection: $routeInfoSheetSelectedDetent)
             }
-            .sheet(isPresented: .constant(showShuttleInfoOverRouteList)) {
-                buildShuttleInfoView()
-                    .sheetViewModifier(detentSelection: $shuttleInfoSheetSelectedDetent)
+            Tab("Parking", systemImage: "parkingsign.square.fill") {
+                Text("Parking data")
             }
-            .sheetViewModifier(detentSelection: $routeListSheetSelectedDetent)
-            .background {
-                // This changes for all the sheets, not just
-                // the currently selected one
-                // https://stackoverflow.com/questions/74423799/how-to-size-content-for-presentation-detents-in-swiftui
-                GeometryReader { proxy in
-                    Color.clear
-                        .onChange(of: proxy.size.height) {
-                            if proxy.size.height <= 360 {
-                                currentSheetHeight = proxy.size.height
-                            }
+        }
+        .sheetViewModifier(detentSelection: $routeListSheetSelectedDetent)
+        .background {
+            // This changes for all the sheets, not just
+            // the currently selected one
+            // https://stackoverflow.com/questions/74423799/how-to-size-content-for-presentation-detents-in-swiftui
+            GeometryReader { proxy in
+                Color.clear
+                    .onChange(of: proxy.size.height) {
+                        if proxy.size.height <= 360 {
+                            currentSheetHeight = proxy.size.height
                         }
-                }
+                    }
             }
+        }
     }
     
     func buildMapView() -> some View {
