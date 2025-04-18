@@ -35,59 +35,44 @@ struct RouteListContentView: View {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            HStack(alignment: .top) {
+        RootSheetContentView(title: "Routes") {
+            HStack {
                 VStack(alignment: .leading) {
-                    Text("Routes")
-                        .font(.title2)
-                        .bold()
+                    HStack(spacing: 4) {
+                        Text("Current stop: \(globalStopsState.selectedStop?.name ?? "")")
+                        if locationManagerState.locationIsUpdating,
+                           globalStopsState.selectedStop == nil {
+                            Text("Loading...")
+                        }
+                        
+                        if globalStopsState.isAutomaticWhenLocationIsAvailable {
+                            Image(systemName: "location.fill")
+                                .accessibilityLabel("Automatic selection enabled")
+                        }
+                    }
+                    Button("Change stop") {
+                        showStopSelectionView = true
+                    }
                 }
                 Spacer()
             }
-            .padding(EdgeInsets(top: 16, leading: 16, bottom: 8, trailing: 16))
+            .padding(.horizontal)
             
             Divider()
-                .padding(EdgeInsets(top: 0, leading: 0, bottom: 8, trailing: 0))
-
-            ScrollView {
-                HStack {
-                    VStack(alignment: .leading) {
-                        HStack(spacing: 4) {
-                            Text("Current stop: \(globalStopsState.selectedStop?.name ?? "")")
-                            if locationManagerState.locationIsUpdating,
-                               globalStopsState.selectedStop == nil {
-                                Text("Loading...")
-                            }
-                            
-                            if globalStopsState.isAutomaticWhenLocationIsAvailable {
-                                Image(systemName: "location.fill")
-                                    .accessibilityLabel("Automatic selection enabled")
-                            }
-                        }
-                        Button("Change stop") {
-                            showStopSelectionView = true
-                        }
-                    }
-                    Spacer()
+            ForEach(viewModel.routes) { route in
+                RouteListItem(route: route) { selectedRoute in
+                    globalDataState.selectedRouteId = route.id
                 }
                 .padding(.horizontal)
+                .buttonStyle(.plain)
                 
                 Divider()
-                ForEach(viewModel.routes) { route in
-                    RouteListItem(route: route) { selectedRoute in
-                        globalDataState.selectedRouteId = route.id
-                    }
-                    .padding(.horizontal)
-                    .buttonStyle(.plain)
-                    
-                    Divider()
-                }
-                
-                RouteListFooter {
-                    showChangelogView = true
-                }
-                .padding()
             }
+            
+            RouteListFooter {
+                showChangelogView = true
+            }
+            .padding()
         }
         .onAppear {
             if let apolloClient = globalDataState.apolloClient {
