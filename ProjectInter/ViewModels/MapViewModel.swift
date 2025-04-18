@@ -97,6 +97,12 @@ extension MapViewStop {
     }
 }
 
+/// Represents a parking structure on the map.
+struct MapParkingStructure: Identifiable {
+    var id: String
+    var coordinates: CLLocationCoordinate2D
+}
+
 // MARK: - Network arguments
 
 /// Information to pass into the network request for map data.
@@ -114,6 +120,7 @@ class MapViewModel: NetworkDataModelProtocol {
     @Published var routes: [MapViewRoute] = []
     @Published var shuttles: [MapViewShuttle] = []
     @Published var stops: [MapViewStop] = []
+    @Published var parkingStructures: [MapParkingStructure] = []
     
     var apolloClient: ApolloClientProtocol?
     
