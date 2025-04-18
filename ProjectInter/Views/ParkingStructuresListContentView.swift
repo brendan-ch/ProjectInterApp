@@ -10,6 +10,15 @@ import SwiftUI
 struct ParkingStructuresListContentView: View {
     @StateObject var viewModel = ParkingStructuresListContentViewModel()
     
+    @EnvironmentObject var globalDataModel: GlobalDataModel
+    
+    var networkArguments: ParkingStructuresNetworkingArguments? {
+        if let systemId = globalDataModel.selectedSystem?.id {
+            return .init(systemId: systemId)
+        }
+        return nil
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
             HStack(alignment: .top) {
@@ -49,6 +58,18 @@ struct ParkingStructuresListContentView: View {
                 }
             }
         }
+        .onAppear {
+            if let apolloClient = globalDataModel.apolloClient {
+                viewModel.apolloClient = apolloClient
+            }
+            
+            if let networkArguments = networkArguments {
+                viewModel.startRefreshingData(arguments: networkArguments)
+            }
+        }
+        .onDisappear {
+            viewModel.stopRefreshingData()
+        }
     }
 }
 
@@ -57,4 +78,5 @@ struct ParkingStructuresListContentView: View {
     let viewModel = builder.build()
     
     ParkingStructuresListContentView(viewModel: viewModel)
+        .environmentObject(GlobalDataModel())
 }
