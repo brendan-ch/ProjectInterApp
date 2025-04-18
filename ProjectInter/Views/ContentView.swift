@@ -28,6 +28,13 @@ extension View {
     }
 }
 
+enum Tabs {
+    case shuttles
+    case parking
+    case settings
+}
+
+
 /// The primary view of the app. Controls map height adjustment and
 /// which sheet is displayed.
 struct ContentView: View {
@@ -64,6 +71,8 @@ struct ContentView: View {
     // Controls the map height
     @State var currentSheetHeight: CGFloat = 360
     
+    @State var tabSelection: Tabs = .shuttles
+    
     var body: some View {
         ZStack(alignment: .bottom) {
             Group {
@@ -80,8 +89,8 @@ struct ContentView: View {
     }
     
     func buildSheetContent() -> some View {
-        TabView {
-            Tab("Shuttles", systemImage: "bus.fill") {
+        TabView(selection: $tabSelection) {
+            Tab("Shuttles", systemImage: "bus.fill", value: .shuttles) {
                 buildRouteListView()
                     .sheet(isPresented: .constant(showRouteInfo)) {
                         buildRouteInfoView()
@@ -96,10 +105,10 @@ struct ContentView: View {
                             .sheetViewModifier(detentSelection: $shuttleInfoSheetSelectedDetent)
                     }
             }
-            Tab("Parking", systemImage: "parkingsign.square.fill") {
+            Tab("Parking", systemImage: "parkingsign.square.fill", value: .parking) {
                 buildParkingStructuresView()
             }
-            Tab("Settings", systemImage: "gear") {
+            Tab("Settings", systemImage: "gear", value: .settings) {
                 Text("Settings")
             }
         }
