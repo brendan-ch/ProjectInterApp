@@ -9,7 +9,7 @@ import Foundation
 
 struct ParkingStructure {
     var address: String
-    var spacesAvailable: Int
+    var spotsAvailable: Int
     var capacity: Int
     var coordinates: RawCoordinates
     var name: String
