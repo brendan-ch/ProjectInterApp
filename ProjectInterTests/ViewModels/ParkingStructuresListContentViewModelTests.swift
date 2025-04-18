@@ -79,6 +79,8 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
     let secondaryMock = ParkingStructuresListContentViewModelTestsMockData.secondaryMock
     
     func assertViewModelDataForDefaultMock(viewModel: ParkingStructuresListContentViewModel) {
+        #expect(viewModel.structures.count == 2)
+        
         #expect(viewModel.structures[0].id == "1")
         #expect(viewModel.structures[1].id == "2")
         
@@ -93,6 +95,8 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
     }
     
     func assertViewModelDataForSecondaryMock(viewModel: ParkingStructuresListContentViewModel) {
+        #expect(viewModel.structures.count == 2)
+        
         #expect(viewModel.structures[0].id == "3")
         #expect(viewModel.structures[1].id == "4")
         
