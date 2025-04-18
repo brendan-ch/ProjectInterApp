@@ -72,13 +72,6 @@ struct RouteListContentView: View {
                 }
                 .padding(.horizontal)
                 
-                // Display location banner if not authorized
-                if locationManagerState.authorizationStatus == .notDetermined {
-                    EnableLocationAccessGroupBoxView {
-                        locationManagerState.requestAuthorization()
-                    }
-                }
-                
                 Divider()
                 ForEach(viewModel.routes) { route in
                     RouteListItem(route: route) { selectedRoute in
@@ -145,25 +138,6 @@ struct RouteListItem: View {
             .listRowBackground(Color.clear)
             .contentShape(Rectangle())
         }
-    }
-}
-
-struct EnableLocationAccessGroupBoxView: View {
-    var onPressGrant: () -> Void
-    
-    // TODO: fix the spacing
-    var body: some View {
-        GroupBox(label: Label("Enable Location Access", systemImage: "location")) {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("See times for your closest stop, get notifications for shuttles, and more.")
-                Button("Grant location access") {
-                    onPressGrant()
-                }
-            }
-        }
-        .padding(.horizontal)
-        .padding(.bottom, 8)
-        .presentationBackground(.ultraThickMaterial)
     }
 }
 
