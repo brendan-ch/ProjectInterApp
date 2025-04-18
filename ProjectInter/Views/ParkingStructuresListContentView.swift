@@ -8,11 +8,16 @@
 import SwiftUI
 
 struct ParkingStructuresListContentView: View {
+    @StateObject var viewModel = ParkingStructuresListContentViewModel()
+    
     var body: some View {
         Text("Parking structures")
     }
 }
 
 #Preview {
-    ParkingStructuresListContentView()
+    let builder = ParkingStructuresListContentViewModelPlaceholderBuilder()
+    let viewModel = builder.build()
+    
+    ParkingStructuresListContentView(viewModel: viewModel)
 }
