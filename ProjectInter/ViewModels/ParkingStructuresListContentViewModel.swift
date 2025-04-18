@@ -7,11 +7,9 @@
 
 import Foundation
 
-struct ParkingStructure: Identifiable {
-    var address: String
+struct ParkingStructuresListParkingStructure: Identifiable {
     var spotsAvailable: Int
     var capacity: Int
-    var coordinates: RawCoordinates
     var name: String
     var id: String
 }
@@ -20,7 +18,7 @@ struct ParkingStructuresNetworkingArguments {
 }
 
 class ParkingStructuresListContentViewModel: NetworkDataModelProtocol {
-    @Published var structures: [ParkingStructure] = []
+    @Published var structures: [ParkingStructuresListParkingStructure] = []
     
     typealias T = ParkingStructuresNetworkingArguments
     
