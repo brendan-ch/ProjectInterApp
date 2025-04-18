@@ -28,7 +28,7 @@ struct ParkingStructuresListContentView: View {
                     let currentCount = structure.capacity - structure.spotsAvailable
                     
                     VStack(spacing: 8) {
-                        VStack(spacing: 0) {
+                        VStack{
                             HStack {
                                 Text(structure.name)
                                     .font(.headline)
