@@ -99,6 +99,9 @@ struct ContentView: View {
             Tab("Parking", systemImage: "parkingsign.square.fill") {
                 Text("Parking data")
             }
+            Tab("Settings", systemImage: "gear") {
+                Text("Settings")
+            }
         }
         .sheetViewModifier(detentSelection: $routeListSheetSelectedDetent)
         .background {
