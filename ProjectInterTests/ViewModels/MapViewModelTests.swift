@@ -45,6 +45,23 @@ class MapViewModelTestsMockData {
     static var defaultMock: Mock<Query> {
         Mock<ProjectInterTestMocks.Query>(
             system: Mock<ProjectInterTestMocks.System>(
+                parkingSystem: .init(
+                    parkingStructures: [
+                        .init(
+                            coordinates: .init(
+                                latitude: 33.7945513,
+                                longitude: -117.8518707
+                            ),
+                            id: "1"
+                        ),
+                        .init(
+                            coordinates: .init(
+                                latitude: 33.792937,
+                                longitude: -117.854782
+                            )
+                        )
+                    ]
+                ),
                 routes: [
                     defaultRoute
                 ],
@@ -74,6 +91,7 @@ class MapViewModelTestsMockData {
     static var secondaryMock: Mock<Query> {
         Mock<ProjectInterTestMocks.Query>(
             system: .init(
+                parkingSystem: nil,
                 routes: [
                     .init(
                         color: "#000000",
