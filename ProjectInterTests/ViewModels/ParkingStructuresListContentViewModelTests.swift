@@ -57,7 +57,21 @@ class ParkingStructuresListContentViewModelTestsMockData {
     )
 }
 
-// TODO: Implement Apollo initializer for ParkingStructuresListParkingStructure + tests
+class ParkingStructuresListParkingStructureTests {
+    @Test func apolloDataInitializerInitializesData() {
+        let data = GetParkingStructuresListDataQuery.Data.from(ParkingStructuresListContentViewModelTestsMockData.defaultMock)
+        let parkingStructures = data.system!.parkingSystem!.parkingStructures!
+        
+        let constructedStructures = parkingStructures.map(ParkingStructuresListParkingStructure.init)
+        
+        for i in 0..<constructedStructures.count {
+            #expect(constructedStructures[i].id == parkingStructures[i].id)
+            #expect(constructedStructures[i].name == parkingStructures[i].name)
+            #expect(constructedStructures[i].spotsAvailable == parkingStructures[i].spotsAvailable)
+            #expect(constructedStructures[i].capacity == constructedStructures[i].capacity)
+        }
+    }
+}
 
 class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol {
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
