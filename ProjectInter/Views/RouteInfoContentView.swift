@@ -29,7 +29,7 @@ struct RouteInfoContentView: View {
     }
     
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
+        VStack {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
                     Text(viewModel.routeName)
@@ -50,28 +50,30 @@ struct RouteInfoContentView: View {
             }
             .padding()
             
-            Section {
-                VStack {
-                    ForEach(viewModel.shuttles) { upcomingDeparture in
-                        Divider()
-                        
-                        RouteInfoShuttleViewItem(shuttle: upcomingDeparture) { shuttle in
-                            globalDataState.selectedShuttleId = shuttle.id
+            HStack {
+                Text("Upcoming departures")
+                    .bold()
+                Spacer()
+            }
+            .padding(.horizontal)
+            
+            ScrollView(.vertical, showsIndicators: false) {
+                Section {
+                    VStack {
+                        ForEach(viewModel.shuttles) { upcomingDeparture in
+                            Divider()
+                            
+                            RouteInfoShuttleViewItem(shuttle: upcomingDeparture) { shuttle in
+                                globalDataState.selectedShuttleId = shuttle.id
+                            }
+                            .accessibilityLabel("Shuttle label in route info page")
+                            .accessibilityIdentifier(upcomingDeparture.id)
+                            .buttonStyle(.plain)
+                            .padding(.horizontal)
+                            
                         }
-                        .accessibilityLabel("Shuttle label in route info page")
-                        .accessibilityIdentifier(upcomingDeparture.id)
-                        .buttonStyle(.plain)
-                        .padding(.horizontal)
-                        
                     }
                 }
-            } header: {
-                HStack {
-                    Text("Upcoming departures")
-                        .bold()
-                    Spacer()
-                }
-                .padding(.horizontal)
             }
         }
         .onAppear {

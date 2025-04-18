@@ -11,13 +11,12 @@ import MapKit
 
 struct SheetViewModifier: ViewModifier {
     let detentSelection: Binding<PresentationDetent>
-    let standardPresentationDetents: Set<PresentationDetent> = [.height(120), .height(360), .height(720)]
+    let standardPresentationDetents: Set<PresentationDetent> = [.height(96), .height(360), .height(720)]
     
     func body(content: Content) -> some View {
         content
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .presentationDetents(standardPresentationDetents, selection: detentSelection)
-            .presentationBackground(.ultraThickMaterial)
             .presentationBackgroundInteraction(.enabled)
             .interactiveDismissDisabled()
     }
@@ -28,6 +27,13 @@ extension View {
         self.modifier(SheetViewModifier(detentSelection: detentSelection))
     }
 }
+
+enum Tabs {
+    case shuttles
+    case parking
+    case settings
+}
+
 
 /// The primary view of the app. Controls map height adjustment and
 /// which sheet is displayed.
@@ -51,6 +57,7 @@ struct ContentView: View {
     var routeListContentViewModel: RouteListContentViewModel?
     var routeInfoContentViewModel: RouteInfoContentViewModel?
     var shuttleInfoContentViewModel: ShuttleInfoContentViewModel?
+    var parkingStructuresContentViewModel: ParkingStructuresListContentViewModel?
     
     @EnvironmentObject var globalDataState: GlobalDataModel
     @EnvironmentObject var locationManagerState: GlobalLocationDataModel
@@ -63,6 +70,8 @@ struct ContentView: View {
     
     // Controls the map height
     @State var currentSheetHeight: CGFloat = 360
+    
+    @State var tabSelection: Tabs = .shuttles
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -80,40 +89,57 @@ struct ContentView: View {
     }
     
     func buildSheetContent() -> some View {
-        buildRouteListView()
-            .sheet(isPresented: .constant(showRouteInfo)) {
-                buildRouteInfoView()
-                    .sheet(isPresented: .constant(showShuttleInfoOverRouteInfo)) {
+        TabView(selection: $tabSelection) {
+            Tab("Shuttles", systemImage: "bus.fill", value: .shuttles) {
+                buildRouteListView()
+                    .sheet(isPresented: .constant(showRouteInfo)) {
+                        buildRouteInfoView()
+                            .sheet(isPresented: .constant(showShuttleInfoOverRouteInfo)) {
+                                buildShuttleInfoView()
+                                    .sheetViewModifier(detentSelection: $shuttleInfoSheetSelectedDetent)
+                            }
+                            .sheetViewModifier(detentSelection: $routeInfoSheetSelectedDetent)
+                    }
+                    .sheet(isPresented: .constant(showShuttleInfoOverRouteList)) {
                         buildShuttleInfoView()
                             .sheetViewModifier(detentSelection: $shuttleInfoSheetSelectedDetent)
                     }
-                    .sheetViewModifier(detentSelection: $routeInfoSheetSelectedDetent)
             }
-            .sheet(isPresented: .constant(showShuttleInfoOverRouteList)) {
-                buildShuttleInfoView()
-                    .sheetViewModifier(detentSelection: $shuttleInfoSheetSelectedDetent)
+            Tab("Parking", systemImage: "parkingsign.square.fill", value: .parking) {
+                buildParkingStructuresView()
             }
-            .sheetViewModifier(detentSelection: $routeListSheetSelectedDetent)
-            .background {
-                // This changes for all the sheets, not just
-                // the currently selected one
-                // https://stackoverflow.com/questions/74423799/how-to-size-content-for-presentation-detents-in-swiftui
-                GeometryReader { proxy in
-                    Color.clear
-                        .onChange(of: proxy.size.height) {
-                            if proxy.size.height <= 360 {
-                                currentSheetHeight = proxy.size.height
-                            }
+            Tab("Settings", systemImage: "gear", value: .settings) {
+                Text("Settings")
+            }
+        }
+        .sheetViewModifier(detentSelection: $routeListSheetSelectedDetent)
+        .background {
+            // This changes for all the sheets, not just
+            // the currently selected one
+            // https://stackoverflow.com/questions/74423799/how-to-size-content-for-presentation-detents-in-swiftui
+            GeometryReader { proxy in
+                Color.clear
+                    .onChange(of: proxy.size.height) {
+                        if proxy.size.height <= 360 {
+                            currentSheetHeight = proxy.size.height
                         }
-                }
+                    }
             }
+        }
+    }
+    
+    func buildParkingStructuresView() -> some View {
+        if let parkingStructuresContentViewModel = parkingStructuresContentViewModel {
+            return ParkingStructuresListContentView(viewModel: parkingStructuresContentViewModel)
+        }
+        return ParkingStructuresListContentView()
     }
     
     func buildMapView() -> some View {
         if let mapViewModel = mapViewModel {
-            return MapView(viewModel: mapViewModel)
+            return MapView(viewModel: mapViewModel, tabSelection: tabSelection)
         }
-        return MapView()
+        return MapView(tabSelection: tabSelection)
     }
     
     func buildRouteListView() -> some View {
@@ -157,11 +183,15 @@ struct ContentView: View {
     let shuttleInfoContentViewModelBuilder = ShuttleInfoContentViewModelPlaceholderBuilder()
     let shuttleInfoContentViewModel = shuttleInfoContentViewModelBuilder.build()
     
+    let parkingStructuresContentViewModelBuilder = ParkingStructuresListContentViewModelPlaceholderBuilder()
+    let parkingStructuresViewModel = parkingStructuresContentViewModelBuilder.build()
+    
     return ContentView(
         mapViewModel: mapViewModel,
         routeListContentViewModel: routeListContentViewModel,
         routeInfoContentViewModel: routeInfoContentViewModel,
-        shuttleInfoContentViewModel: shuttleInfoContentViewModel
+        shuttleInfoContentViewModel: shuttleInfoContentViewModel,
+        parkingStructuresContentViewModel: parkingStructuresViewModel
     )
         .environmentObject(globalDataModel)
         .environmentObject(globalStopsModel)

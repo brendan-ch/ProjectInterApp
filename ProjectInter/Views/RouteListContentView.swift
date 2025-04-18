@@ -35,53 +35,59 @@ struct RouteListContentView: View {
     }
     
     var body: some View {
-        ScrollView {
+        VStack(spacing: 0) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
                     Text("Routes")
                         .font(.title2)
                         .bold()
-                    HStack(spacing: 4) {
-                        Text("Current stop: \(globalStopsState.selectedStop?.name ?? "")")
-                        if locationManagerState.locationIsUpdating,
-                           globalStopsState.selectedStop == nil {
-                            Text("Loading...")
-                        }
-                        
-                        if globalStopsState.isAutomaticWhenLocationIsAvailable {
-                            Image(systemName: "location.fill")
-                                .accessibilityLabel("Automatic selection enabled")
-                        }
-                    }
-                    Button("Change stop") {
-                        showStopSelectionView = true
-                    }
                 }
                 Spacer()
             }
-            .padding()
+            .padding(EdgeInsets(top: 16, leading: 16, bottom: 8, trailing: 16))
             
-            // Display location banner if not authorized
-            if locationManagerState.authorizationStatus == .notDetermined {
-                EnableLocationAccessGroupBoxView {
-                    locationManagerState.requestAuthorization()
-                }
-            }
-            
-            ForEach(viewModel.routes) { route in
-                RouteListItem(route: route) { selectedRoute in
-                    globalDataState.selectedRouteId = route.id
+            Divider()
+                .padding(EdgeInsets(top: 0, leading: 0, bottom: 8, trailing: 0))
+
+            ScrollView {
+                HStack {
+                    VStack(alignment: .leading) {
+                        HStack(spacing: 4) {
+                            Text("Current stop: \(globalStopsState.selectedStop?.name ?? "")")
+                            if locationManagerState.locationIsUpdating,
+                               globalStopsState.selectedStop == nil {
+                                Text("Loading...")
+                            }
+                            
+                            if globalStopsState.isAutomaticWhenLocationIsAvailable {
+                                Image(systemName: "location.fill")
+                                    .accessibilityLabel("Automatic selection enabled")
+                            }
+                        }
+                        Button("Change stop") {
+                            showStopSelectionView = true
+                        }
+                    }
+                    Spacer()
                 }
                 .padding(.horizontal)
-                .buttonStyle(.plain)
                 
                 Divider()
+                ForEach(viewModel.routes) { route in
+                    RouteListItem(route: route) { selectedRoute in
+                        globalDataState.selectedRouteId = route.id
+                    }
+                    .padding(.horizontal)
+                    .buttonStyle(.plain)
+                    
+                    Divider()
+                }
+                
+                RouteListFooter {
+                    showChangelogView = true
+                }
+                .padding()
             }
-            
-            RouteListFooter {
-                showChangelogView = true
-            }
-            .padding()
         }
         .onAppear {
             if let apolloClient = globalDataState.apolloClient {
@@ -132,25 +138,6 @@ struct RouteListItem: View {
             .listRowBackground(Color.clear)
             .contentShape(Rectangle())
         }
-    }
-}
-
-struct EnableLocationAccessGroupBoxView: View {
-    var onPressGrant: () -> Void
-    
-    // TODO: fix the spacing
-    var body: some View {
-        GroupBox(label: Label("Enable Location Access", systemImage: "location")) {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("See times for your closest stop, get notifications for shuttles, and more.")
-                Button("Grant location access") {
-                    onPressGrant()
-                }
-            }
-        }
-        .padding(.horizontal)
-        .padding(.bottom, 8)
-        .presentationBackground(.ultraThickMaterial)
     }
 }
 
