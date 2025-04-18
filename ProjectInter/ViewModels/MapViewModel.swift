@@ -103,6 +103,16 @@ struct MapParkingStructure: Identifiable {
     var coordinates: CLLocationCoordinate2D
 }
 
+extension MapParkingStructure {
+    init(_ structure: GetMapDataQuery.Data.System.ParkingSystem.ParkingStructure) {
+        self.id = structure.id
+        self.coordinates = CLLocationCoordinate2D(
+            latitude: structure.coordinates.latitude,
+            longitude: structure.coordinates.longitude
+        )
+    }
+}
+
 // MARK: - Network arguments
 
 /// Information to pass into the network request for map data.
