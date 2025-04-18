@@ -35,7 +35,7 @@ struct RouteListContentView: View {
     }
     
     var body: some View {
-        ScrollView {
+        VStack(spacing: 0) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
                     Text("Routes")
@@ -61,27 +61,29 @@ struct RouteListContentView: View {
             }
             .padding()
             
-            // Display location banner if not authorized
-            if locationManagerState.authorizationStatus == .notDetermined {
-                EnableLocationAccessGroupBoxView {
-                    locationManagerState.requestAuthorization()
+            ScrollView {
+                // Display location banner if not authorized
+                if locationManagerState.authorizationStatus == .notDetermined {
+                    EnableLocationAccessGroupBoxView {
+                        locationManagerState.requestAuthorization()
+                    }
                 }
-            }
-            
-            ForEach(viewModel.routes) { route in
-                RouteListItem(route: route) { selectedRoute in
-                    globalDataState.selectedRouteId = route.id
-                }
-                .padding(.horizontal)
-                .buttonStyle(.plain)
                 
-                Divider()
+                ForEach(viewModel.routes) { route in
+                    RouteListItem(route: route) { selectedRoute in
+                        globalDataState.selectedRouteId = route.id
+                    }
+                    .padding(.horizontal)
+                    .buttonStyle(.plain)
+                    
+                    Divider()
+                }
+                
+                RouteListFooter {
+                    showChangelogView = true
+                }
+                .padding()
             }
-            
-            RouteListFooter {
-                showChangelogView = true
-            }
-            .padding()
         }
         .onAppear {
             if let apolloClient = globalDataState.apolloClient {
