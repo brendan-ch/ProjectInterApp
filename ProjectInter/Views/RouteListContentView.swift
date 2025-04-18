@@ -61,7 +61,7 @@ struct RouteListContentView: NetworkView {
             Divider()
             ForEach(viewModel.routes) { route in
                 RouteListItem(route: route) { selectedRoute in
-                    globalDataState.selectedRouteId = route.id
+                    globalDataModel.selectedRouteId = route.id
                 }
                 .padding(.horizontal)
                 .buttonStyle(.plain)
