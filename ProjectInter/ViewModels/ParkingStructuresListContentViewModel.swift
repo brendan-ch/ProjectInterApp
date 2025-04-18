@@ -15,6 +15,7 @@ struct ParkingStructuresListParkingStructure: Identifiable {
 }
 
 struct ParkingStructuresNetworkingArguments {
+    let systemId: String
 }
 
 class ParkingStructuresListContentViewModel: NetworkDataModelProtocol {
