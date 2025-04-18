@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Apollo
 
 protocol NetworkDataModelProtocol: ObservableObject {
     associatedtype T
@@ -28,6 +29,8 @@ protocol NetworkDataModelProtocol: ObservableObject {
     /// Refreshes the data once and blocks the calling thread.
     /// Resumes when the refresh is done.
     func refreshDataOnce(arguments: T) async
+    
+    var apolloClient: ApolloClientProtocol? { get set }
 }
 
 extension NetworkDataModelProtocol {

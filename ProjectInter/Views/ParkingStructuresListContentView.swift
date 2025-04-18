@@ -7,8 +7,20 @@
 
 import SwiftUI
 
-struct ParkingStructuresListContentView: View {
+struct ParkingStructuresListContentView: NetworkView {
+    typealias NetworkArguments = ParkingStructuresNetworkingArguments
+    typealias ViewModelType = ParkingStructuresListContentViewModel
+    
     @StateObject var viewModel = ParkingStructuresListContentViewModel()
+    
+    @EnvironmentObject var globalDataModel: GlobalDataModel
+    
+    var networkArguments: ParkingStructuresNetworkingArguments? {
+        if let systemId = globalDataModel.selectedSystem?.id {
+            return .init(systemId: systemId)
+        }
+        return nil
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -49,6 +61,12 @@ struct ParkingStructuresListContentView: View {
                 }
             }
         }
+        .onAppear {
+            restartDataUpdates()
+        }
+        .onDisappear {
+            stopDataUpdates()
+        }
     }
 }
 
@@ -57,4 +75,5 @@ struct ParkingStructuresListContentView: View {
     let viewModel = builder.build()
     
     ParkingStructuresListContentView(viewModel: viewModel)
+        .environmentObject(GlobalDataModel())
 }

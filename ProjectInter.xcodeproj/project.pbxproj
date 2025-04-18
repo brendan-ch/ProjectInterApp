@@ -56,6 +56,7 @@
 			membershipExceptions = (
 				Info.plist,
 				Operations/GetAllSystems.graphql,
+				Operations/GetParkingStructuresListData.graphql,
 			);
 			target = 20FA7B732D10E11E00D4EAD1 /* ProjectInter */;
 		};
@@ -67,6 +68,7 @@
 			buildPhase = 20FA7B702D10E11E00D4EAD1 /* Sources */;
 			membershipExceptions = (
 				Operations/GetAllSystems.graphql,
+				Operations/GetParkingStructuresListData.graphql,
 			);
 		};
 /* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
@@ -461,7 +463,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ProjectInter/ProjectInter.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ProjectInter/Preview Content\"";
 				DEVELOPMENT_TEAM = 4A9XHUS87Q;
 				ENABLE_PREVIEWS = YES;
@@ -478,7 +480,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.0.9;
+				MARKETING_VERSION = 0.0.10;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.bchen.Inter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -497,7 +499,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ProjectInter/ProjectInter.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ProjectInter/Preview Content\"";
 				DEVELOPMENT_TEAM = 4A9XHUS87Q;
 				ENABLE_PREVIEWS = YES;
@@ -514,7 +516,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.0.9;
+				MARKETING_VERSION = 0.0.10;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.bchen.Inter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
