@@ -74,27 +74,69 @@ class ParkingStructuresListParkingStructureTests {
 }
 
 class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol {
+    let defaultArguments = ParkingStructuresListContentViewModelTestsMockData.defaultArguments
+    let defaultMock = ParkingStructuresListContentViewModelTestsMockData.defaultMock
+    let secondaryMock = ParkingStructuresListContentViewModelTestsMockData.secondaryMock
+    
+    func assertViewModelDataForDefaultMock(viewModel: ParkingStructuresListContentViewModel) {
+        #expect(viewModel.structures[0].id == "1")
+        #expect(viewModel.structures[1].id == "2")
+        
+        #expect(viewModel.structures[0].capacity == 100)
+        #expect(viewModel.structures[1].capacity == 200)
+        
+        #expect(viewModel.structures[0].name == "Anderson Structure")
+        #expect(viewModel.structures[1].name == "Barrera")
+        
+        #expect(viewModel.structures[0].spotsAvailable == 50)
+        #expect(viewModel.structures[1].spotsAvailable == 100)
+    }
+    
+    func assertViewModelDataForSecondaryMock(viewModel: ParkingStructuresListContentViewModel) {
+        #expect(viewModel.structures[0].id == "3")
+        #expect(viewModel.structures[1].id == "4")
+        
+        #expect(viewModel.structures[0].capacity == 500)
+        #expect(viewModel.structures[1].capacity == 350)
+        
+        #expect(viewModel.structures[0].name == "Knott Studios Lot")
+        #expect(viewModel.structures[1].name == "Jim Miller Lot")
+        
+        #expect(viewModel.structures[0].spotsAvailable == 100)
+        #expect(viewModel.structures[1].spotsAvailable == 12)
+    }
+    
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
+        let mockClient = MockApolloClient()
+        mockClient.queryMock = defaultMock
+        
+        let viewModel = ParkingStructuresListContentViewModel(apolloClient: mockClient)
+        
+        let networkArguments = defaultArguments
+        viewModel.startRefreshingData(arguments: networkArguments)
+        
+        try? await Task.sleep(for: .milliseconds(500))
+        
+        assertViewModelDataForDefaultMock(viewModel: viewModel)
+    }
+    
+    @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
         
     }
     
-    func startRefreshingDataRefreshesDataMultipleTimes() async {
+    @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
         
     }
     
-    func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
+    @Test func refreshDataOnceUpdatesData() async {
         
     }
     
-    func refreshDataOnceUpdatesData() async {
+    @Test func refreshDataOnceDoesNothingIfNoData() async {
         
     }
     
-    func refreshDataOnceDoesNothingIfNoData() async {
-        
-    }
-    
-    func refreshDataOnceDoesNothingIfNoApolloClient() async {
+    @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
         
     }
     
