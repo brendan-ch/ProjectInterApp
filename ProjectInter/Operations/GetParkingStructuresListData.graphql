@@ -1,0 +1,12 @@
+query GetParkingStructuresListData($systemId: ID!) {
+  system(id: $systemId) {
+    parkingSystem {
+      parkingStructures {
+        capacity
+        name
+        spotsAvailable
+        id
+      }
+    }
+  }
+}

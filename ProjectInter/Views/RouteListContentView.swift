@@ -11,11 +11,11 @@ import Apollo
 /// View to display a list of routes, including ETA and
 /// next stop for the currently selected stop in
 /// the passed ``GlobalDataState`` instance.
-struct RouteListContentView: View {
+struct RouteListContentView: NetworkView {
     /// Backing view model.
     @StateObject var viewModel: RouteListContentViewModel = RouteListContentViewModel()
     
-    @EnvironmentObject var globalDataState: GlobalDataModel
+    @EnvironmentObject var globalDataModel: GlobalDataModel
     @EnvironmentObject var globalStopsState: GlobalStopsModel
     @EnvironmentObject var locationManagerState: GlobalLocationDataModel
     
@@ -24,9 +24,9 @@ struct RouteListContentView: View {
     @State var showStopSelectionView: Bool = false
     @State var showChangelogView: Bool = false
     
-    var routeListNetworkArguments: RouteListNetworkArguments? {
+    var networkArguments: RouteListNetworkArguments? {
         guard let stopId = globalStopsState.selectedStop?.id,
-              let systemId = globalDataState.selectedSystem?.id
+              let systemId = globalDataModel.selectedSystem?.id
         else {
             return nil
         }
@@ -75,16 +75,13 @@ struct RouteListContentView: View {
             .padding()
         }
         .onAppear {
-            if let apolloClient = globalDataState.apolloClient {
-                viewModel.apolloClient = apolloClient
-            }
+            restartDataUpdates()
         }
         .onChange(of: globalStopsState.selectedStop) {
-            // Refresh data in backing view model
-            if let arguments = routeListNetworkArguments {
-                viewModel.stopRefreshingData()
-                viewModel.startRefreshingData(arguments: arguments)
-            }
+            restartDataUpdates()
+        }
+        .onDisappear {
+            stopDataUpdates()
         }
         .sheet(isPresented: $showStopSelectionView) {
             StopSelectionView()

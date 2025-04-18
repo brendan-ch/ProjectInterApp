@@ -9,20 +9,20 @@ import SwiftUI
 
 /// View which displays information for the currently selected
 /// route in ``GlobalDataState`` and a list of upcoming shuttles.
-struct RouteInfoContentView: View {
+struct RouteInfoContentView: NetworkView {
     /// ``GlobalDataState`` instance containing the currently selected route
     /// and `ApolloClient` instance.
-    @EnvironmentObject var globalDataState: GlobalDataModel
+    @EnvironmentObject var globalDataModel: GlobalDataModel
     
     @EnvironmentObject var globalStopsState: GlobalStopsModel
     
     /// Backing ``RouteInfoContentView`` instance.
     @StateObject var viewModel: RouteInfoContentViewModel = RouteInfoContentViewModel()
     
-    var routeInfoNetworkArguments: RouteInfoNetworkArguments? {
-        guard let systemId = globalDataState.selectedSystem?.id,
+    var networkArguments: RouteInfoNetworkArguments? {
+        guard let systemId = globalDataModel.selectedSystem?.id,
               let stopId = globalStopsState.selectedStop?.id,
-              let routeId = globalDataState.selectedRouteId else { return nil }
+              let routeId = globalDataModel.selectedRouteId else { return nil }
         
         
         return RouteInfoNetworkArguments(systemId: systemId, stopId: stopId, routeId: routeId)
@@ -41,10 +41,10 @@ struct RouteInfoContentView: View {
                 }
                 Spacer()
                 
-                if globalDataState.selectedShuttleId == nil {
+                if globalDataModel.selectedShuttleId == nil {
                     Button("Close") {
-                        globalDataState.selectedRouteId = nil
-                        globalDataState.selectedShuttleId = nil
+                        globalDataModel.selectedRouteId = nil
+                        globalDataModel.selectedShuttleId = nil
                     }
                 }
             }
@@ -64,7 +64,7 @@ struct RouteInfoContentView: View {
                             Divider()
                             
                             RouteInfoShuttleViewItem(shuttle: upcomingDeparture) { shuttle in
-                                globalDataState.selectedShuttleId = shuttle.id
+                                globalDataModel.selectedShuttleId = shuttle.id
                             }
                             .accessibilityLabel("Shuttle label in route info page")
                             .accessibilityIdentifier(upcomingDeparture.id)
@@ -77,22 +77,13 @@ struct RouteInfoContentView: View {
             }
         }
         .onAppear {
-            // Control which dataset to use depending on Apollo client
-            if let client = globalDataState.apolloClient {
-                viewModel.apolloClient = client
-            }
-            
-            restartDataUpdatesIfArgumentsExist()
+            restartDataUpdates()
         }
-        .onChange(of: globalDataState.selectedRouteId) {
-            restartDataUpdatesIfArgumentsExist()
+        .onChange(of: globalDataModel.selectedRouteId) {
+            restartDataUpdates()
         }
-    }
-    
-    private func restartDataUpdatesIfArgumentsExist() {
-        if let arguments = routeInfoNetworkArguments {
-            viewModel.stopRefreshingData()
-            viewModel.startRefreshingData(arguments: arguments)
+        .onDisappear {
+            stopDataUpdates()
         }
     }
 }

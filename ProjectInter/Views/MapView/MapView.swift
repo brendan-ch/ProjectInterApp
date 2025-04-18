@@ -24,9 +24,9 @@ struct AnnotationTag: Hashable {
 
 /// MapKit `Map` wrapper which displays relevant information
 /// on a map.
-struct MapView: View {
+struct MapView: NetworkView {
     /// Source of truth for the currently selected route ID and shuttle ID.
-    @EnvironmentObject var globalDataState: GlobalDataModel
+    @EnvironmentObject var globalDataModel: GlobalDataModel
     
     /// Source of truth for the currently selected stop ID and the list of stops.
     @EnvironmentObject var globalStopsModel: GlobalStopsModel
@@ -36,8 +36,8 @@ struct MapView: View {
     
     var tabSelection: Tabs
     
-    var mapViewNetworkArguments: MapViewNetworkArguments? {
-        guard let systemId = globalDataState.selectedSystem?.id else { return nil }
+    var networkArguments: MapViewNetworkArguments? {
+        guard let systemId = globalDataModel.selectedSystem?.id else { return nil }
         
         return MapViewNetworkArguments(systemId: systemId)
     }
@@ -53,7 +53,7 @@ struct MapView: View {
             if tabSelection == .shuttles {
                 // MARK: Polyline rendering
                 
-                if let selectedRouteId = globalDataState.selectedRouteId {
+                if let selectedRouteId = globalDataModel.selectedRouteId {
                     let routeToDisplay = viewModel.routes.first { route in
                         route.id == selectedRouteId
                     }
@@ -85,7 +85,7 @@ struct MapView: View {
                 
                 // MARK: Stop rendering
                 
-                if let routeId = globalDataState.selectedRouteId {
+                if let routeId = globalDataModel.selectedRouteId {
                     ForEach(viewModel.stops) { stop in
                         if stop.routeIds.contains(routeId) {
                             buildStopAnnotation(stop: stop)
@@ -105,24 +105,23 @@ struct MapView: View {
         }
         .mapStyle(.standard(emphasis: .muted, pointsOfInterest: []))
         .onAppear {
-            if let client = globalDataState.apolloClient {
-                viewModel.apolloClient = client
-            }
-            
-            restartDataUpdatesIfArgumentsExist()
+            restartDataUpdates()
         }
-        .onChange(of: globalDataState.selectedSystem) {
-            restartDataUpdatesIfArgumentsExist()
+        .onChange(of: globalDataModel.selectedSystem) {
+            restartDataUpdates()
+        }
+        .onDisappear {
+            stopDataUpdates()
         }
         // Reset the map position if the user selects something
-        .onChange(of: globalDataState.selectedRouteId) {
+        .onChange(of: globalDataModel.selectedRouteId) {
             viewModel.position = .automatic
         }
-        .onChange(of: [globalDataState.selectedShuttleId, globalStopsModel.selectedStopIdOnMap]) {
+        .onChange(of: [globalDataModel.selectedShuttleId, globalStopsModel.selectedStopIdOnMap]) {
             // TODO: center the map around the selected shuttle
             viewModel.position = .automatic
             
-            if let selectedShuttleId = globalDataState.selectedShuttleId {
+            if let selectedShuttleId = globalDataModel.selectedShuttleId {
                 selectedTag = .init(id: selectedShuttleId, type: .shuttle)
             } else if let selectedStopId = globalStopsModel.selectedStopIdOnMap {
                 selectedTag = .init(id: selectedStopId, type: .stop)
@@ -145,17 +144,10 @@ struct MapView: View {
         
         if selectedTag.type == .shuttle {
             globalStopsModel.selectedStopIdOnMap = nil
-            globalDataState.selectedShuttleId = selectedTag.id
+            globalDataModel.selectedShuttleId = selectedTag.id
         } else {
             globalStopsModel.selectedStopIdOnMap = selectedTag.id
-            globalDataState.selectedShuttleId = nil
-        }
-    }
-    
-    private func restartDataUpdatesIfArgumentsExist() {
-        if let arguments = mapViewNetworkArguments {
-            viewModel.stopRefreshingData()
-            viewModel.startRefreshingData(arguments: arguments)
+            globalDataModel.selectedShuttleId = nil
         }
     }
 }
@@ -206,7 +198,7 @@ extension MapView {
             )
         }
         .annotationTitles(
-            globalDataState.selectedShuttleId == shuttle.id ? .visible : .hidden
+            globalDataModel.selectedShuttleId == shuttle.id ? .visible : .hidden
         )
         .tag(
             AnnotationTag(id: shuttle.id, type: .shuttle)
@@ -218,18 +210,18 @@ extension MapView {
     }
     
     private func shouldDisplayShuttleOnMap(_ shuttle: MapViewShuttle, associatedStop: MapViewStop?) -> Bool {
-        (globalDataState.selectedRouteId != nil && shuttle.routeId == globalDataState.selectedRouteId)
+        (globalDataModel.selectedRouteId != nil && shuttle.routeId == globalDataModel.selectedRouteId)
         ||
-        (globalDataState.selectedRouteId == nil && associatedStop != nil && associatedStop!.routeIds.contains(shuttle.routeId ?? ""))
+        (globalDataModel.selectedRouteId == nil && associatedStop != nil && associatedStop!.routeIds.contains(shuttle.routeId ?? ""))
     }
     
     private func shouldDisplayOrientation(for shuttle: MapViewShuttle) -> Bool {
-        globalDataState.selectedShuttleId == shuttle.id ||
-        (globalDataState.selectedShuttleId == nil && shuttle.routeId == globalDataState.selectedRouteId)
+        globalDataModel.selectedShuttleId == shuttle.id ||
+        (globalDataModel.selectedShuttleId == nil && shuttle.routeId == globalDataModel.selectedRouteId)
     }
     
     private func shouldBeTransparent(for shuttle: MapViewShuttle) -> Bool {
-        globalDataState.selectedShuttleId != nil && globalDataState.selectedShuttleId != shuttle.id
+        globalDataModel.selectedShuttleId != nil && globalDataModel.selectedShuttleId != shuttle.id
     }
 }
 

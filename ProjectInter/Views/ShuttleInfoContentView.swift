@@ -9,14 +9,14 @@ import SwiftUI
 
 /// View which displays information about a single shuttle,
 /// including ETA from the currently selected stop ID.
-struct ShuttleInfoContentView: View {
+struct ShuttleInfoContentView: NetworkView {
     /// Backing view model.
     @StateObject var viewModel = ShuttleInfoContentViewModel()
     
     /// Source of truth for the currently selected shuttle ID.
-    @EnvironmentObject var globalDataState: GlobalDataModel
+    @EnvironmentObject var globalDataModel: GlobalDataModel
     
-    @EnvironmentObject var globalStopsState: GlobalStopsModel
+    @EnvironmentObject var globalStopsModel: GlobalStopsModel
     
     @EnvironmentObject var notificationSchedulingState: GlobalNotificationSchedulingModel
     
@@ -29,10 +29,10 @@ struct ShuttleInfoContentView: View {
         return viewModel.isNotificationScheduled
     }
     
-    var shuttleInfoNetworkArguments: ShuttleInfoNetworkArguments? {
-        guard let systemId = globalDataState.selectedSystem?.id,
-              let shuttleId = globalDataState.selectedShuttleId,
-              let stopId = globalStopsState.selectedStop?.id
+    var networkArguments: ShuttleInfoNetworkArguments? {
+        guard let systemId = globalDataModel.selectedSystem?.id,
+              let shuttleId = globalDataModel.selectedShuttleId,
+              let stopId = globalStopsModel.selectedStop?.id
             else { return nil }
         
         return ShuttleInfoNetworkArguments(
@@ -57,7 +57,7 @@ struct ShuttleInfoContentView: View {
                 }
                 Spacer()
                 Button("Close") {
-                    globalDataState.selectedShuttleId = nil
+                    globalDataModel.selectedShuttleId = nil
                 }
             }
             .padding()
@@ -159,19 +159,19 @@ struct ShuttleInfoContentView: View {
 
         }
         .onAppear {
-            if let client = globalDataState.apolloClient {
-                viewModel.apolloClient = client
-            }
-            restartDataUpdatesIfArgumentsExist()
+            restartDataUpdates()
         }
-        .onChange(of: globalDataState.selectedShuttleId) {
-            restartDataUpdatesIfArgumentsExist()
+        .onChange(of: globalDataModel.selectedShuttleId) {
+            restartDataUpdates()
+        }
+        .onDisappear {
+            stopDataUpdates()
         }
     }
     
-    private func generateNetworkArguments() -> NotificationNetworkArguments? {
-        guard let stopId = globalStopsState.selectedStop?.id,
-              let shuttleId = globalDataState.selectedShuttleId,
+    private func generateNotificationNetworkArguments() -> NotificationNetworkArguments? {
+        guard let stopId = globalStopsModel.selectedStop?.id,
+              let shuttleId = globalDataModel.selectedShuttleId,
               let deviceId = customAppDelegate.notificationTokenString
         else { return nil }
         
@@ -185,36 +185,23 @@ struct ShuttleInfoContentView: View {
     }
     
     private func scheduleNotification(secondsThreshold: Int) async {
-        guard var input = generateNetworkArguments() else { return }
+        guard var input = generateNotificationNetworkArguments() else { return }
         input.secondsThreshold = secondsThreshold
         do {
             try await notificationSchedulingState.scheduleNotification(input)
-            await refreshDataOnce()
+            restartDataUpdates()
         } catch {
             print(error)
         }
     }
     
     private func cancelNotification() async {
-        guard let input = generateNetworkArguments() else { return }
+        guard let input = generateNotificationNetworkArguments() else { return }
         do {
             try await notificationSchedulingState.cancelNotification(input)
-            await refreshDataOnce()
+            restartDataUpdates()
         } catch {
             print(error)
-        }
-    }
-    
-    private func refreshDataOnce() async {
-        if let arguments = shuttleInfoNetworkArguments {
-            await viewModel.refreshDataOnce(arguments: arguments)
-        }
-    }
-
-    private func restartDataUpdatesIfArgumentsExist() {
-        if let arguments = shuttleInfoNetworkArguments {
-            viewModel.stopRefreshingData()
-            viewModel.startRefreshingData(arguments: arguments)
         }
     }
 }
