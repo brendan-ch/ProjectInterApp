@@ -50,6 +50,7 @@ struct ContentView: View {
     var routeListContentViewModel: RouteListContentViewModel?
     var routeInfoContentViewModel: RouteInfoContentViewModel?
     var shuttleInfoContentViewModel: ShuttleInfoContentViewModel?
+    var parkingStructuresContentViewModel: ParkingStructuresListContentViewModel?
     
     @EnvironmentObject var globalDataState: GlobalDataModel
     @EnvironmentObject var locationManagerState: GlobalLocationDataModel
@@ -119,6 +120,9 @@ struct ContentView: View {
     }
     
     func buildParkingStructuresView() -> some View {
+        if let parkingStructuresContentViewModel = parkingStructuresContentViewModel {
+            return ParkingStructuresListContentView(viewModel: parkingStructuresContentViewModel)
+        }
         return ParkingStructuresListContentView()
     }
     
@@ -170,11 +174,15 @@ struct ContentView: View {
     let shuttleInfoContentViewModelBuilder = ShuttleInfoContentViewModelPlaceholderBuilder()
     let shuttleInfoContentViewModel = shuttleInfoContentViewModelBuilder.build()
     
+    let parkingStructuresContentViewModelBuilder = ParkingStructuresListContentViewModelPlaceholderBuilder()
+    let parkingStructuresViewModel = parkingStructuresContentViewModelBuilder.build()
+    
     return ContentView(
         mapViewModel: mapViewModel,
         routeListContentViewModel: routeListContentViewModel,
         routeInfoContentViewModel: routeInfoContentViewModel,
-        shuttleInfoContentViewModel: shuttleInfoContentViewModel
+        shuttleInfoContentViewModel: shuttleInfoContentViewModel,
+        parkingStructuresContentViewModel: parkingStructuresViewModel
     )
         .environmentObject(globalDataModel)
         .environmentObject(globalStopsModel)
