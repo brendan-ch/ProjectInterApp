@@ -129,7 +129,7 @@ struct ContentView: View {
     }
     
     func buildSettingsView() -> some View {
-        return SettingsView()
+        return SettingsContentView()
     }
     
     func buildParkingStructuresView() -> some View {
