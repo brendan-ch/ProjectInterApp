@@ -142,20 +142,54 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
     }
     
     @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
+        let mockClient = MockApolloClient()
+        mockClient.queryMock = defaultMock
         
+        let viewModel = ParkingStructuresListContentViewModel(apolloClient: mockClient)
+        
+        let networkArguments = defaultArguments
+        viewModel.startRefreshingData(arguments: networkArguments, sleepDuration: .milliseconds(100))
+        
+        try? await Task.sleep(for: .milliseconds(500))
+        
+        viewModel.stopRefreshingData()
+        mockClient.queryMock = secondaryMock
+        
+        try? await Task.sleep(for: .milliseconds(700))
+        
+        assertViewModelDataForDefaultMock(viewModel: viewModel)
     }
     
     @Test func refreshDataOnceUpdatesData() async {
+        let mockClient = MockApolloClient()
+        mockClient.queryMock = defaultMock
         
+        let viewModel = ParkingStructuresListContentViewModel(apolloClient: mockClient)
+        
+        let networkArguments = defaultArguments
+        await viewModel.refreshDataOnce(arguments: networkArguments)
+        
+        assertViewModelDataForDefaultMock(viewModel: viewModel)
     }
     
     @Test func refreshDataOnceDoesNothingIfNoData() async {
+        let mockClient = MockApolloClient()
+        mockClient.queryMock = nil
         
+        let viewModel = ParkingStructuresListContentViewModel(apolloClient: mockClient)
+        
+        let networkArguments = defaultArguments
+        await viewModel.refreshDataOnce(arguments: networkArguments)
+        
+        #expect(viewModel.structures.isEmpty)
     }
     
     @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
+        let viewModel = ParkingStructuresListContentViewModel()
         
+        let networkArguments = defaultArguments
+        await viewModel.refreshDataOnce(arguments: networkArguments)
+        
+        #expect(viewModel.structures.isEmpty)
     }
-    
-    
 }
