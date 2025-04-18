@@ -1,4 +1,6 @@
-# Base types
+# The Interchange system schema.
+# Note how Passio ID and parking ID are abstracted away
+# from the endpoints.
 type System {
   id: ID!
   name: String!
@@ -8,11 +10,29 @@ type System {
   stop(id: ID): Stop
   shuttles: [Shuttle!]
   shuttle(id: ID): Shuttle
+
+  parkingSystem: ParkingSystem
+}
+
+type ParkingSystem {
+  systemId: ID!
+  parkingStructures: [ParkingStructure!]
+  parkingStructure(id: ID): ParkingStructure
+}
+
+type ParkingStructure {
+  id: ID!
+  name: String!
+  capacity: Int!
+  spotsAvailable: Int!
+  coordinates: Coordinates!
+  address: String!
 }
 
 type Route {
   name: String!
   id: ID!
+  systemId: ID!
   orderedStop(forStopId: ID): OrderedStop
   shuttles: [Shuttle!]
   polylineCoordinates: [Coordinates!]!
@@ -26,10 +46,12 @@ type OrderedStop {
   routeId: ID!
   stop: Stop
   stopId: ID!
+  systemId: ID!
 }
 
 type Stop {
   id: ID!
+  systemId: ID!
   name: String!
   coordinates: Coordinates!
   etas: [ETA!]
@@ -47,10 +69,12 @@ type ETA {
   shuttle: Shuttle
   shuttleId: ID!
   secondsRemaining: Float!
+  systemId: ID!
 }
 
 type Shuttle {
   name: String!
+  systemId: ID!
   id: ID!,
   coordinates: Coordinates!
   route: Route
@@ -67,6 +91,8 @@ type Query {
 
   isNotificationScheduled(input: NotificationInput!): Boolean
   secondsThresholdForNotification(input: NotificationInput!): Int
+
+  schemaVersion: ID!
 }
 
 # Mutations
