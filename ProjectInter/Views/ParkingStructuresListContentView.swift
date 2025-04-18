@@ -7,7 +7,10 @@
 
 import SwiftUI
 
-struct ParkingStructuresListContentView: View {
+struct ParkingStructuresListContentView: NetworkView {
+    typealias NetworkArguments = ParkingStructuresNetworkingArguments
+    typealias ViewModelType = ParkingStructuresListContentViewModel
+    
     @StateObject var viewModel = ParkingStructuresListContentViewModel()
     
     @EnvironmentObject var globalDataModel: GlobalDataModel
@@ -59,16 +62,10 @@ struct ParkingStructuresListContentView: View {
             }
         }
         .onAppear {
-            if let apolloClient = globalDataModel.apolloClient {
-                viewModel.apolloClient = apolloClient
-            }
-            
-            if let networkArguments = networkArguments {
-                viewModel.startRefreshingData(arguments: networkArguments)
-            }
+            restartDataUpdates()
         }
         .onDisappear {
-            viewModel.stopRefreshingData()
+            stopDataUpdates()
         }
     }
 }
