@@ -7,12 +7,13 @@
 
 import Foundation
 
-struct ParkingStructure {
+struct ParkingStructure: Identifiable {
     var address: String
     var spotsAvailable: Int
     var capacity: Int
     var coordinates: RawCoordinates
     var name: String
+    var id: String
 }
 
 struct ParkingStructuresNetworkingArguments {

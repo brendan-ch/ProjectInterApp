@@ -16,15 +16,16 @@ class ParkingStructuresListContentViewModelPlaceholderBuilder: PlaceholderBuilde
                 spotsAvailable: 680,
                 capacity: 871,
                 coordinates: .init(latitude: 33.7945513, longitude: -117.8518707),
-                name: "Anderson Structure"
-                
+                name: "Anderson Structure",
+                id: "1"
             ),
             .init(
                 address: "200 W Sycamore Ave, Orange, CA 92866-105",
                 spotsAvailable: 425,
                 capacity: 692,
                 coordinates: .init(latitude: 33.792937, longitude: -117.854782),
-                name: "Barrera"
+                name: "Barrera",
+                id: "2"
             )
         ]
         
