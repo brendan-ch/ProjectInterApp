@@ -96,7 +96,7 @@ struct ContentView: View {
                     }
             }
             Tab("Parking", systemImage: "parkingsign.square.fill") {
-                Text("Parking data")
+                buildParkingStructuresView()
             }
             Tab("Settings", systemImage: "gear") {
                 Text("Settings")
@@ -116,6 +116,10 @@ struct ContentView: View {
                     }
             }
         }
+    }
+    
+    func buildParkingStructuresView() -> some View {
+        return ParkingStructuresListContentView()
     }
     
     func buildMapView() -> some View {
