@@ -58,7 +58,8 @@ class MapViewModelTestsMockData {
                             coordinates: .init(
                                 latitude: 33.792937,
                                 longitude: -117.854782
-                            )
+                            ),
+                            id: "2"
                         )
                     ]
                 ),
@@ -224,6 +225,20 @@ class MapViewShuttleTests {
     }
 }
 
+class MapViewParkingStructureTests {
+    @Test func mapVIewParkingStructureConstructsStructureFromApolloData() {
+        let data = GetMapDataQuery.Data.from(MapViewModelTestsMockData.defaultMock)
+        let parkingStructures = data.system!.parkingSystem!.parkingStructures!
+        
+        let constructedStructures = parkingStructures.map(MapViewParkingStructure.init)
+        for i in 0..<parkingStructures.count {
+            #expect(parkingStructures[i].id == constructedStructures[i].id)
+            #expect(parkingStructures[i].coordinates.latitude == constructedStructures[i].coordinates.latitude)
+            #expect(parkingStructures[i].coordinates.longitude == constructedStructures[i].coordinates.longitude)
+        }
+    }
+}
+
 // MARK: - View model tests
 
 class MapViewModelTests: NetworkDataModelTestsProtocol {
@@ -240,12 +255,14 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.routes.count == 1)
         #expect(viewModel.shuttles.count == 1)
         #expect(viewModel.stops.count == 2)
+        #expect(viewModel.parkingStructures.count == 2)
     }
     
     func assertViewModelDataForSecondaryMock(viewModel: MapViewModel) {
         #expect(viewModel.routes.count == 2)
         #expect(viewModel.shuttles.count == 2)
         #expect(viewModel.stops.count == 1)
+        #expect(viewModel.parkingStructures.count == 0)
     }
     
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {

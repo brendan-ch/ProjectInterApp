@@ -98,15 +98,15 @@ extension MapViewStop {
 }
 
 /// Represents a parking structure on the map.
-struct MapParkingStructure: Identifiable {
+struct MapViewParkingStructure: Identifiable {
     var id: String
     var coordinates: CLLocationCoordinate2D
 }
 
-extension MapParkingStructure {
+extension MapViewParkingStructure {
     init(_ structure: GetMapDataQuery.Data.System.ParkingSystem.ParkingStructure) {
-        self.id = structure.id
-        self.coordinates = CLLocationCoordinate2D(
+        id = structure.id
+        coordinates = CLLocationCoordinate2D(
             latitude: structure.coordinates.latitude,
             longitude: structure.coordinates.longitude
         )
@@ -130,7 +130,7 @@ class MapViewModel: NetworkDataModelProtocol {
     @Published var routes: [MapViewRoute] = []
     @Published var shuttles: [MapViewShuttle] = []
     @Published var stops: [MapViewStop] = []
-    @Published var parkingStructures: [MapParkingStructure] = []
+    @Published var parkingStructures: [MapViewParkingStructure] = []
     
     var apolloClient: ApolloClientProtocol?
     
