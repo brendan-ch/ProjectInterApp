@@ -172,6 +172,7 @@ class MapViewModel: NetworkDataModelProtocol {
                 self.shuttles = data.system?.shuttles?.map(MapViewShuttle.init) ?? []
                 self.routes = data.system?.routes?.map(MapViewRoute.init) ?? []
                 self.stops = data.system?.stops?.map(MapViewStop.init) ?? []
+                self.parkingStructures = data.system?.parkingSystem?.parkingStructures?.map(MapViewParkingStructure.init) ?? []
             }
         }
     }
