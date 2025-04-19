@@ -157,13 +157,12 @@ struct MapView: NetworkView {
 extension MapView {
     func buildParkingStructureAnnotation(parkingStructure: MapViewParkingStructure) -> some MapContent {
         Annotation(
-            parkingStructure.id,
+            parkingStructure.name,
             coordinate: parkingStructure.coordinates,
             anchor: .center
         ) {
             ParkingStructureAnnotationView(structure: parkingStructure)
         }
-        .annotationTitles(.hidden)
     }
 }
 
