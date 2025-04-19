@@ -96,7 +96,9 @@ struct MapView: NetworkView {
                     buildStopAnnotation(stop: stopToRender)
                 }
             } else if tabSelection == .parking {
-                // TODO: render a different set of content
+                ForEach(viewModel.parkingStructures) { structure in
+                    buildParkingStructureAnnotation(parkingStructure: structure)
+                }
             }
         }
         .mapControls {
@@ -149,6 +151,19 @@ struct MapView: NetworkView {
             globalStopsModel.selectedStopIdOnMap = selectedTag.id
             globalDataModel.selectedShuttleId = nil
         }
+    }
+}
+
+extension MapView {
+    func buildParkingStructureAnnotation(parkingStructure: MapViewParkingStructure) -> some MapContent {
+        Annotation(
+            parkingStructure.id,
+            coordinate: parkingStructure.coordinates,
+            anchor: .center
+        ) {
+            ParkingStructureAnnotationView(structure: parkingStructure)
+        }
+        .annotationTitles(.hidden)
     }
 }
 
