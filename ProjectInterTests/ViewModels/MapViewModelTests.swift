@@ -52,14 +52,16 @@ class MapViewModelTestsMockData {
                                 latitude: 33.7945513,
                                 longitude: -117.8518707
                             ),
-                            id: "1"
+                            id: "1",
+                            name: "Anderson Structure"
                         ),
                         .init(
                             coordinates: .init(
                                 latitude: 33.792937,
                                 longitude: -117.854782
                             ),
-                            id: "2"
+                            id: "2",
+                            name: "Barrera"
                         )
                     ]
                 ),
@@ -226,7 +228,7 @@ class MapViewShuttleTests {
 }
 
 class MapViewParkingStructureTests {
-    @Test func mapVIewParkingStructureConstructsStructureFromApolloData() {
+    @Test func mapViewParkingStructureConstructsStructureFromApolloData() {
         let data = GetMapDataQuery.Data.from(MapViewModelTestsMockData.defaultMock)
         let parkingStructures = data.system!.parkingSystem!.parkingStructures!
         
@@ -235,6 +237,7 @@ class MapViewParkingStructureTests {
             #expect(parkingStructures[i].id == constructedStructures[i].id)
             #expect(parkingStructures[i].coordinates.latitude == constructedStructures[i].coordinates.latitude)
             #expect(parkingStructures[i].coordinates.longitude == constructedStructures[i].coordinates.longitude)
+            #expect(parkingStructures[i].name == constructedStructures[i].name)
         }
     }
 }

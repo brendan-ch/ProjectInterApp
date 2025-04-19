@@ -101,6 +101,7 @@ extension MapViewStop {
 struct MapViewParkingStructure: Identifiable {
     var id: String
     var coordinates: CLLocationCoordinate2D
+    var name: String
 }
 
 extension MapViewParkingStructure {
@@ -110,6 +111,7 @@ extension MapViewParkingStructure {
             latitude: structure.coordinates.latitude,
             longitude: structure.coordinates.longitude
         )
+        name = structure.name
     }
 }
 
