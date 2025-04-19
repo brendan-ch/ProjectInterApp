@@ -97,6 +97,24 @@ extension MapViewStop {
     }
 }
 
+/// Represents a parking structure on the map.
+struct MapViewParkingStructure: Identifiable {
+    var id: String
+    var coordinates: CLLocationCoordinate2D
+    var name: String
+}
+
+extension MapViewParkingStructure {
+    init(_ structure: GetMapDataQuery.Data.System.ParkingSystem.ParkingStructure) {
+        id = structure.id
+        coordinates = CLLocationCoordinate2D(
+            latitude: structure.coordinates.latitude,
+            longitude: structure.coordinates.longitude
+        )
+        name = structure.name
+    }
+}
+
 // MARK: - Network arguments
 
 /// Information to pass into the network request for map data.
@@ -114,6 +132,7 @@ class MapViewModel: NetworkDataModelProtocol {
     @Published var routes: [MapViewRoute] = []
     @Published var shuttles: [MapViewShuttle] = []
     @Published var stops: [MapViewStop] = []
+    @Published var parkingStructures: [MapViewParkingStructure] = []
     
     var apolloClient: ApolloClientProtocol?
     
@@ -155,6 +174,7 @@ class MapViewModel: NetworkDataModelProtocol {
                 self.shuttles = data.system?.shuttles?.map(MapViewShuttle.init) ?? []
                 self.routes = data.system?.routes?.map(MapViewRoute.init) ?? []
                 self.stops = data.system?.stops?.map(MapViewStop.init) ?? []
+                self.parkingStructures = data.system?.parkingSystem?.parkingStructures?.map(MapViewParkingStructure.init) ?? []
             }
         }
     }
