@@ -86,6 +86,9 @@ struct ContentView: View {
         .sheet(isPresented: $showSheet) {
             buildSheetContent()
         }
+        .onChange(of: globalDataState.selectedSystem) {
+            tabSelection = .shuttles
+        }
     }
     
     func buildSheetContent() -> some View {
