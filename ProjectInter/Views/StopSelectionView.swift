@@ -13,11 +13,11 @@ struct StopSelectionView: View {
     
     @EnvironmentObject var globalStopsModel: GlobalStopsModel
     
+    @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
+    
     @EnvironmentObject var locationModel: GlobalLocationDataModel
     
     @Environment(\.dismiss) var dismiss
-    
-    @EnvironmentObject var globalDataModel: GlobalIdSelectionModel
     
     var searchResults: [GlobalStopsModelStop] {
         if searchText.isEmpty {
@@ -81,7 +81,7 @@ struct StopSelectionView: View {
             }
         }
         .task {
-            guard let systemId = globalDataModel.selectedSystem?.id else { return }
+            guard let systemId = globalSystemsModel.selectedSystem?.id else { return }
             
             let stopsNetworkArguments = GlobalStopsNetworkArguments(
                 systemId: systemId
@@ -97,6 +97,6 @@ struct StopSelectionView: View {
     
     StopSelectionView()
         .environmentObject(globalStopsModel)
-        .environmentObject(GlobalDataModelPlaceholderBuilder().build())
+        .environmentObject(GlobalSystemsModelPlaceholderBuilder().build())
         .environmentObject(GlobalLocationDataModel())
 }
