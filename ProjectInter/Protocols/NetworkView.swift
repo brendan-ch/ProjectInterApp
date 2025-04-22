@@ -11,7 +11,7 @@ protocol NetworkView: View {
     associatedtype NetworkArguments
     associatedtype ViewModelType: NetworkDataModelProtocol where ViewModelType.T == NetworkArguments
     
-    var globalDataModel: GlobalIdSelectionModel { get }
+    var globalSystemsModel: GlobalSystemsModel { get }
     
     var viewModel: ViewModelType { get }
     
@@ -23,7 +23,7 @@ protocol NetworkView: View {
 
 extension NetworkView {
     func restartDataUpdates() {
-        if let apolloClient = globalDataModel.apolloClient {
+        if let apolloClient = globalSystemsModel.apolloClient {
             viewModel.apolloClient = apolloClient
         }
         
