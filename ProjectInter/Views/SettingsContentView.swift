@@ -9,7 +9,10 @@ import SwiftUI
 
 struct SettingsContentView: View {
     @State private var showChangelogView = false
+    
     @StateObject var changelogVersionModel = AppVersionModel()
+    
+    @EnvironmentObject var globalDataModel: GlobalDataModel
     
     @State private var showFeedbackView = false
     
@@ -25,7 +28,13 @@ struct SettingsContentView: View {
                         HStack {
                             Text("System")
                             Spacer()
-                            Text("Chapman University")
+                            
+                            if let name = globalDataModel.selectedSystem?.name {
+                                Text(name)
+                            } else {
+                                Text("N/A")
+                            }
+                            
                             Image(systemName: "chevron.right")
                                 .tint(.secondary)
                         }
@@ -90,4 +99,5 @@ struct SettingsContentView: View {
 
 #Preview {
     SettingsContentView()
+        .environmentObject(GlobalDataModel())
 }
