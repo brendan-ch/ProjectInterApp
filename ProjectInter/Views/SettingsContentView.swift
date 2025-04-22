@@ -12,7 +12,7 @@ struct SettingsContentView: View {
     
     @StateObject var changelogVersionModel = AppVersionModel()
     
-    @EnvironmentObject var globalDataModel: GlobalIdSelectionModel
+    @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
     
     @State private var showFeedbackView = false
     
@@ -29,7 +29,7 @@ struct SettingsContentView: View {
                             Text("System")
                             Spacer()
                             
-                            if let name = globalDataModel.selectedSystem?.name {
+                            if let name = globalSystemsModel.selectedSystem?.name {
                                 Text(name)
                                     .lineLimit(1)
                             } else {
@@ -100,5 +100,5 @@ struct SettingsContentView: View {
 
 #Preview {
     SettingsContentView()
-        .environmentObject(GlobalIdSelectionModel())
+        .environmentObject(GlobalSystemsModel())
 }

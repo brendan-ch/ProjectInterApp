@@ -14,7 +14,8 @@ struct ShuttleInfoContentView: NetworkView {
     @StateObject var viewModel = ShuttleInfoContentViewModel()
     
     /// Source of truth for the currently selected shuttle ID.
-    @EnvironmentObject var globalDataModel: GlobalIdSelectionModel
+    @EnvironmentObject var globalIdSelectionModel: GlobalIdSelectionModel
+    @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
     
     @EnvironmentObject var globalStopsModel: GlobalStopsModel
     
@@ -30,8 +31,8 @@ struct ShuttleInfoContentView: NetworkView {
     }
     
     var networkArguments: ShuttleInfoNetworkArguments? {
-        guard let systemId = globalDataModel.selectedSystem?.id,
-              let shuttleId = globalDataModel.selectedShuttleId,
+        guard let systemId = globalSystemsModel.selectedSystem?.id,
+              let shuttleId = globalIdSelectionModel.selectedShuttleId,
               let stopId = globalStopsModel.selectedStop?.id
             else { return nil }
         
@@ -57,7 +58,7 @@ struct ShuttleInfoContentView: NetworkView {
                 }
                 Spacer()
                 Button("Close") {
-                    globalDataModel.selectedShuttleId = nil
+                    globalIdSelectionModel.selectedShuttleId = nil
                 }
             }
             .padding()
@@ -161,7 +162,7 @@ struct ShuttleInfoContentView: NetworkView {
         .onAppear {
             restartDataUpdates()
         }
-        .onChange(of: globalDataModel.selectedShuttleId) {
+        .onChange(of: globalIdSelectionModel.selectedShuttleId) {
             restartDataUpdates()
         }
         .onDisappear {
@@ -171,7 +172,7 @@ struct ShuttleInfoContentView: NetworkView {
     
     private func generateNotificationNetworkArguments() -> NotificationNetworkArguments? {
         guard let stopId = globalStopsModel.selectedStop?.id,
-              let shuttleId = globalDataModel.selectedShuttleId,
+              let shuttleId = globalIdSelectionModel.selectedShuttleId,
               let deviceId = customAppDelegate.notificationTokenString
         else { return nil }
         
