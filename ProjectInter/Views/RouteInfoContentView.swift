@@ -12,7 +12,8 @@ import SwiftUI
 struct RouteInfoContentView: NetworkView {
     /// ``GlobalDataState`` instance containing the currently selected route
     /// and `ApolloClient` instance.
-    @EnvironmentObject var globalDataModel: GlobalIdSelectionModel
+    @EnvironmentObject var globalIdSelectionModel: GlobalIdSelectionModel
+    @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
     
     @EnvironmentObject var globalStopsState: GlobalStopsModel
     
@@ -20,10 +21,9 @@ struct RouteInfoContentView: NetworkView {
     @StateObject var viewModel: RouteInfoContentViewModel = RouteInfoContentViewModel()
     
     var networkArguments: RouteInfoNetworkArguments? {
-        guard let systemId = globalDataModel.selectedSystem?.id,
+        guard let systemId = globalSystemsModel.selectedSystem?.id,
               let stopId = globalStopsState.selectedStop?.id,
-              let routeId = globalDataModel.selectedRouteId else { return nil }
-        
+              let routeId = globalIdSelectionModel.selectedRouteId else { return nil }
         
         return RouteInfoNetworkArguments(systemId: systemId, stopId: stopId, routeId: routeId)
     }
@@ -41,10 +41,10 @@ struct RouteInfoContentView: NetworkView {
                 }
                 Spacer()
                 
-                if globalDataModel.selectedShuttleId == nil {
+                if globalIdSelectionModel.selectedShuttleId == nil {
                     Button("Close") {
-                        globalDataModel.selectedRouteId = nil
-                        globalDataModel.selectedShuttleId = nil
+                        globalIdSelectionModel.selectedRouteId = nil
+                        globalIdSelectionModel.selectedShuttleId = nil
                     }
                 }
             }
@@ -64,7 +64,7 @@ struct RouteInfoContentView: NetworkView {
                             Divider()
                             
                             RouteInfoShuttleViewItem(shuttle: upcomingDeparture) { shuttle in
-                                globalDataModel.selectedShuttleId = shuttle.id
+                                globalIdSelectionModel.selectedShuttleId = shuttle.id
                             }
                             .accessibilityLabel("Shuttle label in route info page")
                             .accessibilityIdentifier(upcomingDeparture.id)
@@ -79,7 +79,7 @@ struct RouteInfoContentView: NetworkView {
         .onAppear {
             restartDataUpdates()
         }
-        .onChange(of: globalDataModel.selectedRouteId) {
+        .onChange(of: globalIdSelectionModel.selectedRouteId) {
             restartDataUpdates()
         }
         .onDisappear {
@@ -119,4 +119,5 @@ struct RouteInfoShuttleViewItem: View {
     return RouteInfoContentView(viewModel: model)
         .environmentObject(GlobalIdSelectionModel())
         .environmentObject(GlobalStopsModel())
+        .environmentObject(GlobalSystemsModelPlaceholderBuilder().build())
 }
