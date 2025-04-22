@@ -27,7 +27,7 @@ struct SystemSelectionView: View {
             List {
                 ForEach(searchResults) { system in
                     Button {
-                        globalSystemsModel.selectedSystem = system
+                        globalSystemsModel.selectSystemId(system.id)
                         dismiss()
                     } label: {
                         Text(system.name)

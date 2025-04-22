@@ -34,7 +34,10 @@ class GlobalSystemsModel: NetworkDataModelProtocol {
     let userDefaults: UserDefaults
     
     @Published var systems: [System] = []
-    @Published var selectedSystem: System? = nil
+    @Published private var selectedSystemId: String? = nil
+    var selectedSystem: System? {
+        systems.first { $0.id == selectedSystemId }
+    }
 
     init(
         apolloClient: ApolloClientProtocol? = nil,
@@ -72,4 +75,8 @@ class GlobalSystemsModel: NetworkDataModelProtocol {
         }
     }
 
+    func selectSystemId(_ id: String) {
+        selectedSystemId = id
+        // TODO: Update UserDefaults
+    }
 }
