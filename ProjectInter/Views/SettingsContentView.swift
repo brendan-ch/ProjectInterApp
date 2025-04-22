@@ -31,6 +31,7 @@ struct SettingsContentView: View {
                             
                             if let name = globalDataModel.selectedSystem?.name {
                                 Text(name)
+                                    .lineLimit(1)
                             } else {
                                 Text("N/A")
                             }
