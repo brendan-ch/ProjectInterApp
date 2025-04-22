@@ -41,15 +41,15 @@ struct ContentView: View {
     /// Whether the root-level sheet should be showing.
     @State var showSheet = false
     var showShuttleInfoOverRouteList: Bool {
-        globalDataState.selectedShuttleId != nil
-        && globalDataState.selectedRouteId == nil
+        globalIdSelectionModel.selectedShuttleId != nil
+        && globalIdSelectionModel.selectedRouteId == nil
     }
     var showRouteInfo: Bool {
-        globalDataState.selectedRouteId != nil
+        globalIdSelectionModel.selectedRouteId != nil
     }
     var showShuttleInfoOverRouteInfo: Bool {
-        globalDataState.selectedRouteId != nil
-        && globalDataState.selectedShuttleId != nil
+        globalIdSelectionModel.selectedRouteId != nil
+        && globalIdSelectionModel.selectedShuttleId != nil
     }
     
     // For dependency injection in previews
@@ -59,7 +59,8 @@ struct ContentView: View {
     var shuttleInfoContentViewModel: ShuttleInfoContentViewModel?
     var parkingStructuresContentViewModel: ParkingStructuresListContentViewModel?
     
-    @EnvironmentObject var globalDataState: GlobalIdSelectionModel
+    @EnvironmentObject var globalIdSelectionModel: GlobalIdSelectionModel
+    @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
     @EnvironmentObject var locationManagerState: GlobalLocationDataModel
     
     // Not actually used to set anything, just to provide default values
@@ -86,7 +87,7 @@ struct ContentView: View {
         .sheet(isPresented: $showSheet) {
             buildSheetContent()
         }
-        .onChange(of: globalDataState.selectedSystem) {
+        .onChange(of: globalSystemsModel.selectedSystem) {
             tabSelection = .shuttles
         }
     }
@@ -172,8 +173,11 @@ struct ContentView: View {
 }
 
 #Preview {
-    let globalDataModelBuilder = GlobalDataModelPlaceholderBuilder()
-    let globalDataModel = globalDataModelBuilder.build()
+    let globalIdSelectionModelBuilder = GlobalIdSelectionModelPlaceholderBuilder()
+    let globalIdSelectionModel = globalIdSelectionModelBuilder.build()
+    
+    let globalSystemsModelBuilder = GlobalSystemsModelPlaceholderBuilder()
+    let globalSystemsModel = globalSystemsModelBuilder.build()
     
     let globalStopsModelBuilder = GlobalStopsModelPlaceholderBuilder()
     let globalStopsModel = globalStopsModelBuilder.build()
@@ -200,7 +204,8 @@ struct ContentView: View {
         shuttleInfoContentViewModel: shuttleInfoContentViewModel,
         parkingStructuresContentViewModel: parkingStructuresViewModel
     )
-        .environmentObject(globalDataModel)
+        .environmentObject(globalIdSelectionModel)
+        .environmentObject(globalSystemsModel)
         .environmentObject(globalStopsModel)
         .environmentObject(GlobalLocationDataModel())
 }
