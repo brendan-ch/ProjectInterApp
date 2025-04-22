@@ -31,6 +31,7 @@ struct SystemSelectionView: View {
                         dismiss()
                     } label: {
                         Text(system.name)
+                            .accessibilityIdentifier("SystemSelectionCollectionSearchResultItem \(system.id)")
                     }
                     .tint(Color.primary)
                 }
