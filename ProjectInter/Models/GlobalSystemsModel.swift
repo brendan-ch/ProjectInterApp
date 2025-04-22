@@ -79,6 +79,6 @@ class GlobalSystemsModel: NetworkDataModelProtocol {
 
     func selectSystemId(_ id: String) {
         selectedSystemId = id
-        userDefaults.set(id, forKey: UserDefaults.selectedSystemIdKey)
+        userDefaults.setValue(id, forKey: UserDefaults.selectedSystemIdKey)
     }
 }
