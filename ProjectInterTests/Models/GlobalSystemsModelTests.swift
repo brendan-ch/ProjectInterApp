@@ -10,8 +10,7 @@ import Testing
 import ApolloTestSupport
 import ProjectInterTestMocks
 
-// TODO: Split GlobalDataModel into multiple classes for easier testing
-class GlobalDataModelTests {
+class GlobalSystemsModelTests {
     @Test func testRefreshSystemData() async throws {
         let mockClient = MockApolloClient()
         
@@ -29,7 +28,7 @@ class GlobalDataModelTests {
         )
         mockClient.queryMock = mock
 
-        let globalDataState = GlobalIdSelectionModel(apolloClient: mockClient)
+        let globalDataState = GlobalSystemsModel(apolloClient: mockClient)
         await globalDataState.refreshSystemData()
         
         #expect(globalDataState.systems.count == 2)
@@ -39,7 +38,7 @@ class GlobalDataModelTests {
         let mockClient = MockApolloClient()
         mockClient.queryMock = nil
         
-        let globalDataState = GlobalIdSelectionModel(apolloClient: mockClient)
+        let globalDataState = GlobalSystemsModel(apolloClient: mockClient)
         await globalDataState.refreshSystemData()
         
         #expect(globalDataState.systems.count == 0)
