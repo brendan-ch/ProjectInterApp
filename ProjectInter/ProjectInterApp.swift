@@ -14,7 +14,7 @@ import Apollo
 struct ProjectInterApp: App {
     @StateObject var locationManagerStateObject = GlobalLocationDataModel()
     
-    @StateObject var globalDataStateObject = GlobalIdSelectionModel()
+    @StateObject var globalIdSelectionStateObject = GlobalIdSelectionModel()
     
     @StateObject var globalSystemsStateObject = GlobalSystemsModel(apolloClient: ApolloClientHolderSingleton.shared.apolloClient)
     
@@ -73,7 +73,8 @@ struct ProjectInterApp: App {
                     .environmentObject(customAppDelegate)
             }
         }
-        .environmentObject(globalDataStateObject)
+        .environmentObject(globalIdSelectionStateObject)
+        .environmentObject(globalSystemsStateObject)
         .environmentObject(globalStopsStateObject)
         .environmentObject(locationManagerStateObject)
         .environmentObject(globalNotificationsStateObject)
