@@ -10,7 +10,7 @@ import Apollo
 import ProjectInterOperations
 
 /// Contains globally selected route and shuttle IDs for the app.
-class GlobalIdSelectionModel {
+class GlobalIdSelectionModel: ObservableObject {
     @Published var selectedRouteId: String? = nil
     @Published var selectedShuttleId: String? = nil
 }
