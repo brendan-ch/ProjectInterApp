@@ -45,6 +45,8 @@ class GlobalSystemsModel: NetworkDataModelProtocol {
     ) {
         self.apolloClient = apolloClient
         self.userDefaults = userDefaults
+        
+        selectedSystemId = self.userDefaults.string(forKey: UserDefaults.selectedSystemIdKey)
     }
     
     func refreshDataOnce(arguments _: GlobalDataModelNetworkArguments) async {
@@ -77,6 +79,6 @@ class GlobalSystemsModel: NetworkDataModelProtocol {
 
     func selectSystemId(_ id: String) {
         selectedSystemId = id
-        // TODO: Update UserDefaults
+        userDefaults.set(id, forKey: UserDefaults.selectedSystemIdKey)
     }
 }
