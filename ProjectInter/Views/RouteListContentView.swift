@@ -15,7 +15,8 @@ struct RouteListContentView: NetworkView {
     /// Backing view model.
     @StateObject var viewModel: RouteListContentViewModel = RouteListContentViewModel()
     
-    @EnvironmentObject var globalDataModel: GlobalIdSelectionModel
+    @EnvironmentObject var globalIdSelectionModel: GlobalIdSelectionModel
+    @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
     @EnvironmentObject var globalStopsState: GlobalStopsModel
     @EnvironmentObject var locationManagerState: GlobalLocationDataModel
     
@@ -26,7 +27,7 @@ struct RouteListContentView: NetworkView {
     
     var networkArguments: RouteListNetworkArguments? {
         guard let stopId = globalStopsState.selectedStop?.id,
-              let systemId = globalDataModel.selectedSystem?.id
+              let systemId = globalSystemsModel.selectedSystem?.id
         else {
             return nil
         }
@@ -61,7 +62,7 @@ struct RouteListContentView: NetworkView {
             Divider()
             ForEach(viewModel.routes) { route in
                 RouteListItem(route: route) { selectedRoute in
-                    globalDataModel.selectedRouteId = route.id
+                    globalIdSelectionModel.selectedRouteId = route.id
                 }
                 .padding(.horizontal)
                 .buttonStyle(.plain)
@@ -116,7 +117,7 @@ struct RouteListItem: View {
 }
 
 #Preview {
-    let globalDataModelBuilder = GlobalDataModelPlaceholderBuilder()
+    let globalDataModelBuilder = GlobalIdSelectionModelPlaceholderBuilder()
     let globalDataStateObject = globalDataModelBuilder.build()
     
     let viewModelBuilder = RouteListContentViewModelPlaceholderBuilder()
@@ -125,8 +126,12 @@ struct RouteListItem: View {
     let globalStopModelBuilder = GlobalStopsModelPlaceholderBuilder()
     let globalStopsModel = globalStopModelBuilder.build()
     
+    let globalSystemsModelBuilder = GlobalSystemsModelPlaceholderBuilder()
+    let globalSystemsModel = globalSystemsModelBuilder.build()
+    
     return RouteListContentView(viewModel: viewModel)
         .environmentObject(globalDataStateObject)
         .environmentObject(GlobalLocationDataModel())
         .environmentObject(globalStopsModel)
+        .environmentObject(globalSystemsModel)
 }
