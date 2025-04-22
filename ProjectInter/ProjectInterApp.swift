@@ -14,7 +14,9 @@ import Apollo
 struct ProjectInterApp: App {
     @StateObject var locationManagerStateObject = GlobalLocationDataModel()
     
-    @StateObject var globalDataStateObject = GlobalIdSelectionModel(apolloClient: ApolloClientHolderSingleton.shared.apolloClient)
+    @StateObject var globalDataStateObject = GlobalIdSelectionModel()
+    
+    @StateObject var globalSystemsStateObject = GlobalSystemsModel(apolloClient: ApolloClientHolderSingleton.shared.apolloClient)
     
     @StateObject var globalStopsStateObject = GlobalStopsModel(apolloClient: ApolloClientHolderSingleton.shared.apolloClient)
     
@@ -36,11 +38,11 @@ struct ProjectInterApp: App {
                 ContentView()
                     .task {
                         // Perform overall global data refresh
-                        await globalDataStateObject.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
+                        await globalSystemsStateObject.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
                     }
-                    .onChange(of: globalDataStateObject.selectedSystem) {
+                    .onChange(of: globalSystemsStateObject.selectedSystem) {
                         // Grab the available stops for the system
-                        guard let systemId = globalDataStateObject.selectedSystem?.id else { return }
+                        guard let systemId = globalSystemsStateObject.selectedSystem?.id else { return }
                         
                         Task {
                             let stopsNetworkArguments = GlobalStopsNetworkArguments(
