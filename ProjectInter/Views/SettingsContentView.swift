@@ -13,9 +13,27 @@ struct SettingsContentView: View {
     
     @State private var showFeedbackView = false
     
+    @State private var showSystemPickerView = false
+    
     var body: some View {
         RootSheetContentView(title: "Settings") {
             VStack(spacing: 0) {
+                GroupBox {
+                    Button {
+                        showSystemPickerView = true
+                    } label: {
+                        HStack {
+                            Text("System")
+                            Spacer()
+                            Text("Chapman University")
+                            Image(systemName: "chevron.right")
+                                .tint(.secondary)
+                        }
+                    }
+                    .tint(Color.primary)
+                }
+                .padding()
+                
                 GroupBox(label: Text("Version")) {
                     VStack(alignment: .leading) {
                         if let marketingVersion = changelogVersionModel.getCurrentAppMarketingVersion() {
@@ -63,6 +81,9 @@ struct SettingsContentView: View {
         }
         .sheet(isPresented: $showFeedbackView) {
             FeedbackWebView()
+        }
+        .sheet(isPresented: $showSystemPickerView) {
+            SystemSelectionView()
         }
     }
 }
