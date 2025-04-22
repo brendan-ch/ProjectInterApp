@@ -47,6 +47,12 @@ struct ProjectInterApp: App {
                                 systemId: systemId
                             )
                             await globalStopsStateObject.refreshDataOnce(arguments: stopsNetworkArguments)
+                            
+                            if canAutomaticallySelectStop {
+                                tryAutomaticallySelectStop()
+                            } else if globalStopsStateObject.stops.count > 0 {
+                                globalStopsStateObject.selectStopManually(globalStopsStateObject.stops[0])
+                            }
                         }
                     }
                     .task {
