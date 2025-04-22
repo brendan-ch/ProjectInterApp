@@ -55,6 +55,12 @@ class ParkingStructuresListContentViewModelTestsMockData {
             )
         )
     )
+    
+    static let tertiaryMock = Mock<ProjectInterTestMocks.Query>(
+        system: .init(
+            parkingSystem: nil
+        )
+    )
 }
 
 class ParkingStructuresListParkingStructureTests {
@@ -77,6 +83,7 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
     let defaultArguments = ParkingStructuresListContentViewModelTestsMockData.defaultArguments
     let defaultMock = ParkingStructuresListContentViewModelTestsMockData.defaultMock
     let secondaryMock = ParkingStructuresListContentViewModelTestsMockData.secondaryMock
+    let tertiaryMock = ParkingStructuresListContentViewModelTestsMockData.tertiaryMock
     
     func assertViewModelDataForDefaultMock(viewModel: ParkingStructuresListContentViewModel) {
         #expect(viewModel.structures.count == 2)
@@ -92,6 +99,8 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
         
         #expect(viewModel.structures[0].spotsAvailable == 50)
         #expect(viewModel.structures[1].spotsAvailable == 100)
+        
+        #expect(viewModel.structuresSupportedBySystem)
     }
     
     func assertViewModelDataForSecondaryMock(viewModel: ParkingStructuresListContentViewModel) {
@@ -108,6 +117,12 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
         
         #expect(viewModel.structures[0].spotsAvailable == 100)
         #expect(viewModel.structures[1].spotsAvailable == 12)
+        
+        #expect(viewModel.structuresSupportedBySystem)
+    }
+    
+    func assertViewModelDataForTertiaryMock(viewModel: ParkingStructuresListContentViewModel) {
+        #expect(viewModel.structuresSupportedBySystem == false)
     }
     
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
@@ -195,5 +210,17 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
         await viewModel.refreshDataOnce(arguments: networkArguments)
         
         #expect(viewModel.structures.isEmpty)
+    }
+    
+    @Test func refreshDataSetsUnsupportedStatusIfNoParkingSystem() async {
+        let mockClient = MockApolloClient()
+        mockClient.queryMock = tertiaryMock
+        
+        let viewModel = ParkingStructuresListContentViewModel(apolloClient: mockClient)
+        
+        let networkArguments = defaultArguments
+        await viewModel.refreshDataOnce(arguments: networkArguments)
+        
+        assertViewModelDataForTertiaryMock(viewModel: viewModel)
     }
 }

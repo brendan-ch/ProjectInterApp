@@ -13,10 +13,10 @@ struct ParkingStructuresListContentView: NetworkView {
     
     @StateObject var viewModel = ParkingStructuresListContentViewModel()
     
-    @EnvironmentObject var globalDataModel: GlobalDataModel
+    @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
     
     var networkArguments: ParkingStructuresNetworkingArguments? {
-        if let systemId = globalDataModel.selectedSystem?.id {
+        if let systemId = globalSystemsModel.selectedSystem?.id {
             return .init(systemId: systemId)
         }
         return nil
@@ -24,29 +24,38 @@ struct ParkingStructuresListContentView: NetworkView {
     
     var body: some View {
         RootSheetContentView(title: "Structures") {
-            ForEach(viewModel.structures) { structure in
-                let currentCount = structure.capacity - structure.spotsAvailable
-                
-                VStack(spacing: 8) {
-                    VStack{
-                        HStack {
-                            Text(structure.name)
-                                .font(.headline)
-                            Spacer()
+            if !viewModel.structuresSupportedBySystem {
+                Text("Parking data is not supported for this system.")
+                    .padding()
+            } else if viewModel.structures.count == 0 {
+                Text("No parking structures available.")
+                    .padding()
+            } else {
+                ForEach(viewModel.structures) { structure in
+                    let currentCount = structure.capacity - structure.spotsAvailable
+                    
+                    VStack(spacing: 8) {
+                        VStack{
+                            HStack {
+                                Text(structure.name)
+                                    .font(.headline)
+                                Spacer()
+                            }
+                            HStack {
+                                Text("\(structure.spotsAvailable) available")
+                                Spacer()
+                                Text("\(currentCount)/\(structure.capacity)")
+                            }
                         }
-                        HStack {
-                            Text("\(structure.spotsAvailable) available")
-                            Spacer()
-                            Text("\(currentCount)/\(structure.capacity)")
-                        }
+                        ProgressView(value: Double(currentCount) / Double(structure.capacity))
+                            .progressViewStyle(LinearProgressViewStyle())
                     }
-                    ProgressView(value: Double(currentCount) / Double(structure.capacity))
-                        .progressViewStyle(LinearProgressViewStyle())
+                    .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                    
+                    Divider()
                 }
-                .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-                
-                Divider()
             }
+            
         }
         .onAppear {
             restartDataUpdates()
@@ -62,5 +71,5 @@ struct ParkingStructuresListContentView: NetworkView {
     let viewModel = builder.build()
     
     ParkingStructuresListContentView(viewModel: viewModel)
-        .environmentObject(GlobalDataModel())
+        .environmentObject(GlobalSystemsModelPlaceholderBuilder().build())
 }

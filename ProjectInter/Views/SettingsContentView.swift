@@ -9,13 +9,41 @@ import SwiftUI
 
 struct SettingsContentView: View {
     @State private var showChangelogView = false
+    
     @StateObject var changelogVersionModel = AppVersionModel()
     
+    @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
+    
     @State private var showFeedbackView = false
+    
+    @State private var showSystemPickerView = false
     
     var body: some View {
         RootSheetContentView(title: "Settings") {
             VStack(spacing: 0) {
+                GroupBox {
+                    Button {
+                        showSystemPickerView = true
+                    } label: {
+                        HStack {
+                            Text("System")
+                            Spacer()
+                            
+                            if let name = globalSystemsModel.selectedSystem?.name {
+                                Text(name)
+                                    .lineLimit(1)
+                            } else {
+                                Text("N/A")
+                            }
+                            
+                            Image(systemName: "chevron.right")
+                                .tint(.secondary)
+                        }
+                    }
+                    .tint(Color.primary)
+                }
+                .padding()
+                
                 GroupBox(label: Text("Version")) {
                     VStack(alignment: .leading) {
                         if let marketingVersion = changelogVersionModel.getCurrentAppMarketingVersion() {
@@ -64,9 +92,13 @@ struct SettingsContentView: View {
         .sheet(isPresented: $showFeedbackView) {
             FeedbackWebView()
         }
+        .sheet(isPresented: $showSystemPickerView) {
+            SystemSelectionView()
+        }
     }
 }
 
 #Preview {
     SettingsContentView()
+        .environmentObject(GlobalSystemsModel())
 }

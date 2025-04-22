@@ -13,13 +13,17 @@ final class SettingsUITests: BaseUITests {
         skipSetupFlow()
     }
     
-    func testOpenChangelogOpensTheWebView() {
-        app.launch()
-        
+    func openSettingsTab() {
         let tabButton = app.tabBars.buttons["Settings"]
         let tabButtonExists = tabButton.waitForExistence(timeout: 10)
         XCTAssert(tabButtonExists)
         tabButton.tap()
+    }
+    
+    func testOpenChangelogOpensTheWebView() {
+        app.launch()
+        
+        openSettingsTab()
         
         let changelogButton = app.buttons["See what's new"]
         changelogButton.tap()
@@ -31,5 +35,22 @@ final class SettingsUITests: BaseUITests {
         
         let text = webView.staticTexts.firstMatch
         XCTAssertTrue(text.waitForExistence(timeout: 20), "Page did not load")
+    }
+    
+    func testSystemSelectionOpenAndClosingFlow() {
+        app.launch()
+        
+        openSettingsTab()
+        
+        let app = XCUIApplication()
+        app.tabBars["Tab Bar"].buttons["Settings"].tap()
+        app.buttons.staticTexts["System"].tap()
+        
+        let predicate = NSPredicate(format: "identifier BEGINSWITH 'SystemSelectionCollectionSearchResultItem'")
+        let cellExists = app.buttons.matching(predicate).firstMatch.waitForExistence(timeout: 20)
+        XCTAssertTrue(cellExists)
+        
+        _ = app.buttons["Close"].waitForExistence(timeout: 20)
+        app.buttons["Close"].tap()
     }
 }

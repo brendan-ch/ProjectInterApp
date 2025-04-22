@@ -26,7 +26,8 @@ struct AnnotationTag: Hashable {
 /// on a map.
 struct MapView: NetworkView {
     /// Source of truth for the currently selected route ID and shuttle ID.
-    @EnvironmentObject var globalDataModel: GlobalDataModel
+    @EnvironmentObject var globalIdSelectionModel: GlobalIdSelectionModel
+    @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
     
     /// Source of truth for the currently selected stop ID and the list of stops.
     @EnvironmentObject var globalStopsModel: GlobalStopsModel
@@ -37,7 +38,7 @@ struct MapView: NetworkView {
     var tabSelection: Tabs
     
     var networkArguments: MapViewNetworkArguments? {
-        guard let systemId = globalDataModel.selectedSystem?.id else { return nil }
+        guard let systemId = globalSystemsModel.selectedSystem?.id else { return nil }
         
         return MapViewNetworkArguments(systemId: systemId)
     }
@@ -53,7 +54,7 @@ struct MapView: NetworkView {
             if tabSelection == .shuttles {
                 // MARK: Polyline rendering
                 
-                if let selectedRouteId = globalDataModel.selectedRouteId {
+                if let selectedRouteId = globalIdSelectionModel.selectedRouteId {
                     let routeToDisplay = viewModel.routes.first { route in
                         route.id == selectedRouteId
                     }
@@ -85,7 +86,7 @@ struct MapView: NetworkView {
                 
                 // MARK: Stop rendering
                 
-                if let routeId = globalDataModel.selectedRouteId {
+                if let routeId = globalIdSelectionModel.selectedRouteId {
                     ForEach(viewModel.stops) { stop in
                         if stop.routeIds.contains(routeId) {
                             buildStopAnnotation(stop: stop)
@@ -109,21 +110,21 @@ struct MapView: NetworkView {
         .onAppear {
             restartDataUpdates()
         }
-        .onChange(of: globalDataModel.selectedSystem) {
+        .onChange(of: globalSystemsModel.selectedSystem) {
             restartDataUpdates()
         }
         .onDisappear {
             stopDataUpdates()
         }
         // Reset the map position if the user selects something
-        .onChange(of: globalDataModel.selectedRouteId) {
+        .onChange(of: globalIdSelectionModel.selectedRouteId) {
             viewModel.position = .automatic
         }
-        .onChange(of: [globalDataModel.selectedShuttleId, globalStopsModel.selectedStopIdOnMap]) {
+        .onChange(of: [globalIdSelectionModel.selectedShuttleId, globalStopsModel.selectedStopIdOnMap]) {
             // TODO: center the map around the selected shuttle
             viewModel.position = .automatic
             
-            if let selectedShuttleId = globalDataModel.selectedShuttleId {
+            if let selectedShuttleId = globalIdSelectionModel.selectedShuttleId {
                 selectedTag = .init(id: selectedShuttleId, type: .shuttle)
             } else if let selectedStopId = globalStopsModel.selectedStopIdOnMap {
                 selectedTag = .init(id: selectedStopId, type: .stop)
@@ -146,10 +147,10 @@ struct MapView: NetworkView {
         
         if selectedTag.type == .shuttle {
             globalStopsModel.selectedStopIdOnMap = nil
-            globalDataModel.selectedShuttleId = selectedTag.id
+            globalIdSelectionModel.selectedShuttleId = selectedTag.id
         } else {
             globalStopsModel.selectedStopIdOnMap = selectedTag.id
-            globalDataModel.selectedShuttleId = nil
+            globalIdSelectionModel.selectedShuttleId = nil
         }
     }
 }
@@ -212,7 +213,7 @@ extension MapView {
             )
         }
         .annotationTitles(
-            globalDataModel.selectedShuttleId == shuttle.id ? .visible : .hidden
+            globalIdSelectionModel.selectedShuttleId == shuttle.id ? .visible : .hidden
         )
         .tag(
             AnnotationTag(id: shuttle.id, type: .shuttle)
@@ -224,18 +225,18 @@ extension MapView {
     }
     
     private func shouldDisplayShuttleOnMap(_ shuttle: MapViewShuttle, associatedStop: MapViewStop?) -> Bool {
-        (globalDataModel.selectedRouteId != nil && shuttle.routeId == globalDataModel.selectedRouteId)
+        (globalIdSelectionModel.selectedRouteId != nil && shuttle.routeId == globalIdSelectionModel.selectedRouteId)
         ||
-        (globalDataModel.selectedRouteId == nil && associatedStop != nil && associatedStop!.routeIds.contains(shuttle.routeId ?? ""))
+        (globalIdSelectionModel.selectedRouteId == nil && associatedStop != nil && associatedStop!.routeIds.contains(shuttle.routeId ?? ""))
     }
     
     private func shouldDisplayOrientation(for shuttle: MapViewShuttle) -> Bool {
-        globalDataModel.selectedShuttleId == shuttle.id ||
-        (globalDataModel.selectedShuttleId == nil && shuttle.routeId == globalDataModel.selectedRouteId)
+        globalIdSelectionModel.selectedShuttleId == shuttle.id ||
+        (globalIdSelectionModel.selectedShuttleId == nil && shuttle.routeId == globalIdSelectionModel.selectedRouteId)
     }
     
     private func shouldBeTransparent(for shuttle: MapViewShuttle) -> Bool {
-        globalDataModel.selectedShuttleId != nil && globalDataModel.selectedShuttleId != shuttle.id
+        globalIdSelectionModel.selectedShuttleId != nil && globalIdSelectionModel.selectedShuttleId != shuttle.id
     }
 }
 
@@ -251,12 +252,13 @@ extension MapView {
         .init(name: stopToSelectFromViewModel.name, id: stopToSelectFromViewModel.id, coordinates: .init(latitude: stopToSelectFromViewModel.coordinates.latitude, longitude: stopToSelectFromViewModel.coordinates.longitude))
     )
     
-    let globalDataModel = GlobalDataModel()
+    let globalDataModel = GlobalIdSelectionModel()
     let routeToSelect = viewModel.routes.first!
     globalDataModel.selectedRouteId = routeToSelect.id
     
     return MapView(viewModel: viewModel, tabSelection: .shuttles)
         .environmentObject(globalDataModel)
         .environmentObject(globalStopsModel)
+        .environmentObject(GlobalSystemsModel())
 }
 

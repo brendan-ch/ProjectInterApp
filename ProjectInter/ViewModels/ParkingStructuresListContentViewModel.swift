@@ -37,6 +37,7 @@ struct ParkingStructuresNetworkingArguments {
 
 class ParkingStructuresListContentViewModel: NetworkDataModelProtocol {
     @Published var structures: [ParkingStructuresListParkingStructure] = []
+    @Published var structuresSupportedBySystem = false
     
     typealias T = ParkingStructuresNetworkingArguments
     
@@ -66,8 +67,20 @@ class ParkingStructuresListContentViewModel: NetworkDataModelProtocol {
                     // https://www.reddit.com/r/Xcode/comments/1862x8h/remove_warnings_and_runtime_issues_from_xc15/
                     print("Error fetching parking structures list data: \(error)")
                 case .success(let result):
-                    if let structures = result.data?.system?.parkingSystem?.parkingStructures {
+                    guard let parkingSystem = result.data?.system?.parkingSystem else {
+                        self.structuresSupportedBySystem = false
+                        
+                        continuationIsActive = false
+                        continuation.resume()
+                        
+                        return
+                    }
+                    
+                    self.structuresSupportedBySystem = true
+                    if let structures = parkingSystem.parkingStructures {
                         self.structures = structures.map(ParkingStructuresListParkingStructure.init)
+                    } else {
+                        self.structures = []
                     }
                 }
                 

@@ -1,11 +1,11 @@
 //
-//  NetworkStateObject.swift
+//  GlobalSystemsModel.swift
 //  ProjectInter
 //
-//  Created by Brendan Chen on 2024.12.24.
+//  Created by Brendan Chen on 2025.04.22.
 //
 
-import SwiftUI
+import Foundation
 import Apollo
 import ProjectInterOperations
 
@@ -24,38 +24,33 @@ struct GlobalDataModelNetworkArguments {
     
 }
 
-
-// MARK: - Data model implementation
-
-/// Contains globally shared data for the app.
-class GlobalDataModel: NetworkDataModelProtocol {
+class GlobalSystemsModel: NetworkDataModelProtocol {
     typealias T = GlobalDataModelNetworkArguments
     
     var apolloClient: ApolloClientProtocol?
     
     var dataRefreshLoopTask: Task<Void, any Error>?
     
+    let userDefaults: UserDefaults
+    
     @Published var systems: [System] = []
-    @Published var selectedSystem: System? = nil
-    
-    @Published var selectedRouteId: String? = nil
-    @Published var selectedShuttleId: String? = nil
-    
-    init(apolloClient: ApolloClientProtocol? = nil) {
+    @Published private var selectedSystemId: String? = nil
+    var selectedSystem: System? {
+        systems.first { $0.id == selectedSystemId }
+    }
+
+    init(
+        apolloClient: ApolloClientProtocol? = nil,
+        userDefaults: UserDefaults = UserDefaults.standard
+    ) {
         self.apolloClient = apolloClient
-    }
-    
-    func startRefreshingData(arguments: GlobalDataModelNetworkArguments, sleepDuration: Duration = .seconds(5)) {
-        fatalError("This method is not implemented yet.")
-    }
-    
-    func stopRefreshingData() {
-        fatalError("This method is not implemented yet.")
+        self.userDefaults = userDefaults
+        
+        selectedSystemId = self.userDefaults.string(forKey: UserDefaults.selectedSystemIdKey)
     }
     
     func refreshDataOnce(arguments _: GlobalDataModelNetworkArguments) async {
         await refreshSystemData()
-        tempImplementation_autoSelectSystemId()
     }
     
     func refreshSystemData() async {
@@ -81,17 +76,9 @@ class GlobalDataModel: NetworkDataModelProtocol {
             }
         }
     }
-    
-    // TODO: remove once UI for selecting system is implemented
-    private func tempImplementation_autoSelectSystemId() {
-        if !systems.isEmpty,
-           selectedSystem == nil
-        {
-            DispatchQueue.main.async {
-                self.selectedSystem = self.systems[0]
-            }
-        }
-    }
-    
-}
 
+    func selectSystemId(_ id: String) {
+        selectedSystemId = id
+        userDefaults.setValue(id, forKey: UserDefaults.selectedSystemIdKey)
+    }
+}
