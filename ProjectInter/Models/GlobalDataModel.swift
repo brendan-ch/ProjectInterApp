@@ -47,7 +47,6 @@ class GlobalDataModel: NetworkDataModelProtocol {
     
     func refreshDataOnce(arguments _: GlobalDataModelNetworkArguments) async {
         await refreshSystemData()
-        tempImplementation_autoSelectSystemId()
     }
     
     func refreshSystemData() async {
@@ -73,17 +72,5 @@ class GlobalDataModel: NetworkDataModelProtocol {
             }
         }
     }
-    
-    // TODO: remove once UI for selecting system is implemented
-    private func tempImplementation_autoSelectSystemId() {
-        if !systems.isEmpty,
-           selectedSystem == nil
-        {
-            DispatchQueue.main.async {
-                self.selectedSystem = self.systems[0]
-            }
-        }
-    }
-    
 }
 
