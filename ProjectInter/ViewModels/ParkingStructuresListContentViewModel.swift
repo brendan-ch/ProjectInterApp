@@ -69,6 +69,10 @@ class ParkingStructuresListContentViewModel: NetworkDataModelProtocol {
                 case .success(let result):
                     guard let parkingSystem = result.data?.system?.parkingSystem else {
                         self.structuresSupportedBySystem = false
+                        
+                        continuationIsActive = false
+                        continuation.resume()
+                        
                         return
                     }
                     
