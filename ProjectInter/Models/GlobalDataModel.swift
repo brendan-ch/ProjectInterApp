@@ -45,14 +45,6 @@ class GlobalDataModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func startRefreshingData(arguments: GlobalDataModelNetworkArguments, sleepDuration: Duration = .seconds(5)) {
-        fatalError("This method is not implemented yet.")
-    }
-    
-    func stopRefreshingData() {
-        fatalError("This method is not implemented yet.")
-    }
-    
     func refreshDataOnce(arguments _: GlobalDataModelNetworkArguments) async {
         await refreshSystemData()
         tempImplementation_autoSelectSystemId()
