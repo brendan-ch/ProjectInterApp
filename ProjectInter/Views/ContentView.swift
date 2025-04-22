@@ -59,7 +59,7 @@ struct ContentView: View {
     var shuttleInfoContentViewModel: ShuttleInfoContentViewModel?
     var parkingStructuresContentViewModel: ParkingStructuresListContentViewModel?
     
-    @EnvironmentObject var globalDataState: GlobalDataModel
+    @EnvironmentObject var globalDataState: GlobalIdSelectionModel
     @EnvironmentObject var locationManagerState: GlobalLocationDataModel
     
     // Not actually used to set anything, just to provide default values

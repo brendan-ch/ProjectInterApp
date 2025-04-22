@@ -14,7 +14,7 @@ import Apollo
 struct ProjectInterApp: App {
     @StateObject var locationManagerStateObject = GlobalLocationDataModel()
     
-    @StateObject var globalDataStateObject = GlobalDataModel(apolloClient: ApolloClientHolderSingleton.shared.apolloClient)
+    @StateObject var globalDataStateObject = GlobalIdSelectionModel(apolloClient: ApolloClientHolderSingleton.shared.apolloClient)
     
     @StateObject var globalStopsStateObject = GlobalStopsModel(apolloClient: ApolloClientHolderSingleton.shared.apolloClient)
     

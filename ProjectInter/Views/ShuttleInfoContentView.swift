@@ -14,7 +14,7 @@ struct ShuttleInfoContentView: NetworkView {
     @StateObject var viewModel = ShuttleInfoContentViewModel()
     
     /// Source of truth for the currently selected shuttle ID.
-    @EnvironmentObject var globalDataModel: GlobalDataModel
+    @EnvironmentObject var globalDataModel: GlobalIdSelectionModel
     
     @EnvironmentObject var globalStopsModel: GlobalStopsModel
     
@@ -211,7 +211,7 @@ struct ShuttleInfoContentView: NetworkView {
     let model = builder.build()
     
     return ShuttleInfoContentView(viewModel: model)
-        .environmentObject(GlobalDataModel())
+        .environmentObject(GlobalIdSelectionModel())
         .environmentObject(GlobalStopsModel())
         .environmentObject(GlobalNotificationSchedulingModel())
         .environmentObject(CustomAppDelegate())

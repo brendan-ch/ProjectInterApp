@@ -15,7 +15,7 @@ struct RouteListContentView: NetworkView {
     /// Backing view model.
     @StateObject var viewModel: RouteListContentViewModel = RouteListContentViewModel()
     
-    @EnvironmentObject var globalDataModel: GlobalDataModel
+    @EnvironmentObject var globalDataModel: GlobalIdSelectionModel
     @EnvironmentObject var globalStopsState: GlobalStopsModel
     @EnvironmentObject var locationManagerState: GlobalLocationDataModel
     

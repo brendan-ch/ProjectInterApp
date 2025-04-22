@@ -17,7 +17,7 @@ struct StopSelectionView: View {
     
     @Environment(\.dismiss) var dismiss
     
-    @EnvironmentObject var globalDataModel: GlobalDataModel
+    @EnvironmentObject var globalDataModel: GlobalIdSelectionModel
     
     var searchResults: [GlobalStopsModelStop] {
         if searchText.isEmpty {

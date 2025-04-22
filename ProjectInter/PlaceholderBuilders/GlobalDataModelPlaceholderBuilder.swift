@@ -8,10 +8,10 @@
 import Foundation
 
 class GlobalDataModelPlaceholderBuilder: PlaceholderBuilderProtocol {
-    typealias PlaceholderType = GlobalDataModel
+    typealias PlaceholderType = GlobalIdSelectionModel
     
-    func build() -> GlobalDataModel {
-        let model = GlobalDataModel()
+    func build() -> GlobalIdSelectionModel {
+        let model = GlobalIdSelectionModel()
         model.systems = [
             System(name: "Chapman University", id: "1"),
             System(name: "City of Monterey Park", id: "2")

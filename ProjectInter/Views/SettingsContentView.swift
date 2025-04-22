@@ -12,7 +12,7 @@ struct SettingsContentView: View {
     
     @StateObject var changelogVersionModel = AppVersionModel()
     
-    @EnvironmentObject var globalDataModel: GlobalDataModel
+    @EnvironmentObject var globalDataModel: GlobalIdSelectionModel
     
     @State private var showFeedbackView = false
     
@@ -100,5 +100,5 @@ struct SettingsContentView: View {
 
 #Preview {
     SettingsContentView()
-        .environmentObject(GlobalDataModel())
+        .environmentObject(GlobalIdSelectionModel())
 }

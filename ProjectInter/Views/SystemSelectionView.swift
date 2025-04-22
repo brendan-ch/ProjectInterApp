@@ -10,7 +10,7 @@ import SwiftUI
 struct SystemSelectionView: View {
     @State private var searchText = ""
     
-    @EnvironmentObject var globalDataModel: GlobalDataModel
+    @EnvironmentObject var globalDataModel: GlobalIdSelectionModel
     
     @Environment(\.dismiss) var dismiss
 

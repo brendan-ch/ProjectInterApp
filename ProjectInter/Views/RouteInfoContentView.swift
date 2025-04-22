@@ -12,7 +12,7 @@ import SwiftUI
 struct RouteInfoContentView: NetworkView {
     /// ``GlobalDataState`` instance containing the currently selected route
     /// and `ApolloClient` instance.
-    @EnvironmentObject var globalDataModel: GlobalDataModel
+    @EnvironmentObject var globalDataModel: GlobalIdSelectionModel
     
     @EnvironmentObject var globalStopsState: GlobalStopsModel
     
@@ -117,6 +117,6 @@ struct RouteInfoShuttleViewItem: View {
     let model = builder.build()
     
     return RouteInfoContentView(viewModel: model)
-        .environmentObject(GlobalDataModel())
+        .environmentObject(GlobalIdSelectionModel())
         .environmentObject(GlobalStopsModel())
 }

@@ -29,7 +29,7 @@ class GlobalDataModelTests {
         )
         mockClient.queryMock = mock
 
-        let globalDataState = GlobalDataModel(apolloClient: mockClient)
+        let globalDataState = GlobalIdSelectionModel(apolloClient: mockClient)
         await globalDataState.refreshSystemData()
         
         #expect(globalDataState.systems.count == 2)
@@ -39,7 +39,7 @@ class GlobalDataModelTests {
         let mockClient = MockApolloClient()
         mockClient.queryMock = nil
         
-        let globalDataState = GlobalDataModel(apolloClient: mockClient)
+        let globalDataState = GlobalIdSelectionModel(apolloClient: mockClient)
         await globalDataState.refreshSystemData()
         
         #expect(globalDataState.systems.count == 0)

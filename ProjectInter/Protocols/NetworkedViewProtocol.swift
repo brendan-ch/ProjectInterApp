@@ -11,7 +11,7 @@ protocol NetworkeDataViewProtocol: View {
     associatedtype NetworkArguments
     associatedtype ViewModelType: NetworkDataModelProtocol where ViewModelType.T == NetworkArguments
     
-    var globalDataModel: GlobalDataModel { get set }
+    var globalDataModel: GlobalIdSelectionModel { get set }
     
     var viewModel: ViewModelType { get set }
     

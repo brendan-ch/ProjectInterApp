@@ -26,7 +26,7 @@ struct AnnotationTag: Hashable {
 /// on a map.
 struct MapView: NetworkView {
     /// Source of truth for the currently selected route ID and shuttle ID.
-    @EnvironmentObject var globalDataModel: GlobalDataModel
+    @EnvironmentObject var globalDataModel: GlobalIdSelectionModel
     
     /// Source of truth for the currently selected stop ID and the list of stops.
     @EnvironmentObject var globalStopsModel: GlobalStopsModel
@@ -251,7 +251,7 @@ extension MapView {
         .init(name: stopToSelectFromViewModel.name, id: stopToSelectFromViewModel.id, coordinates: .init(latitude: stopToSelectFromViewModel.coordinates.latitude, longitude: stopToSelectFromViewModel.coordinates.longitude))
     )
     
-    let globalDataModel = GlobalDataModel()
+    let globalDataModel = GlobalIdSelectionModel()
     let routeToSelect = viewModel.routes.first!
     globalDataModel.selectedRouteId = routeToSelect.id
     

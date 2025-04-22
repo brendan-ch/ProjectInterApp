@@ -1,11 +1,11 @@
 //
-//  NetworkStateObject.swift
+//  GlobalSystemsModel.swift
 //  ProjectInter
 //
-//  Created by Brendan Chen on 2024.12.24.
+//  Created by Brendan Chen on 2025.04.22.
 //
 
-import SwiftUI
+import Foundation
 import Apollo
 import ProjectInterOperations
 
@@ -24,11 +24,7 @@ struct GlobalDataModelNetworkArguments {
     
 }
 
-
-// MARK: - Data model implementation
-
-/// Contains globally shared data for the app.
-class GlobalDataModel: NetworkDataModelProtocol {
+class GlobalSystemsModel: NetworkDataModelProtocol {
     typealias T = GlobalDataModelNetworkArguments
     
     var apolloClient: ApolloClientProtocol?
@@ -37,10 +33,7 @@ class GlobalDataModel: NetworkDataModelProtocol {
     
     @Published var systems: [System] = []
     @Published var selectedSystem: System? = nil
-    
-    @Published var selectedRouteId: String? = nil
-    @Published var selectedShuttleId: String? = nil
-    
+
     init(apolloClient: ApolloClientProtocol? = nil) {
         self.apolloClient = apolloClient
     }
@@ -72,5 +65,5 @@ class GlobalDataModel: NetworkDataModelProtocol {
             }
         }
     }
-}
 
+}
