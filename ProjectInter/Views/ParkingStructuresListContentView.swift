@@ -13,10 +13,10 @@ struct ParkingStructuresListContentView: NetworkView {
     
     @StateObject var viewModel = ParkingStructuresListContentViewModel()
     
-    @EnvironmentObject var globalDataModel: GlobalIdSelectionModel
+    @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
     
     var networkArguments: ParkingStructuresNetworkingArguments? {
-        if let systemId = globalDataModel.selectedSystem?.id {
+        if let systemId = globalSystemsModel.selectedSystem?.id {
             return .init(systemId: systemId)
         }
         return nil
@@ -62,5 +62,5 @@ struct ParkingStructuresListContentView: NetworkView {
     let viewModel = builder.build()
     
     ParkingStructuresListContentView(viewModel: viewModel)
-        .environmentObject(GlobalIdSelectionModel())
+        .environmentObject(GlobalSystemsModelPlaceholderBuilder().build())
 }

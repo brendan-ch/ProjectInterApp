@@ -10,15 +10,15 @@ import SwiftUI
 struct SystemSelectionView: View {
     @State private var searchText = ""
     
-    @EnvironmentObject var globalDataModel: GlobalIdSelectionModel
+    @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
     
     @Environment(\.dismiss) var dismiss
 
     var searchResults: [System] {
         if searchText.isEmpty {
-            return globalDataModel.systems
+            return globalSystemsModel.systems
         } else {
-            return globalDataModel.systems.filter { $0.name.lowercased().contains(searchText.lowercased()) }
+            return globalSystemsModel.systems.filter { $0.name.lowercased().contains(searchText.lowercased()) }
         }
     }
     
@@ -27,7 +27,7 @@ struct SystemSelectionView: View {
             List {
                 ForEach(searchResults) { system in
                     Button {
-                        globalDataModel.selectedSystem = system
+                        globalSystemsModel.selectedSystem = system
                         dismiss()
                     } label: {
                         Text(system.name)
@@ -54,8 +54,8 @@ struct SystemSelectionView: View {
 }
 
 #Preview {
-    var globalDataModelBuilder = GlobalDataModelPlaceholderBuilder()
-    var globalDataModel = globalDataModelBuilder.build()
+    var globalSystemsModelBuilder = GlobalSystemsModelPlaceholderBuilder()
+    var globalDataModel = globalSystemsModelBuilder.build()
     
     SystemSelectionView()
         .environmentObject(globalDataModel)
