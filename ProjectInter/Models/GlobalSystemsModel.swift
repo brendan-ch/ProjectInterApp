@@ -31,11 +31,17 @@ class GlobalSystemsModel: NetworkDataModelProtocol {
     
     var dataRefreshLoopTask: Task<Void, any Error>?
     
+    let userDefaults: UserDefaults
+    
     @Published var systems: [System] = []
     @Published var selectedSystem: System? = nil
 
-    init(apolloClient: ApolloClientProtocol? = nil) {
+    init(
+        apolloClient: ApolloClientProtocol? = nil,
+        userDefaults: UserDefaults = UserDefaults.standard
+    ) {
         self.apolloClient = apolloClient
+        self.userDefaults = userDefaults
     }
     
     func refreshDataOnce(arguments _: GlobalDataModelNetworkArguments) async {
