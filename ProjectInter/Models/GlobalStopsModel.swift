@@ -97,6 +97,13 @@ class GlobalStopsModel: NetworkDataModelProtocol {
         }
     }
     
+    func selectStopId(_ stopId: String) {
+        let stop = stops.first { $0.id == stopId }
+        guard let stop else { return }
+        
+        selectStopManually(stop)
+    }
+    
     func selectStopManually(_ stop: GlobalStopsModelStop) {
         selectedStop = stop
         isAutomaticWhenLocationIsAvailable = false

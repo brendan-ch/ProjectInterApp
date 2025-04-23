@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 import WebKit
 import Apollo
+import Combine
 
 @main
 struct ProjectInterApp: App {
@@ -29,6 +30,13 @@ struct ProjectInterApp: App {
     var canAutomaticallySelectStop: Bool {
         globalStopsStateObject.isAutomaticWhenLocationIsAvailable
         && globalStopsStateObject.stops.count > 0
+    }
+    
+    init() {
+        customAppDelegate.notificationCenterDelegate.$lastTappedNotificationDetails
+            .sink { [self] notificationDetails in
+                print(notificationDetails)
+            }
     }
     
     var body: some Scene {
@@ -66,6 +74,13 @@ struct ProjectInterApp: App {
                     }
                     .onChange(of: locationManagerStateObject.lastUpdatedLocation) {
                         tryAutomaticallySelectStop()
+                    }
+                    .onChange(of: customAppDelegate.notificationCenterDelegate.lastTappedNotificationDetails) {
+//                        guard let details = customAppDelegate.notificationCenterDelegate.lastTappedNotificationDetails else { return }
+//                        
+//                        globalSystemsStateObject.selectSystemId(details.systemId)
+//                        globalStopsStateObject.selectStopId(details.stopId)
+//                        globalIdSelectionStateObject.selectedShuttleId = details.shuttleId
                     }
             } else {
                 WelcomeContentView()

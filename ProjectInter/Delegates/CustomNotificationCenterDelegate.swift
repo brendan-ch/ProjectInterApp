@@ -9,7 +9,7 @@ import Foundation
 import UserNotifications
 import UIKit
 
-struct LastTappedNotificationDetails: Codable {
+struct LastTappedNotificationDetails: Codable, Equatable {
     let shuttleId: String
     let systemId: String
     let stopId: String
