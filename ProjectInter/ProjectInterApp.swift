@@ -27,61 +27,11 @@ struct ProjectInterApp: App {
     
     @UIApplicationDelegateAdaptor(CustomAppDelegate.self) var customAppDelegate: CustomAppDelegate
     
-    var canAutomaticallySelectStop: Bool {
-        globalStopsStateObject.isAutomaticWhenLocationIsAvailable
-        && globalStopsStateObject.stops.count > 0
-    }
-    
-    init() {
-        customAppDelegate.notificationCenterDelegate.$lastTappedNotificationDetails
-            .sink { [self] notificationDetails in
-                print(notificationDetails)
-            }
-    }
-    
     var body: some Scene {
         WindowGroup {
             let setupCompleted = setupStateModel.setupCompleted
             if setupCompleted {
-                ContentView()
-                    .task {
-                        // Perform overall global data refresh
-                        await globalSystemsStateObject.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
-                    }
-                    .onChange(of: globalSystemsStateObject.selectedSystem) {
-                        // Grab the available stops for the system
-                        guard let systemId = globalSystemsStateObject.selectedSystem?.id else { return }
-                        
-                        Task {
-                            let stopsNetworkArguments = GlobalStopsNetworkArguments(
-                                systemId: systemId
-                            )
-                            await globalStopsStateObject.refreshDataOnce(arguments: stopsNetworkArguments)
-                            
-                            if canAutomaticallySelectStop {
-                                tryAutomaticallySelectStop()
-                            } else if globalStopsStateObject.stops.count > 0 {
-                                globalStopsStateObject.selectStopManually(globalStopsStateObject.stops[0])
-                            }
-                        }
-                    }
-                    .task {
-                        updateGlobalStopsStateAutomaticState()
-                    }
-                    .onChange(of: canAutomaticallySelectStop) {
-                        // Run on startup in addition to location changes
-                        tryAutomaticallySelectStop()
-                    }
-                    .onChange(of: locationManagerStateObject.lastUpdatedLocation) {
-                        tryAutomaticallySelectStop()
-                    }
-                    .onChange(of: customAppDelegate.notificationCenterDelegate.lastTappedNotificationDetails) {
-//                        guard let details = customAppDelegate.notificationCenterDelegate.lastTappedNotificationDetails else { return }
-//                        
-//                        globalSystemsStateObject.selectSystemId(details.systemId)
-//                        globalStopsStateObject.selectStopId(details.stopId)
-//                        globalIdSelectionStateObject.selectedShuttleId = details.shuttleId
-                    }
+                ContentViewWrapper()
             } else {
                 WelcomeContentView()
                     .environmentObject(setupStateModel)
@@ -95,12 +45,55 @@ struct ProjectInterApp: App {
         .environmentObject(globalNotificationsStateObject)
     }
     
-    func updateGlobalStopsStateAutomaticState() {
-        if locationManagerStateObject.authorizationStatusInitialized {
-            if locationManagerStateObject.isAuthorized {
-                globalStopsStateObject.isAutomaticWhenLocationIsAvailable = true
+}
+
+struct ContentViewWrapper: View {
+    @EnvironmentObject var globalSystemsStateObject: GlobalSystemsModel
+    @EnvironmentObject var globalStopsStateObject: GlobalStopsModel
+    @EnvironmentObject var locationManagerStateObject: GlobalLocationDataModel
+    @EnvironmentObject var customAppDelegate: CustomAppDelegate
+    
+    var canAutomaticallySelectStop: Bool {
+        globalStopsStateObject.isAutomaticWhenLocationIsAvailable
+        && globalStopsStateObject.stops.count > 0
+    }
+
+    var body: some View {
+        ContentView()
+            .task {
+                // Perform overall global data refresh
+                await globalSystemsStateObject.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
             }
-        }
+            .onChange(of: globalSystemsStateObject.selectedSystem) {
+                // Grab the available stops for the system
+                guard let systemId = globalSystemsStateObject.selectedSystem?.id else { return }
+                
+                Task {
+                    let stopsNetworkArguments = GlobalStopsNetworkArguments(
+                        systemId: systemId
+                    )
+                    await globalStopsStateObject.refreshDataOnce(arguments: stopsNetworkArguments)
+                    
+                    if canAutomaticallySelectStop {
+                        tryAutomaticallySelectStop()
+                    } else if globalStopsStateObject.stops.count > 0 {
+                        globalStopsStateObject.selectStopManually(globalStopsStateObject.stops[0])
+                    }
+                }
+            }
+            .task {
+                updateGlobalStopsStateAutomaticState()
+            }
+            .onChange(of: canAutomaticallySelectStop) {
+                // Run on startup in addition to location changes
+                tryAutomaticallySelectStop()
+            }
+            .onChange(of: locationManagerStateObject.lastUpdatedLocation) {
+                tryAutomaticallySelectStop()
+            }
+            .onChange(of: customAppDelegate.notificationCenterDelegate.lastTappedNotificationDetails) {
+                print(customAppDelegate.notificationCenterDelegate.lastTappedNotificationDetails)
+            }
     }
     
     func tryAutomaticallySelectStop() {
@@ -110,6 +103,15 @@ struct ProjectInterApp: App {
             globalStopsStateObject.selectClosestStopBasedOnLocation(location: location)
         }
     }
+    
+    func updateGlobalStopsStateAutomaticState() {
+        if locationManagerStateObject.authorizationStatusInitialized {
+            if locationManagerStateObject.isAuthorized {
+                globalStopsStateObject.isAutomaticWhenLocationIsAvailable = true
+            }
+        }
+    }
+    
 }
 
 class ApolloClientHolderSingleton {
