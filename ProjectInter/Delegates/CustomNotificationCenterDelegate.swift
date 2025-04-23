@@ -18,6 +18,8 @@ struct LastTappedNotificationDetails: Codable {
 class CustomNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate, ObservableObject {
     private var notificationCenter: UNUserNotificationCenterProtocol
     
+    @Published var lastTappedNotificationDetails: LastTappedNotificationDetails?
+    
     override init() {
         notificationCenter = UNUserNotificationCenter.current()
         super.init()
@@ -49,11 +51,17 @@ class CustomNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelega
         completionHandler([.banner])
     }
     
+    // TODO: Validate this behavior via a UI test
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo
         let shuttleNotificationInfo = userInfo.first { $0.key as? String == UNNotificationResponse.shuttleNotificationInfoKey }?.value
         guard let shuttleNotificationInfo else { return }
         
-        print(shuttleNotificationInfo)
+        let jsonSerialization = try? JSONSerialization.data(withJSONObject: shuttleNotificationInfo, options: [])
+        guard let jsonSerialization else { return }
+        let decoded = try? JSONDecoder().decode(LastTappedNotificationDetails.self, from: jsonSerialization)
+        guard let decoded else { return }
+        
+        lastTappedNotificationDetails = decoded
     }
 }
