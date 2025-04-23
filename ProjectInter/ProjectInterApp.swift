@@ -43,15 +43,18 @@ struct ProjectInterApp: App {
         .environmentObject(globalStopsStateObject)
         .environmentObject(locationManagerStateObject)
         .environmentObject(globalNotificationsStateObject)
+        .environmentObject(customAppDelegate.notificationCenterDelegate)
     }
     
 }
 
 struct ContentViewWrapper: View {
     @EnvironmentObject var globalSystemsStateObject: GlobalSystemsModel
+    @EnvironmentObject var globalIdSelectionStateObject: GlobalIdSelectionModel
     @EnvironmentObject var globalStopsStateObject: GlobalStopsModel
     @EnvironmentObject var locationManagerStateObject: GlobalLocationDataModel
     @EnvironmentObject var customAppDelegate: CustomAppDelegate
+    @EnvironmentObject var notificationCenterDelegate: CustomNotificationCenterDelegate
     
     var canAutomaticallySelectStop: Bool {
         globalStopsStateObject.isAutomaticWhenLocationIsAvailable
@@ -91,8 +94,14 @@ struct ContentViewWrapper: View {
             .onChange(of: locationManagerStateObject.lastUpdatedLocation) {
                 tryAutomaticallySelectStop()
             }
-            .onChange(of: customAppDelegate.notificationCenterDelegate.lastTappedNotificationDetails) {
-                print(customAppDelegate.notificationCenterDelegate.lastTappedNotificationDetails)
+            .onChange(of: notificationCenterDelegate.lastTappedNotificationDetails) {
+                guard let details = notificationCenterDelegate.lastTappedNotificationDetails else { return }
+                
+                globalStopsStateObject.selectStopId(details.stopId)
+                globalSystemsStateObject.selectSystemId(details.systemId)
+                globalIdSelectionStateObject.selectedShuttleId = details.shuttleId
+                
+                notificationCenterDelegate.lastTappedNotificationDetails = nil
             }
     }
     
