@@ -87,6 +87,9 @@ struct ContentViewWrapper: View {
             .task {
                 updateGlobalStopsStateAutomaticState()
             }
+            .task {
+                setSelectionStateBasedOnLastTappedNotificationDetails()
+            }
             .onChange(of: canAutomaticallySelectStop) {
                 // Run on startup in addition to location changes
                 tryAutomaticallySelectStop()
@@ -95,14 +98,18 @@ struct ContentViewWrapper: View {
                 tryAutomaticallySelectStop()
             }
             .onChange(of: notificationCenterDelegate.lastTappedNotificationDetails) {
-                guard let details = notificationCenterDelegate.lastTappedNotificationDetails else { return }
-                
-                globalStopsStateObject.selectStopId(details.stopId)
-                globalSystemsStateObject.selectSystemId(details.systemId)
-                globalIdSelectionStateObject.selectedShuttleId = details.shuttleId
-                
-                notificationCenterDelegate.lastTappedNotificationDetails = nil
+                setSelectionStateBasedOnLastTappedNotificationDetails()
             }
+    }
+    
+    func setSelectionStateBasedOnLastTappedNotificationDetails() {
+        guard let details = notificationCenterDelegate.lastTappedNotificationDetails else { return }
+        
+        globalStopsStateObject.selectStopId(details.stopId)
+        globalSystemsStateObject.selectSystemId(details.systemId)
+        globalIdSelectionStateObject.selectedShuttleId = details.shuttleId
+        
+        notificationCenterDelegate.lastTappedNotificationDetails = nil
     }
     
     func tryAutomaticallySelectStop() {
