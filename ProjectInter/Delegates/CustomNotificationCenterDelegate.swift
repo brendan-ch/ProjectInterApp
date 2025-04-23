@@ -9,6 +9,12 @@ import Foundation
 import UserNotifications
 import UIKit
 
+struct LastTappedNotificationDetails: Codable {
+    let shuttleId: String
+    let systemId: String
+    let stopId: String
+}
+
 class CustomNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate, ObservableObject {
     private var notificationCenter: UNUserNotificationCenterProtocol
     
@@ -31,7 +37,7 @@ class CustomNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelega
     }
     
     func getAuthorizationStatus() async -> UNAuthorizationStatus {
-        var settings = await notificationCenter.notificationSettings()
+        let settings = await notificationCenter.notificationSettings()
         return settings.authorizationStatus
     }
     
@@ -44,7 +50,10 @@ class CustomNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelega
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        // TODO: Set selected shuttle ID in this delegate so that the global data model can be updated
-        // See https://www.notion.so/bchendev/Navigate-user-to-selected-shuttle-on-notification-click-1ca07b1035c680c0a109d5c80df2cac1?pvs=4
+        let userInfo = response.notification.request.content.userInfo
+        let shuttleNotificationInfo = userInfo.first { $0.key as? String == UNNotificationResponse.shuttleNotificationInfoKey }?.value
+        guard let shuttleNotificationInfo else { return }
+        
+        print(shuttleNotificationInfo)
     }
 }
