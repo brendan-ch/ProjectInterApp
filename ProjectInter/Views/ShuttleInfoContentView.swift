@@ -212,6 +212,7 @@ struct ShuttleInfoContentView: NetworkView {
     let model = builder.build()
     
     return ShuttleInfoContentView(viewModel: model)
+        .environmentObject(GlobalSystemsModel())
         .environmentObject(GlobalIdSelectionModel())
         .environmentObject(GlobalStopsModel())
         .environmentObject(GlobalNotificationSchedulingModel())

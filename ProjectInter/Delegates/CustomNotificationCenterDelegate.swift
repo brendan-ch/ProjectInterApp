@@ -9,8 +9,16 @@ import Foundation
 import UserNotifications
 import UIKit
 
+struct LastTappedNotificationDetails: Codable, Equatable {
+    let shuttleId: String
+    let systemId: String
+    let stopId: String
+}
+
 class CustomNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate, ObservableObject {
     private var notificationCenter: UNUserNotificationCenterProtocol
+    
+    @Published var lastTappedNotificationDetails: LastTappedNotificationDetails?
     
     override init() {
         notificationCenter = UNUserNotificationCenter.current()
@@ -31,7 +39,7 @@ class CustomNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelega
     }
     
     func getAuthorizationStatus() async -> UNAuthorizationStatus {
-        var settings = await notificationCenter.notificationSettings()
+        let settings = await notificationCenter.notificationSettings()
         return settings.authorizationStatus
     }
     
@@ -43,8 +51,17 @@ class CustomNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelega
         completionHandler([.banner])
     }
     
+    // TODO: Validate this behavior via a UI test
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        // TODO: Set selected shuttle ID in this delegate so that the global data model can be updated
-        // See https://www.notion.so/bchendev/Navigate-user-to-selected-shuttle-on-notification-click-1ca07b1035c680c0a109d5c80df2cac1?pvs=4
+        let userInfo = response.notification.request.content.userInfo
+        let shuttleNotificationInfo = userInfo.first { $0.key as? String == UNNotificationResponse.shuttleNotificationInfoKey }?.value
+        guard let shuttleNotificationInfo else { return }
+        
+        let jsonSerialization = try? JSONSerialization.data(withJSONObject: shuttleNotificationInfo, options: [])
+        guard let jsonSerialization else { return }
+        let decoded = try? JSONDecoder().decode(LastTappedNotificationDetails.self, from: jsonSerialization)
+        guard let decoded else { return }
+        
+        lastTappedNotificationDetails = decoded
     }
 }
