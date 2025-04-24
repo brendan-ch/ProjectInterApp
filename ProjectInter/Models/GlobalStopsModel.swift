@@ -49,7 +49,12 @@ class GlobalStopsModel: NetworkDataModelProtocol {
     var dataRefreshLoopTask: Task<Void, any Error>?
     
     @Published var stops: [GlobalStopsModelStop] = []
-    @Published private(set) var selectedStop: GlobalStopsModelStop? = nil
+    
+    @Published private var selectedStopId: String? = nil
+    var selectedStop: GlobalStopsModelStop? {
+        stops.first { $0.id == selectedStopId }
+    }
+    
     @Published var selectedStopIdOnMap: String? = nil
     
     /// Indicates whether the stop is automatically being selected via location
@@ -98,14 +103,7 @@ class GlobalStopsModel: NetworkDataModelProtocol {
     }
     
     func selectStopId(_ stopId: String) {
-        let stop = stops.first { $0.id == stopId }
-        guard let stop else { return }
-        
-        selectStopManually(stop)
-    }
-    
-    func selectStopManually(_ stop: GlobalStopsModelStop) {
-        selectedStop = stop
+        selectedStopId = stopId
         isAutomaticWhenLocationIsAvailable = false
     }
     
@@ -125,7 +123,7 @@ class GlobalStopsModel: NetworkDataModelProtocol {
             }
         }
         
-        selectedStop = closest
+        selectedStopId = closest.id
     }
     
     private func calculateDistance(_ location1: CLLocationCoordinate2D, _ location2: CLLocationCoordinate2D) -> Double {

@@ -51,7 +51,7 @@ struct StopSelectionView: View {
                 Section(header: Text("All stops")) {
                     ForEach(searchResults) { stop in
                         Button {
-                            globalStopsModel.selectStopManually(stop)
+                            globalStopsModel.selectStopId(stop.id)
                             dismiss()
                         } label: {
                             Text(stop.name)

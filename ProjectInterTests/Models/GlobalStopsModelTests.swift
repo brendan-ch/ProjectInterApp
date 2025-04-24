@@ -134,7 +134,7 @@ class GlobalStopsModelTests {
         
         let stop = GlobalStopsModelStop(name: "Chapman Court", id: "1", coordinates: RawCoordinates(latitude: 33.789730, longitude: -117.886539))
         
-        state.selectStopManually(stop)
+        state.selectStopId(stop.id)
         
         #expect(state.selectedStop == stop)
         #expect(state.isAutomaticWhenLocationIsAvailable == false)

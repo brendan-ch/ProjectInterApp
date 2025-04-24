@@ -80,7 +80,7 @@ struct ContentViewWrapper: View {
                     if canAutomaticallySelectStop {
                         tryAutomaticallySelectStop()
                     } else if globalStopsStateObject.stops.count > 0 {
-                        globalStopsStateObject.selectStopManually(globalStopsStateObject.stops[0])
+                        globalStopsStateObject.selectStopId(globalStopsStateObject.stops[0].id)
                     }
                 }
             }

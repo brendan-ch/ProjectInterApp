@@ -15,7 +15,7 @@ class GlobalStopsModelPlaceholderBuilder: PlaceholderBuilderProtocol {
             GlobalStopsModelStop(name: "Chapman Court", id: "1", coordinates: RawCoordinates(latitude: 33.796796, longitude: -117.889293)),
             GlobalStopsModelStop(name: "Schmid Gate", id: "2", coordinates: RawCoordinates(latitude: 33.793292, longitude: -117.852904))
         ]
-        newModel.selectStopManually(newModel.stops.first!)
+        newModel.selectStopId(newModel.stops.first!.id)
         
         return newModel
     }

@@ -248,9 +248,10 @@ extension MapView {
     let stopToSelectFromViewModel = viewModel.stops.first!
     
     let globalStopsModel = GlobalStopsModel()
-    globalStopsModel.selectStopManually(
+    globalStopsModel.stops = [
         .init(name: stopToSelectFromViewModel.name, id: stopToSelectFromViewModel.id, coordinates: .init(latitude: stopToSelectFromViewModel.coordinates.latitude, longitude: stopToSelectFromViewModel.coordinates.longitude))
-    )
+    ]
+    globalStopsModel.selectStopId(stopToSelectFromViewModel.id)
     
     let globalDataModel = GlobalIdSelectionModel()
     let routeToSelect = viewModel.routes.first!
