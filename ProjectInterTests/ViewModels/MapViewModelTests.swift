@@ -264,7 +264,7 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
-        await testStartRefreshingDataRefreshesDataOnFirstCall()
+        await autoTest_startRefreshingDataRefreshesDataOnFirstCall()
     }
     
     @Test func startRefreshingDataRefreshesDataMultipleTimes() async {

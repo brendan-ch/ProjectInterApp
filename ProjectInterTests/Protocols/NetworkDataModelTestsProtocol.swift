@@ -33,7 +33,13 @@ protocol NetworkDataModelTestsProtocol {
 }
 
 extension NetworkDataModelTestsProtocol {
-    func testStartRefreshingDataRefreshesDataOnFirstCall() async {
+    // This set of functions completely run the networking portion
+    // of the tests using the associated types.
+    // In the class implementing the protocol, call these in
+    // test methods using the @Test decorators, as this decorator
+    // cannot be applied here.
+    
+    func autoTest_startRefreshingDataRefreshesDataOnFirstCall() async {
         let mockClient = MockApolloClient()
         mockClient.queryMock = defaultMock as? Mock<Query>
         
@@ -44,7 +50,7 @@ extension NetworkDataModelTestsProtocol {
         assertViewModelDataForDefaultMock(viewModel: viewModel)
     }
     
-    func testStartRefreshingDataRefreshesDataMultipleTimes() async {
+    func autoTest_startRefreshingDataRefreshesDataMultipleTimes() async {
         let mockClient = MockApolloClient()
         mockClient.queryMock = defaultMock as? Mock<Query>
         

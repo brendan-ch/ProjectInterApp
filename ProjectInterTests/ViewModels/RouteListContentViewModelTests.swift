@@ -149,12 +149,12 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
-        await testStartRefreshingDataRefreshesDataOnFirstCall()
+        await autoTest_startRefreshingDataRefreshesDataOnFirstCall()
     }
     
 
     @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
-        await testStartRefreshingDataRefreshesDataMultipleTimes()
+        await autoTest_startRefreshingDataRefreshesDataMultipleTimes()
     }
 
     @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {

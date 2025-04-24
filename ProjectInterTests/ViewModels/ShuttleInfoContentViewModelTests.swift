@@ -123,7 +123,7 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
-        await testStartRefreshingDataRefreshesDataOnFirstCall()
+        await autoTest_startRefreshingDataRefreshesDataOnFirstCall()
     }
 
 
