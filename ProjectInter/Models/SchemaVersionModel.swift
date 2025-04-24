@@ -20,8 +20,8 @@ class SchemaVersionModel: NetworkDataModelProtocol {
     
     var apolloClient: (any ApolloClientProtocol)?
      
-    var serverMinSchemaVersion: Int?
-    var serverCurrentSchemaVersion: Int?
+    private(set )var serverMinSchemaVersion: Int?
+    private(set) var serverCurrentSchemaVersion: Int?
     
     var appSchemaVersion: Int?
     

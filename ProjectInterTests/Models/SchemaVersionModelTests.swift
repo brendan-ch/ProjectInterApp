@@ -39,29 +39,53 @@ class SchemaVersionModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.serverCurrentSchemaVersion == nil)
     }
     
-    func startRefreshingDataRefreshesDataOnFirstCall() async {
+    @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
         await autoTest_startRefreshingDataRefreshesDataOnFirstCall()
     }
     
-    func startRefreshingDataRefreshesDataMultipleTimes() async {
+    @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
         await autoTest_startRefreshingDataRefreshesDataMultipleTimes()
     }
     
-    func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
+    @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
         await autoTest_stopRefreshingDataStopsDataUpdatesAfterCompletion()
     }
     
-    func refreshDataOnceUpdatesData() async {
+    @Test func refreshDataOnceUpdatesData() async {
         await autoTest_refreshDataOnceUpdatesData()
     }
     
-    func refreshDataOnceDoesNothingIfNoData() async {
+    @Test func refreshDataOnceDoesNothingIfNoData() async {
         await autoTest_refreshDataOnceDoesNothingIfNoData()
     }
     
-    func refreshDataOnceDoesNothingIfNoApolloClient() async {
+    @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
         await autoTest_refreshDataOnceDoesNothingIfNoApolloClient()
     }
     
+    @Test func isCompatiblePropertyIsTrueIfAppSchemaWithinRange() async {
+        let mockClient = MockApolloClient()
+        mockClient.queryMock = defaultMock
+        
+        let viewModel = SchemaVersionModel(apolloClient: nil)
+        
+        for version in [2, 3, 4, 5] {
+            viewModel.appSchemaVersion = version
+            
+            #expect(viewModel.isCompatible)
+        }
+    }
     
+    @Test func isCompatiblePropertyIsFalseIfAppSchemaNotWithinRange() async {
+        let mockClient = MockApolloClient()
+        mockClient.queryMock = defaultMock
+        
+        let viewModel = SchemaVersionModel(apolloClient: nil)
+        
+        for version in [1, 6, 7, 8] {
+            viewModel.appSchemaVersion = version
+            
+            #expect(!viewModel.isCompatible)
+        }
+    }
 }
