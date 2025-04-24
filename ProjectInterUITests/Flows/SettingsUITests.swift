@@ -55,6 +55,19 @@ final class SettingsUITests: BaseUITests {
         assertWebViewExistence(webView)
     }
     
+    func testOpenAcknowledgmentsOpensTheWebView() {
+        app.launch()
+        
+        openSettingsTab()
+        
+        let acknowledgementsButton = app.buttons["View acknowledgments"]
+        acknowledgementsButton.tap()
+        
+        let webView = app.webViews["AcknowledgmentsWebView"]
+        
+        assertWebViewExistence(webView)
+    }
+    
     func testSystemSelectionOpenAndClosingFlow() {
         app.launch()
         

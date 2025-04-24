@@ -90,7 +90,7 @@ struct SettingsContentView: View {
                 Button {
                     showAcknowledgmentsView = true
                 } label: {
-                    Text("View acknowledgements")
+                    Text("View acknowledgments")
                         .font(.footnote)
                 }
             }
