@@ -30,8 +30,8 @@ class SchemaVersionModelTests: NetworkDataModelTestsProtocol {
     }
     
     func assertViewModelDataForSecondaryMock(viewModel: SchemaVersionModel) {
-        #expect(viewModel.serverMinSchemaVersion == 10)
-        #expect(viewModel.serverCurrentSchemaVersion == 8)
+        #expect(viewModel.serverMinSchemaVersion == 8)
+        #expect(viewModel.serverCurrentSchemaVersion == 10)
     }
     
     func assertViewModelDataForEmptyMock(viewModel: SchemaVersionModel) {

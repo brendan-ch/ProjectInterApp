@@ -8,6 +8,7 @@
 import Foundation
 import Apollo
 import ApolloAPI
+import ProjectInterOperations
 
 struct SchemaVersionModelNetworkArguments {
     
@@ -43,6 +44,28 @@ class SchemaVersionModel: NetworkDataModelProtocol {
     }
 
     func refreshDataOnce(arguments: SchemaVersionModelNetworkArguments) async {
+        guard let apolloClient = apolloClient else {
+            return
+        }
         
+        return await withCheckedContinuation { continuation in
+            var continuationIsActive = true
+            apolloClient.fetch(query: GetSchemaVersionQuery()) { [weak self] result in
+                if !continuationIsActive {
+                    return
+                }
+                
+                switch result {
+                case .failure(let error):
+                    print("Error fetching schema versions: \(error)")
+                case .success(let result):
+                    self?.serverMinSchemaVersion = result.data?.schemaMinVersion
+                    self?.serverCurrentSchemaVersion = result.data?.schemaCurrentVersion
+                }
+                
+                continuationIsActive = false
+                continuation.resume()
+            }
+        }
     }
 }
