@@ -25,12 +25,22 @@ struct ProjectInterApp: App {
     
     @StateObject var setupStateModel = SetupStateModel()
     
+    @StateObject var schemaVersionModel = SchemaVersionModel(
+        apolloClient: ApolloClientHolderSingleton.shared.apolloClient,
+        appSchemaVersion: Bundle.main.infoDictionary?["APP_SCHEMA_VERSION"] as? Int
+    )
+    
     @UIApplicationDelegateAdaptor(CustomAppDelegate.self) var customAppDelegate: CustomAppDelegate
     
     var body: some Scene {
         WindowGroup {
             let setupCompleted = setupStateModel.setupCompleted
-            if setupCompleted {
+            if !schemaVersionModel.isCompatible {
+                AppUpdateMessageView()
+                    .task {
+                        schemaVersionModel.startRefreshingData(arguments: SchemaVersionModelNetworkArguments(), sleepDuration: .seconds(60))
+                    }
+            } else if setupCompleted {
                 ContentViewWrapper()
             } else {
                 WelcomeContentView()
