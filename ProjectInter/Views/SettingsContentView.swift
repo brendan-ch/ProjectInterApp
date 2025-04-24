@@ -18,6 +18,8 @@ struct SettingsContentView: View {
     
     @State private var showSystemPickerView = false
     
+    @State private var showAcknowledgmentsView = false
+    
     var body: some View {
         RootSheetContentView(title: "Settings") {
             VStack(spacing: 0) {
@@ -84,6 +86,13 @@ struct SettingsContentView: View {
                     )
                 }
                 .padding()
+                
+                Button {
+                    showAcknowledgmentsView = true
+                } label: {
+                    Text("View acknowledgments")
+                        .font(.footnote)
+                }
             }
         }
         .sheet(isPresented: $showChangelogView) {
@@ -94,6 +103,9 @@ struct SettingsContentView: View {
         }
         .sheet(isPresented: $showSystemPickerView) {
             SystemSelectionView()
+        }
+        .sheet(isPresented: $showAcknowledgmentsView) {
+            AcknowledgmentsWebView()
         }
     }
 }

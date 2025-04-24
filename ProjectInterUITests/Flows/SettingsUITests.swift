@@ -6,6 +6,7 @@
 //
 
 import XCTest
+@testable import ProjectInter
 
 final class SettingsUITests: BaseUITests {
     override func setUpWithError() throws {
@@ -20,6 +21,14 @@ final class SettingsUITests: BaseUITests {
         tabButton.tap()
     }
     
+    func assertWebViewExistence(_ webView: XCUIElement) {
+        // Assert WebView is displayed
+        XCTAssertTrue(webView.waitForExistence(timeout: 5), "WebView did not launch")
+        
+        let text = webView.staticTexts.firstMatch
+        XCTAssertTrue(text.waitForExistence(timeout: 20), "Page did not load")
+    }
+    
     func testOpenChangelogOpensTheWebView() {
         app.launch()
         
@@ -30,11 +39,33 @@ final class SettingsUITests: BaseUITests {
         
         let webView = app.webViews["ChangelogWebView"]
         
-        // Assert WebView is displayed
-        XCTAssertTrue(webView.waitForExistence(timeout: 5), "WebView did not launch")
+        assertWebViewExistence(webView)
+    }
+    
+    func testOpenFeedbackOpensTheWebView() {
+        app.launch()
         
-        let text = webView.staticTexts.firstMatch
-        XCTAssertTrue(text.waitForExistence(timeout: 20), "Page did not load")
+        openSettingsTab()
+        
+        let feedbackButton = app.buttons["Send feedback"]
+        feedbackButton.tap()
+        
+        let webView = app.webViews["FeedbackWebView"]
+        
+        assertWebViewExistence(webView)
+    }
+    
+    func testOpenAcknowledgmentsOpensTheWebView() {
+        app.launch()
+        
+        openSettingsTab()
+        
+        let acknowledgementsButton = app.buttons["View acknowledgments"]
+        acknowledgementsButton.tap()
+        
+        let webView = app.webViews["AcknowledgmentsWebView"]
+        
+        assertWebViewExistence(webView)
     }
     
     func testSystemSelectionOpenAndClosingFlow() {
