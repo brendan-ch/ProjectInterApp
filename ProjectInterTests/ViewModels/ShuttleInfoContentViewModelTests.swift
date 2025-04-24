@@ -79,7 +79,7 @@ class ShuttleInfoEtaListItemTests {
 }
 
 class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
-    let defaultArguments = ShuttleInfoNetworkArguments(systemId: "1", stopId: "1", shuttleId: "1", deviceId: "1")
+    let networkArguments = ShuttleInfoNetworkArguments(systemId: "1", stopId: "1", shuttleId: "1", deviceId: "1")
     let defaultMock = ShuttleInfoContentViewModelMockData.defaultMock
     let secondaryMock = ShuttleInfoContentViewModelMockData.secondaryMock
     
@@ -87,7 +87,7 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         let mockClient = MockApolloClient()
         
         let viewModel = ShuttleInfoContentViewModel(apolloClient: mockClient)
-        let arguments = defaultArguments
+        let arguments = networkArguments
         return (mockClient, viewModel, arguments)
     }
     
@@ -121,16 +121,6 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.secondsThresholdForNotification == nil)
         
         #expect(viewModel.notificationButtonText == "Notify me when nearby")
-    }
-    
-    @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
-        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.queryMock = defaultMock
-        
-        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(1000))
-        try? await Task.sleep(for: .milliseconds(200))
-        
-        assertViewModelDataForDefaultMock(viewModel: viewModel)
     }
     
     @Test func startRefreshingDataRefreshesDataMultipleTimes() async {

@@ -38,6 +38,10 @@ class GlobalSystemsModel: NetworkDataModelProtocol {
     var selectedSystem: System? {
         systems.first { $0.id == selectedSystemId }
     }
+    
+    required convenience init(apolloClient: ApolloClientProtocol? = nil) {
+        self.init(apolloClient: apolloClient, userDefaults: .standard)
+    }
 
     init(
         apolloClient: ApolloClientProtocol? = nil,

@@ -31,6 +31,8 @@ protocol NetworkDataModelProtocol: ObservableObject {
     func refreshDataOnce(arguments: T) async
     
     var apolloClient: ApolloClientProtocol? { get set }
+    
+    init(apolloClient: ApolloClientProtocol?)
 }
 
 extension NetworkDataModelProtocol {

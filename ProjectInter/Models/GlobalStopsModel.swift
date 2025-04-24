@@ -63,7 +63,7 @@ class GlobalStopsModel: NetworkDataModelProtocol {
     /// sets this to false.
     @Published var isAutomaticWhenLocationIsAvailable: Bool = false
     
-    init(apolloClient: ApolloClientProtocol? = nil) {
+    required init(apolloClient: ApolloClientProtocol? = nil) {
         self.apolloClient = apolloClient
     }
     

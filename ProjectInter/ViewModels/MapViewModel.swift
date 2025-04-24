@@ -138,7 +138,7 @@ class MapViewModel: NetworkDataModelProtocol {
     
     var dataRefreshLoopTask: Task<Void, any Error>?
     
-    init(apolloClient: ApolloClientProtocol? = nil) {
+    required init(apolloClient: ApolloClientProtocol? = nil) {
         self.apolloClient = apolloClient
     }
     

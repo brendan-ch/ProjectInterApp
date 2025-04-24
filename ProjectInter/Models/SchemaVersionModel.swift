@@ -22,6 +22,11 @@ class SchemaVersionModel: NetworkDataModelProtocol {
     
     @Published var isCompatible = true
     
+    required init(apolloClient: (any Apollo.ApolloClientProtocol)?) {
+        self.apolloClient = apolloClient
+    }
+    
+
     func refreshDataOnce(arguments: SchemaVersionModelNetworkArguments) async {
         
     }

@@ -99,11 +99,7 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
     
     // private var continuationIsActive = false
     
-    init() {
-        self.apolloClient = nil
-    }
-    
-    init(apolloClient: ApolloClientProtocol) {
+    required init(apolloClient: ApolloClientProtocol? = nil) {
         self.apolloClient = apolloClient
     }
     
