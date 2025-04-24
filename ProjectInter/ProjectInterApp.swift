@@ -68,8 +68,14 @@ struct ContentViewWrapper: View {
                 await globalSystemsStateObject.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
             }
             .onChange(of: globalSystemsStateObject.selectedSystem) {
-                // Grab the available stops for the system
-                guard let systemId = globalSystemsStateObject.selectedSystem?.id else { return }
+                guard let systemId = globalSystemsStateObject.selectedSystem?.id else {
+                    // Account for cases where system ID does not exist due to
+                    // lack of value in UserDefaults
+                    Task {
+                        setSelectionStateBasedOnLastTappedNotificationDetails()
+                    }
+                    return
+                }
                 
                 Task {
                     let stopsNetworkArguments = GlobalStopsNetworkArguments(
@@ -82,13 +88,12 @@ struct ContentViewWrapper: View {
                     } else if globalStopsStateObject.stops.count > 0 {
                         globalStopsStateObject.selectStopId(globalStopsStateObject.stops[0].id)
                     }
+                    
+                    setSelectionStateBasedOnLastTappedNotificationDetails()
                 }
             }
             .task {
                 updateGlobalStopsStateAutomaticState()
-            }
-            .task {
-                setSelectionStateBasedOnLastTappedNotificationDetails()
             }
             .onChange(of: canAutomaticallySelectStop) {
                 // Run on startup in addition to location changes
