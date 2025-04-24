@@ -25,17 +25,34 @@ struct ProjectInterApp: App {
     
     @StateObject var setupStateModel = SetupStateModel()
     
+    @StateObject var schemaVersionModel = SchemaVersionModel(
+        apolloClient: ApolloClientHolderSingleton.shared.apolloClient,
+        appSchemaVersion: Bundle.main.infoDictionary?["APP_SCHEMA_VERSION"] as? Int
+    )
+    
     @UIApplicationDelegateAdaptor(CustomAppDelegate.self) var customAppDelegate: CustomAppDelegate
     
     var body: some Scene {
         WindowGroup {
-            let setupCompleted = setupStateModel.setupCompleted
-            if setupCompleted {
-                ContentViewWrapper()
-            } else {
-                WelcomeContentView()
-                    .environmentObject(setupStateModel)
-                    .environmentObject(customAppDelegate)
+            Group {
+                let setupCompleted = setupStateModel.setupCompleted
+                if !schemaVersionModel.compatibilityCheckCompleted {
+                    ProgressView("Checking server status...")
+                        .progressViewStyle(CircularProgressViewStyle())
+                } else if !schemaVersionModel.isCompatible {
+                    AppUpdateMessageView {
+                        restartSchemaVersionModelRefresh()
+                    }
+                } else if setupCompleted {
+                    ContentViewWrapper()
+                } else {
+                    WelcomeContentView()
+                        .environmentObject(setupStateModel)
+                        .environmentObject(customAppDelegate)
+                }
+            }
+            .task {
+                restartSchemaVersionModelRefresh()
             }
         }
         .environmentObject(globalIdSelectionStateObject)
@@ -44,6 +61,11 @@ struct ProjectInterApp: App {
         .environmentObject(locationManagerStateObject)
         .environmentObject(globalNotificationsStateObject)
         .environmentObject(customAppDelegate.notificationCenterDelegate)
+    }
+    
+    func restartSchemaVersionModelRefresh() {
+        schemaVersionModel.stopRefreshingData()
+        schemaVersionModel.startRefreshingData(arguments: SchemaVersionModelNetworkArguments(), sleepDuration: .seconds(300))
     }
     
 }

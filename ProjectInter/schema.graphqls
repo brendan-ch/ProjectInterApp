@@ -92,7 +92,8 @@ type Query {
   isNotificationScheduled(input: NotificationInput!): Boolean
   secondsThresholdForNotification(input: NotificationInput!): Int
 
-  schemaVersion: ID!
+  schemaMinVersion: Int!
+  schemaCurrentVersion: Int!
 }
 
 # Mutations

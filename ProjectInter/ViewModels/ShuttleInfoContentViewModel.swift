@@ -76,7 +76,7 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
     
     var apolloClient: ApolloClientProtocol?
     
-    init(apolloClient: ApolloClientProtocol? = nil) {
+    required init(apolloClient: ApolloClientProtocol? = nil) {
         self.apolloClient = apolloClient
     }
     
