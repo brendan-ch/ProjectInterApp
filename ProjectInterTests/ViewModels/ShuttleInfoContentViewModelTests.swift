@@ -174,12 +174,6 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
-        let (_, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        viewModel.apolloClient = nil
-        
-        await viewModel.refreshDataOnce(arguments: arguments)
-        
-        #expect(viewModel.name == "")
-        #expect(viewModel.etaDisplay == "ETA currently not available")
+        await autoTest_refreshDataOnceDoesNothingIfNoApolloClient()
     }
 }

@@ -147,14 +147,7 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
-        let viewModel = RouteInfoContentViewModel()
-        let arguments = networkArguments
-        
-        await viewModel.refreshDataOnce(arguments: arguments)
-        
-        #expect(viewModel.routeName == "")
-        #expect(viewModel.routeNextStopName == nil)
-        #expect(viewModel.shuttles.count == 0)
+        await autoTest_refreshDataOnceUpdatesData()
     }
     
     @Test func refreshDataStillRefreshesRouteIfNoShuttles() async {

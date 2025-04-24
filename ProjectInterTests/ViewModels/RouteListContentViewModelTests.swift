@@ -170,21 +170,10 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func refreshDataOnceDoesNothingIfNoData() async {
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = nil
-        
-        let viewModel = RouteListContentViewModel(apolloClient: mockClient)
-        let arguments = networkArguments
-        await viewModel.refreshDataOnce(arguments: arguments)
-        
-        #expect(viewModel.routes.isEmpty)
+        await autoTest_refreshDataOnceDoesNothingIfNoData()
     }
     
     @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
-        let viewModel = RouteListContentViewModel()
-        let arguments = networkArguments
-        await viewModel.refreshDataOnce(arguments: arguments)
-        
-        #expect(viewModel.routes.isEmpty)
+        await autoTest_refreshDataOnceDoesNothingIfNoApolloClient()
     }
 }

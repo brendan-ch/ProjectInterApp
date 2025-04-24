@@ -150,12 +150,7 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
     }
     
     @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
-        let viewModel = ParkingStructuresListContentViewModel()
-        
-        let networkArguments = networkArguments
-        await viewModel.refreshDataOnce(arguments: networkArguments)
-        
-        #expect(viewModel.structures.isEmpty)
+        await autoTest_refreshDataOnceDoesNothingIfNoApolloClient()
     }
     
     @Test func refreshDataSetsUnsupportedStatusIfNoParkingSystem() async {

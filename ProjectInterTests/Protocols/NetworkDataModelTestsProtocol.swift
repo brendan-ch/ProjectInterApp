@@ -109,4 +109,13 @@ extension NetworkDataModelTestsProtocol {
         
         assertViewModelDataForEmptyMock(viewModel: viewModel)
     }
+    
+    func autoTest_refreshDataOnceDoesNothingIfNoApolloClient() async {
+        let viewModel = ViewModel(apolloClient: nil)
+        let arguments = networkArguments
+        
+        await viewModel.refreshDataOnce(arguments: arguments)
+        
+        assertViewModelDataForEmptyMock(viewModel: viewModel)
+    }
 }

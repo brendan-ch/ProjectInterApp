@@ -291,72 +291,66 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func refreshDataOnceStillPopulatesRoutesIfNoShuttles() async {
-//        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-//        let mock = Mock<ProjectInterTestMocks.Query>(
-//            system: Mock<ProjectInterTestMocks.System>(
-//                routes: [
-//                    MapViewModelTestsMockData.defaultRoute
-//                ]
-//            )
-//        )
-//        mockClient.queryMock = mock
-//        
-//        await viewModel.refreshDataOnce(arguments: arguments)
-//        
-//        #expect(viewModel.routes.count == 1)
-//        #expect(viewModel.shuttles.isEmpty)
+        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
+        let mock = Mock<ProjectInterTestMocks.Query>(
+            system: Mock<ProjectInterTestMocks.System>(
+                routes: [
+                    MapViewModelTestsMockData.defaultRoute
+                ]
+            )
+        )
+        mockClient.queryMock = mock
+        
+        await viewModel.refreshDataOnce(arguments: arguments)
+        
+        #expect(viewModel.routes.count == 1)
+        #expect(viewModel.shuttles.isEmpty)
     }
     
     @Test func refreshDataOnceStillPopulatesShuttlesIfNoRoutes() async {
-//        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-//        let mock = Mock<ProjectInterTestMocks.Query>(
-//            system: Mock<ProjectInterTestMocks.System>(
-//                shuttles: [
-//                    MapViewModelTestsMockData.defaultShuttle
-//                ]
-//            )
-//        )
-//        mockClient.queryMock = mock
-//        
-//        await viewModel.refreshDataOnce(arguments: arguments)
-//        
-//        #expect(viewModel.shuttles.count == 1)
-//        #expect(viewModel.routes.isEmpty)
+        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
+        let mock = Mock<ProjectInterTestMocks.Query>(
+            system: Mock<ProjectInterTestMocks.System>(
+                shuttles: [
+                    MapViewModelTestsMockData.defaultShuttle
+                ]
+            )
+        )
+        mockClient.queryMock = mock
+        
+        await viewModel.refreshDataOnce(arguments: arguments)
+        
+        #expect(viewModel.shuttles.count == 1)
+        #expect(viewModel.routes.isEmpty)
     }
     
     @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
-//        let (_, viewModel, arguments) = generateClientAndViewModelWithArguments()
-//        viewModel.apolloClient = nil
-//        
-//        await viewModel.refreshDataOnce(arguments: arguments)
-//        
-//        #expect(viewModel.routes.isEmpty)
-//        #expect(viewModel.shuttles.isEmpty)
+        await autoTest_refreshDataOnceDoesNothingIfNoApolloClient()
     }
     
     @Test func refreshDataOnceUpdatesOrderedStopDataForStopIfExists() async {
-//        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-//        
-//        mockClient.queryMock = Mock<ProjectInterTestMocks.Query>(
-//            system: .init(
-//                stops: [
-//                    .init(
-//                        coordinates: .init(latitude: 1, longitude: 1),
-//                        id: "1",
-//                        name: "Chapman Court",
-//                        orderedStops: [
-//                            .init(
-//                                routeId: "1"
-//                            )
-//                        ]
-//                    )
-//                ]
-//            )
-//        )
-//        
-//        await viewModel.refreshDataOnce(arguments: arguments)
-//        
-//        #expect(viewModel.stops.first!.routeIds.count == 1)
-//        #expect(viewModel.stops.first!.routeIds.contains("1"))
+        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
+        
+        mockClient.queryMock = Mock<ProjectInterTestMocks.Query>(
+            system: .init(
+                stops: [
+                    .init(
+                        coordinates: .init(latitude: 1, longitude: 1),
+                        id: "1",
+                        name: "Chapman Court",
+                        orderedStops: [
+                            .init(
+                                routeId: "1"
+                            )
+                        ]
+                    )
+                ]
+            )
+        )
+        
+        await viewModel.refreshDataOnce(arguments: arguments)
+        
+        #expect(viewModel.stops.first!.routeIds.count == 1)
+        #expect(viewModel.stops.first!.routeIds.contains("1"))
     }
 }
