@@ -91,7 +91,6 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         return (mockClient, viewModel, arguments)
     }
     
-
     func assertViewModelDataForDefaultMock(viewModel: ShuttleInfoContentViewModel) {
         #expect(viewModel.name == "Shuttle 1")
         #expect(viewModel.etaDisplay == "2 min to Stop 1")
@@ -123,6 +122,11 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.notificationButtonText == "Notify me when nearby")
     }
     
+    @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
+        await testStartRefreshingDataRefreshesDataOnFirstCall()
+    }
+
+
     @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
         mockClient.queryMock = defaultMock

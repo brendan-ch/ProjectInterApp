@@ -80,7 +80,7 @@ class ParkingStructuresListParkingStructureTests {
 }
 
 class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol {
-    let defaultArguments = ParkingStructuresListContentViewModelTestsMockData.defaultArguments
+    let networkArguments = ParkingStructuresListContentViewModelTestsMockData.defaultArguments
     let defaultMock = ParkingStructuresListContentViewModelTestsMockData.defaultMock
     let secondaryMock = ParkingStructuresListContentViewModelTestsMockData.secondaryMock
     let tertiaryMock = ParkingStructuresListContentViewModelTestsMockData.tertiaryMock
@@ -126,17 +126,7 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
     }
     
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = defaultMock
-        
-        let viewModel = ParkingStructuresListContentViewModel(apolloClient: mockClient)
-        
-        let networkArguments = defaultArguments
-        viewModel.startRefreshingData(arguments: networkArguments)
-        
-        try? await Task.sleep(for: .milliseconds(500))
-        
-        assertViewModelDataForDefaultMock(viewModel: viewModel)
+        await testStartRefreshingDataRefreshesDataOnFirstCall()
     }
     
     @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
@@ -145,7 +135,7 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
         
         let viewModel = ParkingStructuresListContentViewModel(apolloClient: mockClient)
         
-        let networkArguments = defaultArguments
+        let networkArguments = networkArguments
         viewModel.startRefreshingData(arguments: networkArguments, sleepDuration: .milliseconds(100))
         
         try? await Task.sleep(for: .milliseconds(500))
@@ -166,7 +156,7 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
         
         let viewModel = ParkingStructuresListContentViewModel(apolloClient: mockClient)
         
-        let networkArguments = defaultArguments
+        let networkArguments = networkArguments
         viewModel.startRefreshingData(arguments: networkArguments, sleepDuration: .milliseconds(100))
         
         try? await Task.sleep(for: .milliseconds(500))
@@ -185,7 +175,7 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
         
         let viewModel = ParkingStructuresListContentViewModel(apolloClient: mockClient)
         
-        let networkArguments = defaultArguments
+        let networkArguments = networkArguments
         await viewModel.refreshDataOnce(arguments: networkArguments)
         
         assertViewModelDataForDefaultMock(viewModel: viewModel)
@@ -197,7 +187,7 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
         
         let viewModel = ParkingStructuresListContentViewModel(apolloClient: mockClient)
         
-        let networkArguments = defaultArguments
+        let networkArguments = networkArguments
         await viewModel.refreshDataOnce(arguments: networkArguments)
         
         #expect(viewModel.structures.isEmpty)
@@ -206,7 +196,7 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
     @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
         let viewModel = ParkingStructuresListContentViewModel()
         
-        let networkArguments = defaultArguments
+        let networkArguments = networkArguments
         await viewModel.refreshDataOnce(arguments: networkArguments)
         
         #expect(viewModel.structures.isEmpty)
@@ -218,7 +208,7 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
         
         let viewModel = ParkingStructuresListContentViewModel(apolloClient: mockClient)
         
-        let networkArguments = defaultArguments
+        let networkArguments = networkArguments
         await viewModel.refreshDataOnce(arguments: networkArguments)
         
         assertViewModelDataForTertiaryMock(viewModel: viewModel)

@@ -135,23 +135,21 @@ class RouteListContentViewRouteTests {
 }
 
 class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
-    let defaultArguments = RouteListNetworkArguments(systemId: "1", stopId: "1")
+    let networkArguments = RouteListNetworkArguments(systemId: "1", stopId: "1")
     let defaultMock = RouteListContentViewModelMockData.defaultMock
     let secondaryMock = RouteListContentViewModelMockData.secondaryMock
-
-    @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = defaultMock
-        
-        let viewModel = RouteListContentViewModel(apolloClient: mockClient)
-        let arguments = defaultArguments
-        
-        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .seconds(1))
-        
-        try? await Task.sleep(for: .milliseconds(500))
-        
+    
+    func assertViewModelDataForDefaultMock(viewModel: RouteListContentViewModel) {
         #expect(viewModel.routes.count == 1)
         #expect(viewModel.routes[0].etasInSeconds.count == 2)
+    }
+
+    func assertViewModelDataForSecondaryMock(viewModel: ProjectInter.RouteListContentViewModel) {
+        #expect(viewModel.routes[0].etasInSeconds.count == 1)
+    }
+    
+    @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
+        await testStartRefreshingDataRefreshesDataOnFirstCall()
     }
     
 
@@ -161,7 +159,7 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
         mockClient.queryMock = defaultMock
         
         let viewModel = RouteListContentViewModel(apolloClient: mockClient)
-        let arguments = defaultArguments
+        let arguments = networkArguments
         
         // Act
         viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(100))
@@ -187,7 +185,7 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
         mockClient.queryMock = defaultMock
         
         let viewModel = RouteListContentViewModel(apolloClient: mockClient)
-        viewModel.startRefreshingData(arguments: defaultArguments, sleepDuration: .milliseconds(100))
+        viewModel.startRefreshingData(arguments: networkArguments, sleepDuration: .milliseconds(100))
         
         // Act
         try? await Task.sleep(for: .milliseconds(500))
@@ -207,7 +205,7 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
         mockClient.queryMock = mock
         
         let viewModel = RouteListContentViewModel(apolloClient: mockClient)
-        let arguments = defaultArguments
+        let arguments = networkArguments
         await viewModel.refreshDataOnce(arguments: arguments)
         
         #expect(viewModel.routes.count == 1)
@@ -219,7 +217,7 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
         mockClient.queryMock = nil
         
         let viewModel = RouteListContentViewModel(apolloClient: mockClient)
-        let arguments = defaultArguments
+        let arguments = networkArguments
         await viewModel.refreshDataOnce(arguments: arguments)
         
         #expect(viewModel.routes.isEmpty)
@@ -227,7 +225,7 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
     
     @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
         let viewModel = RouteListContentViewModel()
-        let arguments = defaultArguments
+        let arguments = networkArguments
         await viewModel.refreshDataOnce(arguments: arguments)
         
         #expect(viewModel.routes.isEmpty)
