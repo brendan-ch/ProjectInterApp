@@ -19,6 +19,11 @@ class SchemaVersionModel: NetworkDataModelProtocol {
     var dataRefreshLoopTask: Task<Void, any Error>?
     
     var apolloClient: (any ApolloClientProtocol)?
+     
+    var serverMinSchemaVersion: Int?
+    var serverCurrentSchemaVersion: Int?
+    
+    var appSchemaVersion: Int?
     
     @Published var isCompatible = true
     
@@ -26,9 +31,11 @@ class SchemaVersionModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
+    convenience init(apolloClient: (any Apollo.ApolloClientProtocol)?, appSchemaVersion: Int) {
+        self.init(apolloClient: apolloClient)
+    }
 
     func refreshDataOnce(arguments: SchemaVersionModelNetworkArguments) async {
         
     }
-    
 }
