@@ -128,16 +128,7 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
 
 
     @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
-        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.queryMock = defaultMock
-        
-        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(100))
-        try? await Task.sleep(for: .milliseconds(500))
-        
-        mockClient.queryMock = secondaryMock
-        try? await Task.sleep(for: .milliseconds(600))
-        
-        assertViewModelDataForSecondaryMock(viewModel: viewModel)
+        await autoTest_startRefreshingDataRefreshesDataMultipleTimes()
     }
     
     @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {

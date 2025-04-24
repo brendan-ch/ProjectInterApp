@@ -125,32 +125,7 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     
 
     @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
-        // TODO: Find a way to generate this type of test quickly
-        // Arrange
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = defaultMock
-        
-        let viewModel = RouteInfoContentViewModel(apolloClient: mockClient)
-        let arguments = networkArguments
-        
-        // Act
-        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(100))
-        
-        // Assert
-        try? await Task.sleep(for: .milliseconds(500))
-        
-        #expect(viewModel.routeName == "Red Route")
-        #expect(viewModel.routeNextStopName == "Panther Village")
-        #expect(viewModel.shuttles.count == 2)
-        
-        let updatedMock = secondaryMock
-        mockClient.queryMock = updatedMock
-        
-        try? await Task.sleep(for: .milliseconds(700))
-        
-        #expect(viewModel.routeName == "Grey Route")
-        #expect(viewModel.routeNextStopName == "Chapman Grand")
-        #expect(viewModel.shuttles.count == 1)
+        await autoTest_startRefreshingDataRefreshesDataMultipleTimes()
     }
     
     @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {

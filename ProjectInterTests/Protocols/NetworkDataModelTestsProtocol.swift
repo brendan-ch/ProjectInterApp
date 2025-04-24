@@ -36,7 +36,7 @@ extension NetworkDataModelTestsProtocol {
     // This set of functions completely run the networking portion
     // of the tests using the associated types.
     // In the class implementing the protocol, call these in
-    // test methods using the @Test decorators, as this decorator
+    // test methods using the @Test decorators, as the decorator
     // cannot be applied here.
     
     func autoTest_startRefreshingDataRefreshesDataOnFirstCall() async {
