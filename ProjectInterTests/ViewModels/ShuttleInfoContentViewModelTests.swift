@@ -83,14 +83,6 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     let defaultMock = ShuttleInfoContentViewModelMockData.defaultMock
     let secondaryMock = ShuttleInfoContentViewModelMockData.secondaryMock
     
-    func generateClientAndViewModelWithArguments() -> (MockApolloClient, ShuttleInfoContentViewModel, ShuttleInfoNetworkArguments) {
-        let mockClient = MockApolloClient()
-        
-        let viewModel = ShuttleInfoContentViewModel(apolloClient: mockClient)
-        let arguments = networkArguments
-        return (mockClient, viewModel, arguments)
-    }
-    
     func assertViewModelDataForDefaultMock(viewModel: ShuttleInfoContentViewModel) {
         #expect(viewModel.name == "Shuttle 1")
         #expect(viewModel.etaDisplay == "2 min to Stop 1")

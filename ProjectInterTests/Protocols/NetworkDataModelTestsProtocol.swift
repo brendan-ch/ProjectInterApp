@@ -20,6 +20,8 @@ protocol NetworkDataModelTestsProtocol {
     func assertViewModelDataForSecondaryMock(viewModel: ViewModel)
     func assertViewModelDataForEmptyMock(viewModel: ViewModel)
     
+    func generateClientAndViewModelWithArguments() -> (MockApolloClient, ViewModel, NetworkArguments)
+    
     var defaultMock: DefaultMock { get }
     var secondaryMock: SecondaryMock { get }
     
@@ -34,6 +36,14 @@ protocol NetworkDataModelTestsProtocol {
 }
 
 extension NetworkDataModelTestsProtocol {
+    func generateClientAndViewModelWithArguments() -> (MockApolloClient, ViewModel, NetworkArguments) {
+        let mockClient = MockApolloClient()
+        
+        let viewModel = ViewModel(apolloClient: mockClient)
+        let arguments = networkArguments
+        return (mockClient, viewModel, arguments)
+    }
+    
     // This set of functions completely run the networking portion
     // of the tests using the associated types.
     // In the class implementing the protocol, call these in
