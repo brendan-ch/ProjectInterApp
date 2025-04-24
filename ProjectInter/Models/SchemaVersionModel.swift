@@ -39,8 +39,9 @@ class SchemaVersionModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    convenience init(apolloClient: (any Apollo.ApolloClientProtocol)?, appSchemaVersion: Int) {
+    convenience init(apolloClient: (any Apollo.ApolloClientProtocol)?, appSchemaVersion: Int?) {
         self.init(apolloClient: apolloClient)
+        self.appSchemaVersion = appSchemaVersion
     }
 
     func refreshDataOnce(arguments: SchemaVersionModelNetworkArguments) async {
