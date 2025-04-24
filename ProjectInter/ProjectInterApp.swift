@@ -34,18 +34,22 @@ struct ProjectInterApp: App {
     
     var body: some Scene {
         WindowGroup {
-            let setupCompleted = setupStateModel.setupCompleted
-            if !schemaVersionModel.isCompatible {
-                AppUpdateMessageView()
-                    .task {
-                        schemaVersionModel.startRefreshingData(arguments: SchemaVersionModelNetworkArguments(), sleepDuration: .seconds(60))
-                    }
-            } else if setupCompleted {
-                ContentViewWrapper()
-            } else {
-                WelcomeContentView()
-                    .environmentObject(setupStateModel)
-                    .environmentObject(customAppDelegate)
+            Group {
+                let setupCompleted = setupStateModel.setupCompleted
+                if !schemaVersionModel.compatibilityCheckCompleted {
+                    Text("Checking app compatibility...")
+                } else if !schemaVersionModel.isCompatible {
+                    AppUpdateMessageView()
+                } else if setupCompleted {
+                    ContentViewWrapper()
+                } else {
+                    WelcomeContentView()
+                        .environmentObject(setupStateModel)
+                        .environmentObject(customAppDelegate)
+                }
+            }
+            .task {
+                schemaVersionModel.startRefreshingData(arguments: SchemaVersionModelNetworkArguments(), sleepDuration: .seconds(300))
             }
         }
         .environmentObject(globalIdSelectionStateObject)

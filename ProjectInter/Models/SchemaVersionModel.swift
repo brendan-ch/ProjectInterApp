@@ -20,6 +20,8 @@ class SchemaVersionModel: NetworkDataModelProtocol {
     var dataRefreshLoopTask: Task<Void, any Error>?
     
     var apolloClient: (any ApolloClientProtocol)?
+    
+    @Published private(set) var compatibilityCheckCompleted = false
      
     @Published private(set) var serverMinSchemaVersion: Int?
     @Published private(set) var serverCurrentSchemaVersion: Int?
@@ -64,6 +66,7 @@ class SchemaVersionModel: NetworkDataModelProtocol {
                     self?.serverCurrentSchemaVersion = result.data?.schemaCurrentVersion
                 }
                 
+                self?.compatibilityCheckCompleted = true
                 continuationIsActive = false
                 continuation.resume()
             }
