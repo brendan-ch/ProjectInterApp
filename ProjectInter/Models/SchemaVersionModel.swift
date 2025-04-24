@@ -20,12 +20,19 @@ class SchemaVersionModel: NetworkDataModelProtocol {
     
     var apolloClient: (any ApolloClientProtocol)?
      
-    private(set )var serverMinSchemaVersion: Int?
-    private(set) var serverCurrentSchemaVersion: Int?
+    @Published private(set) var serverMinSchemaVersion: Int?
+    @Published private(set) var serverCurrentSchemaVersion: Int?
     
-    var appSchemaVersion: Int?
+    @Published var appSchemaVersion: Int?
     
-    @Published var isCompatible = true
+    var isCompatible: Bool {
+        if let appSchemaVersion = appSchemaVersion,
+           let serverMinSchemaVersion = serverMinSchemaVersion,
+           let serverCurrentSchemaVersion = serverCurrentSchemaVersion {
+            return appSchemaVersion >= serverMinSchemaVersion && appSchemaVersion <= serverCurrentSchemaVersion
+        }
+        return false
+    }
     
     required init(apolloClient: (any Apollo.ApolloClientProtocol)?) {
         self.apolloClient = apolloClient
