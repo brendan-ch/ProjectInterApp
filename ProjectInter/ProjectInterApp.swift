@@ -40,7 +40,9 @@ struct ProjectInterApp: App {
                     ProgressView("Checking server status...")
                         .progressViewStyle(CircularProgressViewStyle())
                 } else if !schemaVersionModel.isCompatible {
-                    AppUpdateMessageView()
+                    AppUpdateMessageView {
+                        restartSchemaVersionModelRefresh()
+                    }
                 } else if setupCompleted {
                     ContentViewWrapper()
                 } else {

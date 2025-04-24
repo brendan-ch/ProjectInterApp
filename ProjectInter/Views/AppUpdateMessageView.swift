@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct AppUpdateMessageView: View {
+    let onRetry: () -> Void
+    
     var body: some View {
         VStack(alignment: .center, spacing: 16) {
             Spacer()
@@ -22,7 +24,7 @@ struct AppUpdateMessageView: View {
             Spacer()
             
             Button {
-                
+                onRetry()
             } label: {
                 HStack {
                     Spacer()
@@ -39,6 +41,6 @@ struct AppUpdateMessageView: View {
 }
 
 #Preview {
-    AppUpdateMessageView()
+    AppUpdateMessageView {}
 }
 
