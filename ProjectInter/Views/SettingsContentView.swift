@@ -104,6 +104,9 @@ struct SettingsContentView: View {
         .sheet(isPresented: $showSystemPickerView) {
             SystemSelectionView()
         }
+        .sheet(isPresented: $showAcknowledgmentsView) {
+            AcknowledgmentsWebView()
+        }
     }
 }
 
