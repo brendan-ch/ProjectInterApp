@@ -272,18 +272,7 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
-//        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-//        mockClient.queryMock = MapViewModelTestsMockData.defaultMock
-//        
-//        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(100))
-//        try? await Task.sleep(for: .milliseconds(500))
-//        
-//        viewModel.stopRefreshingData()
-//        
-//        mockClient.queryMock = MapViewModelTestsMockData.secondaryMock
-//        try? await Task.sleep(for: .milliseconds(600))
-//        
-//        assertViewModelDataForDefaultMock(viewModel: viewModel)
+        await autoTest_stopRefreshingDataStopsDataUpdatesAfterCompletion()
     }
     
     @Test func refreshDataOnceUpdatesData() async {

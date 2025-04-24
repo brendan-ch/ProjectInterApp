@@ -69,4 +69,21 @@ extension NetworkDataModelTestsProtocol {
         
         assertViewModelDataForSecondaryMock(viewModel: viewModel)
     }
+    
+    func autoTest_stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
+        let mockClient = MockApolloClient()
+        mockClient.queryMock = defaultMock as? Mock<Query>
+        
+        let viewModel = ViewModel(apolloClient: mockClient)
+        viewModel.startRefreshingData(arguments: networkArguments, sleepDuration: .milliseconds(100))
+        
+        try? await Task.sleep(for: .milliseconds(500))
+        
+        viewModel.stopRefreshingData()
+        mockClient.queryMock = secondaryMock as? Mock<Query>
+        
+        try? await Task.sleep(for: .milliseconds(700))
+        
+        assertViewModelDataForDefaultMock(viewModel: viewModel)
+    }
 }
