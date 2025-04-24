@@ -23,6 +23,7 @@ class SchemaVersionModel: NetworkDataModelProtocol {
     @Published var isCompatible = true
     
     func refreshDataOnce(arguments: SchemaVersionModelNetworkArguments) async {
+        
     }
     
 }
