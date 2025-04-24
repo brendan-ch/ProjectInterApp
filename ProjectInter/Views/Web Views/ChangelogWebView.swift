@@ -15,16 +15,7 @@ struct ChangelogWebView: View {
     var body: some View {
         NavigationStack {
             if let url = url {
-                NonPersistentWebView(url: url, accessibilityIdentifier: "ChangelogWebView")
-                    .toolbar {
-                        ToolbarItem(placement: .topBarTrailing) {
-                            Button {
-                                dismiss()
-                            } label: {
-                                Text("Close")
-                            }
-                        }
-                    }
+                WebViewWithCloseButton(url: url, accessibilityIdentifier: "ChangelogWebView")
             }
         }
     }

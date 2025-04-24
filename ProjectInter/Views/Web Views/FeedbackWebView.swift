@@ -14,16 +14,7 @@ struct FeedbackWebView: View {
     var body: some View {
         NavigationStack {
             if let url = url {
-                NonPersistentWebView(url: url, accessibilityIdentifier: "FeedbackWebView")
-                    .toolbar {
-                        ToolbarItem(placement: .topBarTrailing) {
-                            Button {
-                                dismiss()
-                            } label: {
-                                Text("Close")
-                            }
-                        }
-                    }
+                WebViewWithCloseButton(url: url, accessibilityIdentifier: "FeedbackWebView")
             }
         }
     }
