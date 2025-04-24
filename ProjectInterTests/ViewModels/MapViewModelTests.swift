@@ -276,12 +276,7 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func refreshDataOnceUpdatesData() async {
-//        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-//        mockClient.queryMock = MapViewModelTestsMockData.defaultMock
-//        
-//        await viewModel.refreshDataOnce(arguments: arguments)
-//        
-//        assertViewModelDataForDefaultMock(viewModel: viewModel)
+        await autoTest_refreshDataOnceUpdatesData()
     }
     
     @Test func refreshDataOnceDoesNothingIfNoData() async {

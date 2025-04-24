@@ -136,12 +136,7 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func refreshDataOnceUpdatesData() async {
-        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.queryMock = defaultMock
-        
-        await viewModel.refreshDataOnce(arguments: arguments)
-        
-        assertViewModelDataForDefaultMock(viewModel: viewModel)
+        await autoTest_refreshDataOnceUpdatesData()
     }
     
     @Test func refreshDataOnceUpdatesEtaCorrectlyIfUnderOneMin() async {

@@ -138,15 +138,7 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
     }
     
     @Test func refreshDataOnceUpdatesData() async {
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = defaultMock
-        
-        let viewModel = ParkingStructuresListContentViewModel(apolloClient: mockClient)
-        
-        let networkArguments = networkArguments
-        await viewModel.refreshDataOnce(arguments: networkArguments)
-        
-        assertViewModelDataForDefaultMock(viewModel: viewModel)
+        await autoTest_refreshDataOnceUpdatesData()
     }
     
     @Test func refreshDataOnceDoesNothingIfNoData() async {

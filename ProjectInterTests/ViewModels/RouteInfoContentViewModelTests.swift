@@ -133,17 +133,7 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func refreshDataOnceUpdatesData() async {
-        let mock = RouteInfoContentViewModelTestsMockData.defaultMock
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = mock
-        
-        let viewModel = RouteInfoContentViewModel(apolloClient: mockClient)
-        let arguments = networkArguments
-        await viewModel.refreshDataOnce(arguments: arguments)
-        
-        #expect(viewModel.routeName == "Red Route")
-        #expect(viewModel.routeNextStopName == "Panther Village")
-        #expect(viewModel.shuttles.count == 2)
+        await autoTest_refreshDataOnceUpdatesData()
     }
     
     @Test func refreshDataOnceDoesNothingIfNoData() async {

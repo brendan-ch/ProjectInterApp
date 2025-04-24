@@ -86,4 +86,15 @@ extension NetworkDataModelTestsProtocol {
         
         assertViewModelDataForDefaultMock(viewModel: viewModel)
     }
+    
+    func autoTest_refreshDataOnceUpdatesData() async {
+        let mockClient = MockApolloClient()
+        mockClient.queryMock = defaultMock as? Mock<Query>
+        
+        let viewModel = ViewModel(apolloClient: mockClient)
+        let arguments = networkArguments
+        await viewModel.refreshDataOnce(arguments: arguments)
+        
+        assertViewModelDataForDefaultMock(viewModel: viewModel)
+    }
 }

@@ -162,16 +162,7 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func refreshDataOnceUpdatesData() async {
-        let mock = defaultMock
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = mock
-        
-        let viewModel = RouteListContentViewModel(apolloClient: mockClient)
-        let arguments = networkArguments
-        await viewModel.refreshDataOnce(arguments: arguments)
-        
-        #expect(viewModel.routes.count == 1)
-        #expect(viewModel.routes[0].etasInSeconds.count == 2)
+        await autoTest_refreshDataOnceUpdatesData()
     }
     
     @Test func refreshDataOnceDoesNothingIfNoData() async {
