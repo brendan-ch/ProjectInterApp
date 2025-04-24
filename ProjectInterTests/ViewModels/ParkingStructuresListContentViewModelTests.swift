@@ -121,6 +121,10 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
         #expect(viewModel.structuresSupportedBySystem)
     }
     
+    func assertViewModelDataForEmptyMock(viewModel: ParkingStructuresListContentViewModel) {
+        #expect(viewModel.structures.isEmpty)
+    }
+    
     func assertViewModelDataForTertiaryMock(viewModel: ParkingStructuresListContentViewModel) {
         #expect(viewModel.structuresSupportedBySystem == false)
     }
@@ -142,15 +146,7 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
     }
     
     @Test func refreshDataOnceDoesNothingIfNoData() async {
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = nil
-        
-        let viewModel = ParkingStructuresListContentViewModel(apolloClient: mockClient)
-        
-        let networkArguments = networkArguments
-        await viewModel.refreshDataOnce(arguments: networkArguments)
-        
-        #expect(viewModel.structures.isEmpty)
+        await autoTest_refreshDataOnceDoesNothingIfNoData()
     }
     
     @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {

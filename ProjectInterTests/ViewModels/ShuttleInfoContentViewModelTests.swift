@@ -122,6 +122,11 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.notificationButtonText == "Notify me when nearby")
     }
     
+    func assertViewModelDataForEmptyMock(viewModel: ShuttleInfoContentViewModel) {
+        #expect(viewModel.name == "")
+        #expect(viewModel.etaDisplay == "ETA currently not available")
+    }
+    
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
         await autoTest_startRefreshingDataRefreshesDataOnFirstCall()
     }
@@ -165,13 +170,7 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func refreshDataOnceDoesNothingIfNoData() async {
-        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.queryMock = nil
-
-        await viewModel.refreshDataOnce(arguments: arguments)
-        
-        #expect(viewModel.name == "")
-        #expect(viewModel.etaDisplay == "ETA currently not available")
+        await autoTest_refreshDataOnceDoesNothingIfNoData()
     }
     
     @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {

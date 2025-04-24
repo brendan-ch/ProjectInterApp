@@ -263,6 +263,13 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.parkingStructures.count == 0)
     }
     
+    func assertViewModelDataForEmptyMock(viewModel: MapViewModel) {
+        #expect(viewModel.routes.isEmpty)
+        #expect(viewModel.shuttles.isEmpty)
+        #expect(viewModel.parkingStructures.isEmpty)
+        #expect(viewModel.stops.isEmpty)
+    }
+    
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
         await autoTest_startRefreshingDataRefreshesDataOnFirstCall()
     }
@@ -280,13 +287,7 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func refreshDataOnceDoesNothingIfNoData() async {
-//        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-//        mockClient.queryMock = nil
-//
-//        await viewModel.refreshDataOnce(arguments: arguments)
-//        
-//        #expect(viewModel.routes.isEmpty)
-//        #expect(viewModel.shuttles.isEmpty)
+        await autoTest_refreshDataOnceDoesNothingIfNoData()
     }
     
     @Test func refreshDataOnceStillPopulatesRoutesIfNoShuttles() async {

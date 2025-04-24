@@ -18,6 +18,7 @@ protocol NetworkDataModelTestsProtocol {
     
     func assertViewModelDataForDefaultMock(viewModel: ViewModel)
     func assertViewModelDataForSecondaryMock(viewModel: ViewModel)
+    func assertViewModelDataForEmptyMock(viewModel: ViewModel)
     
     var defaultMock: DefaultMock { get }
     var secondaryMock: SecondaryMock { get }
@@ -96,5 +97,16 @@ extension NetworkDataModelTestsProtocol {
         await viewModel.refreshDataOnce(arguments: arguments)
         
         assertViewModelDataForDefaultMock(viewModel: viewModel)
+    }
+    
+    func autoTest_refreshDataOnceDoesNothingIfNoData() async {
+        let mockClient = MockApolloClient()
+        mockClient.queryMock = nil
+        
+        let viewModel = ViewModel(apolloClient: mockClient)
+        let arguments = networkArguments
+        await viewModel.refreshDataOnce(arguments: arguments)
+        
+        assertViewModelDataForEmptyMock(viewModel: viewModel)
     }
 }

@@ -148,6 +148,10 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.routes[0].etasInSeconds.count == 1)
     }
     
+    func assertViewModelDataForEmptyMock(viewModel: RouteListContentViewModel) {
+        #expect(viewModel.routes.isEmpty)
+    }
+    
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
         await autoTest_startRefreshingDataRefreshesDataOnFirstCall()
     }

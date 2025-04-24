@@ -119,6 +119,12 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.shuttles.count == 1)
     }
     
+    func assertViewModelDataForEmptyMock(viewModel: RouteInfoContentViewModel) {
+        #expect(viewModel.routeName == "")
+        #expect(viewModel.routeNextStopName == nil)
+        #expect(viewModel.shuttles.count == 0)
+    }
+    
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
         await autoTest_startRefreshingDataRefreshesDataOnFirstCall()
     }
@@ -137,17 +143,7 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func refreshDataOnceDoesNothingIfNoData() async {
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = nil
-        
-        let viewModel = RouteInfoContentViewModel(apolloClient: mockClient)
-        let arguments = networkArguments
-        
-        await viewModel.refreshDataOnce(arguments: arguments)
-        
-        #expect(viewModel.routeName == "")
-        #expect(viewModel.routeNextStopName == nil)
-        #expect(viewModel.shuttles.count == 0)
+        await autoTest_refreshDataOnceDoesNothingIfNoData()
     }
     
     @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
