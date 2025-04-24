@@ -37,7 +37,8 @@ struct ProjectInterApp: App {
             Group {
                 let setupCompleted = setupStateModel.setupCompleted
                 if !schemaVersionModel.compatibilityCheckCompleted {
-                    Text("Checking app compatibility...")
+                    ProgressView("Checking server status...")
+                        .progressViewStyle(CircularProgressViewStyle())
                 } else if !schemaVersionModel.isCompatible {
                     AppUpdateMessageView()
                 } else if setupCompleted {
@@ -49,7 +50,7 @@ struct ProjectInterApp: App {
                 }
             }
             .task {
-                schemaVersionModel.startRefreshingData(arguments: SchemaVersionModelNetworkArguments(), sleepDuration: .seconds(300))
+                restartSchemaVersionModelRefresh()
             }
         }
         .environmentObject(globalIdSelectionStateObject)
@@ -58,6 +59,11 @@ struct ProjectInterApp: App {
         .environmentObject(locationManagerStateObject)
         .environmentObject(globalNotificationsStateObject)
         .environmentObject(customAppDelegate.notificationCenterDelegate)
+    }
+    
+    func restartSchemaVersionModelRefresh() {
+        schemaVersionModel.stopRefreshingData()
+        schemaVersionModel.startRefreshingData(arguments: SchemaVersionModelNetworkArguments(), sleepDuration: .seconds(300))
     }
     
 }
