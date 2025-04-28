@@ -41,11 +41,11 @@ protocol NetworkDataModelProtocol: ObservableObject {
 extension NetworkDataModelProtocol {
     func startRefreshingData(arguments: NetworkArguments, sleepDuration: Duration = .seconds(5)) {
         if dataRefreshLoopTask != nil {
-            LoggerHolderSingleton.shared.networkingLogger.warning("Data refresh already active for \(type(of: self))")
+            Loggers.shared.networkingLogger.warning("Data refresh already active for \(type(of: self))")
             return
         }
         
-        LoggerHolderSingleton.shared.networkingLogger.notice("Starting data refresh for \(type(of: self))")
+        Loggers.shared.networkingLogger.notice("Starting data refresh for \(type(of: self))")
         dataRefreshLoopTask = Task {
             while !Task.isCancelled {
                 await refreshDataOnce(arguments: arguments)
@@ -55,7 +55,7 @@ extension NetworkDataModelProtocol {
     }
     
     func stopRefreshingData() {
-        LoggerHolderSingleton.shared.networkingLogger.notice("Stopping data refresh for \(type(of: self))")
+        Loggers.shared.networkingLogger.notice("Stopping data refresh for \(type(of: self))")
         dataRefreshLoopTask?.cancel()
         dataRefreshLoopTask = nil
     }
@@ -64,11 +64,11 @@ extension NetworkDataModelProtocol {
         let query = convertNetworkArgumentsIntoQuery(arguments)
         
         guard let apolloClient = apolloClient else {
-            LoggerHolderSingleton.shared.networkingLogger.warning("No Apollo client provided for \(type(of: self)); skipping data refresh")
+            Loggers.shared.networkingLogger.warning("No Apollo client provided for \(type(of: self)); skipping data refresh")
             return
         }
 
-        LoggerHolderSingleton.shared.networkingLogger.notice("Refreshing data for \(type(of: self))")
+        Loggers.shared.networkingLogger.notice("Refreshing data for \(type(of: self))")
 
         return await withCheckedContinuation { continuation in
             var continuationIsActive = true
@@ -83,7 +83,7 @@ extension NetworkDataModelProtocol {
                     return
                 }
                 
-                LoggerHolderSingleton.shared.networkingLogger.notice("Processing refresh data result for \(type(of: self))")
+                Loggers.shared.networkingLogger.notice("Processing refresh data result for \(type(of: self))")
                 self.processRefreshDataResult(result)
             }
         }

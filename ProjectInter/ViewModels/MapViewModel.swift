@@ -148,7 +148,7 @@ class MapViewModel: NetworkDataModelProtocol {
     
     func processRefreshDataResult(_ result: Result<GraphQLResult<GetMapDataQuery.Data>, Error>) {
         guard let data = try? result.get().data else {
-            LoggerHolderSingleton.shared.networkingLogger.warning("No data received for map data query in \(type(of: self))")
+            Loggers.shared.networkingLogger.warning("No data received for map data query in \(type(of: self))")
             return
         }
         
