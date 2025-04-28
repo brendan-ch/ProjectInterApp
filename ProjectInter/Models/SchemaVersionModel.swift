@@ -45,6 +45,22 @@ class SchemaVersionModel: NetworkDataModelProtocol {
         self.init(apolloClient: apolloClient)
         self.appSchemaVersion = appSchemaVersion
     }
+    
+    func convertNetworkArgumentsIntoQuery(_ arguments: SchemaVersionModelNetworkArguments) -> GetSchemaVersionQuery {
+        return GetSchemaVersionQuery()
+    }
+    
+    func processRefreshDataResult(_ result: Result<GraphQLResult<GetSchemaVersionQuery.Data>, any Error>) {
+        switch result {
+        case .failure(let error):
+            print("Error fetching schema versions: \(error)")
+        case .success(let result):
+            self.serverMinSchemaVersion = result.data?.schemaMinVersion
+            self.serverCurrentSchemaVersion = result.data?.schemaCurrentVersion
+        }
+        
+        self.compatibilityCheckCompleted = true
+    }
 
     func refreshDataOnce(arguments: SchemaVersionModelNetworkArguments) async {
         guard let apolloClient = apolloClient else {
@@ -58,15 +74,8 @@ class SchemaVersionModel: NetworkDataModelProtocol {
                     return
                 }
                 
-                switch result {
-                case .failure(let error):
-                    print("Error fetching schema versions: \(error)")
-                case .success(let result):
-                    self?.serverMinSchemaVersion = result.data?.schemaMinVersion
-                    self?.serverCurrentSchemaVersion = result.data?.schemaCurrentVersion
-                }
+                self?.processRefreshDataResult(result)
                 
-                self?.compatibilityCheckCompleted = true
                 continuationIsActive = false
                 continuation.resume()
             }
