@@ -67,41 +67,22 @@ class GlobalStopsModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func startRefreshingData(arguments: GlobalStopsNetworkArguments, sleepDuration: Duration = .seconds(5)) {
-        fatalError("This method is not implemented yet.")
+    func convertNetworkArgumentsIntoQuery(_ arguments: GlobalStopsNetworkArguments) -> GetAllStopsBySystemIdQuery {
+        return GetAllStopsBySystemIdQuery(systemId: arguments.systemId)
     }
     
-    func stopRefreshingData() {
-        fatalError("This method is not implemented yet.")
-    }
-    
-    func refreshDataOnce(arguments: GlobalStopsNetworkArguments) async {
-        return await withCheckedContinuation { continuation in
-            let systemId = arguments.systemId
-            
-            guard let apolloClient = apolloClient else {
-                continuation.resume()
-                return
-            }
-            
-            apolloClient.fetch(query: GetAllStopsBySystemIdQuery(systemId: systemId)) { result in
-                guard let data = try? result.get().data else {
-                    continuation.resume()
-                    return
-                }
-                guard let stops = data.system?.stops else {
-                    continuation.resume()
-                    return
-                }
-                
-                self.stops = stops.map(GlobalStopsModelStop.init)
-                self.stops.sort { $0.name < $1.name }
-                
-                continuation.resume()
-            }
+    func processRefreshDataResult(_ result: Result<GraphQLResult<GetAllStopsBySystemIdQuery.Data>, any Error>) {
+        guard let data = try? result.get().data else {
+            return
         }
+        guard let stops = data.system?.stops else {
+            return
+        }
+
+        self.stops = stops.map(GlobalStopsModelStop.init)
+        self.stops.sort { $0.name < $1.name }
     }
-    
+
     func selectStopId(_ stopId: String) {
         selectedStopId = stopId
         isAutomaticWhenLocationIsAvailable = false

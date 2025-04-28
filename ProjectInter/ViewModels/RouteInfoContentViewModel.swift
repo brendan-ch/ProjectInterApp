@@ -69,38 +69,20 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func refreshDataOnce(arguments: RouteInfoNetworkArguments) async {
-        let systemId = arguments.systemId
-        let stopId = arguments.stopId
-        let routeId = arguments.routeId
-        
-        await refreshData(systemId: systemId, stopId: stopId, routeId: routeId)
+    func convertNetworkArgumentsIntoQuery(_ arguments: RouteInfoNetworkArguments) -> GetRouteInfoDataQuery {
+        return GetRouteInfoDataQuery(
+            systemId: arguments.systemId,
+            stopId: arguments.stopId,
+            routeId: arguments.routeId
+        )
     }
     
-    private func refreshData(systemId: String, stopId: String, routeId: String) async {
-        return await withCheckedContinuation { continuation in
-            var continuationIsActive = true
-            guard let apolloClient = apolloClient else {
-                continuationIsActive = false
-                continuation.resume()
-                return
-            }
-            
-            apolloClient.fetch(query: GetRouteInfoDataQuery(systemId: systemId, stopId: stopId, routeId: routeId)) { result in
-                if !continuationIsActive {
-                    return
-                }
-                
-                switch result {
-                case .success(let response):
-                    self.updateDataFromResponse(response)
-                case .failure(let error):
-                    print("Error fetching data: \(error)")
-                }
-                
-                continuationIsActive = false
-                continuation.resume()
-            }
+    func processRefreshDataResult(_ result: Result<GraphQLResult<GetRouteInfoDataQuery.Data>, any Error>) {
+        switch result {
+        case .success(let response):
+            self.updateDataFromResponse(response)
+        case .failure(let error):
+            print("Error fetching data: \(error)")
         }
     }
     

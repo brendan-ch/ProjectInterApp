@@ -30,7 +30,7 @@ class GlobalSystemsModelTests {
         mockClient.queryMock = mock
 
         let globalDataState = GlobalSystemsModel(apolloClient: mockClient)
-        await globalDataState.refreshSystemData()
+        await globalDataState.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
         
         #expect(globalDataState.systems.count == 2)
     }
@@ -40,7 +40,7 @@ class GlobalSystemsModelTests {
         mockClient.queryMock = nil
         
         let globalDataState = GlobalSystemsModel(apolloClient: mockClient)
-        await globalDataState.refreshSystemData()
+        await globalDataState.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
         
         #expect(globalDataState.systems.count == 0)
     }

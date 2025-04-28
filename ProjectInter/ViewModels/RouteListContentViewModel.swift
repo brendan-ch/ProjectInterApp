@@ -97,8 +97,6 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
     
     var dataRefreshLoopTask: Task<Void, Error>?
     
-    // private var continuationIsActive = false
-    
     init() {
         self.apolloClient = nil
     }
@@ -107,40 +105,16 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func refreshDataOnce(arguments: RouteListNetworkArguments) async {
-        let systemId = arguments.systemId
-        let stopId = arguments.stopId
-        
-        await refreshData(systemId: systemId, stopId: stopId)
+    func convertNetworkArgumentsIntoQuery(_ arguments: RouteListNetworkArguments) -> GetRouteListDataQuery {
+        return GetRouteListDataQuery(systemId: arguments.systemId, stopId: arguments.stopId)
     }
     
-    private func refreshData(systemId: String, stopId: String) async {
-        return await withCheckedContinuation { continuation in
-            var continuationIsActive = true
-            guard let apolloClient = apolloClient else {
-                continuationIsActive = false
-                continuation.resume()
-                return
-            }
-            
-            apolloClient.fetch(
-                query: GetRouteListDataQuery(systemId: systemId, stopId: stopId)
-            ) { result in
-                // Handle cases where callback is called multiple times
-                if !continuationIsActive {
-                    return
-                }
-                
-                switch result {
-                case .success(let response):
-                    self.updateDataFromResponse(response: response)
-                case .failure(let error):
-                    print("Error fetching data: \(error)")
-                }
-                
-                continuationIsActive = false
-                continuation.resume()
-            }
+    func processRefreshDataResult(_ result: Result<GraphQLResult<GetRouteListDataQuery.Data>, any Error>) {
+        switch result {
+        case .success(let response):
+            self.updateDataFromResponse(response: response)
+        case .failure(let error):
+            print("Error fetching data: \(error)")
         }
     }
     

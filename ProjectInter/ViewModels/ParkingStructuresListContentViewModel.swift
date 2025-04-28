@@ -49,43 +49,26 @@ class ParkingStructuresListContentViewModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func refreshDataOnce(arguments: ParkingStructuresNetworkingArguments) async {
-        guard let apolloClient = apolloClient else { return }
-        
-        return await withCheckedContinuation { continuation in
-            var continuationIsActive = true
-            apolloClient.fetch(
-                query: GetParkingStructuresListDataQuery(systemId: arguments.systemId)
-            ) { result in
-                if !continuationIsActive {
-                    return
-                }
+    func convertNetworkArgumentsIntoQuery(_ arguments: ParkingStructuresNetworkingArguments) -> GetParkingStructuresListDataQuery {
+        return GetParkingStructuresListDataQuery(systemId: arguments.systemId)
+    }
+    
+    func processRefreshDataResult(_ result: Result<GraphQLResult<GetParkingStructuresListDataQuery.Data>, any Error>) {
+        switch result {
+        case .failure(let error):
+            print("Error fetching parking structures list data: \(error)")
+        case .success(let result):
+            guard let parkingSystem = result.data?.system?.parkingSystem else {
+                self.structuresSupportedBySystem = false
                 
-                switch result {
-                case .failure(let error):
-                    // TODO: migrate to Logger instead of print
-                    // https://www.reddit.com/r/Xcode/comments/1862x8h/remove_warnings_and_runtime_issues_from_xc15/
-                    print("Error fetching parking structures list data: \(error)")
-                case .success(let result):
-                    guard let parkingSystem = result.data?.system?.parkingSystem else {
-                        self.structuresSupportedBySystem = false
-                        
-                        continuationIsActive = false
-                        continuation.resume()
-                        
-                        return
-                    }
-                    
-                    self.structuresSupportedBySystem = true
-                    if let structures = parkingSystem.parkingStructures {
-                        self.structures = structures.map(ParkingStructuresListParkingStructure.init)
-                    } else {
-                        self.structures = []
-                    }
-                }
-                
-                continuationIsActive = false
-                continuation.resume()
+                return
+            }
+            
+            self.structuresSupportedBySystem = true
+            if let structures = parkingSystem.parkingStructures {
+                self.structures = structures.map(ParkingStructuresListParkingStructure.init)
+            } else {
+                self.structures = []
             }
         }
     }
