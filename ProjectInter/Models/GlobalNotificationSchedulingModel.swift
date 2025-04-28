@@ -45,14 +45,19 @@ class GlobalNotificationSchedulingModel: ObservableObject {
     }
     
     func scheduleNotification(_ arguments: NotificationNetworkArguments) async throws {
+        let stopId = arguments.stopId
+        let shuttleId = arguments.shuttleId
+        
+        let loggingString = String(describing: (stopId, shuttleId))
+        
+        guard let apolloClient = apolloClient else {
+            LoggerHolderSingleton.shared.networkingLogger.warning("No Apollo client provided for \(type(of: self)); skipping notification schedule for \(loggingString)")
+            return
+        }
+        
+        LoggerHolderSingleton.shared.networkingLogger.notice("Starting notification schedule for \(loggingString)")
         return try await withCheckedThrowingContinuation { continuation in
             var continuationIsActive = true
-            
-            guard let apolloClient = apolloClient else {
-                continuationIsActive = false
-                continuation.resume()
-                return
-            }
             
             let notificationInput = generateNotificationInput(arguments)
             
@@ -60,17 +65,20 @@ class GlobalNotificationSchedulingModel: ObservableObject {
                 if !continuationIsActive { return }
                 
                 guard let data = try? result.get().data else {
+                    LoggerHolderSingleton.shared.networkingLogger.error("Unable to get response when scheduling notification for \(loggingString)")
                     continuation.resume(throwing: NotificationSchedulingFailedError.graphqlError)
                     continuationIsActive = false
                     return
                 }
                 
                 if !data.scheduleNotification.success {
+                    LoggerHolderSingleton.shared.networkingLogger.error("Server returned error when scheduling notification for \(loggingString)")
                     continuation.resume(throwing: NotificationSchedulingFailedError.operationFailed)
                     continuationIsActive = false
                     return
                 }
                 
+                LoggerHolderSingleton.shared.networkingLogger.notice("Notification scheduled for \(loggingString)")
                 continuationIsActive = false
                 continuation.resume()
             }
@@ -79,15 +87,19 @@ class GlobalNotificationSchedulingModel: ObservableObject {
     }
     
     func cancelNotification(_ arguments: NotificationNetworkArguments) async throws {
+        let stopId = arguments.stopId
+        let shuttleId = arguments.shuttleId
+        
+        let loggingString = String(describing: (stopId, shuttleId))
+        
+        guard let apolloClient = apolloClient else {
+            LoggerHolderSingleton.shared.networkingLogger.warning("No Apollo client provided for \(type(of: self)); skipping notification cancel for \(loggingString)")
+            return
+        }
+        
+        LoggerHolderSingleton.shared.networkingLogger.notice("Starting notification cancel for \(loggingString)")
         return try await withCheckedThrowingContinuation { continuation in
             var continuationIsActive = true
-            
-            guard let apolloClient = apolloClient else {
-                continuationIsActive = false
-                continuation.resume()
-                return
-            }
-            
             
             let notificationInput = generateNotificationInput(arguments)
             
@@ -95,17 +107,20 @@ class GlobalNotificationSchedulingModel: ObservableObject {
                 if !continuationIsActive { return }
                 
                 guard let data = try? result.get().data else {
+                    LoggerHolderSingleton.shared.networkingLogger.error("Unable to get response when cancelling notification for \(loggingString)")
                     continuation.resume(throwing: NotificationSchedulingFailedError.graphqlError)
                     continuationIsActive = false
                     return
                 }
                 
                 if !data.cancelNotification.success {
+                    LoggerHolderSingleton.shared.networkingLogger.error("Server returned error when cancelling notification for \(loggingString)")
                     continuation.resume(throwing: NotificationSchedulingFailedError.operationFailed)
                     continuationIsActive = false
                     return
                 }
                 
+                LoggerHolderSingleton.shared.networkingLogger.notice("Notification cancelled for \(loggingString)")
                 continuation.resume()
                 continuationIsActive = false
             }

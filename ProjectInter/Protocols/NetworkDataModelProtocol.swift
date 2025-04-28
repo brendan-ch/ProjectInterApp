@@ -83,7 +83,7 @@ extension NetworkDataModelProtocol {
                     return
                 }
                 
-                LoggerHolderSingleton.shared.stateEventsLogger.notice("Processing refresh data result for \(type(of: self))")
+                LoggerHolderSingleton.shared.networkingLogger.notice("Processing refresh data result for \(type(of: self))")
                 self.processRefreshDataResult(result)
             }
         }
