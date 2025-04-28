@@ -8,7 +8,6 @@
 import SwiftUI
 import SwiftData
 import WebKit
-import Apollo
 import Combine
 
 @main
@@ -155,15 +154,5 @@ struct ContentViewWrapper: View {
         }
     }
     
-}
-
-class ApolloClientHolderSingleton {
-    static let shared = ApolloClientHolderSingleton()
-    
-    let apolloClient: ApolloClientProtocol
-    
-    private init() {
-        apolloClient = ApolloClient(url: URL(string: Bundle.main.infoDictionary!["API_BASE_URL"] as! String)!)
-    }
 }
 

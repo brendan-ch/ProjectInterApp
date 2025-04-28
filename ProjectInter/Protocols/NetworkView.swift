@@ -9,7 +9,7 @@ import SwiftUI
 
 protocol NetworkView: View {
     associatedtype NetworkArguments
-    associatedtype ViewModelType: NetworkDataModelProtocol where ViewModelType.T == NetworkArguments
+    associatedtype ViewModelType: NetworkDataModelProtocol where ViewModelType.NetworkArguments == NetworkArguments
     
     var globalSystemsModel: GlobalSystemsModel { get }
     

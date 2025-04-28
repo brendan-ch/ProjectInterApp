@@ -25,7 +25,7 @@ struct GlobalDataModelNetworkArguments {
 }
 
 class GlobalSystemsModel: NetworkDataModelProtocol {
-    typealias T = GlobalDataModelNetworkArguments
+    typealias NetworkArguments = GlobalDataModelNetworkArguments
     
     var apolloClient: ApolloClientProtocol?
     
@@ -34,7 +34,11 @@ class GlobalSystemsModel: NetworkDataModelProtocol {
     let userDefaults: UserDefaults
     
     @Published var systems: [System] = []
-    @Published private var selectedSystemId: String? = nil
+    @Published private var selectedSystemId: String? = nil {
+        didSet {
+            Loggers.shared.globalStateEventsLogger.notice("Selected system ID changed to: \(self.selectedSystemId ?? "nil")")
+        }
+    }
     var selectedSystem: System? {
         systems.first { $0.id == selectedSystemId }
     }
@@ -53,31 +57,20 @@ class GlobalSystemsModel: NetworkDataModelProtocol {
         selectedSystemId = self.userDefaults.string(forKey: UserDefaults.selectedSystemIdKey)
     }
     
-    func refreshDataOnce(arguments _: GlobalDataModelNetworkArguments) async {
-        await refreshSystemData()
+    func convertNetworkArgumentsIntoQuery(_ arguments: GlobalDataModelNetworkArguments) -> GetAllSystemsQuery {
+        return GetAllSystemsQuery()
     }
     
-    func refreshSystemData() async {
-        return await withCheckedContinuation { continuation in
-            guard let apolloClient = apolloClient else {
-                continuation.resume()
-                return
-            }
-            
-            apolloClient.fetch(query: GetAllSystemsQuery()) { result in
-                switch result {
-                case .success(let response):
-                    if let data = response.data {
-                        self.systems = data.systems.map { system in
-                            System(name: system.name, id: system.id)
-                        }
-                    }
-                case .failure(let error):
-                    print("Error fetching data: \(error)")
+    func processRefreshDataResult(_ result: Result<GraphQLResult<GetAllSystemsQuery.Data>, any Error>) {
+        switch result {
+        case .success(let response):
+            if let data = response.data {
+                self.systems = data.systems.map { system in
+                    System(name: system.name, id: system.id)
                 }
-                
-                continuation.resume()
             }
+        case .failure(let error):
+            print("Error fetching data: \(error)")
         }
     }
 

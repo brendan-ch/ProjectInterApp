@@ -20,6 +20,7 @@ class CustomAppDelegate: NSObject, ObservableObject, UIApplicationDelegate {
         let shouldUseMockToken = UserDefaults.standard.bool(forKey: UserDefaults.mockNotificationsTokenKey)
         if shouldUseMockToken {
             notificationTokenString = "mock-device"
+            Loggers.shared.systemEventsLogger.debug("Using mock notification token")
         }
     }
     
@@ -32,7 +33,8 @@ class CustomAppDelegate: NSObject, ObservableObject, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         notificationTokenString = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
-        print(notificationTokenString ?? "No token assigned")
+        Loggers.shared.systemEventsLogger.notice("Notification token string created and saved")
+        Loggers.shared.systemEventsLogger.debug("\(self.notificationTokenString ?? "No token string in state")")
     }
     
     func requestNotificationAuthorizationAndRegisterIfGranted() async {
@@ -41,9 +43,11 @@ class CustomAppDelegate: NSObject, ObservableObject, UIApplicationDelegate {
     }
     
     private func registerForRemoteNotificationsIfPermissionGranted(_ application: UIApplication) async {
+        Loggers.shared.systemEventsLogger.notice("Waiting for notification authorization status...")
         let status = await notificationCenterDelegate.getAuthorizationStatus()
         if status == .authorized {
             application.registerForRemoteNotifications()
         }
+        Loggers.shared.systemEventsLogger.notice("Notifications not authorized, skipping registration")
     }
 }

@@ -142,40 +142,19 @@ class MapViewModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func refreshDataOnce(arguments: MapViewNetworkArguments) async {
-        let systemId = arguments.systemId
-        
-        await refreshData(systemId: systemId)
+    func convertNetworkArgumentsIntoQuery(_ arguments: MapViewNetworkArguments) -> GetMapDataQuery {
+        return GetMapDataQuery(systemId: arguments.systemId)
     }
     
-    private func refreshData(systemId: String) async {
-        return await withCheckedContinuation { continuation in
-            var continuationIsActive = true
-            guard let apolloClient = apolloClient else {
-                continuationIsActive = false
-                continuation.resume()
-                return
-            }
-            
-            apolloClient.fetch(query: GetMapDataQuery(systemId: systemId)) { result in
-                defer {
-                    continuationIsActive = false
-                    continuation.resume()
-                }
-                
-                if !continuationIsActive {
-                    return
-                }
-                
-                guard let data = try? result.get().data else {
-                    return
-                }
-                
-                self.shuttles = data.system?.shuttles?.map(MapViewShuttle.init) ?? []
-                self.routes = data.system?.routes?.map(MapViewRoute.init) ?? []
-                self.stops = data.system?.stops?.map(MapViewStop.init) ?? []
-                self.parkingStructures = data.system?.parkingSystem?.parkingStructures?.map(MapViewParkingStructure.init) ?? []
-            }
+    func processRefreshDataResult(_ result: Result<GraphQLResult<GetMapDataQuery.Data>, Error>) {
+        guard let data = try? result.get().data else {
+            Loggers.shared.networkingLogger.warning("No data received for map data query in \(type(of: self))")
+            return
         }
+        
+        self.shuttles = data.system?.shuttles?.map(MapViewShuttle.init) ?? []
+        self.routes = data.system?.routes?.map(MapViewRoute.init) ?? []
+        self.stops = data.system?.stops?.map(MapViewStop.init) ?? []
+        self.parkingStructures = data.system?.parkingSystem?.parkingStructures?.map(MapViewParkingStructure.init) ?? []
     }
 }

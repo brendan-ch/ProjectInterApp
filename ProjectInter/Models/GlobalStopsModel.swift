@@ -42,7 +42,7 @@ extension GlobalStopsModelStop {
 
 class GlobalStopsModel: NetworkDataModelProtocol {
     
-    typealias T = GlobalStopsNetworkArguments
+    typealias NetworkArguments = GlobalStopsNetworkArguments
     
     var apolloClient: ApolloClientProtocol?
     
@@ -50,7 +50,11 @@ class GlobalStopsModel: NetworkDataModelProtocol {
     
     @Published var stops: [GlobalStopsModelStop] = []
     
-    @Published private var selectedStopId: String? = nil
+    @Published private var selectedStopId: String? = nil {
+        didSet {
+            Loggers.shared.globalStateEventsLogger.notice("Selected stop ID changed to: \(self.selectedStopId ?? "nil")")
+        }
+    }
     var selectedStop: GlobalStopsModelStop? {
         stops.first { $0.id == selectedStopId }
     }
@@ -67,41 +71,22 @@ class GlobalStopsModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func startRefreshingData(arguments: GlobalStopsNetworkArguments, sleepDuration: Duration = .seconds(5)) {
-        fatalError("This method is not implemented yet.")
+    func convertNetworkArgumentsIntoQuery(_ arguments: GlobalStopsNetworkArguments) -> GetAllStopsBySystemIdQuery {
+        return GetAllStopsBySystemIdQuery(systemId: arguments.systemId)
     }
     
-    func stopRefreshingData() {
-        fatalError("This method is not implemented yet.")
-    }
-    
-    func refreshDataOnce(arguments: GlobalStopsNetworkArguments) async {
-        return await withCheckedContinuation { continuation in
-            let systemId = arguments.systemId
-            
-            guard let apolloClient = apolloClient else {
-                continuation.resume()
-                return
-            }
-            
-            apolloClient.fetch(query: GetAllStopsBySystemIdQuery(systemId: systemId)) { result in
-                guard let data = try? result.get().data else {
-                    continuation.resume()
-                    return
-                }
-                guard let stops = data.system?.stops else {
-                    continuation.resume()
-                    return
-                }
-                
-                self.stops = stops.map(GlobalStopsModelStop.init)
-                self.stops.sort { $0.name < $1.name }
-                
-                continuation.resume()
-            }
+    func processRefreshDataResult(_ result: Result<GraphQLResult<GetAllStopsBySystemIdQuery.Data>, any Error>) {
+        guard let data = try? result.get().data else {
+            return
         }
+        guard let stops = data.system?.stops else {
+            return
+        }
+
+        self.stops = stops.map(GlobalStopsModelStop.init)
+        self.stops.sort { $0.name < $1.name }
     }
-    
+
     func selectStopId(_ stopId: String) {
         selectedStopId = stopId
         isAutomaticWhenLocationIsAvailable = false
@@ -109,7 +94,12 @@ class GlobalStopsModel: NetworkDataModelProtocol {
     
     /// From the currently saved stops, select the one that is closest to the provided location.
     func selectClosestStopBasedOnLocation(location: CLLocationCoordinate2D) {
-        guard var closest = stops.first else { return }
+        guard var closest = stops.first else {
+            Loggers.shared.globalStateEventsLogger.warning("Attempted to select stop based on location, but no stops available")
+            
+            return
+        }
+        Loggers.shared.globalStateEventsLogger.notice("Selecting stop based on location")
         
         for savedStop in stops {
             let stopLocation = savedStop.coordinates.asCLLocationCoordinate2D

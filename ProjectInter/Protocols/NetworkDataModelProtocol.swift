@@ -7,9 +7,11 @@
 
 import SwiftUI
 import Apollo
+import ApolloAPI
 
 protocol NetworkDataModelProtocol: ObservableObject {
-    associatedtype T
+    associatedtype NetworkArguments
+    associatedtype GraphQLQueryType: GraphQLQuery
     
     var dataRefreshLoopTask: Task<Void, Error>? { get set }
     
@@ -20,7 +22,7 @@ protocol NetworkDataModelProtocol: ObservableObject {
     /// - Parameters:
     ///   - arguments: The arguments to pass into the data refresh method.
     ///   - sleepDuration: Duration to wait after the data refresh is complete before repeating.
-    func startRefreshingData(arguments: T, sleepDuration: Duration)
+    func startRefreshingData(arguments: NetworkArguments, sleepDuration: Duration)
     
     /// Stops looping the data refresh task. An in-progress refresh or
     /// sleep timer may finish before the loop is stopped.
@@ -28,7 +30,10 @@ protocol NetworkDataModelProtocol: ObservableObject {
     
     /// Refreshes the data once and blocks the calling thread.
     /// Resumes when the refresh is done.
-    func refreshDataOnce(arguments: T) async
+    func refreshDataOnce(arguments: NetworkArguments) async
+    
+    func convertNetworkArgumentsIntoQuery(_ arguments: NetworkArguments) -> GraphQLQueryType
+    func processRefreshDataResult(_ result: Result<GraphQLResult<GraphQLQueryType.Data>, Error>)
     
     var apolloClient: ApolloClientProtocol? { get set }
     
@@ -36,11 +41,13 @@ protocol NetworkDataModelProtocol: ObservableObject {
 }
 
 extension NetworkDataModelProtocol {
-    func startRefreshingData(arguments: T, sleepDuration: Duration = .seconds(5)) {
+    func startRefreshingData(arguments: NetworkArguments, sleepDuration: Duration = .seconds(5)) {
         if dataRefreshLoopTask != nil {
+            Loggers.shared.networkingLogger.warning("Data refresh already active for \(type(of: self))")
             return
         }
         
+        Loggers.shared.networkingLogger.notice("Starting data refresh for \(type(of: self))")
         dataRefreshLoopTask = Task {
             while !Task.isCancelled {
                 await refreshDataOnce(arguments: arguments)
@@ -50,7 +57,37 @@ extension NetworkDataModelProtocol {
     }
     
     func stopRefreshingData() {
+        Loggers.shared.networkingLogger.notice("Stopping data refresh for \(type(of: self))")
         dataRefreshLoopTask?.cancel()
         dataRefreshLoopTask = nil
+    }
+    
+    func refreshDataOnce(arguments: NetworkArguments) async {
+        let query = convertNetworkArgumentsIntoQuery(arguments)
+        
+        guard let apolloClient = apolloClient else {
+            Loggers.shared.networkingLogger.warning("No Apollo client provided for \(type(of: self)); skipping data refresh")
+            return
+        }
+
+        Loggers.shared.networkingLogger.notice("Refreshing data for \(type(of: self))")
+
+        return await withCheckedContinuation { continuation in
+            var continuationIsActive = true
+            
+            apolloClient.fetch(query: query) { result in
+                defer {
+                    continuationIsActive = false
+                    continuation.resume()
+                }
+                
+                if !continuationIsActive {
+                    return
+                }
+                
+                Loggers.shared.networkingLogger.notice("Processing refresh data result for \(type(of: self))")
+                self.processRefreshDataResult(result)
+            }
+        }
     }
 }

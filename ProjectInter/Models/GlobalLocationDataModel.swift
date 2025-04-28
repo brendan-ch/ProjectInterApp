@@ -38,10 +38,12 @@ class GlobalLocationDataModel: NSObject, ObservableObject, CLLocationManagerDele
     }
     
     func requestAuthorization() {
+        Loggers.shared.systemEventsLogger.notice("Requesting location authorization")
         locationManager?.requestAlwaysAuthorization()
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        Loggers.shared.systemEventsLogger.notice("Location authorization status changed to \(status.rawValue)")
         // Also runs when the manager is first created
         authorizationStatusInitialized = true
         authorizationStatus = status
@@ -49,25 +51,28 @@ class GlobalLocationDataModel: NSObject, ObservableObject, CLLocationManagerDele
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let mostRecentLocation = locations.last else { return }
+        guard let mostRecentLocation = locations.last else {
+            Loggers.shared.systemEventsLogger.warning("Location update received but data is empty, skipping update")
+            return
+        }
+        Loggers.shared.systemEventsLogger.notice("Received a location update")
+        Loggers.shared.systemEventsLogger.debug("\(mostRecentLocation)")
+        
         lastUpdatedLocation = CLLocationCoordinate2D(
             latitude: mostRecentLocation.coordinate.latitude,
             longitude: mostRecentLocation.coordinate.longitude
         )
         
-#if DEBUG
-        print("Location updated: \(mostRecentLocation)")
-#endif
-        
         locationIsUpdating = false
     }
     
     private func startUpdatingLocation() {
+        Loggers.shared.systemEventsLogger.notice("Starting location updates")
         locationManager?.startUpdatingLocation()
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
-        print(error)
+        Loggers.shared.systemEventsLogger.warning("Location update failed with error: \(error)")
         locationIsUpdating = false
     }
 }

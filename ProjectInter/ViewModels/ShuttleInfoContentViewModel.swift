@@ -41,13 +41,15 @@ extension ShuttleInfoEtaListItem {
 
 /// Backing view model for ``ShuttleInfoContentView``.
 class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
-    typealias T = ShuttleInfoNetworkArguments
+    typealias NetworkArguments = ShuttleInfoNetworkArguments
     
     /// Name of the shuttle to display.
     @Published var name: String = ""
     
     @Published var etaSecondsRemaining: Double? = nil
     @Published var nameOfStop: String? = nil
+    
+    private var stopId: String? = nil
     
     /// Text representing the ETA of the shuttle relative to the user's selected stop.
     var etaDisplay: String {
@@ -81,65 +83,47 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
     }
     
     var dataRefreshLoopTask: Task<Void, any Error>?
-
-    func refreshDataOnce(arguments: ShuttleInfoNetworkArguments) async {
+    
+    func convertNetworkArgumentsIntoQuery(_ arguments: ShuttleInfoNetworkArguments) -> GetShuttleInfoDataQuery {
         let systemId = arguments.systemId
         let stopId = arguments.stopId
         let shuttleId = arguments.shuttleId
-        let deviceId = arguments.deviceId
+        let deviceId = arguments.deviceId ?? ""
         
-        await refreshData(systemId: systemId, stopId: stopId, shuttleId: shuttleId, deviceId: deviceId ?? "")
+        self.stopId = stopId
+        
+        let notificationInput = NotificationInput(deviceId: deviceId, shuttleId: shuttleId, stopId: stopId)
+        
+        return GetShuttleInfoDataQuery(systemId: systemId, shuttleId: shuttleId, notificationInput: notificationInput)
     }
     
-    private func refreshData(systemId: String, stopId: String, shuttleId: String, deviceId: String) async {
-        return await withCheckedContinuation { continuation in
-            var continuationIsActive = true
-            guard let apolloClient = apolloClient else {
-                continuationIsActive = false
-                continuation.resume()
-                return
+    func processRefreshDataResult(_ result: Result<GraphQLResult<GetShuttleInfoDataQuery.Data>, any Error>) {
+        guard let data = try? result.get().data else {
+            return
+        }
+        guard let shuttle = data.system?.shuttle else {
+            return
+        }
+        
+        self.name = shuttle.name
+        
+        if let etas = shuttle.etas {
+            self.etaListItems = []
+            for eta in etas {
+                guard let stop = eta.stop else { return }
+                if stop.id == stopId {
+                    self.etaSecondsRemaining = eta.secondsRemaining
+                    self.nameOfStop = stop.name
+                }
+                
+                self.etaListItems.append(ShuttleInfoEtaListItem(eta))
             }
-            
-            let notificationInput = NotificationInput(deviceId: deviceId, shuttleId: shuttleId, stopId: stopId)
-            
-            apolloClient.fetch(query: GetShuttleInfoDataQuery(systemId: systemId, shuttleId: shuttleId, notificationInput: notificationInput)) { result in
-                defer {
-                    continuationIsActive = false
-                    continuation.resume()
-                }
-                
-                if !continuationIsActive {
-                    return
-                }
-                
-                guard let data = try? result.get().data else {
-                    return
-                }
-                guard let shuttle = data.system?.shuttle else {
-                    return
-                }
-                
-                self.name = shuttle.name
-                
-                if let etas = shuttle.etas {
-                    self.etaListItems = []
-                    for eta in etas {
-                        guard let stop = eta.stop else { return }
-                        if stop.id == stopId {
-                            self.etaSecondsRemaining = eta.secondsRemaining
-                            self.nameOfStop = stop.name
-                        }
-                        
-                        self.etaListItems.append(ShuttleInfoEtaListItem(eta))
-                    }
-                    self.etaListItems.sort {
-                        $0.secondsRemaining < $1.secondsRemaining
-                    }
-                }
-                
-                self.secondsThresholdForNotification = data.secondsThresholdForNotification
+            self.etaListItems.sort {
+                $0.secondsRemaining < $1.secondsRemaining
             }
         }
+        
+        self.secondsThresholdForNotification = data.secondsThresholdForNotification
     }
 }
 
