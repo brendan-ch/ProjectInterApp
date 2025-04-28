@@ -149,13 +149,14 @@ class MapViewModel: NetworkDataModelProtocol {
     }
     
     private func refreshData(systemId: String) async {
+        guard let apolloClient = apolloClient else {
+            LoggerHolderSingleton.shared.networkingLogger.warning("No Apollo client provided for \(type(of: self)); skipping data refresh")
+            return
+        }
+        
+        LoggerHolderSingleton.shared.networkingLogger.notice("Refreshing data for \(type(of: self))")
         return await withCheckedContinuation { continuation in
             var continuationIsActive = true
-            guard let apolloClient = apolloClient else {
-                continuationIsActive = false
-                continuation.resume()
-                return
-            }
             
             apolloClient.fetch(query: GetMapDataQuery(systemId: systemId)) { result in
                 defer {
@@ -168,9 +169,11 @@ class MapViewModel: NetworkDataModelProtocol {
                 }
                 
                 guard let data = try? result.get().data else {
+                    LoggerHolderSingleton.shared.networkingLogger.warning("No data received for map data query in \(type(of: self))")
                     return
                 }
                 
+                LoggerHolderSingleton.shared.stateEventsLogger.notice("Updating \(type(of: self)) state")
                 self.shuttles = data.system?.shuttles?.map(MapViewShuttle.init) ?? []
                 self.routes = data.system?.routes?.map(MapViewRoute.init) ?? []
                 self.stops = data.system?.stops?.map(MapViewStop.init) ?? []
