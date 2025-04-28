@@ -48,7 +48,7 @@ class GlobalNotificationSchedulingModel: ObservableObject {
         let stopId = arguments.stopId
         let shuttleId = arguments.shuttleId
         
-        let loggingString = String(describing: (stopId, shuttleId))
+        let loggingString = "(stopId: \(stopId), shuttleId: \(shuttleId))"
         
         guard let apolloClient = apolloClient else {
             Loggers.shared.networkingLogger.warning("No Apollo client provided for \(type(of: self)); skipping notification schedule for \(loggingString)")
@@ -90,8 +90,8 @@ class GlobalNotificationSchedulingModel: ObservableObject {
         let stopId = arguments.stopId
         let shuttleId = arguments.shuttleId
         
-        let loggingString = String(describing: (stopId, shuttleId))
-        
+        let loggingString = "(stopId: \(stopId), shuttleId: \(shuttleId))"
+
         guard let apolloClient = apolloClient else {
             Loggers.shared.networkingLogger.warning("No Apollo client provided for \(type(of: self)); skipping notification cancel for \(loggingString)")
             return
