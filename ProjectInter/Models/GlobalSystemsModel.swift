@@ -34,7 +34,11 @@ class GlobalSystemsModel: NetworkDataModelProtocol {
     let userDefaults: UserDefaults
     
     @Published var systems: [System] = []
-    @Published private var selectedSystemId: String? = nil
+    @Published private var selectedSystemId: String? = nil {
+        didSet {
+            Loggers.shared.globalStateEventsLogger.notice("Selected system ID changed to: \(self.selectedSystemId ?? "nil")")
+        }
+    }
     var selectedSystem: System? {
         systems.first { $0.id == selectedSystemId }
     }

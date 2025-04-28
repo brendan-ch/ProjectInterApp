@@ -50,7 +50,11 @@ class GlobalStopsModel: NetworkDataModelProtocol {
     
     @Published var stops: [GlobalStopsModelStop] = []
     
-    @Published private var selectedStopId: String? = nil
+    @Published private var selectedStopId: String? = nil {
+        didSet {
+            Loggers.shared.globalStateEventsLogger.notice("Selected stop ID changed to: \(self.selectedStopId ?? "nil")")
+        }
+    }
     var selectedStop: GlobalStopsModelStop? {
         stops.first { $0.id == selectedStopId }
     }
@@ -90,7 +94,12 @@ class GlobalStopsModel: NetworkDataModelProtocol {
     
     /// From the currently saved stops, select the one that is closest to the provided location.
     func selectClosestStopBasedOnLocation(location: CLLocationCoordinate2D) {
-        guard var closest = stops.first else { return }
+        guard var closest = stops.first else {
+            Loggers.shared.globalStateEventsLogger.warning("Attempted to select stop based on location, but no stops available")
+            
+            return
+        }
+        Loggers.shared.globalStateEventsLogger.notice("Selecting stop based on location")
         
         for savedStop in stops {
             let stopLocation = savedStop.coordinates.asCLLocationCoordinate2D
