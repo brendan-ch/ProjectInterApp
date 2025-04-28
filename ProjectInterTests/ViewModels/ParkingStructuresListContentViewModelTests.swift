@@ -80,7 +80,7 @@ class ParkingStructuresListParkingStructureTests {
 }
 
 class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol {
-    let defaultArguments = ParkingStructuresListContentViewModelTestsMockData.defaultArguments
+    let networkArguments = ParkingStructuresListContentViewModelTestsMockData.defaultArguments
     let defaultMock = ParkingStructuresListContentViewModelTestsMockData.defaultMock
     let secondaryMock = ParkingStructuresListContentViewModelTestsMockData.secondaryMock
     let tertiaryMock = ParkingStructuresListContentViewModelTestsMockData.tertiaryMock
@@ -121,95 +121,36 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
         #expect(viewModel.structuresSupportedBySystem)
     }
     
+    func assertViewModelDataForEmptyMock(viewModel: ParkingStructuresListContentViewModel) {
+        #expect(viewModel.structures.isEmpty)
+    }
+    
     func assertViewModelDataForTertiaryMock(viewModel: ParkingStructuresListContentViewModel) {
         #expect(viewModel.structuresSupportedBySystem == false)
     }
     
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = defaultMock
-        
-        let viewModel = ParkingStructuresListContentViewModel(apolloClient: mockClient)
-        
-        let networkArguments = defaultArguments
-        viewModel.startRefreshingData(arguments: networkArguments)
-        
-        try? await Task.sleep(for: .milliseconds(500))
-        
-        assertViewModelDataForDefaultMock(viewModel: viewModel)
+        await autoTest_startRefreshingDataRefreshesDataOnFirstCall()
     }
     
     @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = defaultMock
-        
-        let viewModel = ParkingStructuresListContentViewModel(apolloClient: mockClient)
-        
-        let networkArguments = defaultArguments
-        viewModel.startRefreshingData(arguments: networkArguments, sleepDuration: .milliseconds(100))
-        
-        try? await Task.sleep(for: .milliseconds(500))
-        
-        assertViewModelDataForDefaultMock(viewModel: viewModel)
-        
-        let updatedMock = secondaryMock
-        mockClient.queryMock = updatedMock
-        
-        try? await Task.sleep(for: .milliseconds(500))
-        
-        assertViewModelDataForSecondaryMock(viewModel: viewModel)
+        await autoTest_startRefreshingDataRefreshesDataMultipleTimes()
     }
     
     @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = defaultMock
-        
-        let viewModel = ParkingStructuresListContentViewModel(apolloClient: mockClient)
-        
-        let networkArguments = defaultArguments
-        viewModel.startRefreshingData(arguments: networkArguments, sleepDuration: .milliseconds(100))
-        
-        try? await Task.sleep(for: .milliseconds(500))
-        
-        viewModel.stopRefreshingData()
-        mockClient.queryMock = secondaryMock
-        
-        try? await Task.sleep(for: .milliseconds(700))
-        
-        assertViewModelDataForDefaultMock(viewModel: viewModel)
+        await autoTest_stopRefreshingDataStopsDataUpdatesAfterCompletion()
     }
     
     @Test func refreshDataOnceUpdatesData() async {
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = defaultMock
-        
-        let viewModel = ParkingStructuresListContentViewModel(apolloClient: mockClient)
-        
-        let networkArguments = defaultArguments
-        await viewModel.refreshDataOnce(arguments: networkArguments)
-        
-        assertViewModelDataForDefaultMock(viewModel: viewModel)
+        await autoTest_refreshDataOnceUpdatesData()
     }
     
     @Test func refreshDataOnceDoesNothingIfNoData() async {
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = nil
-        
-        let viewModel = ParkingStructuresListContentViewModel(apolloClient: mockClient)
-        
-        let networkArguments = defaultArguments
-        await viewModel.refreshDataOnce(arguments: networkArguments)
-        
-        #expect(viewModel.structures.isEmpty)
+        await autoTest_refreshDataOnceDoesNothingIfNoData()
     }
     
     @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
-        let viewModel = ParkingStructuresListContentViewModel()
-        
-        let networkArguments = defaultArguments
-        await viewModel.refreshDataOnce(arguments: networkArguments)
-        
-        #expect(viewModel.structures.isEmpty)
+        await autoTest_refreshDataOnceDoesNothingIfNoApolloClient()
     }
     
     @Test func refreshDataSetsUnsupportedStatusIfNoParkingSystem() async {
@@ -218,7 +159,7 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
         
         let viewModel = ParkingStructuresListContentViewModel(apolloClient: mockClient)
         
-        let networkArguments = defaultArguments
+        let networkArguments = networkArguments
         await viewModel.refreshDataOnce(arguments: networkArguments)
         
         assertViewModelDataForTertiaryMock(viewModel: viewModel)

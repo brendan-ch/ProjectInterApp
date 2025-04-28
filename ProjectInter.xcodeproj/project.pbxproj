@@ -57,6 +57,7 @@
 				Info.plist,
 				Operations/GetAllSystems.graphql,
 				Operations/GetParkingStructuresListData.graphql,
+				Operations/GetSchemaVersion.graphql,
 			);
 			target = 20FA7B732D10E11E00D4EAD1 /* ProjectInter */;
 		};
@@ -69,6 +70,7 @@
 			membershipExceptions = (
 				Operations/GetAllSystems.graphql,
 				Operations/GetParkingStructuresListData.graphql,
+				Operations/GetSchemaVersion.graphql,
 			);
 		};
 /* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */

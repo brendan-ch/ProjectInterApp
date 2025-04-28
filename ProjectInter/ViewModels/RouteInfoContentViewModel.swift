@@ -65,7 +65,7 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
     
     var dataRefreshLoopTask: Task<Void, Error>?
     
-    init(apolloClient: ApolloClientProtocol? = nil) {
+    required init(apolloClient: ApolloClientProtocol? = nil) {
         self.apolloClient = apolloClient
     }
     

@@ -103,115 +103,51 @@ class RouteInfoContentViewShuttleTests {
 }
 
 class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
-    let defaultArguments = RouteInfoContentViewModelTestsMockData.defaultArguments
+    let networkArguments = RouteInfoContentViewModelTestsMockData.defaultArguments
     let defaultMock = RouteInfoContentViewModelTestsMockData.defaultMock
     let secondaryMock = RouteInfoContentViewModelTestsMockData.secondaryMock
     
-    @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = defaultMock
-        
-        let viewModel = RouteInfoContentViewModel(apolloClient: mockClient)
-        let arguments = defaultArguments
-        
-        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .seconds(1))
-        
-        try? await Task.sleep(for: .milliseconds(500))
-        
+    func assertViewModelDataForDefaultMock(viewModel: RouteInfoContentViewModel) {
         #expect(viewModel.routeName == "Red Route")
         #expect(viewModel.routeNextStopName == "Panther Village")
         #expect(viewModel.shuttles.count == 2)
     }
     
-
-    @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
-        // TODO: Find a way to generate this type of test quickly
-        // Arrange
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = defaultMock
-        
-        let viewModel = RouteInfoContentViewModel(apolloClient: mockClient)
-        let arguments = defaultArguments
-        
-        // Act
-        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(100))
-        
-        // Assert
-        try? await Task.sleep(for: .milliseconds(500))
-        
-        #expect(viewModel.routeName == "Red Route")
-        #expect(viewModel.routeNextStopName == "Panther Village")
-        #expect(viewModel.shuttles.count == 2)
-        
-        let updatedMock = secondaryMock
-        mockClient.queryMock = updatedMock
-        
-        try? await Task.sleep(for: .milliseconds(700))
-        
+    func assertViewModelDataForSecondaryMock(viewModel: RouteInfoContentViewModel) {
         #expect(viewModel.routeName == "Grey Route")
         #expect(viewModel.routeNextStopName == "Chapman Grand")
         #expect(viewModel.shuttles.count == 1)
     }
     
+    func assertViewModelDataForEmptyMock(viewModel: RouteInfoContentViewModel) {
+        #expect(viewModel.routeName == "")
+        #expect(viewModel.routeNextStopName == nil)
+        #expect(viewModel.shuttles.count == 0)
+    }
+    
+    @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
+        await autoTest_startRefreshingDataRefreshesDataOnFirstCall()
+    }
+    
+
+    @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
+        await autoTest_startRefreshingDataRefreshesDataMultipleTimes()
+    }
+    
     @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
-        // Arrange
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = defaultMock
-        
-        let viewModel = RouteInfoContentViewModel(apolloClient: mockClient)
-        viewModel.startRefreshingData(arguments: defaultArguments, sleepDuration: .milliseconds(100))
-        
-        try? await Task.sleep(for: .milliseconds(500))
-        
-        // Act
-        viewModel.stopRefreshingData()
-        mockClient.queryMock = secondaryMock
-        
-        try? await Task.sleep(for: .milliseconds(700))
-        
-        // Assert
-        #expect(viewModel.routeName == "Red Route")
-        #expect(viewModel.routeNextStopName == "Panther Village")
-        #expect(viewModel.shuttles.count == 2)
+        await autoTest_stopRefreshingDataStopsDataUpdatesAfterCompletion()
     }
     
     @Test func refreshDataOnceUpdatesData() async {
-        let mock = RouteInfoContentViewModelTestsMockData.defaultMock
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = mock
-        
-        let viewModel = RouteInfoContentViewModel(apolloClient: mockClient)
-        let arguments = defaultArguments
-        await viewModel.refreshDataOnce(arguments: arguments)
-        
-        #expect(viewModel.routeName == "Red Route")
-        #expect(viewModel.routeNextStopName == "Panther Village")
-        #expect(viewModel.shuttles.count == 2)
+        await autoTest_refreshDataOnceUpdatesData()
     }
     
     @Test func refreshDataOnceDoesNothingIfNoData() async {
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = nil
-        
-        let viewModel = RouteInfoContentViewModel(apolloClient: mockClient)
-        let arguments = defaultArguments
-        
-        await viewModel.refreshDataOnce(arguments: arguments)
-        
-        #expect(viewModel.routeName == "")
-        #expect(viewModel.routeNextStopName == nil)
-        #expect(viewModel.shuttles.count == 0)
+        await autoTest_refreshDataOnceDoesNothingIfNoData()
     }
     
     @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
-        let viewModel = RouteInfoContentViewModel()
-        let arguments = defaultArguments
-        
-        await viewModel.refreshDataOnce(arguments: arguments)
-        
-        #expect(viewModel.routeName == "")
-        #expect(viewModel.routeNextStopName == nil)
-        #expect(viewModel.shuttles.count == 0)
+        await autoTest_refreshDataOnceUpdatesData()
     }
     
     @Test func refreshDataStillRefreshesRouteIfNoShuttles() async {
@@ -234,7 +170,7 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         mockClient.queryMock = mock
         
         let viewModel = RouteInfoContentViewModel(apolloClient: mockClient)
-        let arguments = defaultArguments
+        let arguments = networkArguments
         
         await viewModel.refreshDataOnce(arguments: arguments)
         
@@ -283,7 +219,7 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         mockClient.queryMock = mock
         
         let viewModel = RouteInfoContentViewModel(apolloClient: mockClient)
-        let arguments = defaultArguments
+        let arguments = networkArguments
         
         await viewModel.refreshDataOnce(arguments: arguments)
         

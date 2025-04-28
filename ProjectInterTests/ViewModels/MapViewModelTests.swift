@@ -245,14 +245,9 @@ class MapViewParkingStructureTests {
 // MARK: - View model tests
 
 class MapViewModelTests: NetworkDataModelTestsProtocol {
-    func generateClientAndViewModelWithArguments() -> (MockApolloClient, MapViewModel, MapViewNetworkArguments) {
-        let mockClient = MockApolloClient()
-        
-        let viewModel = MapViewModel(apolloClient: mockClient)
-        let arguments = MapViewNetworkArguments(systemId: "1")
-        
-        return (mockClient, viewModel, arguments)
-    }
+    let networkArguments = MapViewNetworkArguments(systemId: "1")
+    let defaultMock = MapViewModelTestsMockData.defaultMock
+    let secondaryMock = MapViewModelTestsMockData.secondaryMock
     
     func assertViewModelDataForDefaultMock(viewModel: MapViewModel) {
         #expect(viewModel.routes.count == 1)
@@ -268,61 +263,31 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.parkingStructures.count == 0)
     }
     
+    func assertViewModelDataForEmptyMock(viewModel: MapViewModel) {
+        #expect(viewModel.routes.isEmpty)
+        #expect(viewModel.shuttles.isEmpty)
+        #expect(viewModel.parkingStructures.isEmpty)
+        #expect(viewModel.stops.isEmpty)
+    }
+    
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
-        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.queryMock = MapViewModelTestsMockData.defaultMock
-        
-        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(1000))
-        try? await Task.sleep(for: .milliseconds(200))
-        
-        assertViewModelDataForDefaultMock(viewModel: viewModel)
+        await autoTest_startRefreshingDataRefreshesDataOnFirstCall()
     }
     
     @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
-        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.queryMock = MapViewModelTestsMockData.defaultMock
-        
-        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(100))
-        try? await Task.sleep(for: .milliseconds(500))
-        
-        mockClient.queryMock = MapViewModelTestsMockData.secondaryMock
-        try? await Task.sleep(for: .milliseconds(600))
-        
-        assertViewModelDataForSecondaryMock(viewModel: viewModel)
+        await autoTest_startRefreshingDataRefreshesDataMultipleTimes()
     }
     
     @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
-        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.queryMock = MapViewModelTestsMockData.defaultMock
-        
-        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(100))
-        try? await Task.sleep(for: .milliseconds(500))
-        
-        viewModel.stopRefreshingData()
-        
-        mockClient.queryMock = MapViewModelTestsMockData.secondaryMock
-        try? await Task.sleep(for: .milliseconds(600))
-        
-        assertViewModelDataForDefaultMock(viewModel: viewModel)
+        await autoTest_stopRefreshingDataStopsDataUpdatesAfterCompletion()
     }
     
     @Test func refreshDataOnceUpdatesData() async {
-        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.queryMock = MapViewModelTestsMockData.defaultMock
-        
-        await viewModel.refreshDataOnce(arguments: arguments)
-        
-        assertViewModelDataForDefaultMock(viewModel: viewModel)
+        await autoTest_refreshDataOnceUpdatesData()
     }
     
     @Test func refreshDataOnceDoesNothingIfNoData() async {
-        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.queryMock = nil
-
-        await viewModel.refreshDataOnce(arguments: arguments)
-        
-        #expect(viewModel.routes.isEmpty)
-        #expect(viewModel.shuttles.isEmpty)
+        await autoTest_refreshDataOnceDoesNothingIfNoData()
     }
     
     @Test func refreshDataOnceStillPopulatesRoutesIfNoShuttles() async {
@@ -360,13 +325,7 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
-        let (_, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        viewModel.apolloClient = nil
-        
-        await viewModel.refreshDataOnce(arguments: arguments)
-        
-        #expect(viewModel.routes.isEmpty)
-        #expect(viewModel.shuttles.isEmpty)
+        await autoTest_refreshDataOnceDoesNothingIfNoApolloClient()
     }
     
     @Test func refreshDataOnceUpdatesOrderedStopDataForStopIfExists() async {

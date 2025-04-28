@@ -79,19 +79,10 @@ class ShuttleInfoEtaListItemTests {
 }
 
 class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
-    let defaultArguments = ShuttleInfoNetworkArguments(systemId: "1", stopId: "1", shuttleId: "1", deviceId: "1")
+    let networkArguments = ShuttleInfoNetworkArguments(systemId: "1", stopId: "1", shuttleId: "1", deviceId: "1")
     let defaultMock = ShuttleInfoContentViewModelMockData.defaultMock
     let secondaryMock = ShuttleInfoContentViewModelMockData.secondaryMock
     
-    func generateClientAndViewModelWithArguments() -> (MockApolloClient, ShuttleInfoContentViewModel, ShuttleInfoNetworkArguments) {
-        let mockClient = MockApolloClient()
-        
-        let viewModel = ShuttleInfoContentViewModel(apolloClient: mockClient)
-        let arguments = defaultArguments
-        return (mockClient, viewModel, arguments)
-    }
-    
-
     func assertViewModelDataForDefaultMock(viewModel: ShuttleInfoContentViewModel) {
         #expect(viewModel.name == "Shuttle 1")
         #expect(viewModel.etaDisplay == "2 min to Stop 1")
@@ -123,51 +114,26 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.notificationButtonText == "Notify me when nearby")
     }
     
-    @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
-        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.queryMock = defaultMock
-        
-        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(1000))
-        try? await Task.sleep(for: .milliseconds(200))
-        
-        assertViewModelDataForDefaultMock(viewModel: viewModel)
+    func assertViewModelDataForEmptyMock(viewModel: ShuttleInfoContentViewModel) {
+        #expect(viewModel.name == "")
+        #expect(viewModel.etaDisplay == "ETA currently not available")
     }
     
+    @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
+        await autoTest_startRefreshingDataRefreshesDataOnFirstCall()
+    }
+
+
     @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
-        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.queryMock = defaultMock
-        
-        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(100))
-        try? await Task.sleep(for: .milliseconds(500))
-        
-        mockClient.queryMock = secondaryMock
-        try? await Task.sleep(for: .milliseconds(600))
-        
-        assertViewModelDataForSecondaryMock(viewModel: viewModel)
+        await autoTest_startRefreshingDataRefreshesDataMultipleTimes()
     }
     
     @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
-        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.queryMock = defaultMock
-        
-        viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(100))
-        try? await Task.sleep(for: .milliseconds(600))
-        
-        viewModel.stopRefreshingData()
-        
-        mockClient.queryMock = secondaryMock
-        try? await Task.sleep(for: .milliseconds(700))
-
-        assertViewModelDataForDefaultMock(viewModel: viewModel)
+        await autoTest_stopRefreshingDataStopsDataUpdatesAfterCompletion()
     }
     
     @Test func refreshDataOnceUpdatesData() async {
-        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.queryMock = defaultMock
-        
-        await viewModel.refreshDataOnce(arguments: arguments)
-        
-        assertViewModelDataForDefaultMock(viewModel: viewModel)
+        await autoTest_refreshDataOnceUpdatesData()
     }
     
     @Test func refreshDataOnceUpdatesEtaCorrectlyIfUnderOneMin() async {
@@ -196,22 +162,10 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func refreshDataOnceDoesNothingIfNoData() async {
-        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.queryMock = nil
-
-        await viewModel.refreshDataOnce(arguments: arguments)
-        
-        #expect(viewModel.name == "")
-        #expect(viewModel.etaDisplay == "ETA currently not available")
+        await autoTest_refreshDataOnceDoesNothingIfNoData()
     }
     
     @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
-        let (_, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        viewModel.apolloClient = nil
-        
-        await viewModel.refreshDataOnce(arguments: arguments)
-        
-        #expect(viewModel.name == "")
-        #expect(viewModel.etaDisplay == "ETA currently not available")
+        await autoTest_refreshDataOnceDoesNothingIfNoApolloClient()
     }
 }

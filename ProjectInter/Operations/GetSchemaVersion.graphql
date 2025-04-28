@@ -1,0 +1,4 @@
+query GetSchemaVersion {
+  schemaMinVersion
+  schemaCurrentVersion
+}
