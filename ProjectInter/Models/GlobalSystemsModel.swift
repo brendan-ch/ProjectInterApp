@@ -25,7 +25,7 @@ struct GlobalDataModelNetworkArguments {
 }
 
 class GlobalSystemsModel: NetworkDataModelProtocol {
-    typealias T = GlobalDataModelNetworkArguments
+    typealias NetworkArguments = GlobalDataModelNetworkArguments
     
     var apolloClient: ApolloClientProtocol?
     

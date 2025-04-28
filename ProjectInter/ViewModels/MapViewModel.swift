@@ -142,43 +142,19 @@ class MapViewModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func refreshDataOnce(arguments: MapViewNetworkArguments) async {
-        let systemId = arguments.systemId
-        
-        await refreshData(systemId: systemId)
+    func convertNetworkArgumentsIntoQuery(_ arguments: MapViewNetworkArguments) -> GetMapDataQuery {
+        return GetMapDataQuery(systemId: arguments.systemId)
     }
     
-    private func refreshData(systemId: String) async {
-        guard let apolloClient = apolloClient else {
-            LoggerHolderSingleton.shared.networkingLogger.warning("No Apollo client provided for \(type(of: self)); skipping data refresh")
+    func processRefreshDataResult(_ result: Result<GraphQLResult<GetMapDataQuery.Data>, Error>) {
+        guard let data = try? result.get().data else {
+            LoggerHolderSingleton.shared.networkingLogger.warning("No data received for map data query in \(type(of: self))")
             return
         }
         
-        LoggerHolderSingleton.shared.networkingLogger.notice("Refreshing data for \(type(of: self))")
-        return await withCheckedContinuation { continuation in
-            var continuationIsActive = true
-            
-            apolloClient.fetch(query: GetMapDataQuery(systemId: systemId)) { result in
-                defer {
-                    continuationIsActive = false
-                    continuation.resume()
-                }
-                
-                if !continuationIsActive {
-                    return
-                }
-                
-                guard let data = try? result.get().data else {
-                    LoggerHolderSingleton.shared.networkingLogger.warning("No data received for map data query in \(type(of: self))")
-                    return
-                }
-                
-                LoggerHolderSingleton.shared.stateEventsLogger.notice("Updating \(type(of: self)) state")
-                self.shuttles = data.system?.shuttles?.map(MapViewShuttle.init) ?? []
-                self.routes = data.system?.routes?.map(MapViewRoute.init) ?? []
-                self.stops = data.system?.stops?.map(MapViewStop.init) ?? []
-                self.parkingStructures = data.system?.parkingSystem?.parkingStructures?.map(MapViewParkingStructure.init) ?? []
-            }
-        }
+        self.shuttles = data.system?.shuttles?.map(MapViewShuttle.init) ?? []
+        self.routes = data.system?.routes?.map(MapViewRoute.init) ?? []
+        self.stops = data.system?.stops?.map(MapViewStop.init) ?? []
+        self.parkingStructures = data.system?.parkingSystem?.parkingStructures?.map(MapViewParkingStructure.init) ?? []
     }
 }

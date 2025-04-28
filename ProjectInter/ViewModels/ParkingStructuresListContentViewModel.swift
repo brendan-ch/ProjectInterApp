@@ -39,7 +39,7 @@ class ParkingStructuresListContentViewModel: NetworkDataModelProtocol {
     @Published var structures: [ParkingStructuresListParkingStructure] = []
     @Published var structuresSupportedBySystem = false
     
-    typealias T = ParkingStructuresNetworkingArguments
+    typealias NetworkArguments = ParkingStructuresNetworkingArguments
     
     var dataRefreshLoopTask: Task<Void, any Error>?
     

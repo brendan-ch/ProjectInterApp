@@ -42,7 +42,7 @@ extension GlobalStopsModelStop {
 
 class GlobalStopsModel: NetworkDataModelProtocol {
     
-    typealias T = GlobalStopsNetworkArguments
+    typealias NetworkArguments = GlobalStopsNetworkArguments
     
     var apolloClient: ApolloClientProtocol?
     

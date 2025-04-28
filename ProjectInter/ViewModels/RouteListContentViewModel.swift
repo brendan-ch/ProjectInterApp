@@ -88,7 +88,7 @@ struct RouteListNetworkArguments {
 
 /// Backing view model for ``RouteListContentView``.
 class RouteListContentViewModel: NetworkDataModelProtocol {
-    typealias T = RouteListNetworkArguments
+    typealias NetworkArguments = RouteListNetworkArguments
 
     /// All routes to render on ``RouteListContentView``.
     @Published var routes: [RouteListContentViewRoute] = []

@@ -50,7 +50,7 @@ struct RouteInfoNetworkArguments {
 
 /// Backing view model for ``RouteInfoContentView``.
 class RouteInfoContentViewModel: NetworkDataModelProtocol {
-    typealias T = RouteInfoNetworkArguments
+    typealias NetworkArguments = RouteInfoNetworkArguments
     
     /// The name of the currently viewed route.
     @Published var routeName: String = ""

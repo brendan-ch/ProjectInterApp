@@ -41,7 +41,7 @@ extension ShuttleInfoEtaListItem {
 
 /// Backing view model for ``ShuttleInfoContentView``.
 class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
-    typealias T = ShuttleInfoNetworkArguments
+    typealias NetworkArguments = ShuttleInfoNetworkArguments
     
     /// Name of the shuttle to display.
     @Published var name: String = ""
