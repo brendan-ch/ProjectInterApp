@@ -36,9 +36,11 @@ protocol NetworkDataModelProtocol: ObservableObject {
 extension NetworkDataModelProtocol {
     func startRefreshingData(arguments: T, sleepDuration: Duration = .seconds(5)) {
         if dataRefreshLoopTask != nil {
+            LoggerHolderSingleton.shared.networkingLogger.warning("Data refresh already active for \(type(of: self))")
             return
         }
         
+        LoggerHolderSingleton.shared.networkingLogger.notice("Starting data refresh for \(type(of: self))")
         dataRefreshLoopTask = Task {
             while !Task.isCancelled {
                 await refreshDataOnce(arguments: arguments)
@@ -48,6 +50,7 @@ extension NetworkDataModelProtocol {
     }
     
     func stopRefreshingData() {
+        LoggerHolderSingleton.shared.networkingLogger.notice("Stopping data refresh for \(type(of: self))")
         dataRefreshLoopTask?.cancel()
         dataRefreshLoopTask = nil
     }
