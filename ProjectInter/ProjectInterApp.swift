@@ -48,6 +48,10 @@ struct ProjectInterApp: App {
                     WelcomeContentView()
                         .environmentObject(setupStateModel)
                         .environmentObject(customAppDelegate)
+                        .environmentObject(globalSystemsStateObject)
+                        .task {
+                            await globalSystemsStateObject.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
+                        }
                 }
             }
             .task {
@@ -85,7 +89,6 @@ struct ContentViewWrapper: View {
     var body: some View {
         ContentView()
             .task {
-                // Perform overall global data refresh
                 await globalSystemsStateObject.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
             }
             .onChange(of: globalSystemsStateObject.selectedSystem) {
