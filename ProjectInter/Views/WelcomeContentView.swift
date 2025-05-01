@@ -10,6 +10,7 @@ import SwiftUI
 enum WelcomeFlowView {
     case LocationPermissionsRequestView
     case NotificationPermissionsRequestView
+    case SystemSelectionSetup
 }
 
 struct WelcomeContentView: View {
@@ -31,6 +32,11 @@ struct WelcomeContentView: View {
                     .navigationBarBackButtonHidden(true)
                 case WelcomeFlowView.NotificationPermissionsRequestView:
                     NotificationPermissionsRequestView {
+                        path.append(WelcomeFlowView.SystemSelectionSetup)
+                    }
+                    .navigationBarBackButtonHidden(true)
+                case WelcomeFlowView.SystemSelectionSetup:
+                    SystemSelectionSetupView {
                         setupStateModel.completeSetup()
                     }
                     .navigationBarBackButtonHidden(true)
