@@ -11,6 +11,8 @@ struct SystemSelectionSetupView: View {
     @EnvironmentObject var systemsModel: GlobalSystemsModel
     
     var onContinue: () -> Void
+    
+    @State private var showSystemSelectionView = false
 
     var body: some View {
         VStack(alignment: .center, spacing: 16) {
@@ -38,7 +40,7 @@ struct SystemSelectionSetupView: View {
             }
             
             Button {
-                
+                showSystemSelectionView = true
             } label: {
                 Spacer()
                 
@@ -73,6 +75,9 @@ struct SystemSelectionSetupView: View {
             .disabled(systemsModel.selectedSystem == nil)
         }
         .padding()
+        .sheet(isPresented: $showSystemSelectionView) {
+            SystemSelectionView()
+        }
     }
 }
 
