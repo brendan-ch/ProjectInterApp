@@ -16,17 +16,35 @@
 default_platform(:ios)
 
 platform :ios do
-  desc "Push a new beta build to TestFlight"
-  lane :beta do
-    increment_build_number(
-        build_number: latest_testflight_build_number + 1,
-        xcodeproj: "ProjectInter.xcodeproj"
-    )
-    build_app(scheme: "ProjectInter")
-    upload_to_testflight
+    lane :beta do
+        increment_build_number(
+            build_number: latest_testflight_build_number + 1,
+        )
+        build_app(scheme: "ProjectInter")
+        upload_to_testflight
+    end
 
-    commit_version_bump(
-        xcodeproj: "ProjectInter.xcodeproj"
-    )
-  end
+    lane :submit do
+        increment_build_number(
+            build_number: latest_testflight_build_number + 1,
+        )
+        build_app(scheme: "ProjectInter")
+        upload_to_app_store
+        
+        # Reset version number
+        increment_version_number
+        increment_build_number(
+            build_number: 1
+        )
+
+        commit_version_bump
+    end
+
+    lane :set_version do |options|
+        if options[:version]
+            increment_version_number(
+                version_number: options[:version]
+            )
+        end
+    end
 end
