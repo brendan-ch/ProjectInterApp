@@ -34,6 +34,11 @@ platform :ios do
     end
 
     lane :submit do
+        setup_ci if ENV['CI']
+        match(
+            type: "appstore"
+        )
+
         increment_build_number(
             build_number: latest_testflight_build_number + 1,
         )
