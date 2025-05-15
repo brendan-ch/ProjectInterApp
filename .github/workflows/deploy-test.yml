@@ -19,5 +19,6 @@ jobs:
           APPLE_KEY_ID: ${{ secrets.APPLE_KEY_ID }}
           APPLE_ISSUER_ID: ${{ secrets.APPLE_ISSUER_ID }}
           APPLE_KEY_CONTENT: ${{ secrets.APPLE_KEY_CONTENT }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           CI: 1
 
