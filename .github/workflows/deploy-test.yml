@@ -1,0 +1,19 @@
+name: Deploy testing build
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    if: ${{ github.event.label.name != 'release' }}
+    runs-on: macos-15
+    steps:
+      - name: Checkout current repository
+        uses: actions/checkout@v4
+
+      - name: Run Fastlane
+        run: fastlane beta
+        env:
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+
