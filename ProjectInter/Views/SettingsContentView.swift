@@ -73,8 +73,8 @@ struct SettingsContentView: View {
                     VStack(alignment: .leading) {
                         Text("Help me make this app better!")
                         
-                        Link(destination: URL(string: "https://github.com/brendan-ch/interchange-issues")!){
-                            Text("Open issue tracker on GitHub")
+                        Link(destination: .feedbackUrl){
+                            Text("Open issue tracker")
                         }
                     }
                     .frame(
