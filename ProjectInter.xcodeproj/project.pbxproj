@@ -340,9 +340,11 @@
 		20FA7B962D10E11F00D4EAD1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ACKNOWLEDGEMENTS_URL = "https://interchange.bchen.dev/acknowledgements";
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				API_BASE_URL = "http://localhost:4000/graphql";
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CHANGELOG_URL = "https://interchange.bchen.dev/changelog";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -406,9 +408,11 @@
 		20FA7B972D10E11F00D4EAD1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ACKNOWLEDGEMENTS_URL = "https://interchange.bchen.dev/acknowledgements";
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				API_BASE_URL = "https://project-inter-6d10a16cd822.herokuapp.com";
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CHANGELOG_URL = "https://interchange.bchen.dev/changelog";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";

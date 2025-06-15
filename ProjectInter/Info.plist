@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>ACKNOWLEDGEMENTS_URL</key>
+	<string>$(ACKNOWLEDGEMENTS_URL)</string>
+	<key>CHANGELOG_URL</key>
+	<string>$(CHANGELOG_URL)</string>
 	<key>APP_SCHEMA_VERSION</key>
 	<integer>1</integer>
 	<key>NSLocationWhenInUseUsageDescription</key>

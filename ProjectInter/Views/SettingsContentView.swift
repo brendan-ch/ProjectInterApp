@@ -100,7 +100,7 @@ struct SettingsContentView: View {
             SystemSelectionView()
         }
         .sheet(isPresented: $showAcknowledgmentsView) {
-            AcknowledgmentsWebView()
+            AcknowledgementsWebView()
         }
     }
 }

@@ -10,13 +10,11 @@ import SwiftUI
 struct ChangelogWebView: View {
     @Environment(\.dismiss) var dismiss
     
-    let url = URL(string: "https://interchange.bchen.dev/changelog")
+    let url = URL.changelogUrl
     
     var body: some View {
         NavigationStack {
-            if let url = url {
-                WebViewWithCloseButton(url: url, accessibilityIdentifier: "ChangelogWebView")
-            }
+            WebViewWithCloseButton(url: url, accessibilityIdentifier: "ChangelogWebView")
         }
     }
 }
