@@ -10,5 +10,7 @@
 	<string>Find your nearest stop, and get notified when a shuttle is nearby.</string>
 	<key>API_BASE_URL</key>
 	<string>$(API_BASE_URL)</string>
+	<key>FEEDBACK_URL</key>
+	<string>$(FEEDBACK_URL)</string>
 </dict>
 </plist>
