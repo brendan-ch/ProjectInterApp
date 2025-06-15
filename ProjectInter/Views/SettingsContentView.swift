@@ -73,10 +73,8 @@ struct SettingsContentView: View {
                     VStack(alignment: .leading) {
                         Text("Help me make this app better!")
                         
-                        Button {
-                            showFeedbackView = true
-                        } label: {
-                            Text("Send feedback")
+                        Link(destination: .feedbackUrl){
+                            Text("Open issue tracker")
                         }
                     }
                     .frame(
@@ -98,14 +96,11 @@ struct SettingsContentView: View {
         .sheet(isPresented: $showChangelogView) {
             ChangelogWebView()
         }
-        .sheet(isPresented: $showFeedbackView) {
-            FeedbackWebView()
-        }
         .sheet(isPresented: $showSystemPickerView) {
             SystemSelectionView()
         }
         .sheet(isPresented: $showAcknowledgmentsView) {
-            AcknowledgmentsWebView()
+            AcknowledgementsWebView()
         }
     }
 }

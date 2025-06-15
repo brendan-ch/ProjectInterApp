@@ -14,7 +14,7 @@ class ApolloClientHolderSingleton {
     let apolloClient: ApolloClientProtocol
     
     private init() {
-        apolloClient = ApolloClient(url: URL(string: Bundle.main.infoDictionary!["API_BASE_URL"] as! String)!)
+        apolloClient = ApolloClient(url: .apiBaseUrl)
     }
 }
 

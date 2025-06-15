@@ -42,19 +42,6 @@ final class SettingsUITests: BaseUITests {
         assertWebViewExistence(webView)
     }
     
-    func testOpenFeedbackOpensTheWebView() {
-        app.launch()
-        
-        openSettingsTab()
-        
-        let feedbackButton = app.buttons["Send feedback"]
-        feedbackButton.tap()
-        
-        let webView = app.webViews["FeedbackWebView"]
-        
-        assertWebViewExistence(webView)
-    }
-    
     func testOpenAcknowledgmentsOpensTheWebView() {
         app.launch()
         
