@@ -84,7 +84,7 @@ class BaseUITests: XCTestCase {
     }
 
     func attemptToSelectShuttleButton() -> Bool {
-        let firstMatchExists = app.otherElements.buttons["Shuttle"].waitForExistence(timeout: 20)
+        let firstMatchExists = app.otherElements.buttons["Shuttle"].waitForExistence(timeout: 5)
         if !firstMatchExists {
             return false
         }
@@ -100,5 +100,37 @@ class BaseUITests: XCTestCase {
         }
         
         return true
+    }
+    
+    func executeCallbackForEachShuttle(shouldExitCallbackLoop: () -> Bool) {
+        let shuttleButtons = app.buttons.matching(identifier: "Shuttle").allElementsBoundByIndex
+        
+        for shuttle in shuttleButtons {
+            let shuttleExists = shuttle.waitForExistence(timeout: 5)
+            if !shuttleExists {
+                continue
+            }
+            
+            sleep(5)
+            shuttle.forceTapElement()
+            
+            let shuttleTextExists = app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 5)
+            if !shuttleTextExists {
+                // Try tapping again if the first attempt didn't work
+                shuttle.forceTapElement()
+                let _ = app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 5)
+            }
+            
+            let shouldExit = shouldExitCallbackLoop()
+            if shouldExit {
+                return
+            }
+            
+            // Close the shuttle info view before trying the next shuttle
+            let closeButton = app.buttons["Close"]
+            if closeButton.waitForExistence(timeout: 5) {
+                closeButton.tap()
+            }
+        }
     }
 }

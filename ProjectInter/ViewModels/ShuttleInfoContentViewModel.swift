@@ -76,6 +76,18 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
         }
     }
     
+    var availableNotificationOptions: [Int] {
+        let allOptions = [2, 5, 10]
+        guard let etaSecondsRemaining = etaSecondsRemaining else {
+            return allOptions
+        }
+        
+        let etaMinutes = etaSecondsRemaining / 60
+        return allOptions.filter { minutes in
+            Double(minutes) < etaMinutes
+        }
+    }
+    
     var apolloClient: ApolloClientProtocol?
     
     required init(apolloClient: ApolloClientProtocol? = nil) {
