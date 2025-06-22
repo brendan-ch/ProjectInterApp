@@ -39,23 +39,31 @@ final class ShuttleInfoUITests: BaseUITests {
         useMockNotificationsToken()
         app.launch()
         
-        var shuttleButtonSelected = false
+        var notificationButtonEnabled = false
         
         executeCallbackForEachStop(shouldExitCallbackLoop: {
-            if !attemptToSelectShuttleButton() {
-                return false
-            }
-            shuttleButtonSelected = true
+            executeCallbackForEachShuttle(shouldExitCallbackLoop: {
+                let notifyMeWhenNearbyStaticText = app.staticTexts["Notify me when nearby"]
+                let notificationButtonExists = notifyMeWhenNearbyStaticText.waitForExistence(timeout: 5)
+                
+                if notificationButtonExists && notifyMeWhenNearbyStaticText.isEnabled {
+                    notificationButtonEnabled = true
+                    return true
+                } else {
+                    // Button doesn't exist or is disabled, try another shuttle
+                    return false
+                }
+            })
             
-            return true
+            // If we found an enabled notification button, exit the stop loop
+            return notificationButtonEnabled
         })
         
-        if !shuttleButtonSelected {
-            XCTFail("No shuttles available")
+        if !notificationButtonEnabled {
+            XCTFail("No shuttles with enabled notification button found")
         }
         
         let notifyMeWhenNearbyStaticText = app.staticTexts["Notify me when nearby"]
-        let _ = notifyMeWhenNearbyStaticText.waitForExistence(timeout: 5)
         notifyMeWhenNearbyStaticText.tap()
         
         assertButtonsInNotificationTimeframeSheetResultInUIUpdate()
