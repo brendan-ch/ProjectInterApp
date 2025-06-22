@@ -7,6 +7,26 @@
 
 import SwiftUI
 
+/// View which conditionally renders a message if there is no data available.
+/// Ensures consistent "no data" message across all data views.
+struct DataWrapperView<Content: View>: View {
+    var shouldDisplayNoDataMessage: Bool
+    var noDataMessage: String
+
+    @ViewBuilder let dataView: Content
+    
+    var body: some View {
+        if (shouldDisplayNoDataMessage) {
+            Spacer()
+            Text(noDataMessage)
+                .foregroundStyle(.secondary)
+            Spacer()
+        } else {
+            dataView
+        }
+    }
+}
+
 /// View which displays information for the currently selected
 /// route in ``GlobalDataState`` and a list of upcoming shuttles.
 struct RouteInfoContentView: NetworkView {
@@ -57,12 +77,10 @@ struct RouteInfoContentView: NetworkView {
             }
             .padding(.horizontal)
             
-            if (viewModel.shuttles.isEmpty) {
-                Spacer()
-                Text("No shuttles available.")
-                    .foregroundStyle(.secondary)
-                Spacer()
-            } else {
+            DataWrapperView(
+                shouldDisplayNoDataMessage: viewModel.shuttles.isEmpty,
+                noDataMessage: "No shuttles available"
+            ) {
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack {
                         ForEach(viewModel.shuttles) { upcomingDeparture in
