@@ -44,6 +44,16 @@ struct ShuttleInfoContentView: NetworkView {
         )
     }
     
+    var hasNoNotificationOptions: Bool {
+        viewModel.availableNotificationOptions.isEmpty
+    }
+    var buttonForegroundStyle: Color? {
+        if hasNoNotificationOptions {
+            return nil  // Let SwiftUI handle disabled styling
+        }
+        return isNotificationScheduled ? .red : .blue
+    }
+    
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             HStack(alignment: .top) {
@@ -87,8 +97,9 @@ struct ShuttleInfoContentView: NetworkView {
                     Spacer()
                 }
             }
+            .disabled(hasNoNotificationOptions)
             .buttonStyle(.bordered)
-            .foregroundStyle(isNotificationScheduled ? .red : .blue)
+            .conditionalForegroundStyle(buttonForegroundStyle)
             .controlSize(.large)
             .padding()
             .alert("Turn on notifications", isPresented: $showingNotificationPermissionsNotGrantedAlert) {
@@ -102,7 +113,7 @@ struct ShuttleInfoContentView: NetworkView {
                 Text("To schedule a notification, turn on app notifications.")
             }
             .confirmationDialog("Select a timeframe", isPresented: $showingNotificationConfirmationDialog, titleVisibility: .visible) {
-                ForEach([2, 5, 10], id: \.self) { minutes in
+                ForEach(viewModel.availableNotificationOptions, id: \.self) { minutes in
                     Button("\(minutes) minutes") {
                         Task {
                             if !isNotificationScheduled {
