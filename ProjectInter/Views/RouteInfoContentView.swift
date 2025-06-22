@@ -57,8 +57,13 @@ struct RouteInfoContentView: NetworkView {
             }
             .padding(.horizontal)
             
-            ScrollView(.vertical, showsIndicators: false) {
-                Section {
+            if (viewModel.shuttles.isEmpty) {
+                Spacer()
+                Text("No shuttles available.")
+                    .foregroundStyle(.secondary)
+                Spacer()
+            } else {
+                ScrollView(.vertical, showsIndicators: false) {
                     VStack {
                         ForEach(viewModel.shuttles) { upcomingDeparture in
                             Divider()
@@ -72,7 +77,9 @@ struct RouteInfoContentView: NetworkView {
                             .padding(.horizontal)
                             
                         }
+                        
                     }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
         }
@@ -115,6 +122,7 @@ struct RouteInfoShuttleViewItem: View {
 #Preview {
     let builder = RouteInfoContentViewModelPlaceholderBuilder()
     let model = builder.build()
+//    model.shuttles = []
     
     return RouteInfoContentView(viewModel: model)
         .environmentObject(GlobalIdSelectionModel())
