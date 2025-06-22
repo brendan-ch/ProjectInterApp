@@ -168,4 +168,109 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
         await autoTest_refreshDataOnceDoesNothingIfNoApolloClient()
     }
+    
+    @Test func availableNotificationOptionsReturnsAllOptionsWhenNoETA() {
+        let viewModel = ShuttleInfoContentViewModel()
+        #expect(viewModel.availableNotificationOptions == [2, 5, 10])
+    }
+    
+    @Test func availableNotificationOptionsFiltersBasedOnETA() async {
+        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
+        
+        // Test with 8 minutes (480 seconds) ETA - should show 2 and 5 minute options
+        mockClient.queryMock = Mock<Query>(
+            system: .init(
+                shuttle: .init(
+                    etas: [
+                        .init(
+                            secondsRemaining: 480, // 8 minutes
+                            stop: .init(
+                                id: "1",
+                                name: "Stop 1"
+                            )
+                        )
+                    ],
+                    name: "Shuttle 1"
+                )
+            )
+        )
+        
+        await viewModel.refreshDataOnce(arguments: arguments)
+        #expect(viewModel.availableNotificationOptions == [2, 5])
+    }
+    
+    @Test func availableNotificationOptionsShowsOnlyTwoMinutesForShortETA() async {
+        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
+        
+        // 3 minutes (180 seconds) ETA should show only 2 minute option
+        mockClient.queryMock = Mock<Query>(
+            system: .init(
+                shuttle: .init(
+                    etas: [
+                        .init(
+                            secondsRemaining: 180,
+                            stop: .init(
+                                id: "1",
+                                name: "Stop 1"
+                            )
+                        )
+                    ],
+                    name: "Shuttle 1"
+                )
+            )
+        )
+        
+        await viewModel.refreshDataOnce(arguments: arguments)
+        #expect(viewModel.availableNotificationOptions == [2])
+    }
+    
+    @Test func availableNotificationOptionsShowsNoOptionsForVeryShortETA() async {
+        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
+        
+        // 1 minute (60 seconds) ETA should show no options
+        mockClient.queryMock = Mock<Query>(
+            system: .init(
+                shuttle: .init(
+                    etas: [
+                        .init(
+                            secondsRemaining: 60,
+                            stop: .init(
+                                id: "1",
+                                name: "Stop 1"
+                            )
+                        )
+                    ],
+                    name: "Shuttle 1"
+                )
+            )
+        )
+        
+        await viewModel.refreshDataOnce(arguments: arguments)
+        #expect(viewModel.availableNotificationOptions == [])
+    }
+    
+    @Test func availableNotificationOptionsShowsAllOptionsForLongETA() async {
+        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
+        
+        // 15 minutes (900 seconds) ETA - should show all options
+        mockClient.queryMock = Mock<Query>(
+            system: .init(
+                shuttle: .init(
+                    etas: [
+                        .init(
+                            secondsRemaining: 900,
+                            stop: .init(
+                                id: "1",
+                                name: "Stop 1"
+                            )
+                        )
+                    ],
+                    name: "Shuttle 1"
+                )
+            )
+        )
+        
+        await viewModel.refreshDataOnce(arguments: arguments)
+        #expect(viewModel.availableNotificationOptions == [2, 5, 10])
+    }
 }
