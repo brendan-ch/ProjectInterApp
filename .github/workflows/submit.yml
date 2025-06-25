@@ -28,16 +28,6 @@ jobs:
           ./apollo-ios-cli generate
           ./apollo-ios-cli generate
 
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.0'
-          bundler-cache: true
-
-      - name: Install fastlane
-        run: |
-          gem install fastlane
-
       - name: Configure Git
         run: |
           git config --global user.name "github-actions[bot]"
