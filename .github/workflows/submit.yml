@@ -38,6 +38,11 @@ jobs:
         run: |
           gem install fastlane
 
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
       - name: Run fastlane submit
         env:
           APPLE_KEY_ID: ${{ secrets.APPLE_KEY_ID }}
@@ -48,6 +53,22 @@ jobs:
         run: |
           fastlane submit
 
-      - name: Push version bump
+      - name: Get version number and create release branch
+        id: version
         run: |
-          git push origin main
+          VERSION=$(xcodebuild -showBuildSettings -project ProjectInter.xcodeproj -configuration Release | grep MARKETING_VERSION | awk '{print $3}')
+          BRANCH_NAME="version/$VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          git checkout -b $BRANCH_NAME
+
+      - name: Push release branch and create pull request
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          git push origin ${{ steps.version.outputs.branch_name }}
+          gh pr create \
+            --title "Version ${{ steps.version.outputs.version }}" \
+            --body "Automated version bump to ${{ steps.version.outputs.version }}" \
+            --base main \
+            --head ${{ steps.version.outputs.branch_name }}
