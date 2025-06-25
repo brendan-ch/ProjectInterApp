@@ -1,0 +1,74 @@
+name: Submit to App Store
+
+on:
+  workflow_dispatch:
+
+jobs:
+  submit:
+    name: Submit app to App Store
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout current repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Set Xcode version
+        run: |
+          sudo xcode-select -s /Applications/Xcode_16.1.app
+
+      - name: Generate ProjectInterOperations Library
+        env:
+          CLI_URL: "https://github.com/apollographql/apollo-ios/releases/download/1.3.3/apollo-ios-cli.tar.gz"
+        run: |
+          curl -L $CLI_URL -o apollo-ios-cli.tar.gz
+          tar -xzf apollo-ios-cli.tar.gz
+          chmod +x apollo-ios-cli
+          ./apollo-ios-cli generate
+          ./apollo-ios-cli generate
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
+          bundler-cache: true
+
+      - name: Install fastlane
+        run: |
+          gem install fastlane
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Run fastlane submit
+        env:
+          APPLE_KEY_ID: ${{ secrets.APPLE_KEY_ID }}
+          APPLE_ISSUER_ID: ${{ secrets.APPLE_ISSUER_ID }}
+          APPLE_KEY_CONTENT: ${{ secrets.APPLE_KEY_CONTENT }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+        run: |
+          fastlane submit
+
+      - name: Get version number and create release branch
+        id: version
+        run: |
+          VERSION=$(xcodebuild -showBuildSettings -project ProjectInter.xcodeproj -configuration Release | grep MARKETING_VERSION | awk '{print $3}')
+          BRANCH_NAME="version/$VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          git checkout -b $BRANCH_NAME
+
+      - name: Push release branch and create pull request
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          git push origin ${{ steps.version.outputs.branch_name }}
+          gh pr create \
+            --title "Version ${{ steps.version.outputs.version }}" \
+            --body "Automated version bump to ${{ steps.version.outputs.version }}" \
+            --base main \
+            --head ${{ steps.version.outputs.branch_name }}
