@@ -48,26 +48,26 @@ platform :ios do
         upload_to_testflight(skip_waiting_for_build_processing: true)
     end
 
-    lane :submit do
-        setup_ci if ENV["CI"]
-        match(
-            type: "appstore"
-        )
-
-        increment_build_number(
-            build_number: latest_testflight_build_number + 1,
-        )
-        build_app(scheme: "ProjectInter")
-        upload_to_app_store
-        
-        # Reset version number
-        increment_version_number
-        increment_build_number(
-            build_number: 1
-        )
-
-        commit_version_bump
-    end
+#   lane :submit do
+#       setup_ci if ENV["CI"]
+#       match(
+#           type: "appstore"
+#       )
+# 
+#       increment_build_number(
+#           build_number: latest_testflight_build_number + 1,
+#       )
+#       build_app(scheme: "ProjectInter")
+#       upload_to_app_store
+#       
+#       # Reset version number
+#       increment_version_number
+#       increment_build_number(
+#           build_number: 1
+#       )
+# 
+#       commit_version_bump
+#   end
 
     lane :set_version do |options|
         unless options[:version]
