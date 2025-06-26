@@ -15,17 +15,22 @@
 
 default_platform(:ios)
 
+before_all do |lane_name|
+    app_store_lanes = [:beta, :submit]
+
+    if app_store_lanes.include?(lane_name)
+        app_store_connect_api_key(
+            key_id: ENV["APPLE_KEY_ID"],
+            issuer_id: ENV["APPLE_ISSUER_ID"],
+            key_content: ENV["APPLE_KEY_CONTENT"],
+            # is_key_content_base64: true,
+            duration: 1200,
+            in_house: false
+        )
+    end
+end
+
 platform :ios do
-    app_store_connect_api_key(
-        key_id: ENV["APPLE_KEY_ID"],
-        issuer_id: ENV["APPLE_ISSUER_ID"],
-        key_content: ENV["APPLE_KEY_CONTENT"],
-        # is_key_content_base64: true,
-        duration: 1200,
-        in_house: false
-    )
-
-
     lane :beta do
         setup_ci if ENV['CI']
 
@@ -43,32 +48,48 @@ platform :ios do
         upload_to_testflight(skip_waiting_for_build_processing: true)
     end
 
-    lane :submit do
-        setup_ci if ENV["CI"]
-        match(
-            type: "appstore"
-        )
-
-        increment_build_number(
-            build_number: latest_testflight_build_number + 1,
-        )
-        build_app(scheme: "ProjectInter")
-        upload_to_app_store
-        
-        # Reset version number
-        increment_version_number
-        increment_build_number(
-            build_number: 1
-        )
-
-        commit_version_bump
-    end
+#   lane :submit do
+#       setup_ci if ENV["CI"]
+#       match(
+#           type: "appstore"
+#       )
+# 
+#       increment_build_number(
+#           build_number: latest_testflight_build_number + 1,
+#       )
+#       build_app(scheme: "ProjectInter")
+#       upload_to_app_store
+#       
+#       # Reset version number
+#       increment_version_number
+#       increment_build_number(
+#           build_number: 1
+#       )
+# 
+#       commit_version_bump
+#   end
 
     lane :set_version do |options|
+        unless options[:version]
+            UI.user_error! "No version number provided"
+        end
+
+        unless options[:build_number]
+            UI.user_error! "No build number provided"
+        end
+
         if options[:version]
             increment_version_number(
                 version_number: options[:version]
             )
         end
+
+        if options[:build_number]
+            increment_build_number(
+                build_number: options[:build_number]
+            )
+        end
+
+        commit_version_bump
     end
 end

@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    if: ${{ github.event.label.name != 'release' }}
+    if: ${{ github.event.label.name != 'release' && !contains(github.event.pull_request.labels.*.name, 'bypass ci/cd') }}
     runs-on: macos-15
     steps:
       - name: Checkout current repository
