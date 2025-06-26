@@ -6,6 +6,7 @@ on:
 
 jobs:
   test:
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'bypass ci/cd') }}
     name: Run unit tests on iOS
     runs-on: macos-15
 
@@ -70,6 +71,7 @@ jobs:
           xcodebuild test-without-building -scheme "$scheme" -"$filetype_parameter" "$file_to_build" -destination "platform=$platform,name=$device" -testPlan "$test_plan"
 
   test-ui:
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'bypass ci/cd') }}
     name: Run UI tests on iOS
     runs-on: macos-15
 

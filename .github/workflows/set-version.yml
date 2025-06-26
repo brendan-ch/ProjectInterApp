@@ -47,4 +47,5 @@ jobs:
             --title "Set version ${{ github.event.inputs.version }} build ${{ github.event.inputs.build_number }}" \
             --body "Manually set version to ${{ github.event.inputs.version }} and build number to ${{ github.event.inputs.build_number }}" \
             --base main \
-            --head $BRANCH_NAME
+            --head $BRANCH_NAME \
+            --label "bypass ci/cd"
