@@ -1,4 +1,6 @@
 name: Set Version and Build Number
+permissions:
+  contents: write
 
 on:
   workflow_dispatch:
@@ -49,3 +51,4 @@ jobs:
             --base main \
             --head $BRANCH_NAME \
             --label "bypass ci/cd"
+
