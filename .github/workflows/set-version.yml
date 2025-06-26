@@ -1,0 +1,50 @@
+name: Set Version and Build Number
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g., 1.2.3)'
+        required: true
+        type: string
+      build_number:
+        description: 'Build number (e.g., 42)'
+        required: true
+        type: string
+
+jobs:
+  set-version:
+    name: Set version and build number
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout current repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Set Xcode version
+        run: |
+          sudo xcode-select -s /Applications/Xcode_16.1.app
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Run fastlane set_version
+        run: |
+          fastlane set_version version:${{ github.event.inputs.version }} build_number:${{ github.event.inputs.build_number }}
+
+      - name: Create version branch and pull request
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          BRANCH_NAME="version/${{ github.event.inputs.version }}-build-${{ github.event.inputs.build_number }}"
+          git checkout -b $BRANCH_NAME
+          git push origin $BRANCH_NAME
+          gh pr create \
+            --title "Set version ${{ github.event.inputs.version }} build ${{ github.event.inputs.build_number }}" \
+            --body "Manually set version to ${{ github.event.inputs.version }} and build number to ${{ github.event.inputs.build_number }}" \
+            --base main \
+            --head $BRANCH_NAME
