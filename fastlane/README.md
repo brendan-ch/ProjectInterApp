@@ -23,14 +23,6 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 
 
-### ios submit
-
-```sh
-[bundle exec] fastlane ios submit
-```
-
-
-
 ### ios set_version
 
 ```sh
