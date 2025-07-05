@@ -15,10 +15,8 @@ import Network
 
 struct Response: Codable {
     var error: String?
-    var success: Bool?
+    var success: Bool
     var message: String?
-    var hash: String?
-    var query: String?
 }
 
 // Mock server code: https://github.com/brendan-ch/project-inter-mock-server
@@ -33,7 +31,6 @@ class MockServerClient {
     private func buildMockApiUrl(paths: [String]) -> URL? {
         guard var components = URLComponents(url: baseUrl, resolvingAgainstBaseURL: true) else { return nil }
         
-        // Add paths
         let pathString = "/" + paths.joined(separator: "/")
         components.path = pathString
         
@@ -61,7 +58,7 @@ class MockServerClient {
         request.httpBody = jsonData
         
         do {
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, _) = try await URLSession.shared.data(for: request)
             
             if let decodedResponse = try? JSONDecoder().decode(Response.self, from: data) {
                 print(decodedResponse)
