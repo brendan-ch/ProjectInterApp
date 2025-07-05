@@ -24,15 +24,16 @@ final class LaunchTests: XCTestCase {
 
     @MainActor
     func testLaunch() async throws {
-        await mockServerClient.clear()
-        
-        let query = GetAllSystemsQuery()
-        let mock = Mock<ProjectInterTestMocks.Query>(
-            systems: [
-                .init(id: "1", name: "System 1"),
-            ],
-        )
-        await mockServerClient.mock(query: query, response: mock)
+        // Move to the mock server client in a future issue
+//        await mockServerClient.clear()
+//        
+//        let query = GetAllSystemsQuery()
+//        let mock = Mock<ProjectInterTestMocks.Query>(
+//            systems: [
+//                .init(id: "1", name: "System 1"),
+//            ],
+//        )
+//        await mockServerClient.mock(query: query, response: mock)
         
         let app = XCUIApplication()
         app.launch()
