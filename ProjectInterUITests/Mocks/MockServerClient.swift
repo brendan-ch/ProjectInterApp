@@ -37,17 +37,26 @@ class MockServerClient {
         return components.url
     }
     
-    func mock(query: any GraphQLQuery, variables: [String: Any] = [:], response: Mock<Query>) async {
+    func mock<Query>(query: Query, variables: [String: Any] = [:], response: Mock<ProjectInterTestMocks.Query>) async where Query : ApolloAPI.GraphQLOperation {
+        
         let requestBody = bodyCreator.requestBody(for: query, sendQueryDocument: true, autoPersistQuery: false)
-        let jsonObject = requestBody.compactMapValues { $0._jsonValue }
-        guard let jsonData = try? JSONSerialization.data(withJSONObject: jsonObject) else {
+        var jsonBodyObject = requestBody.compactMapValues { $0._jsonValue } as [String : Any]
+        
+        let result = GraphQLResult(
+            data: Query.Data.from(response),
+            extensions: nil,
+            errors: nil,
+            source: .server,
+            dependentKeys: nil
+        )
+        let dict = result.asJSONDictionary()
+        jsonBodyObject["response"] = dict
+        
+        guard let jsonBody = try? JSONSerialization.data(withJSONObject: jsonBodyObject) else {
             print("Failed to construct JSON representation of data")
             return
         }
-        
-        // TODO: Add the response object
-        // https://github.com/apollographql/apollo-ios/issues/3196
-        
+
         guard let url = buildMockApiUrl(paths: ["mocks"]) else {
             print("Failed to build mock URL")
             return
@@ -55,7 +64,7 @@ class MockServerClient {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = jsonData
+        request.httpBody = jsonBody
         
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
