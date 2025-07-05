@@ -81,4 +81,20 @@ class MockServerClient {
             print("Failed to call the mock server")
         }
     }
+    
+    func clear() async {
+        guard let url = buildMockApiUrl(paths: ["mocks"]) else {
+            print("Failed to build mock URL")
+            return
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        
+        do {
+            let (_, _) = try await URLSession.shared.data(for: request)
+            print("Cleared mock data")
+        } catch {
+            print("Failed to clear mock data")
+        }
+    }
 }

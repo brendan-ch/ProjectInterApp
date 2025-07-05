@@ -24,6 +24,8 @@ final class LaunchTests: XCTestCase {
 
     @MainActor
     func testLaunch() async throws {
+        await mockServerClient.clear()
+        
         let query = GetAllSystemsQuery()
         let mock = Mock<ProjectInterTestMocks.Query>(
             systems: [
