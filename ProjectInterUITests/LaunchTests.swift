@@ -6,8 +6,13 @@
 //
 
 import XCTest
+@testable import ProjectInter
+import ApolloTestSupport
+import ProjectInterOperations
+import ProjectInterTestMocks
 
 final class LaunchTests: XCTestCase {
+    let mockServerClient = MockServerClient(url: .mockApiBaseUrl)
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
@@ -18,7 +23,15 @@ final class LaunchTests: XCTestCase {
     }
 
     @MainActor
-    func testLaunch() throws {
+    func testLaunch() async throws {
+        let query = GetAllSystemsQuery()
+        let mock = Mock<ProjectInterTestMocks.Query>(
+            systems: [
+                .init(id: "1", name: "System 1"),
+            ],
+        )
+        await mockServerClient.mock(query: query, response: mock)
+        
         let app = XCUIApplication()
         app.launch()
 
