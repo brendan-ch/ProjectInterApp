@@ -37,8 +37,7 @@ class MockServerClient {
         return components.url
     }
     
-    func mock<Query>(query: Query, variables: [String: Any] = [:], response: Mock<ProjectInterTestMocks.Query>) async where Query : ApolloAPI.GraphQLOperation {
-        
+    private func constructJsonSerializableDictionary<Query>(query: Query, response: Mock<ProjectInterTestMocks.Query>) -> [String: Any] where Query : ApolloAPI.GraphQLOperation {
         let requestBody = bodyCreator.requestBody(for: query, sendQueryDocument: true, autoPersistQuery: false)
         var jsonBodyObject = requestBody.compactMapValues { $0._jsonValue } as [String : Any]
         
@@ -52,7 +51,13 @@ class MockServerClient {
         let dict = result.asJSONDictionary()
         jsonBodyObject["response"] = dict
         
-        guard let jsonBody = try? JSONSerialization.data(withJSONObject: jsonBodyObject) else {
+        return jsonBodyObject
+    }
+    
+    func mock<Query>(query: Query, response: Mock<ProjectInterTestMocks.Query>) async where Query : ApolloAPI.GraphQLOperation {
+        let jsonDictionary = constructJsonSerializableDictionary(query: query, response: response)
+        
+        guard let jsonBody = try? JSONSerialization.data(withJSONObject: jsonDictionary) else {
             print("Failed to construct JSON representation of data")
             return
         }
