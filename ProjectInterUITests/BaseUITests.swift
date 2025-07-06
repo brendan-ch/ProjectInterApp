@@ -7,9 +7,13 @@
 
 import XCTest
 import Foundation
+import ApolloTestSupport
+import ProjectInterOperations
+import ProjectInterTestMocks
 
 class BaseUITests: XCTestCase {
     var app: XCUIApplication = XCUIApplication()
+    var client: MockServerClient = MockServerClient(url: .mockApiBaseUrl)
 
     override func setUpWithError() throws {
         // In UI tests it is usually best to stop immediately when a failure occurs.
@@ -18,7 +22,20 @@ class BaseUITests: XCTestCase {
         // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
         app = XCUIApplication()
         
+        Task {
+            await setupServerSchemaVersion()
+        }
+        
         app.launchArguments += ["-uiTests", "1", "-selectedSystemId", "1"]
+    }
+    
+    func setupServerSchemaVersion() async {
+        let query = GetSchemaVersionQuery()
+        let response = Mock<Query>(
+            schemaCurrentVersion: 1,
+            schemaMinVersion: 1,
+        )
+        await client.mock(query: query, response: response)
     }
     
     func skipSetupFlow() {
