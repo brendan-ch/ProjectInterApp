@@ -42,6 +42,7 @@ class BaseUITests: XCTestCase {
         app = XCUIApplication()
         
         Task {
+            await client.clear()
             await setupServerSchemaVersion()
             await setupSystems()
         }
@@ -86,6 +87,17 @@ class BaseUITests: XCTestCase {
 
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
+    }
+    
+    func selectStopFromRouteList(name: String) {
+        let _ = app.buttons["Change stop"].waitForExistence(timeout: 20)
+        app.buttons["Change stop"].tap()
+        
+        XCTAssert(app.collectionViews.cells.staticTexts["No stops found."].waitForNonExistence(timeout: 5))
+        
+        let stopButton = app.buttons[name]
+        let _ = stopButton.waitForExistence(timeout: 5)
+        stopButton.tap()
     }
     
     func executeCallbackForEachStop(shouldExitCallbackLoop: () -> Bool) {
