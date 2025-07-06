@@ -93,7 +93,7 @@ extension NetworkDataModelTestsProtocol {
         viewModel.stopRefreshingData()
         mockClient.queryMock = secondaryMock as? Mock<Query>
         
-        try? await Task.sleep(for: .milliseconds(700))
+        try? await Task.sleep(for: .milliseconds(1000))
         
         assertViewModelDataForDefaultMock(viewModel: viewModel)
     }
