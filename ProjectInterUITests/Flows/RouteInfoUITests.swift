@@ -16,8 +16,9 @@ final class RouteInfoUITests: BaseUITests {
         skipSetupFlow()
     }
     
-    @MainActor
-    func testShuttleInfoIsShownWhenTapped() async {
+    // MARK: - Server mocking
+    // These are to be customized and organized per test file
+    func mockGetAllStopsQueryAndResponse() async {
         let allStopsQuery = GetAllStopsBySystemIdQuery(systemId: defaultSystemId)
         let allStopsResponse = Mock<Query>(
             system: .init(
@@ -43,7 +44,9 @@ final class RouteInfoUITests: BaseUITests {
             )
         )
         await client.mock(query: allStopsQuery, response: allStopsResponse)
-        
+    }
+
+    func mockGetRouteListQueryAndResponse() async {
         let routeListQuery = GetRouteListDataQuery(systemId: defaultSystemId, stopId: "1")
         let routeListResponse = Mock<Query>(
             system: .init(
@@ -104,7 +107,9 @@ final class RouteInfoUITests: BaseUITests {
         )
         
         await client.mock(query: routeListQuery, response: routeListResponse)
-        
+    }
+    
+    func mockGetRouteInfoDataQueryAndResponse() async {
         let routeInfoQuery = GetRouteInfoDataQuery(systemId: defaultSystemId, stopId: "1", routeId: "1")
         let routeInfoResponse = Mock<Query>(
             system: .init(
@@ -137,6 +142,30 @@ final class RouteInfoUITests: BaseUITests {
             )
         )
         await client.mock(query: routeInfoQuery, response: routeInfoResponse)
+    }
+    
+    // MARK: - Tests
+    @MainActor
+    func testShuttleInfoRendering() async {
+        await mockGetAllStopsQueryAndResponse()
+        await mockGetRouteListQueryAndResponse()
+        await mockGetRouteInfoDataQueryAndResponse()
+        
+        app.launch()
+        
+        selectStopFromRouteList(name: "Chapman Court")
+        selectFirstMatchButton(textIdentifier: "Red Route")
+        
+        XCTAssert(app.staticTexts["Shuttle 1"].firstMatch.waitForExistence(timeout: 5))
+        XCTAssert(app.staticTexts["Shuttle 2"].firstMatch.waitForExistence(timeout: 5))
+    }
+    
+
+    @MainActor
+    func testShuttleInfoIsShownWhenTapped() async {
+        await mockGetAllStopsQueryAndResponse()
+        await mockGetRouteListQueryAndResponse()
+        await mockGetRouteInfoDataQueryAndResponse()
         
         let shuttleInfoQuery = GetShuttleInfoDataQuery(
             systemId: defaultSystemId,
@@ -175,34 +204,21 @@ final class RouteInfoUITests: BaseUITests {
         XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 5))
     }
     
-    func testRouteInfoIsClosedWhenCloseButtonTapped() {
+    @MainActor
+    func testRouteInfoIsClosedWhenCloseButtonTapped() async {
+        await mockGetAllStopsQueryAndResponse()
+        await mockGetRouteListQueryAndResponse()
+        await mockGetRouteInfoDataQueryAndResponse()
+
         app.launch()
         
-        var routeTapped = false
+        selectStopFromRouteList(name: "Chapman Court")
+        selectFirstMatchButton(textIdentifier: "Red Route")
         
-        executeCallbackForEachStop(shouldExitCallbackLoop: {
-            if !checkIfRoutesExist() {
-                return false
-            }
-            
-            executeCallbackForEachRoute(shouldExitCallbackLoop: {
-                routeTapped = true
-                
-                // Exit immediately to test the close button
-                return true
-            })
-            
-            let _ = app.buttons["Close"].waitForExistence(timeout: 5)
-            app.buttons["Close"].tap()
-            
-            let routeInfoShuttlesNoLongerExist = app.buttons["Shuttle label in route info page"].waitForNonExistence(timeout: 5)
-            XCTAssert(routeInfoShuttlesNoLongerExist)
-            
-            return true
-        })
+        let _ = app.buttons["Close"].waitForExistence(timeout: 5)
+        app.buttons["Close"].tap()
         
-        if !routeTapped {
-            XCTFail("No routes found in test data")
-        }
+        XCTAssert(app.buttons["Shuttle 1"].waitForNonExistence(timeout: 5))
+        XCTAssert(app.buttons["Shuttle 2"].waitForNonExistence(timeout: 5))
     }
 }
