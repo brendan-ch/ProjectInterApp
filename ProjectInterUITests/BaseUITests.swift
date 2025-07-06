@@ -96,8 +96,20 @@ class BaseUITests: XCTestCase {
         XCTAssert(app.collectionViews.cells.staticTexts["No stops found."].waitForNonExistence(timeout: 5))
         
         let stopButton = app.buttons[name]
-        let _ = stopButton.waitForExistence(timeout: 5)
+        let exists = stopButton.waitForExistence(timeout: 5)
+        if !exists {
+            XCTFail("Unable to find stop \(name)")
+        }
         stopButton.tap()
+    }
+    
+    func selectRouteFromRouteList(name: String) {
+        let routeButton = app.buttons.containing(.staticText, identifier: name).firstMatch
+        let exists = routeButton.waitForExistence(timeout: 5)
+        if !exists {
+            XCTFail("Unable to find route \(name)")
+        }
+        routeButton.tap()
     }
     
     func executeCallbackForEachStop(shouldExitCallbackLoop: () -> Bool) {
