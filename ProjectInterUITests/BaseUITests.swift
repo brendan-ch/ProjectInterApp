@@ -103,11 +103,11 @@ class BaseUITests: XCTestCase {
         stopButton.tap()
     }
     
-    func selectRouteFromRouteList(name: String) {
-        let routeButton = app.buttons.containing(.staticText, identifier: name).firstMatch
+    func selectFirstMatchButton(textIdentifier: String) {
+        let routeButton = app.buttons.containing(.staticText, identifier: textIdentifier).firstMatch
         let exists = routeButton.waitForExistence(timeout: 5)
         if !exists {
-            XCTFail("Unable to find route \(name)")
+            XCTFail("Unable to find button with static text \(textIdentifier)")
         }
         routeButton.tap()
     }
