@@ -43,6 +43,7 @@ class BaseUITests: XCTestCase {
         
         Task {
             await setupServerSchemaVersion()
+            await setupSystems()
         }
         
         app.launchArguments += ["-uiTests", "1", "-selectedSystemId", defaultSystemId]
@@ -53,6 +54,21 @@ class BaseUITests: XCTestCase {
         let response = Mock<Query>(
             schemaCurrentVersion: 1,
             schemaMinVersion: 1,
+        )
+        await client.mock(query: query, response: response)
+    }
+    
+    func setupSystems() async {
+        let systems = mockSystems.map { key, value in
+            return Mock<System>(
+                id: key,
+                name: value
+            )
+        }
+        
+        let query = GetAllSystemsQuery()
+        let response = Mock<Query>(
+            systems: systems
         )
         await client.mock(query: query, response: response)
     }
