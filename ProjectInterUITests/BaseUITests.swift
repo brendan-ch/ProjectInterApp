@@ -14,6 +14,25 @@ import ProjectInterTestMocks
 class BaseUITests: XCTestCase {
     var app: XCUIApplication = XCUIApplication()
     var client: MockServerClient = MockServerClient(url: .mockApiBaseUrl)
+    
+    /// For tests involving multiple systems, the information is stored here in order to
+    /// construct mock requests involving system IDs.
+    let mockSystems = [
+        "1": "Chapman University",
+        "2": "Cal State Long Beach"
+    ]
+    
+    /// The user's selected system ID by default. Present regardless of whether
+    /// testing one or multiple systems.
+    var defaultSystemId: String {
+        mockSystems.keys.first!
+    }
+    
+    /// The user's selected system name by default. Present regardless of whether
+    /// testing one or multiple systems.
+    var defaultSystemName: String {
+        mockSystems[defaultSystemId]!
+    }
 
     override func setUpWithError() throws {
         // In UI tests it is usually best to stop immediately when a failure occurs.
@@ -26,7 +45,7 @@ class BaseUITests: XCTestCase {
             await setupServerSchemaVersion()
         }
         
-        app.launchArguments += ["-uiTests", "1", "-selectedSystemId", "1"]
+        app.launchArguments += ["-uiTests", "1", "-selectedSystemId", defaultSystemId]
     }
     
     func setupServerSchemaVersion() async {
