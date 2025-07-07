@@ -90,7 +90,7 @@ final class RouteInfoUITests: BaseUITests {
                                 shuttles: [
                                     .init(
                                         eta: .init(
-                                            secondsRemaining: 50
+                                            secondsRemaining: 150
                                         )
                                     ),
                                     .init(
@@ -125,7 +125,7 @@ final class RouteInfoUITests: BaseUITests {
                     shuttles: [
                         .init(
                             eta: .init(
-                                secondsRemaining: 50
+                                secondsRemaining: 150
                             ),
                             id: "1",
                             name: "Shuttle 1"
@@ -177,12 +177,12 @@ final class RouteInfoUITests: BaseUITests {
             )
         )
         let shuttleInfoResponse = Mock<Query>(
-            secondsThresholdForNotification: 300,
+            secondsThresholdForNotification: 150,
             system: .init(
                 shuttle: .init(
                     etas: [
                         .init(
-                            secondsRemaining: 50,
+                            secondsRemaining: 150,
                             stop: .init(
                                 id: "1",
                                 name: "Chapman Court"
