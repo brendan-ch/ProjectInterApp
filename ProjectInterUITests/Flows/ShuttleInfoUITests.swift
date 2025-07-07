@@ -6,6 +6,9 @@
 //
 
 import XCTest
+import ProjectInterOperations
+import ApolloTestSupport
+import ProjectInterTestMocks
 
 final class ShuttleInfoUITests: BaseUITests {
     override func setUpWithError() throws {
@@ -13,6 +16,7 @@ final class ShuttleInfoUITests: BaseUITests {
         skipSetupFlow()
     }
     
+    // MARK: - Helpers
     func getAvailableOptionsWithinSheet(_ sheet: XCUIElementQuery) -> [String] {
         // Buttons must be in "<#> minutes" format
         let allSheetButtons = sheet.buttons.allElementsBoundByIndex
@@ -67,6 +71,50 @@ final class ShuttleInfoUITests: BaseUITests {
         }
     }
     
+    // MARK: - Tests
+    @MainActor
+    func testShuttleInfoIsShownWhenTapped() async {
+        await mockGetAllStopsQueryAndResponse()
+        await mockGetRouteListQueryAndResponse()
+        await mockGetRouteInfoDataQueryAndResponse()
+        
+        let shuttleInfoQuery = GetShuttleInfoDataQuery(
+            systemId: defaultSystemId,
+            shuttleId: "1",
+            notificationInput: .init(
+                deviceId: "1",
+                shuttleId: "1",
+                stopId: "1"
+            )
+        )
+        let shuttleInfoResponse = Mock<Query>(
+            secondsThresholdForNotification: 150,
+            system: .init(
+                shuttle: .init(
+                    etas: [
+                        .init(
+                            secondsRemaining: 150,
+                            stop: .init(
+                                id: "1",
+                                name: "Chapman Court"
+                            )
+                        )
+                    ],
+                    name: "Shuttle 1"
+                )
+            )
+        )
+        await client.mock(query: shuttleInfoQuery, response: shuttleInfoResponse)
+        
+        app.launch()
+        
+        selectStopFromRouteList(name: "Chapman Court")
+        selectFirstMatchButton(textIdentifier: "Red Route")
+        selectFirstMatchButton(textIdentifier: "Shuttle 1")
+        
+        XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 5))
+    }
+
     func testNotificationMenuButtonsAndCancelButtonResultInButtonTextUpdate() {
         useMockNotificationsToken()
         app.launch()
