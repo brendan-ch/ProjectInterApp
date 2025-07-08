@@ -150,81 +150,51 @@ final class MapUITests: BaseUITests {
         XCTAssert(totalShuttleCount == calculatedShuttleCount)
     }
     
-    func testTapOnShuttleOpensShuttleInfo() {
+    @MainActor
+    func testTapOnShuttleOpensShuttleInfo() async {
+        await mockGetAllStopsQueryAndResponse()
+        await mockGetRouteListQueryAndResponse()
+        await mockGetMapDataQueryAndResponse()
+        await mockShuttleInfoQueryAndResponse()
+        
         app.launch()
         
-        var shuttleButtonTapped = false
+        selectStopFromRouteList(name: "Chapman Court")
         
-        executeCallbackForEachStop(shouldExitCallbackLoop: {
-            if !attemptToSelectShuttleButton() {
-                return false
-            }
-            
-            XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
-            shuttleButtonTapped = true
-            return true
-        })
-        
-        if !shuttleButtonTapped {
-            XCTFail("No shuttle buttons found.")
-        }
+        XCTAssert(attemptToSelectShuttleButton())
+        XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
     }
     
-    func testTapOnShuttleAfterDeselectOpensShuttleInfo() {
+    @MainActor
+    func testTapOnShuttleAfterDeselectOpensShuttleInfo() async {
+        await mockGetAllStopsQueryAndResponse()
+        await mockGetRouteListQueryAndResponse()
+        await mockGetMapDataQueryAndResponse()
+        await mockShuttleInfoQueryAndResponse()
+        
         app.launch()
         
-        var shuttleButtonTapped = false
+        selectStopFromRouteList(name: "Chapman Court")
         
-        executeCallbackForEachStop(shouldExitCallbackLoop: {
-            if !attemptToSelectShuttleButton() {
-                return false
-            }
-            
-            XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
-            shuttleButtonTapped = true
-            
-            app.buttons["Close"].tap()
-            
-            if !attemptToSelectShuttleButton() {
-                return false
-            }
-            
-            XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
-
-            return true
-        })
-        
-        if !shuttleButtonTapped {
-            XCTFail("No shuttle buttons found.")
-        }
+        XCTAssert(attemptToSelectShuttleButton())
+        app.buttons["Close"].tap()
+        XCTAssert(attemptToSelectShuttleButton())
+        XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
     }
     
-    func testTapOnStopDeselectsShuttleAndHidesInfo() {
+    @MainActor
+    func testTapOnStopDeselectsShuttleAndHidesInfo() async {
+        await mockGetAllStopsQueryAndResponse()
+        await mockGetRouteListQueryAndResponse()
+        await mockGetMapDataQueryAndResponse()
+        await mockShuttleInfoQueryAndResponse()
+        
         app.launch()
         
-        var shuttleButtonTapped = false
+        selectStopFromRouteList(name: "Chapman Court")
         
-        executeCallbackForEachStop(shouldExitCallbackLoop: {
-            if !attemptToSelectShuttleButton() {
-                return false
-            }
-
-            let firstMatchStopButtonExists = app.otherElements.buttons["Stop"].waitForExistence(timeout: 20)
-            if !firstMatchStopButtonExists {
-                return false
-            }
-            
-            XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
-            shuttleButtonTapped = true
-
-            app.buttons["Stop"].firstMatch.tap()
-            XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForNonExistence(timeout: 20))
-            
-            return true
-        })
-        
-        if !shuttleButtonTapped {
-            XCTFail("No shuttle buttons found.")
-        }
+        XCTAssert(attemptToSelectShuttleButton())
+        app.buttons["Stop"].firstMatch.tap()
+        XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForNonExistence(timeout: 20))
     }
 }
