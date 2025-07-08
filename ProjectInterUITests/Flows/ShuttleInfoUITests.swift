@@ -76,41 +76,6 @@ final class ShuttleInfoUITests: BaseUITests {
         }
     }
     
-    // MARK: - Mocks
-    func mockShuttleInfoQueryAndResponse(secondsRemaining: Double = 150, secondsThresholdForNotification: Int? = nil) async {
-        useMockNotificationsToken()
-        
-        let shuttleInfoQuery = GetShuttleInfoDataQuery(
-            systemId: defaultSystemId,
-            shuttleId: "1",
-            notificationInput: .init(
-                deviceId: "mock-device",
-                shuttleId: "1",
-                stopId: "1"
-            )
-        )
-        let shuttleInfoResponse = Mock<Query>(
-            // Note that missing response properties are
-            // automatically filled in by the server as `null`
-            secondsThresholdForNotification: secondsThresholdForNotification,
-            system: .init(
-                shuttle: .init(
-                    etas: [
-                        .init(
-                            secondsRemaining: secondsRemaining,
-                            stop: .init(
-                                id: "1",
-                                name: "Chapman Court"
-                            )
-                        )
-                    ],
-                    name: "Shuttle 1"
-                )
-            )
-        )
-        await client.mock(query: shuttleInfoQuery, response: shuttleInfoResponse)
-    }
-    
     // MARK: - Shared navigation
     func navigateToShuttlePage() {
         selectStopFromRouteList(name: "Chapman Court")
