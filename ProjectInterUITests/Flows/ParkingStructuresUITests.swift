@@ -6,6 +6,9 @@
 //
 
 import XCTest
+import ProjectInterTestMocks
+import ApolloTestSupport
+import ProjectInterOperations
 
 final class ParkingStructuresUITests: BaseUITests {
     override func setUpWithError() throws {
@@ -13,7 +16,36 @@ final class ParkingStructuresUITests: BaseUITests {
         skipSetupFlow()
     }
     
-    func testParkingStructuresTabSelection() {
+    func mockGetParkingStructuresListData() async {
+        let query = GetParkingStructuresListDataQuery(systemId: defaultSystemId)
+        let response = Mock<Query>(
+            system: .init(
+                parkingSystem: .init(
+                    parkingStructures: [
+                        .init(
+                            capacity: 100,
+                            id: "1",
+                            name: "Anderson",
+                            spotsAvailable: 50
+                        ),
+                        .init(
+                            capacity: 150,
+                            id: "2",
+                            name: "Barrera",
+                            spotsAvailable: 100
+                        )
+                    ]
+                )
+            )
+        )
+        
+        await client.mock(query: query, response: response)
+    }
+    
+    @MainActor
+    func testParkingStructuresDisplay() async {
+        await mockGetParkingStructuresListData()
+        
         app.launch()
         
         let structuresButton = app.tabBars.buttons["Parking"]
@@ -21,8 +53,12 @@ final class ParkingStructuresUITests: BaseUITests {
         XCTAssert(parkingTabExists)
         structuresButton.tap()
         
-        let structuresHeading = app.staticTexts["Structures"]
-        let structuresHeadingExists = structuresHeading.waitForExistence(timeout: 10)
-        XCTAssert(structuresHeadingExists)
+        
+        XCTAssert(app.staticTexts["Anderson"].waitForExistence(timeout: 5))
+        XCTAssert(app.staticTexts["100 available"].waitForExistence(timeout: 5))
+        XCTAssert(app.staticTexts["50/100"].waitForExistence(timeout: 5))
+        XCTAssert(app.staticTexts["Barrera"].waitForExistence(timeout: 5))
+        XCTAssert(app.staticTexts["50 available"].waitForExistence(timeout: 5))
+        XCTAssert(app.staticTexts["50/150"].waitForExistence(timeout: 5))
     }
 }
