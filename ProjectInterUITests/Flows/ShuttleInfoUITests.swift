@@ -32,7 +32,8 @@ final class ShuttleInfoUITests: BaseUITests {
         return availableOptions
     }
     
-    func assertButtonsInNotificationTimeframeSheetResultInUIUpdate() {
+    @MainActor
+    func assertButtonsInNotificationTimeframeSheetResultInRefresh() async {
         // Assumes the sheet is already open
         let sheet = app.sheets["Select a timeframe"].otherElements
         
@@ -43,14 +44,17 @@ final class ShuttleInfoUITests: BaseUITests {
         for optionText in availableOptions {
             // Extract the number from "X minutes" format
             let components = optionText.components(separatedBy: " ")
-            guard let minuteValue = components.first else {
+            guard let minuteValue = Int(components.first ?? "invalid") else {
                 XCTFail("Could not parse minute value from: \(optionText)")
                 continue
             }
             
+            
             let expectedCancelText = "Cancel \(minuteValue)-minute notification"
             
-            // Tap the option
+            // To get it to show up when refreshing the view model,
+            // mock before tapping
+            await mockShuttleInfoQueryAndResponse(secondsRemaining: 750, secondsThresholdForNotification: minuteValue * 60)
             sheet.buttons[optionText].tap()
             
             // Verify the button text changes to the cancel format
@@ -58,10 +62,11 @@ final class ShuttleInfoUITests: BaseUITests {
                      "Expected button with text '\(expectedCancelText)' not found after tapping '\(optionText)'")
             
             // Cancel the notification to reset for the next test
+            await mockShuttleInfoQueryAndResponse(secondsRemaining: 750, secondsThresholdForNotification: nil)
             app.buttons[expectedCancelText].tap()
             
             // Verify it goes back to the original state
-            XCTAssert(app.buttons["Notify me when nearby"].waitForExistence(timeout: 5),
+            XCTAssert(app.buttons["Notify me when nearby"].waitForExistence(timeout: 10),
                      "Button should return to 'Notify me when nearby' state after canceling")
             
             // Re-open the sheet for the next iteration (if there are more options)
@@ -71,29 +76,28 @@ final class ShuttleInfoUITests: BaseUITests {
         }
     }
     
-    // MARK: - Tests
-    @MainActor
-    func testShuttleInfoIsShownWhenTapped() async {
-        await mockGetAllStopsQueryAndResponse()
-        await mockGetRouteListQueryAndResponse()
-        await mockGetRouteInfoDataQueryAndResponse()
+    // MARK: - Mocks
+    func mockShuttleInfoQueryAndResponse(secondsRemaining: Double = 150, secondsThresholdForNotification: Int? = nil) async {
+        useMockNotificationsToken()
         
         let shuttleInfoQuery = GetShuttleInfoDataQuery(
             systemId: defaultSystemId,
             shuttleId: "1",
             notificationInput: .init(
-                deviceId: "1",
+                deviceId: "mock-device",
                 shuttleId: "1",
                 stopId: "1"
             )
         )
         let shuttleInfoResponse = Mock<Query>(
-            secondsThresholdForNotification: 150,
+            // Note that missing response properties are
+            // automatically filled in by the server as `null`
+            secondsThresholdForNotification: secondsThresholdForNotification,
             system: .init(
                 shuttle: .init(
                     etas: [
                         .init(
-                            secondsRemaining: 150,
+                            secondsRemaining: secondsRemaining,
                             stop: .init(
                                 id: "1",
                                 name: "Chapman Court"
@@ -105,47 +109,43 @@ final class ShuttleInfoUITests: BaseUITests {
             )
         )
         await client.mock(query: shuttleInfoQuery, response: shuttleInfoResponse)
-        
-        app.launch()
-        
+    }
+    
+    // MARK: - Shared navigation
+    func navigateToShuttlePage() {
         selectStopFromRouteList(name: "Chapman Court")
         selectFirstMatchButton(textIdentifier: "Red Route")
         selectFirstMatchButton(textIdentifier: "Shuttle 1")
+    }
+    
+    // MARK: - Tests
+    @MainActor
+    func testShuttleInfoIsShownWhenTapped() async {
+        await mockGetAllStopsQueryAndResponse()
+        await mockGetRouteListQueryAndResponse()
+        await mockGetRouteInfoDataQueryAndResponse()
+        await mockShuttleInfoQueryAndResponse()
         
-        XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 5))
+        app.launch()
+        navigateToShuttlePage()
+        
+        XCTAssert(app.staticTexts["Shuttle 1"].firstMatch.waitForExistence(timeout: 5))
+        XCTAssert(app.staticTexts["2 min to Chapman Court"].firstMatch.waitForExistence(timeout: 5))
     }
 
-    func testNotificationMenuButtonsAndCancelButtonResultInButtonTextUpdate() {
-        useMockNotificationsToken()
+    @MainActor
+    func testNotificationMenuButtonsAndCancelButtonResultInRefresh() async {
+        await mockGetAllStopsQueryAndResponse()
+        await mockGetRouteListQueryAndResponse()
+        await mockGetRouteInfoDataQueryAndResponse()
+        await mockShuttleInfoQueryAndResponse(secondsRemaining: 750)
+        
         app.launch()
-        
-        var notificationButtonEnabled = false
-        
-        executeCallbackForEachStop(shouldExitCallbackLoop: {
-            executeCallbackForEachShuttle(shouldExitCallbackLoop: {
-                let notifyMeWhenNearbyStaticText = app.staticTexts["Notify me when nearby"]
-                let notificationButtonExists = notifyMeWhenNearbyStaticText.waitForExistence(timeout: 5)
-                
-                if notificationButtonExists && notifyMeWhenNearbyStaticText.isEnabled {
-                    notificationButtonEnabled = true
-                    return true
-                } else {
-                    // Button doesn't exist or is disabled, try another shuttle
-                    return false
-                }
-            })
-            
-            // If we found an enabled notification button, exit the stop loop
-            return notificationButtonEnabled
-        })
-        
-        if !notificationButtonEnabled {
-            XCTFail("No shuttles with enabled notification button found")
-        }
+        navigateToShuttlePage()
         
         let notifyMeWhenNearbyStaticText = app.staticTexts["Notify me when nearby"]
         notifyMeWhenNearbyStaticText.tap()
         
-        assertButtonsInNotificationTimeframeSheetResultInUIUpdate()
+        await assertButtonsInNotificationTimeframeSheetResultInRefresh()
     }
 }
