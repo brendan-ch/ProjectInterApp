@@ -6,6 +6,9 @@
 //
 
 import XCTest
+import ProjectInterOperations
+import ProjectInterTestMocks
+import ApolloTestSupport
 
 final class RouteInfoUITests: BaseUITests {
     override func setUpWithError() throws {
@@ -13,69 +16,39 @@ final class RouteInfoUITests: BaseUITests {
         skipSetupFlow()
     }
     
-    func testShuttleInfoIsShownWhenTapped() {
+    // MARK: - Tests
+    @MainActor
+    func testShuttleListRendering() async {
+        await mockGetAllStopsQueryAndResponse()
+        await mockGetRouteListQueryAndResponse()
+        await mockGetRouteInfoDataQueryAndResponse()
+        
         app.launch()
         
-        var shuttleInfoTapped = false
+        selectStopFromRouteList(name: "Chapman Court")
+        selectFirstMatchButton(textIdentifier: "Red Route")
         
-        executeCallbackForEachStop(shouldExitCallbackLoop: {
-            if !checkIfRoutesExist() {
-                return false
-            }
-            
-            executeCallbackForEachRoute(shouldExitCallbackLoop: {
-                let routeInfoShuttlesExist = app.buttons["Shuttle label in route info page"].waitForExistence(timeout: 5)
-                if !routeInfoShuttlesExist {
-                    return false
-                }
-                
-                app.buttons["Shuttle label in route info page"].firstMatch.tap()
-                
-                XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 5))
-                shuttleInfoTapped = true
-                
-                return true
-            })
-            
-            if !shuttleInfoTapped {
-                return false
-            }
-            return true
-        })
-        
-        if !shuttleInfoTapped {
-            XCTFail("No shuttles found in test data")
-        }
+        XCTAssert(app.staticTexts["Shuttle 1"].firstMatch.waitForExistence(timeout: 5))
+        XCTAssert(app.staticTexts["Shuttle 2"].firstMatch.waitForExistence(timeout: 5))
     }
     
-    func testRouteInfoIsClosedWhenCloseButtonTapped() {
+
+    
+    @MainActor
+    func testRouteInfoIsClosedWhenCloseButtonTapped() async {
+        await mockGetAllStopsQueryAndResponse()
+        await mockGetRouteListQueryAndResponse()
+        await mockGetRouteInfoDataQueryAndResponse()
+
         app.launch()
         
-        var routeTapped = false
+        selectStopFromRouteList(name: "Chapman Court")
+        selectFirstMatchButton(textIdentifier: "Red Route")
         
-        executeCallbackForEachStop(shouldExitCallbackLoop: {
-            if !checkIfRoutesExist() {
-                return false
-            }
-            
-            executeCallbackForEachRoute(shouldExitCallbackLoop: {
-                routeTapped = true
-                
-                // Exit immediately to test the close button
-                return true
-            })
-            
-            let _ = app.buttons["Close"].waitForExistence(timeout: 5)
-            app.buttons["Close"].tap()
-            
-            let routeInfoShuttlesNoLongerExist = app.buttons["Shuttle label in route info page"].waitForNonExistence(timeout: 5)
-            XCTAssert(routeInfoShuttlesNoLongerExist)
-            
-            return true
-        })
+        let _ = app.buttons["Close"].waitForExistence(timeout: 5)
+        app.buttons["Close"].tap()
         
-        if !routeTapped {
-            XCTFail("No routes found in test data")
-        }
+        XCTAssert(app.buttons["Shuttle 1"].waitForNonExistence(timeout: 5))
+        XCTAssert(app.buttons["Shuttle 2"].waitForNonExistence(timeout: 5))
     }
 }

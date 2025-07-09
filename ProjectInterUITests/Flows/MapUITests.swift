@@ -6,6 +6,9 @@
 //
 
 import XCTest
+import ProjectInterOperations
+import ApolloTestSupport
+import ProjectInterTestMocks
 
 final class MapUITests: BaseUITests {
     override func setUpWithError() throws {
@@ -13,132 +16,204 @@ final class MapUITests: BaseUITests {
         skipSetupFlow()
     }
     
-    
-    func testRouteIsShownWhenRouteIsSelected() {
-        app.launch()
-        
-        executeCallbackForEachStop(shouldExitCallbackLoop: {
-            if !checkIfRoutesExist() {
-                return false
-            }
-            
-            executeCallbackForEachRoute(shouldExitCallbackLoop: {
-                let screenshot = XCUIScreen.main.screenshot()
-                let attachment = XCTAttachment(screenshot: screenshot)
-                attachment.lifetime = .keepAlways
-                add(attachment)
-                
-                // Run for every route
-                return false
-            })
-            
-            return true
-        })
-    }
-    
-    func testUnrelatedShuttlesAreHiddenWhenRouteIsSelected() {
-        app.launch()
-        
-        executeCallbackForEachStop(shouldExitCallbackLoop: {
-            var shuttleCounts: [Int] = []
-            let totalShuttleCount = app.otherElements.buttons.matching(identifier: "Shuttle").allElementsBoundByIndex.count
-            
-            if !checkIfRoutesExist() {
-                return false
-            }
-            
-            executeCallbackForEachRoute(shouldExitCallbackLoop: {
-                let shuttleCount = app.otherElements.buttons.matching(identifier: "Shuttle").allElementsBoundByIndex.count
-                shuttleCounts.append(shuttleCount)
-                
-                return false
-            })
-            
-            var calculatedShuttleCount = 0
-            for count in shuttleCounts {
-                calculatedShuttleCount += count
-            }
-            XCTAssert(totalShuttleCount == calculatedShuttleCount)
-            
-            return true
-        })
-    }
-    
-    func testTapOnShuttleOpensShuttleInfo() {
-        app.launch()
-        
-        var shuttleButtonTapped = false
-        
-        executeCallbackForEachStop(shouldExitCallbackLoop: {
-            if !attemptToSelectShuttleButton() {
-                return false
-            }
-            
-            XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
-            shuttleButtonTapped = true
-            return true
-        })
-        
-        if !shuttleButtonTapped {
-            XCTFail("No shuttle buttons found.")
-        }
-    }
-    
-    func testTapOnShuttleAfterDeselectOpensShuttleInfo() {
-        app.launch()
-        
-        var shuttleButtonTapped = false
-        
-        executeCallbackForEachStop(shouldExitCallbackLoop: {
-            if !attemptToSelectShuttleButton() {
-                return false
-            }
-            
-            XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
-            shuttleButtonTapped = true
-            
-            app.buttons["Close"].tap()
-            
-            if !attemptToSelectShuttleButton() {
-                return false
-            }
-            
-            XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
+    func mockGetMapDataQueryAndResponse() async {
+        let route = Mock<ProjectInterTestMocks.Route>(
+            color: "#ff0000",
+            id: "1",
+            polylineCoordinates: Mock<Query>.mapRouteMock
+        )
 
-            return true
-        })
         
-        if !shuttleButtonTapped {
-            XCTFail("No shuttle buttons found.")
-        }
+        let query = GetMapDataQuery(systemId: defaultSystemId)
+        let response = Mock<ProjectInterTestMocks.Query>(
+            system: Mock<ProjectInterTestMocks.System>(
+                routes: [
+                    route
+                ],
+                shuttles: [
+                    .init(
+                        coordinates: Mock<Coordinates>(
+                            // 33.78793° N, 117.86723° W
+                            latitude: 33.78793,
+                            longitude: -117.86723
+                        ),
+                        id: "1",
+                        name: "Shuttle 1",
+                        orientationInDegrees: 90.00,
+                        route: Mock<Route>(
+                            color: "#ff0000",
+                            id: "1"
+                        )
+                    ),
+                    .init(
+                        coordinates: Mock<Coordinates>(
+                            // 33.79330° N, 117.85296° W
+                            latitude: 33.79330,
+                            longitude: -117.85296
+                        ),
+                        id: "2",
+                        name: "Shuttle 2",
+                        orientationInDegrees: 90.00,
+                        route: Mock<Route>(
+                            color: "#ff0000",
+                            id: "1"
+                        )
+                    )
+                ],
+                stops: [
+                    .init(
+                        coordinates: .init(
+                            // 33.79646° N, 117.88941° W
+                            latitude: 33.79646,
+                            longitude: -117.88941
+                        ),
+                        id: "1",
+                        name: "Chapman Court",
+                        orderedStops: [
+                            .init(
+                                routeId: "1"
+                            )
+                        ]
+                    ),
+                    .init(
+                        coordinates: .init(
+                            // 33.79329° N, 117.85267° W
+                            latitude: 33.79329,
+                            longitude: -117.85267
+                        ),
+                        id: "2",
+                        name: "Schmid Gate",
+                        orderedStops: [
+                            .init(
+                                routeId: "1"
+                            )
+                        ]
+                    )
+                ]
+            )
+        )
+
+        await client.mock(query: query, response: response)
     }
     
-    func testTapOnStopDeselectsShuttleAndHidesInfo() {
+    @MainActor
+    func testRouteIsShownWhenRouteIsSelected() async {
+        await mockGetAllStopsQueryAndResponse()
+        await mockGetRouteListQueryAndResponse()
+        await mockGetRouteInfoDataQueryAndResponse()
+        await mockGetMapDataQueryAndResponse()
+        
         app.launch()
         
-        var shuttleButtonTapped = false
+        selectStopFromRouteList(name: "Chapman Court")
+        selectFirstMatchButton(textIdentifier: "Red Route")
         
-        executeCallbackForEachStop(shouldExitCallbackLoop: {
-            if !attemptToSelectShuttleButton() {
-                return false
-            }
-
-            let firstMatchStopButtonExists = app.otherElements.buttons["Stop"].waitForExistence(timeout: 20)
-            if !firstMatchStopButtonExists {
-                return false
-            }
-            
-            XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
-            shuttleButtonTapped = true
-
-            app.buttons["Stop"].firstMatch.tap()
-            XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForNonExistence(timeout: 20))
-            
-            return true
-        })
+        let screenshot = XCUIScreen.main.screenshot()
+        let attachment = XCTAttachment(screenshot: screenshot)
+        attachment.lifetime = .keepAlways
+        add(attachment)
+    }
+    
+    @MainActor
+    func testUnrelatedShuttlesAreHiddenWhenRouteIsSelected() async {
+        await mockGetAllStopsQueryAndResponse()
+        await mockGetRouteListQueryAndResponse()
+        await mockGetMapDataQueryAndResponse()
         
-        if !shuttleButtonTapped {
-            XCTFail("No shuttle buttons found.")
+        app.launch()
+        
+        let shuttleExists = app.otherElements.buttons.matching(identifier: "Shuttle").firstMatch.waitForExistence(timeout: 5)
+        XCTAssert(shuttleExists)
+        
+        var shuttleCounts: [Int] = []
+        // When no routes are selected
+        let totalShuttleCount = app.otherElements.buttons.matching(identifier: "Shuttle").allElementsBoundByIndex.count
+        
+        selectFirstMatchButton(textIdentifier: "Red Route")
+        
+        var shuttleCount = app.otherElements.buttons.matching(identifier: "Shuttle").allElementsBoundByIndex.count
+        shuttleCounts.append(shuttleCount)
+
+        let closeButton = app.buttons["Close"]
+        let _ = closeButton.waitForExistence(timeout: 5)
+        closeButton.tap()
+        
+        selectFirstMatchButton(textIdentifier: "Blue Route")
+
+        shuttleCount = app.otherElements.buttons.matching(identifier: "Shuttle").allElementsBoundByIndex.count
+        shuttleCounts.append(shuttleCount)
+        
+        var calculatedShuttleCount = 0
+        for count in shuttleCounts {
+            calculatedShuttleCount += count
         }
+        XCTAssert(totalShuttleCount == calculatedShuttleCount)
+    }
+    
+    @MainActor
+    func testTapOnShuttleOpensShuttleInfo() async {
+        await mockGetAllStopsQueryAndResponse()
+        await mockGetRouteListQueryAndResponse()
+        await mockGetMapDataQueryAndResponse()
+        await mockShuttleInfoQueryAndResponse(.init(
+            id: "1"
+        ))
+        await mockShuttleInfoQueryAndResponse(.init(
+            id: "2"
+        ))
+
+        app.launch()
+        
+        selectStopFromRouteList(name: "Chapman Court")
+        
+        XCTAssert(attemptToSelectShuttleButton())
+        XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
+    }
+    
+    @MainActor
+    func testTapOnShuttleAfterDeselectOpensShuttleInfo() async {
+        useMockNotificationsToken()
+
+        await mockGetAllStopsQueryAndResponse()
+        await mockGetRouteListQueryAndResponse()
+        await mockGetMapDataQueryAndResponse()
+        await mockShuttleInfoQueryAndResponse(.init(
+            id: "1"
+        ))
+        await mockShuttleInfoQueryAndResponse(.init(
+            id: "2"
+        ))
+
+        app.launch()
+        
+        selectStopFromRouteList(name: "Chapman Court")
+        
+        XCTAssert(attemptToSelectShuttleButton())
+        app.buttons["Close"].tap()
+        XCTAssert(attemptToSelectShuttleButton())
+        XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
+    }
+    
+    @MainActor
+    func testTapOnStopDeselectsShuttleAndHidesInfo() async {
+        useMockNotificationsToken()
+
+        await mockGetAllStopsQueryAndResponse()
+        await mockGetRouteListQueryAndResponse()
+        await mockGetMapDataQueryAndResponse()
+        await mockShuttleInfoQueryAndResponse(.init(
+            id: "1"
+        ))
+        await mockShuttleInfoQueryAndResponse(.init(
+            id: "2"
+        ))
+
+        app.launch()
+        
+        selectStopFromRouteList(name: "Chapman Court")
+        
+        XCTAssert(attemptToSelectShuttleButton())
+        app.buttons["Stop"].firstMatch.tap()
+        XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForNonExistence(timeout: 20))
     }
 }
