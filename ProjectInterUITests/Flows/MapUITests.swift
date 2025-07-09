@@ -20,7 +20,7 @@ final class MapUITests: BaseUITests {
         let route = Mock<ProjectInterTestMocks.Route>(
             color: "#ff0000",
             id: "1",
-            polylineCoordinates: Mock<Query>.mapRouteMock,
+            polylineCoordinates: Mock<Query>.mapRouteMock
         )
 
         

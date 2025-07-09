@@ -16,9 +16,6 @@ final class RouteInfoUITests: BaseUITests {
         skipSetupFlow()
     }
     
-    // MARK: - Server mocking
-    // These are to be customized and organized per test file
-    
     // MARK: - Tests
     @MainActor
     func testShuttleListRendering() async {

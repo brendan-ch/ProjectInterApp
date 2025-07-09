@@ -90,7 +90,7 @@ final class ShuttleInfoUITests: BaseUITests {
         await mockGetRouteListQueryAndResponse()
         await mockGetRouteInfoDataQueryAndResponse()
         await mockShuttleInfoQueryAndResponse(.init(
-            secondsRemaining: 150,
+            secondsRemaining: 150
         ))
         
         app.launch()
