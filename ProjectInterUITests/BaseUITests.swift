@@ -66,7 +66,7 @@ class BaseUITests: XCTestCase {
         let query = GetSchemaVersionQuery()
         let response = Mock<Query>(
             schemaCurrentVersion: 1,
-            schemaMinVersion: 1,
+            schemaMinVersion: 1
         )
         await client.mock(query: query, response: response)
     }
