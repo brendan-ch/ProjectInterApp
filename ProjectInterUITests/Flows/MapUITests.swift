@@ -155,8 +155,13 @@ final class MapUITests: BaseUITests {
         await mockGetAllStopsQueryAndResponse()
         await mockGetRouteListQueryAndResponse()
         await mockGetMapDataQueryAndResponse()
-        await mockShuttleInfoQueryAndResponse()
-        
+        await mockShuttleInfoQueryAndResponse(.init(
+            id: "1"
+        ))
+        await mockShuttleInfoQueryAndResponse(.init(
+            id: "2"
+        ))
+
         app.launch()
         
         selectStopFromRouteList(name: "Chapman Court")
@@ -170,8 +175,13 @@ final class MapUITests: BaseUITests {
         await mockGetAllStopsQueryAndResponse()
         await mockGetRouteListQueryAndResponse()
         await mockGetMapDataQueryAndResponse()
-        await mockShuttleInfoQueryAndResponse()
-        
+        await mockShuttleInfoQueryAndResponse(.init(
+            id: "1"
+        ))
+        await mockShuttleInfoQueryAndResponse(.init(
+            id: "2"
+        ))
+
         app.launch()
         
         selectStopFromRouteList(name: "Chapman Court")
@@ -187,8 +197,13 @@ final class MapUITests: BaseUITests {
         await mockGetAllStopsQueryAndResponse()
         await mockGetRouteListQueryAndResponse()
         await mockGetMapDataQueryAndResponse()
-        await mockShuttleInfoQueryAndResponse()
-        
+        await mockShuttleInfoQueryAndResponse(.init(
+            id: "1"
+        ))
+        await mockShuttleInfoQueryAndResponse(.init(
+            id: "2"
+        ))
+
         app.launch()
         
         selectStopFromRouteList(name: "Chapman Court")

@@ -11,6 +11,18 @@ import ApolloTestSupport
 import ProjectInterOperations
 import ProjectInterTestMocks
 
+struct ShuttleInfoQueryMockOptions {
+    var secondsRemaining: Double
+    var secondsThresholdForNotification: Int?
+    var id: String
+    
+    init(secondsRemaining: Double = 150, secondsThresholdForNotification: Int? = nil, id: String = "1") {
+        self.secondsRemaining = secondsRemaining
+        self.secondsThresholdForNotification = secondsThresholdForNotification
+        self.id = id
+    }
+}
+
 class BaseUITests: XCTestCase {
     var app: XCUIApplication = XCUIApplication()
     var client: MockServerClient = MockServerClient(url: .mockApiBaseUrl)
@@ -337,12 +349,12 @@ class BaseUITests: XCTestCase {
         await client.mock(query: routeInfoQuery, response: routeInfoResponse)
     }
     
-    func mockShuttleInfoQueryAndResponse(secondsRemaining: Double = 150, secondsThresholdForNotification: Int? = nil) async {
+    func mockShuttleInfoQueryAndResponse(_ options: ShuttleInfoQueryMockOptions) async {
         useMockNotificationsToken()
         
         let shuttleInfoQuery = GetShuttleInfoDataQuery(
             systemId: defaultSystemId,
-            shuttleId: "1",
+            shuttleId: options.id,
             notificationInput: .init(
                 deviceId: "mock-device",
                 shuttleId: "1",
@@ -352,12 +364,12 @@ class BaseUITests: XCTestCase {
         let shuttleInfoResponse = Mock<Query>(
             // Note that missing response properties are
             // automatically filled in by the server as `null`
-            secondsThresholdForNotification: secondsThresholdForNotification,
+            secondsThresholdForNotification: options.secondsThresholdForNotification,
             system: .init(
                 shuttle: .init(
                     etas: [
                         .init(
-                            secondsRemaining: secondsRemaining,
+                            secondsRemaining: options.secondsRemaining,
                             stop: .init(
                                 id: "1",
                                 name: "Chapman Court"

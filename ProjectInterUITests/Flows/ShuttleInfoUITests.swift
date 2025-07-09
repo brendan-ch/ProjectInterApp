@@ -54,7 +54,7 @@ final class ShuttleInfoUITests: BaseUITests {
             
             // To get it to show up when refreshing the view model,
             // mock before tapping
-            await mockShuttleInfoQueryAndResponse(secondsRemaining: 750, secondsThresholdForNotification: minuteValue * 60)
+            await mockShuttleInfoQueryAndResponse(.init(secondsRemaining: 750, secondsThresholdForNotification: minuteValue * 60))
             sheet.buttons[optionText].tap()
             
             // Verify the button text changes to the cancel format
@@ -62,7 +62,7 @@ final class ShuttleInfoUITests: BaseUITests {
                      "Expected button with text '\(expectedCancelText)' not found after tapping '\(optionText)'")
             
             // Cancel the notification to reset for the next test
-            await mockShuttleInfoQueryAndResponse(secondsRemaining: 750, secondsThresholdForNotification: nil)
+            await mockShuttleInfoQueryAndResponse(.init(secondsRemaining: 750, secondsThresholdForNotification: nil))
             app.buttons[expectedCancelText].tap()
             
             // Verify it goes back to the original state
@@ -89,7 +89,9 @@ final class ShuttleInfoUITests: BaseUITests {
         await mockGetAllStopsQueryAndResponse()
         await mockGetRouteListQueryAndResponse()
         await mockGetRouteInfoDataQueryAndResponse()
-        await mockShuttleInfoQueryAndResponse()
+        await mockShuttleInfoQueryAndResponse(.init(
+            secondsRemaining: 150,
+        ))
         
         app.launch()
         navigateToShuttlePage()
@@ -103,7 +105,9 @@ final class ShuttleInfoUITests: BaseUITests {
         await mockGetAllStopsQueryAndResponse()
         await mockGetRouteListQueryAndResponse()
         await mockGetRouteInfoDataQueryAndResponse()
-        await mockShuttleInfoQueryAndResponse(secondsRemaining: 750)
+        await mockShuttleInfoQueryAndResponse(.init(
+            secondsRemaining: 750
+        ))
         
         app.launch()
         navigateToShuttlePage()
