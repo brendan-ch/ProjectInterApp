@@ -103,6 +103,7 @@ jobs:
       - name: Run backend server
         working-directory: server
         run: |
+          npm install
           # Use & to send to the background
           npm run dev &
 
