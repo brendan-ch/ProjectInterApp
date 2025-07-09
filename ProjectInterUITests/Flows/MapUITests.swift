@@ -172,6 +172,8 @@ final class MapUITests: BaseUITests {
     
     @MainActor
     func testTapOnShuttleAfterDeselectOpensShuttleInfo() async {
+        useMockNotificationsToken()
+
         await mockGetAllStopsQueryAndResponse()
         await mockGetRouteListQueryAndResponse()
         await mockGetMapDataQueryAndResponse()
@@ -194,6 +196,8 @@ final class MapUITests: BaseUITests {
     
     @MainActor
     func testTapOnStopDeselectsShuttleAndHidesInfo() async {
+        useMockNotificationsToken()
+
         await mockGetAllStopsQueryAndResponse()
         await mockGetRouteListQueryAndResponse()
         await mockGetMapDataQueryAndResponse()

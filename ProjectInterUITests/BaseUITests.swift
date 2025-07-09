@@ -350,14 +350,12 @@ class BaseUITests: XCTestCase {
     }
     
     func mockShuttleInfoQueryAndResponse(_ options: ShuttleInfoQueryMockOptions) async {
-        useMockNotificationsToken()
-        
         let shuttleInfoQuery = GetShuttleInfoDataQuery(
             systemId: defaultSystemId,
             shuttleId: options.id,
             notificationInput: .init(
                 deviceId: "mock-device",
-                shuttleId: "1",
+                shuttleId: options.id,
                 stopId: "1"
             )
         )

@@ -86,6 +86,8 @@ final class ShuttleInfoUITests: BaseUITests {
     // MARK: - Tests
     @MainActor
     func testShuttleInfoIsShownWhenTapped() async {
+        useMockNotificationsToken()
+        
         await mockGetAllStopsQueryAndResponse()
         await mockGetRouteListQueryAndResponse()
         await mockGetRouteInfoDataQueryAndResponse()
@@ -102,6 +104,8 @@ final class ShuttleInfoUITests: BaseUITests {
 
     @MainActor
     func testNotificationMenuButtonsAndCancelButtonResultInRefresh() async {
+        useMockNotificationsToken()
+        
         await mockGetAllStopsQueryAndResponse()
         await mockGetRouteListQueryAndResponse()
         await mockGetRouteInfoDataQueryAndResponse()
