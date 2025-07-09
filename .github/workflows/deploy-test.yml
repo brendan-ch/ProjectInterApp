@@ -3,6 +3,7 @@ name: Deploy testing build
 on:
   pull_request:
     branches: [ "main" ]
+    types: [ opened ]
 
 jobs:
   build:
