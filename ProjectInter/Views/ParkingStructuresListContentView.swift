@@ -72,7 +72,10 @@ struct ParkingStructuresListContentView: NetworkView {
     let builder = ParkingStructuresListContentViewModelPlaceholderBuilder()
     let viewModel = builder.build()
     viewModel.structuresSupportedBySystem = true
-    viewModel.structures = []
+    viewModel.structures = [
+        .init(spotsAvailable: 50, capacity: 100, name: "Anderson", id: "1"),
+        .init(spotsAvailable: 50, capacity: 200, name: "Barrera", id: "2")
+    ]
     
     return ParkingStructuresListContentView(viewModel: viewModel)
         .environmentObject(GlobalSystemsModelPlaceholderBuilder().build())
