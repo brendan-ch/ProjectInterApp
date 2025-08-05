@@ -9,20 +9,55 @@ import SwiftUI
 import Charts
 
 struct ParkingAveragePerTimePeriod {
-    var timePeriod: String
-    var filledPercentage: Double
+    let from: Date
+    let to: Date
+    let averageSpotsAvailable: Float
+    var averageSpotsAvailableRounded: Int {
+        Int(self.averageSpotsAvailable.rounded())
+    }
 }
 
-let data: [ParkingAveragePerTimePeriod] = [
-    .init(timePeriod: "8-10 AM", filledPercentage: 50),
-    .init(timePeriod: "10 AM-12 PM", filledPercentage: 72),
-    .init(timePeriod: "12-2 PM", filledPercentage: 85),
-    .init(timePeriod: "2-4 PM", filledPercentage: 83),
-    .init(timePeriod: "4-6 PM", filledPercentage: 79),
-    .init(timePeriod: "6-8 PM", filledPercentage: 53),
-    .init(timePeriod: "8-10 PM", filledPercentage: 24)
-]
+let calendar = Calendar.current
+let now = Date()
 
+// Generated with Claude
+let data: [ParkingAveragePerTimePeriod] = [
+    .init(
+        from: calendar.date(bySettingHour: 8, minute: 0, second: 0, of: now)!,
+        to: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: now)!,
+        averageSpotsAvailable: 50
+    ),
+    .init(
+        from: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: now)!,
+        to: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: now)!,
+        averageSpotsAvailable: 28
+    ),
+    .init(
+        from: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: now)!,
+        to: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: now)!,
+        averageSpotsAvailable: 15
+    ),
+    .init(
+        from: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: now)!,
+        to: calendar.date(bySettingHour: 16, minute: 0, second: 0, of: now)!,
+        averageSpotsAvailable: 17
+    ),
+    .init(
+        from: calendar.date(bySettingHour: 16, minute: 0, second: 0, of: now)!,
+        to: calendar.date(bySettingHour: 18, minute: 0, second: 0, of: now)!,
+        averageSpotsAvailable: 21
+    ),
+    .init(
+        from: calendar.date(bySettingHour: 18, minute: 0, second: 0, of: now)!,
+        to: calendar.date(bySettingHour: 20, minute: 0, second: 0, of: now)!,
+        averageSpotsAvailable: 47
+    ),
+    .init(
+        from: calendar.date(bySettingHour: 20, minute: 0, second: 0, of: now)!,
+        to: calendar.date(bySettingHour: 22, minute: 0, second: 0, of: now)!,
+        averageSpotsAvailable: 76
+    )
+]
 
 struct ParkingStructureInfoContentView: View {
     let currentCount = 50
@@ -76,16 +111,16 @@ struct ParkingStructureInfoContentView: View {
             
             Group {
                 VStack(alignment: .leading, spacing: 16)  {
-                    Chart(data, id: \.timePeriod) { item in
+                    Chart(data, id: \.from) { item in
                         BarMark(
-                            x: .value("Time", item.timePeriod),
-                            y: .value("Filled %", item.filledPercentage)
+                            x: .value("Time", item.from ..< item.to),
+                            y: .value("Average spots filled", capacity - item.averageSpotsAvailableRounded)
                         )
                     }
                     .chartGesture { proxy in
                         SpatialTapGesture().onEnded { value in
-                            if let (timePeriod, _) = proxy.value(at: value.location, as: (String, Int).self),
-                               let tappedIndex = data.firstIndex(where: { $0.timePeriod == timePeriod }) {
+                            if let (from, _) = proxy.value(at: value.location, as: (Date, Int).self),
+                               let tappedIndex = data.firstIndex(where: { $0.from == from }) {
                                 print(tappedIndex)
                             }
                         }
