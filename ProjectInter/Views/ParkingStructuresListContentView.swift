@@ -33,25 +33,7 @@ struct ParkingStructuresListContentView: NetworkView {
             } else {
                 DataWrapperView(shouldDisplayNoDataMessage: viewModel.structures.isEmpty, noDataMessage: "No parking structures available.") {
                     ForEach(viewModel.structures) { structure in
-                        let currentCount = structure.capacity - structure.spotsAvailable
-                        
-                        VStack(spacing: 8) {
-                            VStack{
-                                HStack {
-                                    Text(structure.name)
-                                        .font(.headline)
-                                    Spacer()
-                                }
-                                HStack {
-                                    Text("\(structure.spotsAvailable) available")
-                                    Spacer()
-                                    Text("\(currentCount)/\(structure.capacity)")
-                                }
-                            }
-                            ProgressView(value: Double(currentCount) / Double(structure.capacity))
-                                .progressViewStyle(LinearProgressViewStyle())
-                        }
-                        .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                        ParkingStructureItem(structure: structure)
                         
                         Divider()
                     }
@@ -65,6 +47,32 @@ struct ParkingStructuresListContentView: NetworkView {
         .onDisappear {
             stopDataUpdates()
         }
+    }
+}
+
+struct ParkingStructureItem: View {
+    let structure: ParkingStructuresListParkingStructure
+    var currentCount: Int {
+        structure.capacity - structure.spotsAvailable
+    }
+    var body: some View {
+        VStack(spacing: 8) {
+            VStack{
+                HStack {
+                    Text(structure.name)
+                        .font(.headline)
+                    Spacer()
+                }
+                HStack {
+                    Text("\(structure.spotsAvailable) available")
+                    Spacer()
+                    Text("\(currentCount)/\(structure.capacity)")
+                }
+            }
+            ProgressView(value: Double(currentCount) / Double(structure.capacity))
+                .progressViewStyle(LinearProgressViewStyle())
+        }
+        .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
     }
 }
 
