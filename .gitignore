@@ -1,7 +1,9 @@
 # Apollo
 # codegen data
-ProjectInterOperations/
 apollo-ios-cli
+
+# We want codegen data to be included as it includes custom scalar types
+# ProjectInterOperations/
 
 # Xcode
 #
