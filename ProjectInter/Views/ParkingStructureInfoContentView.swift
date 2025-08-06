@@ -63,6 +63,8 @@ struct ParkingStructureInfoContentView: View {
     let currentCount = 50
     let capacity = 100
     
+    @EnvironmentObject var globalIdSelectionModel: GlobalIdSelectionModel
+    
     var body: some View {
         ScrollView(.vertical) {
             HStack(alignment: .top) {
@@ -74,6 +76,7 @@ struct ParkingStructureInfoContentView: View {
                 }
                 Spacer()
                 Button("Close") {
+                    globalIdSelectionModel.selectedParkingStructureId = nil
                 }
             }
             .padding()
@@ -138,4 +141,5 @@ struct ParkingStructureInfoContentView: View {
 
 #Preview {
     ParkingStructureInfoContentView()
+        .environmentObject(GlobalIdSelectionModel())
 }
