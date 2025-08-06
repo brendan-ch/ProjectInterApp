@@ -5,6 +5,7 @@
 //  Created by Brendan Chen on 2025.08.06.
 //
 
+import Foundation
 import Apollo
 import ProjectInterOperations
 
@@ -14,6 +15,7 @@ struct ParkingStructureNetworkingArguments {
 }
 
 class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
+    let calendar = Calendar.current
     
     typealias NetworkArguments = ParkingStructureNetworkingArguments
     
@@ -26,9 +28,12 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
     }
     
     func convertNetworkArgumentsIntoQuery(_ arguments: NetworkArguments) -> GetParkingStructureInfoDataQuery {
+        let from = calendar.date(bySettingHour: 8, minute: 0, second: 0, of: Date())!
+        let to = calendar.date(bySettingHour: 20, minute: 0, second: 0, of: Date())!
+        
         let historicalAverageInput = HistoricalParkingAverageQueryInput(
-            from: "",
-            to: "",
+            from: from,
+            to: to,
             // Every 2 hours
             intervalMs: 1000 * 60 * 60 * 2
         )
