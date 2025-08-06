@@ -51,13 +51,16 @@ struct ContentView: View {
         globalIdSelectionModel.selectedRouteId != nil
         && globalIdSelectionModel.selectedShuttleId != nil
     }
+    var showParkingStructureInfo: Bool {
+        globalIdSelectionModel.selectedParkingStructureId != nil
+    }
     
     // For dependency injection in previews
     var mapViewModel: MapViewModel?
     var routeListContentViewModel: RouteListContentViewModel?
     var routeInfoContentViewModel: RouteInfoContentViewModel?
     var shuttleInfoContentViewModel: ShuttleInfoContentViewModel?
-    var parkingStructuresContentViewModel: ParkingStructuresListContentViewModel?
+    var parkingStructuresListContentViewModel: ParkingStructuresListContentViewModel?
     
     @EnvironmentObject var globalIdSelectionModel: GlobalIdSelectionModel
     @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
@@ -110,7 +113,10 @@ struct ContentView: View {
                     }
             }
             Tab("Parking", systemImage: "parkingsign.square.fill", value: .parking) {
-                buildParkingStructuresView()
+                buildParkingStructuresListView()
+                    .sheet(isPresented: .constant(showParkingStructureInfo)) {
+                        buildParkingStructureInfoView()
+                    }
             }
             Tab("Settings", systemImage: "gear", value: .settings) {
                 buildSettingsView()
@@ -136,11 +142,15 @@ struct ContentView: View {
         return SettingsContentView()
     }
     
-    func buildParkingStructuresView() -> some View {
-        if let parkingStructuresContentViewModel = parkingStructuresContentViewModel {
+    func buildParkingStructuresListView() -> some View {
+        if let parkingStructuresContentViewModel = parkingStructuresListContentViewModel {
             return ParkingStructuresListContentView(viewModel: parkingStructuresContentViewModel)
         }
         return ParkingStructuresListContentView()
+    }
+    
+    func buildParkingStructureInfoView() -> some View {
+        return ParkingStructureInfoContentView()
     }
     
     func buildMapView() -> some View {
@@ -202,7 +212,7 @@ struct ContentView: View {
         routeListContentViewModel: routeListContentViewModel,
         routeInfoContentViewModel: routeInfoContentViewModel,
         shuttleInfoContentViewModel: shuttleInfoContentViewModel,
-        parkingStructuresContentViewModel: parkingStructuresViewModel
+        parkingStructuresListContentViewModel: parkingStructuresViewModel
     )
         .environmentObject(globalIdSelectionModel)
         .environmentObject(globalSystemsModel)
