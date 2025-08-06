@@ -1,3 +1,5 @@
+scalar DateTime
+
 # The Interchange system schema.
 # Note how Passio ID and parking ID are abstracted away
 # from the endpoints.
@@ -27,6 +29,22 @@ type ParkingStructure {
   spotsAvailable: Int!
   coordinates: Coordinates!
   address: String!
+  updatedTime: DateTime
+  systemId: ID!
+
+  historicalAverages(input: HistoricalParkingAverageQueryInput): [HistoricalParkingAverageQueryResult!]
+}
+
+type HistoricalParkingAverageQueryResult {
+  from: DateTime!
+  to: DateTime!
+  averageSpotsAvailable: Float!
+}
+
+input HistoricalParkingAverageQueryInput {
+  from: DateTime!
+  to: DateTime!
+  intervalMs: Int!
 }
 
 type Route {
@@ -37,6 +55,7 @@ type Route {
   shuttles: [Shuttle!]
   polylineCoordinates: [Coordinates!]!
   color: String!
+  updatedTime: DateTime
 }
 
 type OrderedStop {
@@ -47,6 +66,7 @@ type OrderedStop {
   stop: Stop
   stopId: ID!
   systemId: ID!
+  updatedTime: DateTime
 }
 
 type Stop {
@@ -56,6 +76,7 @@ type Stop {
   coordinates: Coordinates!
   etas: [ETA!]
   orderedStops: [OrderedStop!]
+  updatedTime: DateTime
 }
 
 type Coordinates {
@@ -70,6 +91,7 @@ type ETA {
   shuttleId: ID!
   secondsRemaining: Float!
   systemId: ID!
+  updatedTime: DateTime
 }
 
 type Shuttle {
@@ -82,6 +104,7 @@ type Shuttle {
   etas: [ETA!]
   eta(forStopId: ID): ETA
   orientationInDegrees: Float!
+  updatedTime: DateTime
 }
 
 # Queries

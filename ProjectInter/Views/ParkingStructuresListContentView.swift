@@ -14,7 +14,8 @@ struct ParkingStructuresListContentView: NetworkView {
     @StateObject var viewModel = ParkingStructuresListContentViewModel()
     
     @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
-    
+    @EnvironmentObject var globalIdSelectionModel: GlobalIdSelectionModel
+
     var networkArguments: ParkingStructuresNetworkingArguments? {
         if let systemId = globalSystemsModel.selectedSystem?.id {
             return .init(systemId: systemId)
@@ -33,25 +34,10 @@ struct ParkingStructuresListContentView: NetworkView {
             } else {
                 DataWrapperView(shouldDisplayNoDataMessage: viewModel.structures.isEmpty, noDataMessage: "No parking structures available.") {
                     ForEach(viewModel.structures) { structure in
-                        let currentCount = structure.capacity - structure.spotsAvailable
-                        
-                        VStack(spacing: 8) {
-                            VStack{
-                                HStack {
-                                    Text(structure.name)
-                                        .font(.headline)
-                                    Spacer()
-                                }
-                                HStack {
-                                    Text("\(structure.spotsAvailable) available")
-                                    Spacer()
-                                    Text("\(currentCount)/\(structure.capacity)")
-                                }
-                            }
-                            ProgressView(value: Double(currentCount) / Double(structure.capacity))
-                                .progressViewStyle(LinearProgressViewStyle())
+                        ParkingStructureItem(structure: structure) { structure in
+                            globalIdSelectionModel.selectedParkingStructureId = structure.id
                         }
-                        .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                        .buttonStyle(.plain)
                         
                         Divider()
                     }
@@ -68,12 +54,49 @@ struct ParkingStructuresListContentView: NetworkView {
     }
 }
 
+struct ParkingStructureItem: View {
+    let structure: ParkingStructuresListParkingStructure
+    let action: (_ selectedParkingStructure: ParkingStructuresListParkingStructure) -> Void
+
+    var currentCount: Int {
+        structure.capacity - structure.spotsAvailable
+    }
+    var body: some View {
+        Button {
+            action(structure)
+        } label: {
+            VStack(spacing: 8) {
+                VStack{
+                    HStack {
+                        Text(structure.name)
+                            .font(.headline)
+                        Spacer()
+                    }
+                    HStack {
+                        Text("\(structure.spotsAvailable) available")
+                        Spacer()
+                        Text("\(currentCount)/\(structure.capacity)")
+                    }
+                }
+                ProgressView(value: Double(currentCount) / Double(structure.capacity))
+                    .progressViewStyle(LinearProgressViewStyle())
+            }
+            .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+            .contentShape(Rectangle())
+        }
+    }
+}
+
 #Preview {
     let builder = ParkingStructuresListContentViewModelPlaceholderBuilder()
     let viewModel = builder.build()
     viewModel.structuresSupportedBySystem = true
-    viewModel.structures = []
+    viewModel.structures = [
+        .init(spotsAvailable: 50, capacity: 100, name: "Anderson", id: "1"),
+        .init(spotsAvailable: 50, capacity: 200, name: "Barrera", id: "2")
+    ]
     
     return ParkingStructuresListContentView(viewModel: viewModel)
         .environmentObject(GlobalSystemsModelPlaceholderBuilder().build())
+        .environmentObject(GlobalIdSelectionModel())
 }
