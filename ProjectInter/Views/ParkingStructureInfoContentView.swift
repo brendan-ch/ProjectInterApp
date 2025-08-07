@@ -8,9 +8,6 @@
 import SwiftUI
 import Charts
 
-let calendar = Calendar.current
-let now = Date()
-
 struct ParkingStructureInfoContentView: NetworkView {
     @StateObject var viewModel = ParkingStructureInfoContentViewModel()
 

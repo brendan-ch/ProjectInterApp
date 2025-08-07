@@ -5,7 +5,12 @@
 //  Created by Brendan Chen on 2025.08.07.
 //
 
+import Foundation
+
 class ParkingStructureInfoContentViewModelPlaceholderBuilder: PlaceholderBuilderProtocol {
+    let calendar = Calendar.current
+    let now = Date()
+    
     typealias PlaceholderType = ParkingStructureInfoContentViewModel
     
     func build() -> ParkingStructureInfoContentViewModel {

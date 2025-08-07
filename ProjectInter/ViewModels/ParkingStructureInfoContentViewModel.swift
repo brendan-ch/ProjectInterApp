@@ -48,32 +48,23 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
     private let calendar = Calendar.current
     
     var startOfCurrentTimePeriod: Date? {
-        guard let averages = averages else {
+        guard let average = findAverageCorrespondingToDate() else {
             return nil
         }
-        
-        for average in averages {
-            if average.from <= Date() && average.to >= Date() {
-                let numSeconds: TimeInterval = 1
-                return average.from - numSeconds
-            }
-        }
-        
-        return nil
+    
+        // If we use the same identifier as the BarMark corresponding
+        // to the average, SwiftUI will stack them on top of each other
+        // Therefore, we use a different identifier
+        let numSecondsDiff: TimeInterval = 1
+        return average.from - numSecondsDiff
     }
     
     var endOfCurrentTimePeriod: Date? {
-        guard let averages = averages else {
+        guard let average = findAverageCorrespondingToDate() else {
             return nil
         }
         
-        for average in averages {
-            if average.from <= Date() && average.to >= Date() {
-                return average.to
-            }
-        }
-        
-        return nil
+        return average.to
     }
 
     typealias NetworkArguments = ParkingStructureNetworkingArguments
@@ -84,6 +75,20 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
     
     required init(apolloClient: (any Apollo.ApolloClientProtocol)? = nil) {
         self.apolloClient = apolloClient
+    }
+    
+    func findAverageCorrespondingToDate(_ date: Date = Date()) -> ParkingAveragePerTimePeriod? {
+        guard let averages = averages else {
+            return nil
+        }
+        
+        for average in averages {
+            if average.from <= date && average.to >= date {
+                return average
+            }
+        }
+
+        return nil
     }
     
     func generateHistoricalAverageInput() -> HistoricalParkingAverageQueryInput {
