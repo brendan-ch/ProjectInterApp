@@ -83,19 +83,22 @@ class ParkingStructureInfoContentViewModelTestsMockData {
 
 class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     let defaultMock = ParkingStructureInfoContentViewModelTestsMockData.defaultMock
-    let secondaryMock = ParkingStructureInfoContentViewModelTestsMockData.defaultMock
+    let secondaryMock = ParkingStructureInfoContentViewModelTestsMockData.secondaryMock
     let networkArguments = ParkingStructureInfoContentViewModelTestsMockData.defaultArguments
     
     func assertViewModelDataForDefaultMock(viewModel: ParkingStructureInfoContentViewModel) {
-        
+        #expect(viewModel.capacity == 100)
+        #expect(viewModel.spotsAvailable == 50)
+        #expect(viewModel.name == "Anderson Structure")
+    }
+    
+    func assertViewModelDataForSecondaryMock(viewModel: ParkingStructureInfoContentViewModel) {
+        #expect(viewModel.capacity == 150)
+        #expect(viewModel.spotsAvailable == 100)
+        #expect(viewModel.name == "Barrera")
     }
     
     func assertViewModelDataForEmptyMock(viewModel: ProjectInter.ParkingStructureInfoContentViewModel) {
-        
-    }
-
-    func assertViewModelDataForSecondaryMock(viewModel: ParkingStructureInfoContentViewModel) {
-        
     }
 
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {

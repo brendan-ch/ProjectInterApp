@@ -15,7 +15,11 @@ struct ParkingStructureNetworkingArguments {
 }
 
 class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
-    let calendar = Calendar.current
+    @Published var name: String?
+    @Published var capacity: Int?
+    @Published var spotsAvailable: Int?
+    
+    private let calendar = Calendar.current
     
     typealias NetworkArguments = ParkingStructureNetworkingArguments
     
@@ -45,6 +49,17 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
     }
     
     func processRefreshDataResult(_ result: Result<Apollo.GraphQLResult<ProjectInterOperations.GetParkingStructureInfoDataQuery.Data>, any Error>) {
-        
+        switch result {
+        case .failure(let error):
+            Loggers.shared.networkingLogger.log("Failed to fetch parking structure info: \(error)")
+        case .success(let result):
+            guard let parkingStructure = result.data?.system?.parkingSystem?.parkingStructure else {
+                return
+            }
+            
+            self.name = parkingStructure.name
+            self.capacity = parkingStructure.capacity
+            self.spotsAvailable = parkingStructure.spotsAvailable
+        }
     }
 }
