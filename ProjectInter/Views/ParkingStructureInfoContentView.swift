@@ -69,16 +69,16 @@ struct ParkingStructureInfoContentView: NetworkView {
             .controlSize(.large)
             .padding()
             
+            HStack {
+                Text("This day last week")
+                    .font(.headline)
+                Spacer()
+            }
+            .padding(.horizontal)
+            
             if let averages = viewModel.averages,
                let capacity = viewModel.capacity,
                let spotsAvailable = viewModel.spotsAvailable {
-                HStack {
-                    Text("Compared to one week ago")
-                        .font(.headline)
-                    Spacer()
-                }
-                .padding(.horizontal)
-                
                 Group {
                     VStack(alignment: .leading, spacing: 16)  {
                         Chart {
@@ -111,12 +111,16 @@ struct ParkingStructureInfoContentView: NetworkView {
                         .chartYAxis {
                             AxisMarks(position: .automatic, values: stride(from: 0, to: capacity, by: 100).map { $0 })
                         }
-                        
-                        Text("Right now, Anderson Structure is 30% more filled than this time from last week.")
                     }
                 }
                 .frame(height: 320)
                 .padding()
+            } else {
+                HStack {
+                    Text("No historical data available. Check back later.")
+                    Spacer()
+                }
+                .padding(.horizontal)
             }
             
             

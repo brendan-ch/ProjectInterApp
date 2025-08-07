@@ -18,6 +18,34 @@ final class ParkingStructureInfoUITests: BaseUITests {
         skipSetupFlow()
     }
     
+    func mockGetParkingStructuresDataWithoutHistorical() async {
+        let now = Date()
+        let query = GetParkingStructureInfoDataQuery(
+            systemId: defaultSystemId,
+            parkingStructureId: "1",
+            historicalAveragesInput: .init(
+                from: calendar.date(bySettingHour: 8, minute: 0, second: 0, of: now)!,
+                to: calendar.date(bySettingHour: 20, minute: 0, second: 0, of: now)!,
+                intervalMs: 1000 * 60 * 60 * 2
+            )
+        )
+        
+        let response = Mock<Query>(
+            system: .init(
+                parkingSystem: .init(
+                    parkingStructure: .init(
+                        capacity: 100,
+                        id: "1",
+                        name: "Anderson",
+                        spotsAvailable: 20
+                    )
+                )
+            )
+        )
+
+        await client.mock(query: query, response: response)
+    }
+    
     func mockGetParkingStructureDataWithHistorical() async {
         let now = Date()
         let query = GetParkingStructureInfoDataQuery(
@@ -80,5 +108,23 @@ final class ParkingStructureInfoUITests: BaseUITests {
         
         XCTAssert(app.staticTexts["20 available"].waitForExistence(timeout: 5))
         XCTAssert(app.staticTexts["80/100"].waitForExistence(timeout: 5))
+    }
+    
+    @MainActor
+    func testParkingStructureInfoDisplayWithoutHistorical() async {
+        await mockGetParkingStructuresListData()
+        await mockGetParkingStructuresDataWithoutHistorical()
+        app.launch()
+        
+        let structuresButton = app.tabBars.buttons["Parking"]
+        let parkingTabExists = structuresButton.waitForExistence(timeout: 10)
+        XCTAssert(parkingTabExists)
+        structuresButton.tap()
+        
+        let parkingStructureText = app.staticTexts["Anderson"]
+        XCTAssert(parkingStructureText.waitForExistence(timeout: 10))
+        parkingStructureText.tap()
+
+        XCTAssert(app.staticTexts["No historical data available. Check back later."].waitForExistence(timeout: 5))
     }
 }
