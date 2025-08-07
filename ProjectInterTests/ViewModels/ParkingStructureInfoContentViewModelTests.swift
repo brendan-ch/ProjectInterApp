@@ -29,17 +29,17 @@ class ParkingStructureInfoContentViewModelTestsMockData {
                         .init(
                             averageSpotsAvailable: 80,
                             from: calendar.date(bySettingHour: 8, minute: 0, second: 0, of: Date()),
-                            to: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: Date()),
+                            to: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: Date())
                         ),
                         .init(
                             averageSpotsAvailable: 67,
                             from: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: Date()),
-                            to: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: Date()),
+                            to: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: Date())
                         ),
                         .init(
                             averageSpotsAvailable: 55,
                             from: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: Date()),
-                            to: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: Date()),
+                            to: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: Date())
                         ),
                     ],
                     id: "1",
@@ -59,28 +59,28 @@ class ParkingStructureInfoContentViewModelTestsMockData {
                         .init(
                             averageSpotsAvailable: 140,
                             from: calendar.date(bySettingHour: 8, minute: 0, second: 0, of: Date()),
-                            to: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: Date()),
+                            to: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: Date())
                         ),
                         .init(
                             averageSpotsAvailable: 110,
                             from: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: Date()),
-                            to: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: Date()),
+                            to: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: Date())
                         ),
                         .init(
                             averageSpotsAvailable: 102,
                             from: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: Date()),
-                            to: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: Date()),
+                            to: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: Date())
                         ),
                         .init(
                             averageSpotsAvailable: 95,
                             from: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: Date()),
-                            to: calendar.date(bySettingHour: 16, minute: 0, second: 0, of: Date()),
-                        ),
+                            to: calendar.date(bySettingHour: 16, minute: 0, second: 0, of: Date())
+                        )
                     ],
                     id: "2",
                     name: "Barrera",
                     spotsAvailable: 100
-                ),
+                )
             )
         )
     )
