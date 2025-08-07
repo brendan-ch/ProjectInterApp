@@ -123,4 +123,5 @@ struct ParkingStructureInfoContentView: NetworkView {
     
     ParkingStructureInfoContentView(viewModel: viewModel)
         .environmentObject(GlobalIdSelectionModel())
+        .environmentObject(GlobalSystemsModel())
 }
