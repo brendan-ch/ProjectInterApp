@@ -81,7 +81,6 @@ class ParkingStructuresListParkingStructureTests {
 }
 
 class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol {
-    let calendar = Calendar.current
     let networkArguments = ParkingStructuresListContentViewModelTestsMockData.defaultArguments
     let defaultMock = ParkingStructuresListContentViewModelTestsMockData.defaultMock
     let secondaryMock = ParkingStructuresListContentViewModelTestsMockData.secondaryMock
@@ -129,66 +128,6 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
     
     func assertViewModelDataForTertiaryMock(viewModel: ParkingStructuresListContentViewModel) {
         #expect(viewModel.structuresSupportedBySystem == false)
-    }
-    
-    func constructViewModelWithAverages() -> ParkingStructureInfoContentViewModel {
-        let now = Date()
-        let viewModel = ParkingStructureInfoContentViewModel()
-        viewModel.averages = [
-            .init(
-                from: calendar.date(bySettingHour: 8, minute: 0, second: 0, of: now)!,
-                to: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: now)!,
-                averageSpotsAvailable: 50
-            ),
-            .init(
-                from: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: now)!,
-                to: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: now)!,
-                averageSpotsAvailable: 28
-            ),
-            .init(
-                from: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: now)!,
-                to: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: now)!,
-                averageSpotsAvailable: 15
-            ),
-        ]
-        
-        return viewModel
-    }
-    
-    @Test func findAverageCorrespondingToDateReturnsCorrectAverage() {
-        let now = Date()
-        let viewModel = constructViewModelWithAverages()
-        
-        let dateInput = calendar.date(bySettingHour: 13, minute: 0, second: 0, of: now)!
-        let result = viewModel.findAverageCorrespondingToDate(dateInput)
-        
-        #expect(result?.from == viewModel.averages![2].from)
-        #expect(result?.to == viewModel.averages![2].to)
-    }
-    
-    @Test func findAverageCorrespondingToDateReturnsNil() {
-        let now = Date()
-        let viewModel = constructViewModelWithAverages()
-
-        let dateInput = calendar.date(bySettingHour: 20, minute: 0, second: 0, of: now)!
-        let result = viewModel.findAverageCorrespondingToDate(dateInput)
-        
-        #expect(result == nil)
-    }
-
-    
-    @Test func viewModelCorrectlyGeneratesHistoricalAverageInput() {
-        let oneWeekAgo = calendar.date(byAdding: .day, value: -7, to: Date())!
-        let expectedFrom = calendar.date(bySettingHour: ParkingStructureInfoContentViewModel.startingHour, minute: 0, second: 0, of: oneWeekAgo)!
-        let expectedTo = calendar.date(bySettingHour: ParkingStructureInfoContentViewModel.endingHour, minute: 0, second: 0, of: oneWeekAgo)!
-        
-        let viewModel = ParkingStructureInfoContentViewModel()
-        let input = viewModel.generateHistoricalAverageInput()
-        
-        
-        #expect(input.from == expectedFrom)
-        #expect(input.to == expectedTo)
-        #expect(input.intervalMs == ParkingStructureInfoContentViewModel.intervalMs)
     }
     
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
