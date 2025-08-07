@@ -46,7 +46,7 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
     
     var apolloClient: (any Apollo.ApolloClientProtocol)?
     
-    required init(apolloClient: (any Apollo.ApolloClientProtocol)?) {
+    required init(apolloClient: (any Apollo.ApolloClientProtocol)? = nil) {
         self.apolloClient = apolloClient
     }
     

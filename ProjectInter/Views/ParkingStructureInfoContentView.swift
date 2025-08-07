@@ -50,17 +50,25 @@ let data: [ParkingAveragePerTimePeriod] = [
     )
 ]
 
-struct ParkingStructureInfoContentView: View {
-    let currentCount = 50
-    let capacity = 100
-    
+struct ParkingStructureInfoContentView: NetworkView {
+    @StateObject var viewModel = ParkingStructureInfoContentViewModel()
+
     @EnvironmentObject var globalIdSelectionModel: GlobalIdSelectionModel
+    @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
     
+    var networkArguments: ParkingStructureNetworkingArguments? {
+        if let systemId = globalSystemsModel.selectedSystem?.id,
+           let parkingStructureId = globalIdSelectionModel.selectedParkingStructureId {
+            return .init(systemId: systemId, parkingStructureId: parkingStructureId)
+        }
+        return nil
+    }
+
     var body: some View {
         ScrollView(.vertical) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
-                    Text("Anderson Structure")
+                    Text(viewModel.name ?? "")
                         .font(.title2)
                         .bold()
                         .accessibilityLabel("Parking structure name")
@@ -72,16 +80,23 @@ struct ParkingStructureInfoContentView: View {
             }
             .padding()
             
-            VStack {
-                HStack {
-                    Text("\(capacity - currentCount) available")
-                    Spacer()
-                    Text("\(currentCount)/\(capacity)")
+            if let capacity = viewModel.capacity,
+               let spotsAvailable = viewModel.spotsAvailable {
+                let currentCount = capacity - spotsAvailable
+                
+                VStack {
+                    HStack {
+                        Text("\(capacity - currentCount) available")
+                        Spacer()
+                        Text("\(currentCount)/\(capacity)")
+                    }
+                    ProgressView(value: Double(currentCount) / Double(capacity))
+                        .progressViewStyle(LinearProgressViewStyle())
                 }
-                ProgressView(value: Double(currentCount) / Double(capacity))
-                    .progressViewStyle(LinearProgressViewStyle())
+                .padding(.horizontal)
+            } else {
+                Text("Parking data not available.")
             }
-            .padding(.horizontal)
 
             Button {
                 
@@ -96,36 +111,46 @@ struct ParkingStructureInfoContentView: View {
             .controlSize(.large)
             .padding()
             
-            HStack {
-                Text("Historical Data")
-                    .font(.headline)
-                Spacer()
-            }
-            .padding(.horizontal)
-            
-            Group {
-                VStack(alignment: .leading, spacing: 16)  {
-                    Chart(data, id: \.from) { item in
-                        BarMark(
-                            x: .value("Time", item.from ..< item.to),
-                            y: .value("Average spots filled", capacity - item.averageSpotsAvailableRounded)
-                        )
-                    }
-                    .chartGesture { proxy in
-                        SpatialTapGesture().onEnded { value in
-                            if let (from, _) = proxy.value(at: value.location, as: (Date, Int).self),
-                               let tappedIndex = data.firstIndex(where: { $0.from == from }) {
-                                print(tappedIndex)
+            if let averages = viewModel.averages,
+               let capacity = viewModel.capacity {
+                HStack {
+                    Text("Historical Data")
+                        .font(.headline)
+                    Spacer()
+                }
+                .padding(.horizontal)
+                
+                Group {
+                    VStack(alignment: .leading, spacing: 16)  {
+                        Chart(averages, id: \.from) { item in
+                            BarMark(
+                                x: .value("Time", item.from ..< item.to),
+                                y: .value("Average spots filled", capacity - item.averageSpotsAvailableRounded)
+                            )
+                        }
+                        .chartGesture { proxy in
+                            SpatialTapGesture().onEnded { value in
+                                if let (from, _) = proxy.value(at: value.location, as: (Date, Int).self),
+                                   let tappedIndex = data.firstIndex(where: { $0.from == from }) {
+                                    print(tappedIndex)
+                                }
                             }
                         }
+                        
+//                        Text("Right now, Anderson Structure is 30% more filled than this time from last week.")
                     }
-                    
-                    Text("Right now, Anderson Structure is 30% more filled than this time from last week.")
                 }
+                .frame(height: 320)
+                .padding()
             }
-            .frame(height: 320)
-            .padding()
             
+            
+        }
+        .onAppear {
+            restartDataUpdates()
+        }
+        .onDisappear {
+            stopDataUpdates()
         }
     }
 }
