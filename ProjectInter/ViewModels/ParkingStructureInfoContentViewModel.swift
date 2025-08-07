@@ -47,25 +47,8 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
     
     private let calendar = Calendar.current
     
-    var startOfCurrentTimePeriod: Date? {
-        guard let average = findAverageCorrespondingToDate() else {
-            return nil
-        }
-    
-        // If we use the same identifier as the BarMark corresponding
-        // to the average, SwiftUI will stack them on top of each other
-        // Therefore, we use a different identifier
-        let numSecondsDiff: TimeInterval = 1
-        return average.from - numSecondsDiff
-    }
-    
-    var endOfCurrentTimePeriod: Date? {
-        guard let average = findAverageCorrespondingToDate() else {
-            return nil
-        }
-        
-        return average.to
-    }
+    @Published var startOfCurrentTimePeriod: Date?
+    @Published var endOfCurrentTimePeriod: Date?
 
     typealias NetworkArguments = ParkingStructureNetworkingArguments
     
@@ -77,7 +60,18 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func findAverageCorrespondingToDate(_ date: Date = Date()) -> ParkingAveragePerTimePeriod? {
+    private func setStartAndEndPeriodForCurrentCorrespondingAverage() {
+        let oneWeekAgo = calendar.date(byAdding: .day, value: -7, to: Date())!
+        guard let average = findAverageCorrespondingToDate(oneWeekAgo) else {
+            return
+        }
+
+        let numSecondsDiff: TimeInterval = 1
+        startOfCurrentTimePeriod = average.from - numSecondsDiff
+        endOfCurrentTimePeriod = average.to
+    }
+    
+    func findAverageCorrespondingToDate(_ date: Date) -> ParkingAveragePerTimePeriod? {
         guard let averages = averages else {
             return nil
         }
@@ -134,6 +128,7 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
             }
             
             averages = averagesFromNetwork.map(ParkingAveragePerTimePeriod.init)
+            setStartAndEndPeriodForCurrentCorrespondingAverage()
         }
     }
     
@@ -147,5 +142,7 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
     
     private func clearHistoricalData() {
         averages = nil
+        startOfCurrentTimePeriod = nil
+        endOfCurrentTimePeriod = nil
     }
 }

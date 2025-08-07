@@ -114,6 +114,8 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.name == nil)
         
         #expect(viewModel.averages == nil)
+        #expect(viewModel.startOfCurrentTimePeriod == nil)
+        #expect(viewModel.endOfCurrentTimePeriod == nil)
     }
     
     func constructViewModelWithAverages() -> ParkingStructureInfoContentViewModel {
