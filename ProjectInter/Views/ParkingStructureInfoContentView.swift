@@ -11,8 +11,6 @@ import Charts
 let calendar = Calendar.current
 let now = Date()
 
-// Generated with Claude
-
 struct ParkingStructureInfoContentView: NetworkView {
     @StateObject var viewModel = ParkingStructureInfoContentViewModel()
 
@@ -75,9 +73,10 @@ struct ParkingStructureInfoContentView: NetworkView {
             .padding()
             
             if let averages = viewModel.averages,
-               let capacity = viewModel.capacity {
+               let capacity = viewModel.capacity,
+               let spotsAvailable = viewModel.spotsAvailable {
                 HStack {
-                    Text("Historical Data")
+                    Text("Compared to last week")
                         .font(.headline)
                     Spacer()
                 }
@@ -85,11 +84,24 @@ struct ParkingStructureInfoContentView: NetworkView {
                 
                 Group {
                     VStack(alignment: .leading, spacing: 16)  {
-                        Chart(averages, id: \.from) { item in
-                            BarMark(
-                                x: .value("Time", item.from ..< item.to),
-                                y: .value("Average spots filled", capacity - item.averageSpotsAvailableRounded)
-                            )
+                        Chart {
+                            if let startOfCurrentTimePeriod = viewModel.startOfCurrentTimePeriod,
+                               let endOfCurrentTimePeriod = viewModel.endOfCurrentTimePeriod {
+                                BarMark(
+                                    x: .value("Time", startOfCurrentTimePeriod ..< endOfCurrentTimePeriod),
+                                    y: .value("Average spots filled", capacity - spotsAvailable)
+                                )
+                                .zIndex(1)
+                            }
+                            
+                            ForEach(averages, id: \.from) { item in
+                                BarMark(
+                                    x: .value("Time", item.from ..< item.to),
+                                    y: .value("Average spots filled", capacity - item.averageSpotsAvailableRounded)
+                                )
+                                .opacity(0.4)
+                                .zIndex(0)
+                            }
                         }
                         .chartGesture { proxy in
                             SpatialTapGesture().onEnded { value in
@@ -100,7 +112,7 @@ struct ParkingStructureInfoContentView: NetworkView {
                             }
                         }
                         
-//                        Text("Right now, Anderson Structure is 30% more filled than this time from last week.")
+                        Text("Right now, Anderson Structure is 30% more filled than this time from last week.")
                     }
                 }
                 .frame(height: 320)

@@ -47,6 +47,35 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
     
     private let calendar = Calendar.current
     
+    var startOfCurrentTimePeriod: Date? {
+        guard let averages = averages else {
+            return nil
+        }
+        
+        for average in averages {
+            if average.from <= Date() && average.to >= Date() {
+                let numSeconds: TimeInterval = 1
+                return average.from - numSeconds
+            }
+        }
+        
+        return nil
+    }
+    
+    var endOfCurrentTimePeriod: Date? {
+        guard let averages = averages else {
+            return nil
+        }
+        
+        for average in averages {
+            if average.from <= Date() && average.to >= Date() {
+                return average.to
+            }
+        }
+        
+        return nil
+    }
+
     typealias NetworkArguments = ParkingStructureNetworkingArguments
     
     var dataRefreshLoopTask: Task<Void, any Error>?
