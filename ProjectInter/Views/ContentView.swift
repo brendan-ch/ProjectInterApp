@@ -66,11 +66,11 @@ struct ContentView: View {
     @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
     @EnvironmentObject var locationManagerState: GlobalLocationDataModel
     
-    // Not actually used to set anything, just to provide default values
     @State var routeListSheetSelectedDetent: PresentationDetent = .height(360)
     @State var routeInfoSheetSelectedDetent: PresentationDetent = .height(360)
     @State var shuttleInfoSheetSelectedDetent: PresentationDetent = .height(360)
-    
+    @State var parkingInfoSheetSelectedDetent: PresentationDetent = .height(360)
+
     
     // Controls the map height
     @State var currentSheetHeight: CGFloat = 360
@@ -116,6 +116,7 @@ struct ContentView: View {
                 buildParkingStructuresListView()
                     .sheet(isPresented: .constant(showParkingStructureInfo)) {
                         buildParkingStructureInfoView()
+                            .sheetViewModifier(detentSelection: $parkingInfoSheetSelectedDetent)
                     }
             }
             Tab("Settings", systemImage: "gear", value: .settings) {
