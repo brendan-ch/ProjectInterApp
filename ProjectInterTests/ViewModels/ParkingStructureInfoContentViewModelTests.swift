@@ -40,12 +40,12 @@ class ParkingStructureInfoContentViewModelTestsMockData {
                             averageSpotsAvailable: 55,
                             from: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: Date()),
                             to: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: Date())
-                        ),
+                        )
                     ],
                     id: "1",
                     name: "Anderson Structure",
                     spotsAvailable: 50
-                ),
+                )
             )
         )
     )
@@ -136,7 +136,7 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
                 from: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: now)!,
                 to: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: now)!,
                 averageSpotsAvailable: 15
-            ),
+            )
         ]
         
         return viewModel
