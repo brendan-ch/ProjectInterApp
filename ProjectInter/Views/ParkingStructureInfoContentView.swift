@@ -8,15 +8,6 @@
 import SwiftUI
 import Charts
 
-struct ParkingAveragePerTimePeriod {
-    let from: Date
-    let to: Date
-    let averageSpotsAvailable: Float
-    var averageSpotsAvailableRounded: Int {
-        Int(self.averageSpotsAvailable.rounded())
-    }
-}
-
 let calendar = Calendar.current
 let now = Date()
 

@@ -71,6 +71,11 @@ class ParkingStructureInfoContentViewModelTestsMockData {
                             from: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: Date()),
                             to: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: Date()),
                         ),
+                        .init(
+                            averageSpotsAvailable: 95,
+                            from: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: Date()),
+                            to: calendar.date(bySettingHour: 16, minute: 0, second: 0, of: Date()),
+                        ),
                     ],
                     id: "2",
                     name: "Barrera",
@@ -90,15 +95,24 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.capacity == 100)
         #expect(viewModel.spotsAvailable == 50)
         #expect(viewModel.name == "Anderson Structure")
+        
+        #expect(viewModel.averages?.count == 3)
     }
     
     func assertViewModelDataForSecondaryMock(viewModel: ParkingStructureInfoContentViewModel) {
         #expect(viewModel.capacity == 150)
         #expect(viewModel.spotsAvailable == 100)
         #expect(viewModel.name == "Barrera")
+        
+        #expect(viewModel.averages?.count == 4)
     }
     
     func assertViewModelDataForEmptyMock(viewModel: ProjectInter.ParkingStructureInfoContentViewModel) {
+        #expect(viewModel.capacity == nil)
+        #expect(viewModel.spotsAvailable == nil)
+        #expect(viewModel.name == nil)
+        
+        #expect(viewModel.averages == nil)
     }
 
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
