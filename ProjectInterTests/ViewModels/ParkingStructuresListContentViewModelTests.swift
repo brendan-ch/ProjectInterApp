@@ -10,6 +10,7 @@ import Testing
 import ProjectInterOperations
 import ApolloTestSupport
 import ProjectInterTestMocks
+import Foundation
 
 class ParkingStructuresListContentViewModelTestsMockData {
     static let defaultArguments = ParkingStructuresNetworkingArguments(systemId: "1")
@@ -127,6 +128,20 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
     
     func assertViewModelDataForTertiaryMock(viewModel: ParkingStructuresListContentViewModel) {
         #expect(viewModel.structuresSupportedBySystem == false)
+    }
+    
+    @Test func viewModelCorrectlyGeneratesHistoricalAverageInput() {
+        let oneWeekAgo = calendar.date(byAdding: .day, value: -7, to: Date())!
+        let expectedFrom = calendar.date(bySettingHour: ParkingStructureInfoContentViewModel.startingHour, minute: 0, second: 0, of: oneWeekAgo)!
+        let expectedTo = calendar.date(bySettingHour: ParkingStructureInfoContentViewModel.endingHour, minute: 0, second: 0, of: oneWeekAgo)!
+        
+        let viewModel = ParkingStructureInfoContentViewModel()
+        let input = viewModel.generateHistoricalAverageInput()
+        
+        
+        #expect(input.from == expectedFrom)
+        #expect(input.to == expectedTo)
+        #expect(input.intervalMs == ParkingStructureInfoContentViewModel.intervalMs)
     }
     
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {

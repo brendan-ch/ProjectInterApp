@@ -31,12 +31,19 @@ struct ParkingStructureNetworkingArguments {
     let parkingStructureId: String
 }
 
+// MARK: - View model implementation
+
 class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
     @Published var name: String?
     @Published var capacity: Int?
     @Published var spotsAvailable: Int?
     
     @Published var averages: [ParkingAveragePerTimePeriod]?
+    
+    // Historical average data
+    static let startingHour = 8
+    static let endingHour = 20
+    static let intervalMs = 1000 * 60 * 60 * 2
     
     private let calendar = Calendar.current
     
@@ -50,17 +57,23 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
         self.apolloClient = apolloClient
     }
     
-    func convertNetworkArgumentsIntoQuery(_ arguments: NetworkArguments) -> GetParkingStructureInfoDataQuery {
-        let from = calendar.date(bySettingHour: 8, minute: 0, second: 0, of: Date())!
-        let to = calendar.date(bySettingHour: 20, minute: 0, second: 0, of: Date())!
+    func generateHistoricalAverageInput() -> HistoricalParkingAverageQueryInput {
+        let oneWeekAgo = calendar.date(byAdding: .day, value: -7, to: Date())!
+        
+        let from = calendar.date(bySettingHour: ParkingStructureInfoContentViewModel.startingHour, minute: 0, second: 0, of: oneWeekAgo)!
+        let to = calendar.date(bySettingHour: ParkingStructureInfoContentViewModel.endingHour, minute: 0, second: 0, of: oneWeekAgo)!
         
         let historicalAverageInput = HistoricalParkingAverageQueryInput(
             from: from,
             to: to,
             // Every 2 hours
-            intervalMs: 1000 * 60 * 60 * 2
+            intervalMs: ParkingStructureInfoContentViewModel.intervalMs
         )
-        
+        return historicalAverageInput
+    }
+    
+    func convertNetworkArgumentsIntoQuery(_ arguments: NetworkArguments) -> GetParkingStructureInfoDataQuery {
+        let historicalAverageInput = generateHistoricalAverageInput()
         return GetParkingStructureInfoDataQuery(
             systemId: arguments.systemId,
             parkingStructureId: arguments.parkingStructureId,
