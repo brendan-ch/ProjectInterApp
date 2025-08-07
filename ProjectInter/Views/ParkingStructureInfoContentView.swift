@@ -73,7 +73,7 @@ struct ParkingStructureInfoContentView: NetworkView {
                let capacity = viewModel.capacity,
                let spotsAvailable = viewModel.spotsAvailable {
                 HStack {
-                    Text("Compared to last week")
+                    Text("Compared to one week ago")
                         .font(.headline)
                     Spacer()
                 }
@@ -88,6 +88,7 @@ struct ParkingStructureInfoContentView: NetworkView {
                                     x: .value("Time", startOfCurrentTimePeriod ..< endOfCurrentTimePeriod),
                                     y: .value("Average spots filled", capacity - spotsAvailable)
                                 )
+                                .foregroundStyle(Color.pink)
                                 .zIndex(1)
                             }
                             
@@ -96,7 +97,6 @@ struct ParkingStructureInfoContentView: NetworkView {
                                     x: .value("Time", item.from ..< item.to),
                                     y: .value("Average spots filled", capacity - item.averageSpotsAvailableRounded)
                                 )
-                                .opacity(0.4)
                                 .zIndex(0)
                             }
                         }
@@ -107,6 +107,9 @@ struct ParkingStructureInfoContentView: NetworkView {
                                     print(tappedIndex)
                                 }
                             }
+                        }
+                        .chartYAxis {
+                            AxisMarks(position: .automatic, values: stride(from: 0, to: capacity, by: 100).map { $0 })
                         }
                         
                         Text("Right now, Anderson Structure is 30% more filled than this time from last week.")
