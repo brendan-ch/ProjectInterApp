@@ -21,6 +21,8 @@ class SchemaVersionModel: NetworkDataModelProtocol {
     
     var apolloClient: (any ApolloClientProtocol)?
     
+    @Published var dataInitState: InitializationState = .notInitialized
+    
     @Published private(set) var compatibilityCheckCompleted = false
      
     @Published private(set) var serverMinSchemaVersion: Int?

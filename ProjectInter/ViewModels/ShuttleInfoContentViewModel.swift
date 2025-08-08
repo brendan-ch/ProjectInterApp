@@ -43,6 +43,8 @@ extension ShuttleInfoEtaListItem {
 class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
     typealias NetworkArguments = ShuttleInfoNetworkArguments
     
+    @Published var dataInitState: InitializationState = .notInitialized
+
     /// Name of the shuttle to display.
     @Published var name: String = ""
     

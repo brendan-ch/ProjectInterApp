@@ -61,6 +61,8 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
     /// Currently running shuttles to display for the route.
     @Published var shuttles: [RouteInfoContentViewShuttle] = []
     
+    @Published var dataInitState: InitializationState = .notInitialized
+    
     var apolloClient: ApolloClientProtocol?
     
     var dataRefreshLoopTask: Task<Void, Error>?

@@ -27,6 +27,8 @@ struct GlobalDataModelNetworkArguments {
 class GlobalSystemsModel: NetworkDataModelProtocol {
     typealias NetworkArguments = GlobalDataModelNetworkArguments
     
+    @Published var dataInitState: InitializationState = .notInitialized
+    
     var apolloClient: ApolloClientProtocol?
     
     var dataRefreshLoopTask: Task<Void, any Error>?
