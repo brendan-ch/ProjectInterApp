@@ -14,13 +14,16 @@ struct WithInitializationView<Content: View>: View {
     var body: some View {
         switch dataInitState {
         case .initializing:
-            Text("Loading content")
+            ProgressView()
+                .padding()
         case .succeeded:
             content
         case .failed:
             Text("Failed to load content. Please try again later.")
+                .padding()
         default:
-            Text("Loading content")
+            ProgressView()
+                .padding()
         }
     }
 }
