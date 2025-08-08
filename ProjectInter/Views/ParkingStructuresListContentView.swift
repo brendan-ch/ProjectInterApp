@@ -25,21 +25,23 @@ struct ParkingStructuresListContentView: NetworkView {
     
     var body: some View {
         RootSheetContentView(title: "Structures") {
-            if !viewModel.structuresSupportedBySystem {
-                Spacer()
-                Text("Parking data is not supported for this system.")
-                    .padding()
-                    .foregroundStyle(.secondary)
-                Spacer()
-            } else {
-                DataWrapperView(shouldDisplayNoDataMessage: viewModel.structures.isEmpty, noDataMessage: "No parking structures available.") {
-                    ForEach(viewModel.structures) { structure in
-                        ParkingStructureItem(structure: structure) { structure in
-                            globalIdSelectionModel.selectedParkingStructureId = structure.id
+            WithInitializationView(dataInitState: viewModel.dataInitState) {
+                if !viewModel.structuresSupportedBySystem {
+                    Spacer()
+                    Text("Parking data is not supported for this system.")
+                        .padding()
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                } else {
+                    DataWrapperView(shouldDisplayNoDataMessage: viewModel.structures.isEmpty, noDataMessage: "No parking structures available.") {
+                        ForEach(viewModel.structures) { structure in
+                            ParkingStructureItem(structure: structure) { structure in
+                                globalIdSelectionModel.selectedParkingStructureId = structure.id
+                            }
+                            .buttonStyle(.plain)
+                            
+                            Divider()
                         }
-                        .buttonStyle(.plain)
-                        
-                        Divider()
                     }
                 }
             }
