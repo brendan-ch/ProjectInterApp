@@ -53,10 +53,22 @@ class ParkingStructureInfoContentViewModelPlaceholderBuilder: PlaceholderBuilder
         ]
         
         let viewModel = ParkingStructureInfoContentViewModel()
-        viewModel.name = "Anderson Structure"
-        viewModel.capacity = 100
-        viewModel.spotsAvailable = 80
-        viewModel.averages = data
+        
+        Task {
+            DispatchQueue.main.sync {
+                viewModel.dataInitState = .initializing
+            }
+            try? await Task.sleep(for: .seconds(2))
+            
+            DispatchQueue.main.sync {
+                viewModel.dataInitState = .succeeded
+                viewModel.name = "Anderson Structure"
+                viewModel.capacity = 100
+                viewModel.spotsAvailable = 80
+                viewModel.averages = data
+            }
+
+        }
         
         return viewModel
     }
