@@ -23,22 +23,22 @@ struct ParkingStructureInfoContentView: NetworkView {
     }
 
     var body: some View {
-        WithInitializationView(dataInitState: viewModel.dataInitState) {
-            ScrollView(.vertical) {
-                HStack(alignment: .top) {
-                    VStack(alignment: .leading) {
-                        Text(viewModel.name ?? "")
-                            .font(.title2)
-                            .bold()
-                            .accessibilityLabel("Parking structure name")
-                    }
-                    Spacer()
-                    Button("Close") {
-                        globalIdSelectionModel.selectedParkingStructureId = nil
-                    }
+        ScrollView(.vertical) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading) {
+                    Text(viewModel.name ?? "")
+                        .font(.title2)
+                        .bold()
+                        .accessibilityLabel("Parking structure name")
                 }
-                .padding()
-                
+                Spacer()
+                Button("Close") {
+                    globalIdSelectionModel.selectedParkingStructureId = nil
+                }
+            }
+            .padding()
+            
+            WithInitializationView(dataInitState: viewModel.dataInitState) {
                 if let capacity = viewModel.capacity,
                    let spotsAvailable = viewModel.spotsAvailable {
                     let currentCount = capacity - spotsAvailable
@@ -123,8 +123,6 @@ struct ParkingStructureInfoContentView: NetworkView {
                     }
                     .padding(.horizontal)
                 }
-                
-                
             }
         }
         .onAppear {

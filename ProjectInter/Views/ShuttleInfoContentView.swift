@@ -55,25 +55,25 @@ struct ShuttleInfoContentView: NetworkView {
     }
     
     var body: some View {
-        WithInitializationView(dataInitState: viewModel.dataInitState) {
-            ScrollView(.vertical, showsIndicators: false) {
-                HStack(alignment: .top) {
-                    VStack(alignment: .leading) {
-                        Text(viewModel.name)
-                            .font(.title2)
-                            .bold()
-                            .accessibilityLabel("Shuttle name")
-                        Text(viewModel.etaDisplay)
-                            .font(.callout)
-                            .foregroundStyle(.secondary)
-                    }
-                    Spacer()
-                    Button("Close") {
-                        globalIdSelectionModel.selectedShuttleId = nil
-                    }
+        ScrollView(.vertical, showsIndicators: false) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading) {
+                    Text(viewModel.name)
+                        .font(.title2)
+                        .bold()
+                        .accessibilityLabel("Shuttle name")
+                    Text(viewModel.etaDisplay)
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
                 }
-                .padding()
-                
+                Spacer()
+                Button("Close") {
+                    globalIdSelectionModel.selectedShuttleId = nil
+                }
+            }
+            .padding()
+            
+            WithInitializationView(dataInitState: viewModel.dataInitState) {
                 Button(action: {
                     if customAppDelegate.notificationTokenString == nil {
                         showingNotificationPermissionsNotGrantedAlert = true

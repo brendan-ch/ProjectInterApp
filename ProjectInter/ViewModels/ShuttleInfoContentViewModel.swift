@@ -60,7 +60,7 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
             return "\(ETAFormatter.formatSecondsRemaining(etaSecondsRemaining)) to \(nameOfStop)"
         }
         
-        return "ETA currently not available"
+        return dataInitState == .initializing ? "" : "ETA currently not available"
     }
     
     @Published var etaListItems: [ShuttleInfoEtaListItem] = []
