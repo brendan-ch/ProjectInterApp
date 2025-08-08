@@ -14,7 +14,7 @@ class MapViewModelPlaceholderBuilder: PlaceholderBuilderProtocol {
     
     func build() -> MapViewModel {
         let newModel = MapViewModel()
-        
+        newModel.dataInitState = .succeeded
         newModel.routes = [
             MapViewRoute(
                 id: "1",

@@ -39,6 +39,8 @@ class ParkingStructuresListContentViewModel: NetworkDataModelProtocol {
     @Published var structures: [ParkingStructuresListParkingStructure] = []
     @Published var structuresSupportedBySystem = false
     
+    @Published var dataInitState: InitializationState = .notInitialized
+    
     typealias NetworkArguments = ParkingStructuresNetworkingArguments
     
     var dataRefreshLoopTask: Task<Void, any Error>?

@@ -134,6 +134,8 @@ class MapViewModel: NetworkDataModelProtocol {
     @Published var stops: [MapViewStop] = []
     @Published var parkingStructures: [MapViewParkingStructure] = []
     
+    @Published var dataInitState: InitializationState = .notInitialized
+
     var apolloClient: ApolloClientProtocol?
     
     var dataRefreshLoopTask: Task<Void, any Error>?

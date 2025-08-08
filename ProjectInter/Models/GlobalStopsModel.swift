@@ -48,6 +48,8 @@ class GlobalStopsModel: NetworkDataModelProtocol {
     
     var dataRefreshLoopTask: Task<Void, any Error>?
     
+    @Published var dataInitState: InitializationState = .notInitialized
+    
     @Published var stops: [GlobalStopsModelStop] = []
     
     @Published private var selectedStopId: String? = nil {

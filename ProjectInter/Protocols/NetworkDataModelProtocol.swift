@@ -9,9 +9,18 @@ import SwiftUI
 import Apollo
 import ApolloAPI
 
+enum InitializationState {
+    case notInitialized
+    case initializing
+    case succeeded
+    case failed
+}
+
 protocol NetworkDataModelProtocol: ObservableObject {
     associatedtype NetworkArguments
     associatedtype GraphQLQueryType: GraphQLQuery
+    
+    var dataInitState: InitializationState { get set }
     
     var dataRefreshLoopTask: Task<Void, Error>? { get set }
     
@@ -63,6 +72,12 @@ extension NetworkDataModelProtocol {
     }
     
     func refreshDataOnce(arguments: NetworkArguments) async {
+        if dataInitState == .notInitialized {
+            DispatchQueue.main.sync {
+                self.dataInitState = .initializing
+            }
+        }
+        
         let query = convertNetworkArgumentsIntoQuery(arguments)
         
         guard let apolloClient = apolloClient else {
@@ -87,6 +102,13 @@ extension NetworkDataModelProtocol {
                 
                 Loggers.shared.networkingLogger.notice("Processing refresh data result for \(type(of: self))")
                 self.processRefreshDataResult(result)
+                
+                switch result {
+                case .failure(let error):
+                    self.dataInitState = .failed
+                case .success(let response):
+                    self.dataInitState = .succeeded
+                }
             }
         }
     }

@@ -49,6 +49,8 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
     
     @Published var startOfCurrentTimePeriod: Date?
     @Published var endOfCurrentTimePeriod: Date?
+    
+    @Published var dataInitState: InitializationState = .notInitialized
 
     typealias NetworkArguments = ParkingStructureNetworkingArguments
     

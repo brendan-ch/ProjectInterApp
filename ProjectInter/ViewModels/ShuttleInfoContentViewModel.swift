@@ -43,6 +43,8 @@ extension ShuttleInfoEtaListItem {
 class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
     typealias NetworkArguments = ShuttleInfoNetworkArguments
     
+    @Published var dataInitState: InitializationState = .notInitialized
+
     /// Name of the shuttle to display.
     @Published var name: String = ""
     
@@ -58,7 +60,7 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
             return "\(ETAFormatter.formatSecondsRemaining(etaSecondsRemaining)) to \(nameOfStop)"
         }
         
-        return "ETA currently not available"
+        return dataInitState == .initializing ? "" : "ETA currently not available"
     }
     
     @Published var etaListItems: [ShuttleInfoEtaListItem] = []

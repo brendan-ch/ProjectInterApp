@@ -57,27 +57,29 @@ struct RouteInfoContentView: NetworkView {
             }
             .padding(.horizontal)
             
-            DataWrapperView(
-                shouldDisplayNoDataMessage: viewModel.shuttles.isEmpty,
-                noDataMessage: "No shuttles available"
-            ) {
-                ScrollView(.vertical, showsIndicators: false) {
-                    VStack {
-                        ForEach(viewModel.shuttles) { upcomingDeparture in
-                            Divider()
-                            
-                            RouteInfoShuttleViewItem(shuttle: upcomingDeparture) { shuttle in
-                                globalIdSelectionModel.selectedShuttleId = shuttle.id
+            WithInitializationView(dataInitState: viewModel.dataInitState) {
+                DataWrapperView(
+                    shouldDisplayNoDataMessage: viewModel.shuttles.isEmpty,
+                    noDataMessage: "No shuttles available"
+                ) {
+                    ScrollView(.vertical, showsIndicators: false) {
+                        VStack {
+                            ForEach(viewModel.shuttles) { upcomingDeparture in
+                                Divider()
+                                
+                                RouteInfoShuttleViewItem(shuttle: upcomingDeparture) { shuttle in
+                                    globalIdSelectionModel.selectedShuttleId = shuttle.id
+                                }
+                                .accessibilityLabel("Shuttle label in route info page")
+                                .accessibilityIdentifier(upcomingDeparture.id)
+                                .buttonStyle(.plain)
+                                .padding(.horizontal)
+                                
                             }
-                            .accessibilityLabel("Shuttle label in route info page")
-                            .accessibilityIdentifier(upcomingDeparture.id)
-                            .buttonStyle(.plain)
-                            .padding(.horizontal)
                             
                         }
-                        
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
         }

@@ -93,6 +93,8 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
     /// All routes to render on ``RouteListContentView``.
     @Published var routes: [RouteListContentViewRoute] = []
     
+    @Published var dataInitState: InitializationState = .notInitialized
+    
     var apolloClient: ApolloClientProtocol?
     
     var dataRefreshLoopTask: Task<Void, Error>?
