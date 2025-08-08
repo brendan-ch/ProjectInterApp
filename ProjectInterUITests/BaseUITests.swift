@@ -380,4 +380,30 @@ class BaseUITests: XCTestCase {
         )
         await client.mock(query: shuttleInfoQuery, response: shuttleInfoResponse)
     }
+    
+    func mockGetParkingStructuresListData() async {
+        let query = GetParkingStructuresListDataQuery(systemId: defaultSystemId)
+        let response = Mock<Query>(
+            system: .init(
+                parkingSystem: .init(
+                    parkingStructures: [
+                        .init(
+                            capacity: 100,
+                            id: "1",
+                            name: "Anderson",
+                            spotsAvailable: 50
+                        ),
+                        .init(
+                            capacity: 150,
+                            id: "2",
+                            name: "Barrera",
+                            spotsAvailable: 100
+                        )
+                    ]
+                )
+            )
+        )
+        
+        await client.mock(query: query, response: response)
+    }
 }

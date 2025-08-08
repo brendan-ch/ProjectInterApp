@@ -1,0 +1,22 @@
+query GetParkingStructureInfoData(
+  $systemId: ID!,
+  $parkingStructureId: ID!,
+  $historicalAveragesInput: HistoricalParkingAverageQueryInput!
+) {
+  system(id: $systemId) {
+    parkingSystem {
+      parkingStructure(id: $parkingStructureId) {
+        capacity
+        name
+        spotsAvailable
+        id
+        historicalAverages(input: $historicalAveragesInput) {
+          from
+          to
+          averageSpotsAvailable
+        }
+      }
+    }
+  }
+}
+

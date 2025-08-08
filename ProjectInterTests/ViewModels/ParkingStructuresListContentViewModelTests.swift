@@ -10,6 +10,7 @@ import Testing
 import ProjectInterOperations
 import ApolloTestSupport
 import ProjectInterTestMocks
+import Foundation
 
 class ParkingStructuresListContentViewModelTestsMockData {
     static let defaultArguments = ParkingStructuresNetworkingArguments(systemId: "1")

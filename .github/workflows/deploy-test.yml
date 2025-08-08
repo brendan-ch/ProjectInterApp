@@ -13,16 +13,6 @@ jobs:
       - name: Checkout current repository
         uses: actions/checkout@v4
 
-      - name: Generate ProjectInterOperations Library
-        env:
-          CLI_URL: "https://github.com/apollographql/apollo-ios/releases/download/1.3.3/apollo-ios-cli.tar.gz"
-        run: |
-          curl -L $CLI_URL -o apollo-ios-cli.tar.gz
-          tar -xzf apollo-ios-cli.tar.gz
-          chmod +x apollo-ios-cli
-          ./apollo-ios-cli generate
-          ./apollo-ios-cli generate
-
 
       - name: Run Fastlane
         run: fastlane beta

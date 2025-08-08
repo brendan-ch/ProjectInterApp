@@ -8,68 +8,25 @@
 import SwiftUI
 import Charts
 
-struct ParkingAveragePerTimePeriod {
-    let from: Date
-    let to: Date
-    let averageSpotsAvailable: Float
-    var averageSpotsAvailableRounded: Int {
-        Int(self.averageSpotsAvailable.rounded())
-    }
-}
+struct ParkingStructureInfoContentView: NetworkView {
+    @StateObject var viewModel = ParkingStructureInfoContentViewModel()
 
-let calendar = Calendar.current
-let now = Date()
-
-// Generated with Claude
-let data: [ParkingAveragePerTimePeriod] = [
-    .init(
-        from: calendar.date(bySettingHour: 8, minute: 0, second: 0, of: now)!,
-        to: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: now)!,
-        averageSpotsAvailable: 50
-    ),
-    .init(
-        from: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: now)!,
-        to: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: now)!,
-        averageSpotsAvailable: 28
-    ),
-    .init(
-        from: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: now)!,
-        to: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: now)!,
-        averageSpotsAvailable: 15
-    ),
-    .init(
-        from: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: now)!,
-        to: calendar.date(bySettingHour: 16, minute: 0, second: 0, of: now)!,
-        averageSpotsAvailable: 17
-    ),
-    .init(
-        from: calendar.date(bySettingHour: 16, minute: 0, second: 0, of: now)!,
-        to: calendar.date(bySettingHour: 18, minute: 0, second: 0, of: now)!,
-        averageSpotsAvailable: 21
-    ),
-    .init(
-        from: calendar.date(bySettingHour: 18, minute: 0, second: 0, of: now)!,
-        to: calendar.date(bySettingHour: 20, minute: 0, second: 0, of: now)!,
-        averageSpotsAvailable: 47
-    ),
-    .init(
-        from: calendar.date(bySettingHour: 20, minute: 0, second: 0, of: now)!,
-        to: calendar.date(bySettingHour: 22, minute: 0, second: 0, of: now)!,
-        averageSpotsAvailable: 76
-    )
-]
-
-struct ParkingStructureInfoContentView: View {
-    let currentCount = 50
-    let capacity = 100
-    
     @EnvironmentObject var globalIdSelectionModel: GlobalIdSelectionModel
+    @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
     
+    var networkArguments: ParkingStructureNetworkingArguments? {
+        if let systemId = globalSystemsModel.selectedSystem?.id,
+           let parkingStructureId = globalIdSelectionModel.selectedParkingStructureId {
+            return .init(systemId: systemId, parkingStructureId: parkingStructureId)
+        }
+        return nil
+    }
+
     var body: some View {
         ScrollView(.vertical) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
-                    Text("Anderson Structure")
+                    Text(viewModel.name ?? "")
                         .font(.title2)
                         .bold()
                         .accessibilityLabel("Parking structure name")
@@ -81,16 +38,23 @@ struct ParkingStructureInfoContentView: View {
             }
             .padding()
             
-            VStack {
-                HStack {
-                    Text("\(capacity - currentCount) available")
-                    Spacer()
-                    Text("\(currentCount)/\(capacity)")
+            if let capacity = viewModel.capacity,
+               let spotsAvailable = viewModel.spotsAvailable {
+                let currentCount = capacity - spotsAvailable
+                
+                VStack {
+                    HStack {
+                        Text("\(capacity - currentCount) available")
+                        Spacer()
+                        Text("\(currentCount)/\(capacity)")
+                    }
+                    ProgressView(value: Double(currentCount) / Double(capacity))
+                        .progressViewStyle(LinearProgressViewStyle())
                 }
-                ProgressView(value: Double(currentCount) / Double(capacity))
-                    .progressViewStyle(LinearProgressViewStyle())
+                .padding(.horizontal)
+            } else {
+                Text("Parking data not available.")
             }
-            .padding(.horizontal)
 
             Button {
                 
@@ -106,40 +70,74 @@ struct ParkingStructureInfoContentView: View {
             .padding()
             
             HStack {
-                Text("Historical Data")
+                Text("This day last week")
                     .font(.headline)
                 Spacer()
             }
             .padding(.horizontal)
             
-            Group {
-                VStack(alignment: .leading, spacing: 16)  {
-                    Chart(data, id: \.from) { item in
-                        BarMark(
-                            x: .value("Time", item.from ..< item.to),
-                            y: .value("Average spots filled", capacity - item.averageSpotsAvailableRounded)
-                        )
-                    }
-                    .chartGesture { proxy in
-                        SpatialTapGesture().onEnded { value in
-                            if let (from, _) = proxy.value(at: value.location, as: (Date, Int).self),
-                               let tappedIndex = data.firstIndex(where: { $0.from == from }) {
-                                print(tappedIndex)
+            if let averages = viewModel.averages,
+               let capacity = viewModel.capacity,
+               let spotsAvailable = viewModel.spotsAvailable {
+                Group {
+                    VStack(alignment: .leading, spacing: 16)  {
+                        Chart {
+                            if let startOfCurrentTimePeriod = viewModel.startOfCurrentTimePeriod,
+                               let endOfCurrentTimePeriod = viewModel.endOfCurrentTimePeriod {
+                                BarMark(
+                                    x: .value("Time", startOfCurrentTimePeriod ..< endOfCurrentTimePeriod),
+                                    y: .value("Average spots filled", capacity - spotsAvailable)
+                                )
+                                .foregroundStyle(Color.pink)
+                                .zIndex(1)
+                            }
+                            
+                            ForEach(averages, id: \.from) { item in
+                                BarMark(
+                                    x: .value("Time", item.from ..< item.to),
+                                    y: .value("Average spots filled", capacity - item.averageSpotsAvailableRounded)
+                                )
+                                .zIndex(0)
                             }
                         }
+                        .chartGesture { proxy in
+                            SpatialTapGesture().onEnded { value in
+                                if let (from, _) = proxy.value(at: value.location, as: (Date, Int).self),
+                                   let tappedIndex = averages.firstIndex(where: { $0.from == from }) {
+                                    print(tappedIndex)
+                                }
+                            }
+                        }
+                        .chartYAxis {
+                            AxisMarks(position: .automatic, values: stride(from: 0, to: capacity, by: 100).map { $0 })
+                        }
                     }
-                    
-                    Text("Right now, Anderson Structure is 30% more filled than this time from last week.")
                 }
+                .frame(height: 320)
+                .padding()
+            } else {
+                HStack {
+                    Text("No historical data available. Check back later.")
+                    Spacer()
+                }
+                .padding(.horizontal)
             }
-            .frame(height: 320)
-            .padding()
             
+            
+        }
+        .onAppear {
+            restartDataUpdates()
+        }
+        .onDisappear {
+            stopDataUpdates()
         }
     }
 }
 
 #Preview {
-    ParkingStructureInfoContentView()
+    let viewModel = ParkingStructureInfoContentViewModelPlaceholderBuilder().build()
+    
+    ParkingStructureInfoContentView(viewModel: viewModel)
         .environmentObject(GlobalIdSelectionModel())
+        .environmentObject(GlobalSystemsModel())
 }
