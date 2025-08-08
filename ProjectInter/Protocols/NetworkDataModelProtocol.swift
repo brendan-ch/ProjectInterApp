@@ -73,7 +73,9 @@ extension NetworkDataModelProtocol {
     
     func refreshDataOnce(arguments: NetworkArguments) async {
         if dataInitState == .notInitialized {
-            dataInitState = .initializing
+            DispatchQueue.main.sync {
+                self.dataInitState = .initializing
+            }
         }
         
         let query = convertNetworkArgumentsIntoQuery(arguments)
