@@ -23,107 +23,109 @@ struct ParkingStructureInfoContentView: NetworkView {
     }
 
     var body: some View {
-        ScrollView(.vertical) {
-            HStack(alignment: .top) {
-                VStack(alignment: .leading) {
-                    Text(viewModel.name ?? "")
-                        .font(.title2)
-                        .bold()
-                        .accessibilityLabel("Parking structure name")
-                }
-                Spacer()
-                Button("Close") {
-                    globalIdSelectionModel.selectedParkingStructureId = nil
-                }
-            }
-            .padding()
-            
-            if let capacity = viewModel.capacity,
-               let spotsAvailable = viewModel.spotsAvailable {
-                let currentCount = capacity - spotsAvailable
-                
-                VStack {
-                    HStack {
-                        Text("\(capacity - currentCount) available")
-                        Spacer()
-                        Text("\(currentCount)/\(capacity)")
+        WithInitializationView(dataInitState: viewModel.dataInitState) {
+            ScrollView(.vertical) {
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading) {
+                        Text(viewModel.name ?? "")
+                            .font(.title2)
+                            .bold()
+                            .accessibilityLabel("Parking structure name")
                     }
-                    ProgressView(value: Double(currentCount) / Double(capacity))
-                        .progressViewStyle(LinearProgressViewStyle())
+                    Spacer()
+                    Button("Close") {
+                        globalIdSelectionModel.selectedParkingStructureId = nil
+                    }
+                }
+                .padding()
+                
+                if let capacity = viewModel.capacity,
+                   let spotsAvailable = viewModel.spotsAvailable {
+                    let currentCount = capacity - spotsAvailable
+                    
+                    VStack {
+                        HStack {
+                            Text("\(capacity - currentCount) available")
+                            Spacer()
+                            Text("\(currentCount)/\(capacity)")
+                        }
+                        ProgressView(value: Double(currentCount) / Double(capacity))
+                            .progressViewStyle(LinearProgressViewStyle())
+                    }
+                    .padding(.horizontal)
+                } else {
+                    Text("Parking data not available.")
+                }
+                
+                Button {
+                    
+                } label: {
+                    HStack {
+                        Spacer()
+                        Text("Directions")
+                        Spacer()
+                    }
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.large)
+                .padding()
+                
+                HStack {
+                    Text("This day last week")
+                        .font(.headline)
+                    Spacer()
                 }
                 .padding(.horizontal)
-            } else {
-                Text("Parking data not available.")
-            }
-
-            Button {
                 
-            } label: {
-                HStack {
-                    Spacer()
-                    Text("Directions")
-                    Spacer()
-                }
-            }
-            .buttonStyle(.bordered)
-            .controlSize(.large)
-            .padding()
-            
-            HStack {
-                Text("This day last week")
-                    .font(.headline)
-                Spacer()
-            }
-            .padding(.horizontal)
-            
-            if let averages = viewModel.averages,
-               let capacity = viewModel.capacity,
-               let spotsAvailable = viewModel.spotsAvailable {
-                Group {
-                    VStack(alignment: .leading, spacing: 16)  {
-                        Chart {
-                            if let startOfCurrentTimePeriod = viewModel.startOfCurrentTimePeriod,
-                               let endOfCurrentTimePeriod = viewModel.endOfCurrentTimePeriod {
-                                BarMark(
-                                    x: .value("Time", startOfCurrentTimePeriod ..< endOfCurrentTimePeriod),
-                                    y: .value("Average spots filled", capacity - spotsAvailable)
-                                )
-                                .foregroundStyle(Color.pink)
-                                .zIndex(1)
-                            }
-                            
-                            ForEach(averages, id: \.from) { item in
-                                BarMark(
-                                    x: .value("Time", item.from ..< item.to),
-                                    y: .value("Average spots filled", capacity - item.averageSpotsAvailableRounded)
-                                )
-                                .zIndex(0)
-                            }
-                        }
-                        .chartGesture { proxy in
-                            SpatialTapGesture().onEnded { value in
-                                if let (from, _) = proxy.value(at: value.location, as: (Date, Int).self),
-                                   let tappedIndex = averages.firstIndex(where: { $0.from == from }) {
-                                    print(tappedIndex)
+                if let averages = viewModel.averages,
+                   let capacity = viewModel.capacity,
+                   let spotsAvailable = viewModel.spotsAvailable {
+                    Group {
+                        VStack(alignment: .leading, spacing: 16)  {
+                            Chart {
+                                if let startOfCurrentTimePeriod = viewModel.startOfCurrentTimePeriod,
+                                   let endOfCurrentTimePeriod = viewModel.endOfCurrentTimePeriod {
+                                    BarMark(
+                                        x: .value("Time", startOfCurrentTimePeriod ..< endOfCurrentTimePeriod),
+                                        y: .value("Average spots filled", capacity - spotsAvailable)
+                                    )
+                                    .foregroundStyle(Color.pink)
+                                    .zIndex(1)
+                                }
+                                
+                                ForEach(averages, id: \.from) { item in
+                                    BarMark(
+                                        x: .value("Time", item.from ..< item.to),
+                                        y: .value("Average spots filled", capacity - item.averageSpotsAvailableRounded)
+                                    )
+                                    .zIndex(0)
                                 }
                             }
-                        }
-                        .chartYAxis {
-                            AxisMarks(position: .automatic, values: stride(from: 0, to: capacity, by: 100).map { $0 })
+                            .chartGesture { proxy in
+                                SpatialTapGesture().onEnded { value in
+                                    if let (from, _) = proxy.value(at: value.location, as: (Date, Int).self),
+                                       let tappedIndex = averages.firstIndex(where: { $0.from == from }) {
+                                        print(tappedIndex)
+                                    }
+                                }
+                            }
+                            .chartYAxis {
+                                AxisMarks(position: .automatic, values: stride(from: 0, to: capacity, by: 100).map { $0 })
+                            }
                         }
                     }
+                    .frame(height: 320)
+                    .padding()
+                } else {
+                    HStack {
+                        Text("No historical data available. Check back later.")
+                        Spacer()
+                    }
+                    .padding(.horizontal)
                 }
-                .frame(height: 320)
-                .padding()
-            } else {
-                HStack {
-                    Text("No historical data available. Check back later.")
-                    Spacer()
-                }
-                .padding(.horizontal)
+                
+                
             }
-            
-            
         }
         .onAppear {
             restartDataUpdates()

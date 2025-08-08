@@ -37,37 +37,39 @@ struct RouteListContentView: NetworkView {
     
     var body: some View {
         RootSheetContentView(title: "Routes") {
-            HStack {
-                VStack(alignment: .leading) {
-                    HStack(spacing: 4) {
-                        Text("Current stop: \(globalStopsState.selectedStop?.name ?? "")")
-                        if locationManagerState.locationIsUpdating,
-                           globalStopsState.selectedStop == nil {
-                            Text("Loading...")
+            WithInitializationView(dataInitState: viewModel.dataInitState) {
+                HStack {
+                    VStack(alignment: .leading) {
+                        HStack(spacing: 4) {
+                            Text("Current stop: \(globalStopsState.selectedStop?.name ?? "")")
+                            if locationManagerState.locationIsUpdating,
+                               globalStopsState.selectedStop == nil {
+                                Text("Loading...")
+                            }
+                            
+                            if globalStopsState.isAutomaticWhenLocationIsAvailable {
+                                Image(systemName: "location.fill")
+                                    .accessibilityLabel("Automatic selection enabled")
+                            }
                         }
-                        
-                        if globalStopsState.isAutomaticWhenLocationIsAvailable {
-                            Image(systemName: "location.fill")
-                                .accessibilityLabel("Automatic selection enabled")
+                        Button("Change stop") {
+                            showStopSelectionView = true
                         }
                     }
-                    Button("Change stop") {
-                        showStopSelectionView = true
-                    }
-                }
-                Spacer()
-            }
-            .padding(.horizontal)
-            
-            Divider()
-            ForEach(viewModel.routes) { route in
-                RouteListItem(route: route) { selectedRoute in
-                    globalIdSelectionModel.selectedRouteId = route.id
+                    Spacer()
                 }
                 .padding(.horizontal)
-                .buttonStyle(.plain)
                 
                 Divider()
+                ForEach(viewModel.routes) { route in
+                    RouteListItem(route: route) { selectedRoute in
+                        globalIdSelectionModel.selectedRouteId = route.id
+                    }
+                    .padding(.horizontal)
+                    .buttonStyle(.plain)
+                    
+                    Divider()
+                }
             }
         }
         .onAppear {
