@@ -61,6 +61,7 @@ actor ApolloActor {
             }
         }
         
+        activeStreams[streamKey] = stream
         return stream
     }
     
