@@ -9,13 +9,8 @@ import Foundation
 import Apollo
 import ApolloAPI
 
-actor ApolloActor {
+class ApolloNetworkModel {
     private let client: ApolloClientProtocol
-    private var activeStreams: [String: Any] = [:]
-    
-    var numStreams: Int {
-        activeStreams.count
-    }
     
     init(client: ApolloClientProtocol) {
         self.client = client
@@ -26,12 +21,6 @@ actor ApolloActor {
         _ query: Query,
         sleepDuration: Duration = .seconds(5)
     ) -> AsyncStream<Result<Query.Data, Error>> {
-        let streamKey = getStreamKey(query)
-        
-        if let existingStream = activeStreams[streamKey] as? AsyncStream<Result<Query.Data, Error>> {
-            return existingStream
-        }
-        
         let stream = AsyncStream<Result<Query.Data, Error>> { continuation in
             let task = Task {
                 while !Task.isCancelled {
@@ -52,24 +41,10 @@ actor ApolloActor {
             
             continuation.onTermination = { _ in
                 task.cancel()
-                Task {
-                    await self.removeStream(for: query)
-                }
             }
         }
         
-        activeStreams[streamKey] = stream
         return stream
-    }
-    
-    func removeStream<Query: GraphQLQuery>(for query: Query) {
-        let streamKey = getStreamKey(query)
-        activeStreams.removeValue(forKey: streamKey)
-    }
-    
-    func getStreamKey<Query: GraphQLQuery>(_ query: Query) -> String {
-        let streamKey = String(describing: Query.self) + (query.__variables?.description ?? "")
-        return streamKey
     }
     
     private func fetchOnce<Query: GraphQLQuery>(_ query: Query) async throws -> GraphQLResult<Query.Data> {
