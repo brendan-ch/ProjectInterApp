@@ -9,11 +9,6 @@ import Foundation
 import Apollo
 import ApolloAPI
 
-enum ApolloFetchError: Error {
-    case noData
-    case fetchError(Error)
-}
-
 actor ApolloActor {
     private let client: ApolloClientProtocol
     private var activeStreams: [String: Any] = [:]
@@ -30,25 +25,24 @@ actor ApolloActor {
         // Will need to wait for Apollo 2.0.0 migration to resolve non-sendable type error
         _ query: Query,
         sleepDuration: Duration = .seconds(5)
-    ) -> AsyncStream<Result<Query.Data, ApolloFetchError>> {
+    ) -> AsyncStream<Result<Query.Data, Error>> {
         let streamKey = getStreamKey(query)
         
-        if let existingStream = activeStreams[streamKey] as? AsyncStream<Result<Query.Data, ApolloFetchError>> {
+        if let existingStream = activeStreams[streamKey] as? AsyncStream<Result<Query.Data, Error>> {
             return existingStream
         }
         
-        let stream = AsyncStream<Result<Query.Data, ApolloFetchError>> { continuation in
+        let stream = AsyncStream<Result<Query.Data, Error>> { continuation in
             let task = Task {
                 while !Task.isCancelled {
                     do {
                         let result = try await self.fetchOnce(query)
                         if let data = result.data {
                             continuation.yield(.success(data))
-                        } else {
-                            continuation.yield(.failure(ApolloFetchError.noData))
                         }
                     } catch {
-                        continuation.yield(.failure(ApolloFetchError.fetchError(error)))
+                        Loggers.shared.networkingLogger.error("\(error.localizedDescription)")
+                        continuation.yield(.failure(error))
                     }
                     
                     try? await Task.sleep(for: sleepDuration)
@@ -58,6 +52,9 @@ actor ApolloActor {
             
             continuation.onTermination = { _ in
                 task.cancel()
+                Task {
+                    await self.removeStream(for: query)
+                }
             }
         }
         
@@ -65,7 +62,7 @@ actor ApolloActor {
         return stream
     }
     
-    func removeStream<Query: GraphQLQuery>(_ query: Query) {
+    func removeStream<Query: GraphQLQuery>(for query: Query) {
         let streamKey = getStreamKey(query)
         activeStreams.removeValue(forKey: streamKey)
     }
