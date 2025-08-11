@@ -22,7 +22,7 @@ actor ApolloActor {
         self.client = client
     }
     
-    func stream<Query: GraphQLQuery>(
+    func getStream<Query: GraphQLQuery>(
         // Will need to wait for Apollo 2.0.0 migration to resolve non-sendable type error
         _ query: Query,
         sleepDuration: Duration = .seconds(5)
@@ -65,7 +65,7 @@ actor ApolloActor {
         activeStreams.removeValue(forKey: streamKey)
     }
     
-    private func getStreamKey<Query: GraphQLQuery>(_ query: Query) -> String {
+    func getStreamKey<Query: GraphQLQuery>(_ query: Query) -> String {
         let streamKey = String(describing: Query.self) + (query.__variables?.description ?? "")
         return streamKey
     }
