@@ -18,6 +18,10 @@ actor ApolloActor {
     private let client: ApolloClientProtocol
     private var activeStreams: [String: Any] = [:]
     
+    var numStreams: Int {
+        activeStreams.count
+    }
+    
     init(client: ApolloClientProtocol) {
         self.client = client
     }
