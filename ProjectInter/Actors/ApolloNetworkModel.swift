@@ -49,7 +49,36 @@ class ApolloNetworkModel {
     
     private func fetchOnce<Query: GraphQLQuery>(_ query: Query) async throws -> GraphQLResult<Query.Data> {
         return try await withCheckedThrowingContinuation { continuation in
+            var continuationIsActive = true
+
             client.fetch(query: query) { result in
+                defer {
+                    continuationIsActive = false
+                }
+                
+                if !continuationIsActive {
+                    return
+                }
+
+                // ensure this is only called once
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    func mutateOnce<Mutation: GraphQLMutation>(_ mutation: Mutation) async throws -> GraphQLResult<Mutation.Data> {
+        return try await withCheckedThrowingContinuation { continuation in
+            var continuationIsActive = true
+            
+            client.perform(mutation: mutation) { result in
+                defer {
+                    continuationIsActive = false
+                }
+                
+                if !continuationIsActive {
+                    return
+                }
+                
                 continuation.resume(with: result)
             }
         }

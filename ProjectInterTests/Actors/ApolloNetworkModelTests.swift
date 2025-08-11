@@ -69,4 +69,29 @@ class ApolloNetworkModelTests {
             task.cancel()
         }
     }
+    
+    @Test func mutateOncePerformsTheMutation() async {
+        let client = MockApolloClient()
+        client.mutationMock = .init(
+            cancelNotification: .init(
+                data: .init(
+                    deviceId: "1",
+                    shuttleId: "1",
+                    stopId: "1"
+                ),
+                message: "Successfully performed operation",
+                success: true
+            )
+        )
+        let actor = ApolloNetworkModel(client: client)
+        let mutation = CancelNotificationMutation(input: .init(
+            deviceId: "1",
+            shuttleId: "1",
+            stopId: "1"
+        ))
+        
+        await #expect(throws: Never.self) {
+            try await actor.mutateOnce(mutation)
+        }
+    }
 }
