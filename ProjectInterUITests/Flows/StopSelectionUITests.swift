@@ -14,7 +14,7 @@ final class StopSelectionUITests: BaseUITests {
     }
     
     @MainActor
-    func testOpenAndClosingFlow() async {
+    func testOpenAndClosingFlowWithoutAnyRoutes() async {
         await mockGetAllStopsQueryAndResponse()
         
         app.launch()

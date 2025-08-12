@@ -16,16 +16,16 @@ struct ProjectInterApp: App {
     
     @StateObject var globalIdSelectionStateObject = GlobalIdSelectionModel()
     
-    @StateObject var globalSystemsStateObject = GlobalSystemsModel(apolloClient: ApolloClientHolderSingleton.shared.apolloClient)
+    @StateObject var globalSystemsStateObject = GlobalSystemsModel(apolloNetworkModel: ApolloNetworkModelSingleton.shared.apolloNetworkModel)
     
-    @StateObject var globalStopsStateObject = GlobalStopsModel(apolloClient: ApolloClientHolderSingleton.shared.apolloClient)
+    @StateObject var globalStopsStateObject = GlobalStopsModel(apolloNetworkModel: ApolloNetworkModelSingleton.shared.apolloNetworkModel)
     
     @StateObject var globalNotificationsStateObject = GlobalNotificationSchedulingModel(apolloClient: ApolloClientHolderSingleton.shared.apolloClient)
     
     @StateObject var setupStateModel = SetupStateModel()
     
     @StateObject var schemaVersionModel = SchemaVersionModel(
-        apolloClient: ApolloClientHolderSingleton.shared.apolloClient,
+        apolloNetworkModel: ApolloNetworkModelSingleton.shared.apolloNetworkModel,
         appSchemaVersion: Bundle.main.infoDictionary?["APP_SCHEMA_VERSION"] as? Int
     )
     

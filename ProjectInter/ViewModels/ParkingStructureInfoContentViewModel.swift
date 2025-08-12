@@ -56,12 +56,12 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
     
     var dataRefreshLoopTask: Task<Void, any Error>?
     
-    var apolloClient: (any Apollo.ApolloClientProtocol)?
-    
-    required init(apolloClient: (any Apollo.ApolloClientProtocol)? = nil) {
-        self.apolloClient = apolloClient
+    var apolloNetworkModel: ApolloNetworkModel?
+
+    required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
+        self.apolloNetworkModel = apolloNetworkModel
     }
-    
+
     private func setStartAndEndPeriodForCurrentCorrespondingAverage() {
         let oneWeekAgo = calendar.date(byAdding: .day, value: -7, to: Date())!
         guard let average = findAverageCorrespondingToDate(oneWeekAgo) else {
@@ -110,12 +110,12 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
             historicalAveragesInput: historicalAverageInput)
     }
     
-    func processRefreshDataResult(_ result: Result<Apollo.GraphQLResult<ProjectInterOperations.GetParkingStructureInfoDataQuery.Data>, any Error>) {
+    func processRefreshDataResult(_ result: Result<GetParkingStructureInfoDataQuery.Data, any Error>) {
         switch result {
         case .failure(let error):
             Loggers.shared.networkingLogger.log("Failed to fetch parking structure info: \(error)")
         case .success(let result):
-            guard let parkingStructure = result.data?.system?.parkingSystem?.parkingStructure else {
+            guard let parkingStructure = result.system?.parkingSystem?.parkingStructure else {
                 clearAllData()
                 return
             }

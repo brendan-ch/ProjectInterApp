@@ -82,10 +82,11 @@ class GlobalStopsModelTests {
 
     @Test func testRefreshStopDataWithValidDataAndSorting() async throws {
         let mockClient = MockApolloClient()
-        
         mockClient.queryMock = mock
+        
+        let networkModel = ApolloNetworkModel(client: mockClient)
 
-        let globalStopsModel = GlobalStopsModel(apolloClient: mockClient)
+        let globalStopsModel = GlobalStopsModel(apolloNetworkModel: networkModel)
         let arguments = GlobalStopsNetworkArguments(systemId: "1")
         
         await globalStopsModel.refreshDataOnce(arguments: arguments)

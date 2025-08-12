@@ -29,11 +29,11 @@ class GlobalSystemsModel: NetworkDataModelProtocol {
     
     @Published var dataInitState: InitializationState = .notInitialized
     
-    var apolloClient: ApolloClientProtocol?
-    
     var dataRefreshLoopTask: Task<Void, any Error>?
     
     let userDefaults: UserDefaults
+    
+    var apolloNetworkModel: ApolloNetworkModel?
     
     @Published var systems: [System] = []
     @Published private var selectedSystemId: String? = nil {
@@ -45,15 +45,18 @@ class GlobalSystemsModel: NetworkDataModelProtocol {
         systems.first { $0.id == selectedSystemId }
     }
     
-    required convenience init(apolloClient: ApolloClientProtocol? = nil) {
-        self.init(apolloClient: apolloClient, userDefaults: .standard)
+    required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
+        self.apolloNetworkModel = apolloNetworkModel
+        self.userDefaults = UserDefaults.standard
+        
+        selectedSystemId = self.userDefaults.string(forKey: UserDefaults.selectedSystemIdKey)
     }
 
     init(
-        apolloClient: ApolloClientProtocol? = nil,
+        apolloNetworkModel: ApolloNetworkModel? = nil,
         userDefaults: UserDefaults = UserDefaults.standard
     ) {
-        self.apolloClient = apolloClient
+        self.apolloNetworkModel = apolloNetworkModel
         self.userDefaults = userDefaults
         
         selectedSystemId = self.userDefaults.string(forKey: UserDefaults.selectedSystemIdKey)
@@ -63,13 +66,11 @@ class GlobalSystemsModel: NetworkDataModelProtocol {
         return GetAllSystemsQuery()
     }
     
-    func processRefreshDataResult(_ result: Result<GraphQLResult<GetAllSystemsQuery.Data>, any Error>) {
+    func processRefreshDataResult(_ result: Result<GetAllSystemsQuery.Data, any Error>) {
         switch result {
-        case .success(let response):
-            if let data = response.data {
-                self.systems = data.systems.map { system in
-                    System(name: system.name, id: system.id)
-                }
+        case .success(let data):
+            self.systems = data.systems.map { system in
+                System(name: system.name, id: system.id)
             }
         case .failure(let error):
             print("Error fetching data: \(error)")

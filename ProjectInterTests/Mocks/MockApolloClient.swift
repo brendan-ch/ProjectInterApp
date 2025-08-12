@@ -23,6 +23,9 @@ class MockApolloClient: ApolloClientProtocol {
     var queryMock: Mock<ProjectInterTestMocks.Query>?
     var mutationMock: Mock<ProjectInterTestMocks.Mutation>?
     
+    // MARK: - Function calling data
+    var lastMutationPassed: (any GraphQLMutation)?
+    
     // MARK: - ApolloClientProtocol conformance
     var store: Apollo.ApolloStore
     
@@ -66,6 +69,7 @@ class MockApolloClient: ApolloClientProtocol {
     }
     
     func perform<Mutation>(mutation: Mutation, publishResultToStore: Bool, contextIdentifier: UUID?, context: (any Apollo.RequestContext)?, queue: DispatchQueue, resultHandler: Apollo.GraphQLResultHandler<Mutation.Data>?) -> (any Apollo.Cancellable) where Mutation : ApolloAPI.GraphQLMutation {
+        lastMutationPassed = mutation
         
         guard let mock = mutationMock else {
             resultHandler?(.failure(MockError()))

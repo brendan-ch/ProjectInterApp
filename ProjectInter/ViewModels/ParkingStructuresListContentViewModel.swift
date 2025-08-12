@@ -45,22 +45,22 @@ class ParkingStructuresListContentViewModel: NetworkDataModelProtocol {
     
     var dataRefreshLoopTask: Task<Void, any Error>?
     
-    var apolloClient: ApolloClientProtocol?
-    
-    required init(apolloClient: ApolloClientProtocol? = nil) {
-        self.apolloClient = apolloClient
+    var apolloNetworkModel: ApolloNetworkModel?
+
+    required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
+        self.apolloNetworkModel = apolloNetworkModel
     }
     
     func convertNetworkArgumentsIntoQuery(_ arguments: ParkingStructuresNetworkingArguments) -> GetParkingStructuresListDataQuery {
         return GetParkingStructuresListDataQuery(systemId: arguments.systemId)
     }
     
-    func processRefreshDataResult(_ result: Result<GraphQLResult<GetParkingStructuresListDataQuery.Data>, any Error>) {
+    func processRefreshDataResult(_ result: Result<GetParkingStructuresListDataQuery.Data, any Error>) {
         switch result {
         case .failure(let error):
             print("Error fetching parking structures list data: \(error)")
         case .success(let result):
-            guard let parkingSystem = result.data?.system?.parkingSystem else {
+            guard let parkingSystem = result.system?.parkingSystem else {
                 self.structuresSupportedBySystem = false
                 
                 return

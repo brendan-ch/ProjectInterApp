@@ -136,20 +136,20 @@ class MapViewModel: NetworkDataModelProtocol {
     
     @Published var dataInitState: InitializationState = .notInitialized
 
-    var apolloClient: ApolloClientProtocol?
-    
     var dataRefreshLoopTask: Task<Void, any Error>?
     
-    required init(apolloClient: ApolloClientProtocol? = nil) {
-        self.apolloClient = apolloClient
+    var apolloNetworkModel: ApolloNetworkModel? = ApolloNetworkModel.shared
+
+    required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
+        self.apolloNetworkModel = apolloNetworkModel
     }
     
     func convertNetworkArgumentsIntoQuery(_ arguments: MapViewNetworkArguments) -> GetMapDataQuery {
         return GetMapDataQuery(systemId: arguments.systemId)
     }
     
-    func processRefreshDataResult(_ result: Result<GraphQLResult<GetMapDataQuery.Data>, Error>) {
-        guard let data = try? result.get().data else {
+    func processRefreshDataResult(_ result: Result<GetMapDataQuery.Data, Error>) {
+        guard let data = try? result.get() else {
             Loggers.shared.networkingLogger.warning("No data received for map data query in \(type(of: self))")
             return
         }
