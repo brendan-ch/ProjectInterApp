@@ -38,8 +38,9 @@ protocol NetworkDataModelTestsProtocol {
 extension NetworkDataModelTestsProtocol {
     func generateClientAndViewModelWithArguments() -> (MockApolloClient, ViewModel, NetworkArguments) {
         let mockClient = MockApolloClient()
+        let networkModel = ApolloNetworkModel(client: mockClient)
         
-        let viewModel = ViewModel(apolloClient: mockClient)
+        let viewModel = ViewModel(apolloNetworkModel: networkModel)
         let arguments = networkArguments
         return (mockClient, viewModel, arguments)
     }
@@ -54,7 +55,9 @@ extension NetworkDataModelTestsProtocol {
         let mockClient = MockApolloClient()
         mockClient.queryMock = defaultMock as? Mock<Query>
         
-        let viewModel = ViewModel(apolloClient: mockClient)
+        let networkModel = ApolloNetworkModel(client: mockClient)
+
+        let viewModel = ViewModel(apolloNetworkModel: networkModel)
         viewModel.startRefreshingData(arguments: networkArguments, sleepDuration: .milliseconds(1000))
         try? await Task.sleep(for: .milliseconds(200))
         
@@ -65,7 +68,9 @@ extension NetworkDataModelTestsProtocol {
         let mockClient = MockApolloClient()
         mockClient.queryMock = defaultMock as? Mock<Query>
         
-        let viewModel = ViewModel(apolloClient: mockClient)
+        let networkModel = ApolloNetworkModel(client: mockClient)
+        
+        let viewModel = ViewModel(apolloNetworkModel: networkModel)
         let arguments = networkArguments
         
         viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(100))
@@ -85,7 +90,9 @@ extension NetworkDataModelTestsProtocol {
         let mockClient = MockApolloClient()
         mockClient.queryMock = defaultMock as? Mock<Query>
         
-        let viewModel = ViewModel(apolloClient: mockClient)
+        let networkModel = ApolloNetworkModel(client: mockClient)
+
+        let viewModel = ViewModel(apolloNetworkModel: networkModel)
         viewModel.startRefreshingData(arguments: networkArguments, sleepDuration: .milliseconds(100))
         
         try? await Task.sleep(for: .milliseconds(500))
@@ -102,7 +109,9 @@ extension NetworkDataModelTestsProtocol {
         let mockClient = MockApolloClient()
         mockClient.queryMock = defaultMock as? Mock<Query>
         
-        let viewModel = ViewModel(apolloClient: mockClient)
+        let networkModel = ApolloNetworkModel(client: mockClient)
+        
+        let viewModel = ViewModel(apolloNetworkModel: networkModel)
         let arguments = networkArguments
         await viewModel.refreshDataOnce(arguments: arguments)
         
@@ -113,7 +122,9 @@ extension NetworkDataModelTestsProtocol {
         let mockClient = MockApolloClient()
         mockClient.queryMock = nil
         
-        let viewModel = ViewModel(apolloClient: mockClient)
+        let networkModel = ApolloNetworkModel(client: mockClient)
+        
+        let viewModel = ViewModel(apolloNetworkModel: networkModel)
         let arguments = networkArguments
         await viewModel.refreshDataOnce(arguments: arguments)
         
@@ -121,7 +132,7 @@ extension NetworkDataModelTestsProtocol {
     }
     
     func autoTest_refreshDataOnceDoesNothingIfNoApolloClient() async {
-        let viewModel = ViewModel(apolloClient: nil)
+        let viewModel = ViewModel(apolloNetworkModel: nil)
         let arguments = networkArguments
         
         await viewModel.refreshDataOnce(arguments: arguments)
