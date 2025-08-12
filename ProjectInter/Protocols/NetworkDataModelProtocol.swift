@@ -97,15 +97,13 @@ extension NetworkDataModelProtocol where Self: Sendable {
             return
         }
         Loggers.shared.networkingLogger.notice("Refreshing data for \(type(of: self))")
-        Task {
-            do {
-                let result = try await apolloNetworkModel.fetchOnce(query)
-                if let data = result.data {
-                    await processRefreshDataResult(.success(data))
-                }
-            } catch {
-                await processRefreshDataResult(.failure(error))
+        do {
+            let result = try await apolloNetworkModel.fetchOnce(query)
+            if let data = result.data {
+                await processRefreshDataResult(.success(data))
             }
+        } catch {
+            await processRefreshDataResult(.failure(error))
         }
     }
 }
