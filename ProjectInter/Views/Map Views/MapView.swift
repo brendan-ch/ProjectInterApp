@@ -153,6 +153,11 @@ struct MapView: NetworkView {
             globalIdSelectionModel.selectedShuttleId = nil
         }
     }
+    
+    func restartDataUpdates() {
+        guard let networkArguments = networkArguments else { return }
+        viewModel.startRefreshingData(arguments: networkArguments)
+    }
 }
 
 extension MapView {

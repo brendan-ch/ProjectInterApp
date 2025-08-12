@@ -46,7 +46,7 @@ protocol NetworkDataModelProtocol: ObservableObject {
     @MainActor
     func processRefreshDataResult(_ result: Result<GraphQLQueryType.Data, Error>)
 
-    var apolloNetworkModel: ApolloNetworkModel? { get }
+    var apolloNetworkModel: ApolloNetworkModel? { get set }
     
     init(apolloNetworkModel: ApolloNetworkModel?)
 }

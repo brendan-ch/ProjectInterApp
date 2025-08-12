@@ -19,7 +19,7 @@ class SchemaVersionModel: NetworkDataModelProtocol {
     
     var dataRefreshLoopTask: Task<Void, any Error>?
     
-    var apolloClient: (any ApolloClientProtocol)?
+    var apolloNetworkModel: ApolloNetworkModel?
     
     @Published var dataInitState: InitializationState = .notInitialized
     
@@ -39,12 +39,12 @@ class SchemaVersionModel: NetworkDataModelProtocol {
         return false
     }
     
-    required init(apolloClient: (any Apollo.ApolloClientProtocol)?) {
-        self.apolloClient = apolloClient
+    required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
+        self.apolloNetworkModel = apolloNetworkModel
     }
     
-    convenience init(apolloClient: (any Apollo.ApolloClientProtocol)?, appSchemaVersion: Int?) {
-        self.init(apolloClient: apolloClient)
+    convenience init(apolloNetworkModel: ApolloNetworkModel? = nil, appSchemaVersion: Int?) {
+        self.init(apolloNetworkModel: apolloNetworkModel)
         self.appSchemaVersion = appSchemaVersion
     }
     
@@ -52,35 +52,15 @@ class SchemaVersionModel: NetworkDataModelProtocol {
         return GetSchemaVersionQuery()
     }
     
-    func processRefreshDataResult(_ result: Result<GraphQLResult<GetSchemaVersionQuery.Data>, any Error>) {
+    func processRefreshDataResult(_ result: Result<GetSchemaVersionQuery.Data, any Error>) {
         switch result {
         case .failure(let error):
             print("Error fetching schema versions: \(error)")
         case .success(let result):
-            self.serverMinSchemaVersion = result.data?.schemaMinVersion
-            self.serverCurrentSchemaVersion = result.data?.schemaCurrentVersion
+            self.serverMinSchemaVersion = result.schemaMinVersion
+            self.serverCurrentSchemaVersion = result.schemaCurrentVersion
         }
         
         self.compatibilityCheckCompleted = true
-    }
-
-    func refreshDataOnce(arguments: SchemaVersionModelNetworkArguments) async {
-        guard let apolloClient = apolloClient else {
-            return
-        }
-        
-        return await withCheckedContinuation { continuation in
-            var continuationIsActive = true
-            apolloClient.fetch(query: GetSchemaVersionQuery()) { [weak self] result in
-                if !continuationIsActive {
-                    return
-                }
-                
-                self?.processRefreshDataResult(result)
-                
-                continuationIsActive = false
-                continuation.resume()
-            }
-        }
     }
 }

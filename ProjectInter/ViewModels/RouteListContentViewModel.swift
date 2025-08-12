@@ -95,40 +95,38 @@ class RouteListContentViewModel: NetworkDataModelProtocol {
     
     @Published var dataInitState: InitializationState = .notInitialized
     
-    var apolloClient: ApolloClientProtocol?
-    
+    var apolloNetworkModel: ApolloNetworkModel?
+
     var dataRefreshLoopTask: Task<Void, Error>?
     
-    required init(apolloClient: ApolloClientProtocol? = nil) {
-        self.apolloClient = apolloClient
+    required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
+        self.apolloNetworkModel = apolloNetworkModel
     }
-    
+
     func convertNetworkArgumentsIntoQuery(_ arguments: RouteListNetworkArguments) -> GetRouteListDataQuery {
         return GetRouteListDataQuery(systemId: arguments.systemId, stopId: arguments.stopId)
     }
     
-    func processRefreshDataResult(_ result: Result<GraphQLResult<GetRouteListDataQuery.Data>, any Error>) {
+    func processRefreshDataResult(_ result: Result<GetRouteListDataQuery.Data, any Error>) {
         switch result {
         case .success(let response):
-            self.updateDataFromResponse(response: response)
+            self.updateDataFromResponse(data: response)
         case .failure(let error):
             print("Error fetching data: \(error)")
         }
     }
     
-    private func updateDataFromResponse(response: GraphQLResult<GetRouteListDataQuery.Data>) {
-        if let data = response.data {
-            if let orderedStops = data.system?.stop?.orderedStops {
-                self.routes = []
-                orderedStops.forEach { orderedStop in
-                    if let route = orderedStop.route {
-                        var constructedRoute = RouteListContentViewRoute(route)
-                        if let nextStop = orderedStop.nextStop?.stop {
-                            constructedRoute.nextStopName = nextStop.name
-                        }
-                        
-                        self.routes.append(constructedRoute)
+    private func updateDataFromResponse(data: GetRouteListDataQuery.Data) {
+        if let orderedStops = data.system?.stop?.orderedStops {
+            self.routes = []
+            orderedStops.forEach { orderedStop in
+                if let route = orderedStop.route {
+                    var constructedRoute = RouteListContentViewRoute(route)
+                    if let nextStop = orderedStop.nextStop?.stop {
+                        constructedRoute.nextStopName = nextStop.name
                     }
+                    
+                    self.routes.append(constructedRoute)
                 }
             }
         }

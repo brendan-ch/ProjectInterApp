@@ -12,6 +12,8 @@ import ApolloAPI
 class ApolloNetworkModel {
     private let client: ApolloClientProtocol
     
+    static let shared = ApolloNetworkModel(client: ApolloClientHolderSingleton.shared.apolloClient)
+    
     init(client: ApolloClientProtocol) {
         self.client = client
     }
@@ -47,7 +49,7 @@ class ApolloNetworkModel {
         return stream
     }
     
-    private func fetchOnce<Query: GraphQLQuery>(_ query: Query) async throws -> GraphQLResult<Query.Data> {
+    func fetchOnce<Query: GraphQLQuery>(_ query: Query) async throws -> GraphQLResult<Query.Data> {
         return try await withCheckedThrowingContinuation { continuation in
             var continuationIsActive = true
 

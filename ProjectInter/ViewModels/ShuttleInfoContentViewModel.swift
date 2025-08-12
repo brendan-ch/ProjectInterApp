@@ -90,12 +90,12 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
         }
     }
     
-    var apolloClient: ApolloClientProtocol?
-    
-    required init(apolloClient: ApolloClientProtocol? = nil) {
-        self.apolloClient = apolloClient
+    var apolloNetworkModel: ApolloNetworkModel?
+
+    required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
+        self.apolloNetworkModel = apolloNetworkModel
     }
-    
+
     var dataRefreshLoopTask: Task<Void, any Error>?
     
     func convertNetworkArgumentsIntoQuery(_ arguments: ShuttleInfoNetworkArguments) -> GetShuttleInfoDataQuery {
@@ -111,8 +111,8 @@ class ShuttleInfoContentViewModel: NetworkDataModelProtocol {
         return GetShuttleInfoDataQuery(systemId: systemId, shuttleId: shuttleId, notificationInput: notificationInput)
     }
     
-    func processRefreshDataResult(_ result: Result<GraphQLResult<GetShuttleInfoDataQuery.Data>, any Error>) {
-        guard let data = try? result.get().data else {
+    func processRefreshDataResult(_ result: Result<GetShuttleInfoDataQuery.Data, any Error>) {
+        guard let data = try? result.get() else {
             return
         }
         guard let shuttle = data.system?.shuttle else {

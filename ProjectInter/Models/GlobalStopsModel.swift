@@ -69,26 +69,28 @@ class GlobalStopsModel: NetworkDataModelProtocol {
     /// sets this to false.
     @Published var isAutomaticWhenLocationIsAvailable: Bool = false
     
-    required init(apolloClient: ApolloClientProtocol? = nil) {
-        self.apolloClient = apolloClient
+    var apolloNetworkModel: ApolloNetworkModel?
+    
+    required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
+        self.apolloNetworkModel = apolloNetworkModel
     }
     
     func convertNetworkArgumentsIntoQuery(_ arguments: GlobalStopsNetworkArguments) -> GetAllStopsBySystemIdQuery {
         return GetAllStopsBySystemIdQuery(systemId: arguments.systemId)
     }
     
-    func processRefreshDataResult(_ result: Result<GraphQLResult<GetAllStopsBySystemIdQuery.Data>, any Error>) {
-        guard let data = try? result.get().data else {
+    internal func processRefreshDataResult(_ result: Result<GetAllStopsBySystemIdQuery.Data, any Error>) {
+        guard let data = try? result.get() else {
             return
         }
         guard let stops = data.system?.stops else {
             return
         }
-
+        
         self.stops = stops.map(GlobalStopsModelStop.init)
         self.stops.sort { $0.name < $1.name }
     }
-
+    
     func selectStopId(_ stopId: String) {
         selectedStopId = stopId
         isAutomaticWhenLocationIsAvailable = false

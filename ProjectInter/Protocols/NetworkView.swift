@@ -23,8 +23,8 @@ protocol NetworkView: View {
 
 extension NetworkView {
     func restartDataUpdates() {
-        if let apolloClient = globalSystemsModel.apolloClient {
-            viewModel.apolloClient = apolloClient
+        if let apolloNetworkModel = globalSystemsModel.apolloNetworkModel {
+            viewModel.apolloNetworkModel = apolloNetworkModel
         }
         
         if let networkArguments = networkArguments {

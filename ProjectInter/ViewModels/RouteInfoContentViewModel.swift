@@ -63,12 +63,12 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
     
     @Published var dataInitState: InitializationState = .notInitialized
     
-    var apolloClient: ApolloClientProtocol?
+    var apolloNetworkModel: ApolloNetworkModel?
     
     var dataRefreshLoopTask: Task<Void, Error>?
     
-    required init(apolloClient: ApolloClientProtocol? = nil) {
-        self.apolloClient = apolloClient
+    required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
+        self.apolloNetworkModel = apolloNetworkModel
     }
     
     func convertNetworkArgumentsIntoQuery(_ arguments: RouteInfoNetworkArguments) -> GetRouteInfoDataQuery {
@@ -79,7 +79,7 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
         )
     }
     
-    func processRefreshDataResult(_ result: Result<GraphQLResult<GetRouteInfoDataQuery.Data>, any Error>) {
+    func processRefreshDataResult(_ result: Result<GetRouteInfoDataQuery.Data, any Error>) {
         switch result {
         case .success(let response):
             self.updateDataFromResponse(response)
@@ -88,26 +88,24 @@ class RouteInfoContentViewModel: NetworkDataModelProtocol {
         }
     }
     
-    private func updateDataFromResponse(_ response: GraphQLResult<GetRouteInfoDataQuery.Data>) {
-        if let data = response.data {
-            if let route = data.system?.route {
-                // Set basic route data
-                self.routeName = route.name
-                if let nextStopName = route.orderedStop?.nextStop?.stop?.name {
-                    self.routeNextStopName = nextStopName
-                }
-                
-                self.shuttles = route.shuttles?.map(RouteInfoContentViewShuttle.init) ?? []
-                
-                self.shuttles.sort {
-                    if $0.secondsRemaining != nil {
-                        if $1.secondsRemaining != nil {
-                            return $0.secondsRemaining! < $1.secondsRemaining!
-                        }
-                        return true
+    private func updateDataFromResponse(_ response: GetRouteInfoDataQuery.Data) {
+        if let route = response.system?.route {
+            // Set basic route data
+            self.routeName = route.name
+            if let nextStopName = route.orderedStop?.nextStop?.stop?.name {
+                self.routeNextStopName = nextStopName
+            }
+            
+            self.shuttles = route.shuttles?.map(RouteInfoContentViewShuttle.init) ?? []
+            
+            self.shuttles.sort {
+                if $0.secondsRemaining != nil {
+                    if $1.secondsRemaining != nil {
+                        return $0.secondsRemaining! < $1.secondsRemaining!
                     }
-                    return false
+                    return true
                 }
+                return false
             }
         }
     }

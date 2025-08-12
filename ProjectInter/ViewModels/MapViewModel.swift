@@ -136,16 +136,43 @@ class MapViewModel: NetworkDataModelProtocol {
     
     @Published var dataInitState: InitializationState = .notInitialized
 
-    var apolloClient: ApolloClientProtocol?
-    
     var dataRefreshLoopTask: Task<Void, any Error>?
     
-    required init(apolloClient: ApolloClientProtocol? = nil) {
-        self.apolloClient = apolloClient
+    var apolloNetworkModel: ApolloNetworkModel? = ApolloNetworkModel.shared
+
+    required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
+        self.apolloNetworkModel = apolloNetworkModel
     }
     
     func convertNetworkArgumentsIntoQuery(_ arguments: MapViewNetworkArguments) -> GetMapDataQuery {
         return GetMapDataQuery(systemId: arguments.systemId)
+    }
+    
+    func startRefreshingData(arguments: MapViewNetworkArguments, sleepDuration: Duration = .seconds(5)) {
+        Task {
+            let query = convertNetworkArgumentsIntoQuery(arguments)
+            guard let stream = apolloNetworkModel?.getStream(query, sleepDuration: sleepDuration) else {
+                return
+            }
+            
+            for try await result in stream {
+                await processRefreshDataResult(result)
+            }
+        }
+
+    }
+    
+    @MainActor
+    func processRefreshDataResult(_ result: Result<GetMapDataQuery.Data, Error>) {
+        guard let data = try? result.get() else {
+            Loggers.shared.networkingLogger.warning("No data received for map data query in \(type(of: self))")
+            return
+        }
+        
+        self.shuttles = data.system?.shuttles?.map(MapViewShuttle.init) ?? []
+        self.routes = data.system?.routes?.map(MapViewRoute.init) ?? []
+        self.stops = data.system?.stops?.map(MapViewStop.init) ?? []
+        self.parkingStructures = data.system?.parkingSystem?.parkingStructures?.map(MapViewParkingStructure.init) ?? []
     }
     
     func processRefreshDataResult(_ result: Result<GraphQLResult<GetMapDataQuery.Data>, Error>) {
