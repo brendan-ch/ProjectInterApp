@@ -42,25 +42,42 @@ protocol NetworkDataModelProtocol: ObservableObject {
     func refreshDataOnce(arguments: NetworkArguments) async
     
     func convertNetworkArgumentsIntoQuery(_ arguments: NetworkArguments) -> GraphQLQueryType
-    func processRefreshDataResult(_ result: Result<GraphQLResult<GraphQLQueryType.Data>, Error>)
     
-    var apolloClient: ApolloClientProtocol? { get set }
+    @MainActor
+    func processRefreshDataResult(_ result: Result<GraphQLQueryType.Data, Error>)
+
+    var apolloNetworkModel: ApolloNetworkModel? { get }
     
     init(apolloClient: ApolloClientProtocol?)
 }
 
-extension NetworkDataModelProtocol {
+extension NetworkDataModelProtocol where Self: Sendable {
+    private func setInitializingStateIfNotInitialized() {
+        if dataInitState == .notInitialized {
+            Task { @MainActor in
+                self.dataInitState = .initializing
+            }
+        }
+    }
+    
     func startRefreshingData(arguments: NetworkArguments, sleepDuration: Duration = .seconds(5)) {
         if dataRefreshLoopTask != nil {
             Loggers.shared.networkingLogger.warning("Data refresh already active for \(type(of: self))")
             return
         }
         
+        setInitializingStateIfNotInitialized()
+
         Loggers.shared.networkingLogger.notice("Starting data refresh for \(type(of: self))")
+        
+        let query = convertNetworkArgumentsIntoQuery(arguments)
         dataRefreshLoopTask = Task {
-            while !Task.isCancelled {
-                await refreshDataOnce(arguments: arguments)
-                try? await Task.sleep(for: sleepDuration)
+            guard let stream = apolloNetworkModel?.getStream(query, sleepDuration: sleepDuration) else {
+                return
+            }
+            
+            for try await result in stream {
+                await processRefreshDataResult(result)
             }
         }
     }
@@ -72,43 +89,22 @@ extension NetworkDataModelProtocol {
     }
     
     func refreshDataOnce(arguments: NetworkArguments) async {
-        if dataInitState == .notInitialized {
-            DispatchQueue.main.sync {
-                self.dataInitState = .initializing
-            }
-        }
-        
+        setInitializingStateIfNotInitialized()
+        // Spawn a one-off task to refresh the data
         let query = convertNetworkArgumentsIntoQuery(arguments)
-        
-        guard let apolloClient = apolloClient else {
-            Loggers.shared.networkingLogger.warning("No Apollo client provided for \(type(of: self)); skipping data refresh")
+        guard let apolloNetworkModel = apolloNetworkModel else {
+            Loggers.shared.networkingLogger.warning("No network model provided for \(type(of: self)); skipping data refresh")
             return
         }
-
         Loggers.shared.networkingLogger.notice("Refreshing data for \(type(of: self))")
-
-        return await withCheckedContinuation { continuation in
-            var continuationIsActive = true
-            
-            apolloClient.fetch(query: query) { result in
-                defer {
-                    continuationIsActive = false
-                    continuation.resume()
+        Task {
+            do {
+                let result = try await apolloNetworkModel.fetchOnce(query)
+                if let data = result.data {
+                    await processRefreshDataResult(.success(data))
                 }
-                
-                if !continuationIsActive {
-                    return
-                }
-                
-                Loggers.shared.networkingLogger.notice("Processing refresh data result for \(type(of: self))")
-                self.processRefreshDataResult(result)
-                
-                switch result {
-                case .failure(let error):
-                    self.dataInitState = .failed
-                case .success(let response):
-                    self.dataInitState = .succeeded
-                }
+            } catch {
+                await processRefreshDataResult(.failure(error))
             }
         }
     }
