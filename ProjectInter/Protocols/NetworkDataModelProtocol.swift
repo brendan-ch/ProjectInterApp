@@ -48,7 +48,7 @@ protocol NetworkDataModelProtocol: ObservableObject {
 
     var apolloNetworkModel: ApolloNetworkModel? { get }
     
-    init(apolloClient: ApolloClientProtocol?)
+    init(apolloNetworkModel: ApolloNetworkModel?)
 }
 
 extension NetworkDataModelProtocol where Self: Sendable {
