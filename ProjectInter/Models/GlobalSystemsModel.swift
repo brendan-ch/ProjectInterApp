@@ -48,6 +48,8 @@ class GlobalSystemsModel: NetworkDataModelProtocol {
     required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
         self.apolloNetworkModel = apolloNetworkModel
         self.userDefaults = UserDefaults.standard
+        
+        selectedSystemId = self.userDefaults.string(forKey: UserDefaults.selectedSystemIdKey)
     }
 
     init(
