@@ -67,7 +67,8 @@ class SchemaVersionModelTests: NetworkDataModelTestsProtocol {
         let mockClient = MockApolloClient()
         mockClient.queryMock = defaultMock
         
-        let viewModel = SchemaVersionModel(apolloClient: mockClient)
+        let networkModel = ApolloNetworkModel(client: mockClient)
+        let viewModel = SchemaVersionModel(apolloNetworkModel: networkModel)
         await viewModel.refreshDataOnce(arguments: networkArguments)
         
         for version in [2, 3, 4, 5] {
@@ -81,7 +82,8 @@ class SchemaVersionModelTests: NetworkDataModelTestsProtocol {
         let mockClient = MockApolloClient()
         mockClient.queryMock = defaultMock
         
-        let viewModel = SchemaVersionModel(apolloClient: mockClient)
+        let networkModel = ApolloNetworkModel(client: mockClient)
+        let viewModel = SchemaVersionModel(apolloNetworkModel: networkModel)
         await viewModel.refreshDataOnce(arguments: networkArguments)
 
         for version in [1, 6, 7, 8] {

@@ -158,7 +158,8 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
         let mockClient = MockApolloClient()
         mockClient.queryMock = tertiaryMock
         
-        let viewModel = ParkingStructuresListContentViewModel(apolloClient: mockClient)
+        let networkModel = ApolloNetworkModel(client: mockClient)
+        let viewModel = ParkingStructuresListContentViewModel(apolloNetworkModel: networkModel)
         
         let networkArguments = networkArguments
         await viewModel.refreshDataOnce(arguments: networkArguments)

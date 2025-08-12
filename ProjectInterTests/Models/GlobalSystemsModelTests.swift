@@ -28,8 +28,10 @@ class GlobalSystemsModelTests {
             ]
         )
         mockClient.queryMock = mock
+        
+        let networkModel = ApolloNetworkModel(client: mockClient)
 
-        let globalDataState = GlobalSystemsModel(apolloClient: mockClient)
+        let globalDataState = GlobalSystemsModel(apolloNetworkModel: networkModel)
         await globalDataState.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
         
         #expect(globalDataState.systems.count == 2)
@@ -39,7 +41,8 @@ class GlobalSystemsModelTests {
         let mockClient = MockApolloClient()
         mockClient.queryMock = nil
         
-        let globalDataState = GlobalSystemsModel(apolloClient: mockClient)
+        let networkModel = ApolloNetworkModel(client: mockClient)
+        let globalDataState = GlobalSystemsModel(apolloNetworkModel: networkModel)
         await globalDataState.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
         
         #expect(globalDataState.systems.count == 0)
@@ -48,7 +51,7 @@ class GlobalSystemsModelTests {
     @Test func testUpdateSystemIdUpdatesSelectedSystemAndUserDefaults() async {
         let mockUserDefaults = MockUserDefaults()
         
-        let state = GlobalSystemsModel(apolloClient: nil, userDefaults: mockUserDefaults)
+        let state = GlobalSystemsModel(apolloNetworkModel: nil, userDefaults: mockUserDefaults)
         state.systems = [
             .init(name: "Chapman University", id: "1"),
             .init(name: "CSULB", id: "2")

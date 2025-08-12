@@ -169,7 +169,8 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         let mockClient = MockApolloClient()
         mockClient.queryMock = mock
         
-        let viewModel = RouteInfoContentViewModel(apolloClient: mockClient)
+        let networkModel = ApolloNetworkModel(client: mockClient)
+        let viewModel = RouteInfoContentViewModel(apolloNetworkModel: networkModel)
         let arguments = networkArguments
         
         await viewModel.refreshDataOnce(arguments: arguments)
@@ -218,7 +219,8 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         let mockClient = MockApolloClient()
         mockClient.queryMock = mock
         
-        let viewModel = RouteInfoContentViewModel(apolloClient: mockClient)
+        let networkModel = ApolloNetworkModel(client: mockClient)
+        let viewModel = RouteInfoContentViewModel(apolloNetworkModel: networkModel)
         let arguments = networkArguments
         
         await viewModel.refreshDataOnce(arguments: arguments)
