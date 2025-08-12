@@ -52,11 +52,12 @@ protocol NetworkDataModelProtocol: ObservableObject {
 }
 
 extension NetworkDataModelProtocol where Self: Sendable {
-    private func setInitializingStateIfNotInitialized() {
-        if dataInitState == .notInitialized {
-            Task { @MainActor in
-                self.dataInitState = .initializing
-            }
+    @MainActor
+    private func setDataInitState(_ newState: InitializationState) {
+        if newState == .initializing && (dataInitState == .notInitialized || dataInitState == .failed) {
+            self.dataInitState = newState
+        } else if (newState == .succeeded || newState == .failed) && dataInitState == .initializing {
+            self.dataInitState = newState
         }
     }
     
@@ -65,18 +66,24 @@ extension NetworkDataModelProtocol where Self: Sendable {
             Loggers.shared.networkingLogger.warning("Data refresh already active for \(type(of: self))")
             return
         }
-        
-        setInitializingStateIfNotInitialized()
 
         Loggers.shared.networkingLogger.notice("Starting data refresh for \(type(of: self))")
         
         let query = convertNetworkArgumentsIntoQuery(arguments)
         dataRefreshLoopTask = Task {
+            await setDataInitState(.initializing)
             guard let stream = apolloNetworkModel?.getStream(query, sleepDuration: sleepDuration) else {
                 return
             }
             
             for try await result in stream {
+                switch result {
+                case .failure:
+                    await setDataInitState(.failed)
+                case .success:
+                    await setDataInitState(.succeeded)
+                }
+                
                 await processRefreshDataResult(result)
             }
         }
@@ -89,10 +96,11 @@ extension NetworkDataModelProtocol where Self: Sendable {
     }
     
     func refreshDataOnce(arguments: NetworkArguments) async {
-        setInitializingStateIfNotInitialized()
+        await setDataInitState(.initializing)
         // Spawn a one-off task to refresh the data
         let query = convertNetworkArgumentsIntoQuery(arguments)
         guard let apolloNetworkModel = apolloNetworkModel else {
+            await setDataInitState(.failed)
             Loggers.shared.networkingLogger.warning("No network model provided for \(type(of: self)); skipping data refresh")
             return
         }
@@ -100,9 +108,11 @@ extension NetworkDataModelProtocol where Self: Sendable {
         do {
             let result = try await apolloNetworkModel.fetchOnce(query)
             if let data = result.data {
+                await setDataInitState(.succeeded)
                 await processRefreshDataResult(.success(data))
             }
         } catch {
+            await setDataInitState(.failed)
             await processRefreshDataResult(.failure(error))
         }
     }
