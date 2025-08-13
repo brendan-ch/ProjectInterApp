@@ -32,10 +32,18 @@ end
 
 platform :ios do
     lane :test do
+        setup_ci if ENV['CI']
+        match(
+            type: "development"
+        )
         run_tests(testplan: "ProjectInterTests")
     end
 
     lane :test_ui do
+        setup_ci if ENV['CI']
+        match(
+            type: "development"
+        )
         run_tests(testplan: "ProjectInterUITests")
     end
 
