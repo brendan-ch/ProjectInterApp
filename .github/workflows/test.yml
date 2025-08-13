@@ -19,6 +19,10 @@ jobs:
       - name: Run Fastlane
         working-directory: app
         run: fastlane test
+        env:
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+
 
   test-ui:
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'bypass ci/cd') }}
@@ -60,3 +64,6 @@ jobs:
       - name: Run Fastlane
         working-directory: app
         run: fastlane test_ui
+        env:
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
