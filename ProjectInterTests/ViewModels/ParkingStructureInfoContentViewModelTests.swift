@@ -24,6 +24,7 @@ class ParkingStructureInfoContentViewModelTestsMockData {
         system: .init(
             parkingSystem: .init(
                 parkingStructure: .init(
+                    address: "300 E Walnut Ave, Orange, CA 92867 United States",
                     capacity: 100,
                     historicalAverages: [
                         .init(
@@ -54,6 +55,7 @@ class ParkingStructureInfoContentViewModelTestsMockData {
         system: .init(
             parkingSystem: .init(
                 parkingStructure: .init(
+                    address: "200 W Sycamore Ave, Orange, CA 92866 United States",
                     capacity: 150,
                     historicalAverages: [
                         .init(
