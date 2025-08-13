@@ -6,9 +6,12 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 import Charts
 
 struct ParkingStructureInfoContentView: NetworkView {
+    private let addressCopyTimeout = Duration.seconds(3)
+    @State private var addressCopied = false
     @StateObject var viewModel = ParkingStructureInfoContentViewModel()
 
     @EnvironmentObject var globalIdSelectionModel: GlobalIdSelectionModel
@@ -73,11 +76,11 @@ struct ParkingStructureInfoContentView: NetworkView {
                     .controlSize(.large)
                     
                     Button {
-                        
+                        copyAddress()
                     } label: {
                         HStack {
                             Spacer()
-                            Text("Copy address")
+                            Text(addressCopied ? "Copied!" : "Copy address")
                             Spacer()
                         }
                     }
@@ -147,6 +150,18 @@ struct ParkingStructureInfoContentView: NetworkView {
         }
         .onDisappear {
             stopDataUpdates()
+        }
+    }
+    
+    func copyAddress() {
+        guard let address = viewModel.address else { return }
+        UIPasteboard.general.setValue(address, forPasteboardType: UTType.text.identifier)
+        
+        addressCopied = true
+        
+        Task {
+            try? await Task.sleep(for: addressCopyTimeout)
+            addressCopied = false
         }
     }
 }
