@@ -31,8 +31,12 @@ before_all do |lane_name|
 end
 
 platform :ios do
-    lane :tests do
+    lane :test do
         run_tests(testplan: "ProjectInterTests")
+    end
+
+    lane :test_ui do
+        run_tests(testplan: "ProjectInterUITests")
     end
 
     lane :beta do
