@@ -20,6 +20,7 @@ jobs:
         working-directory: app
         run: fastlane test
         env:
+          CI: 1
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
 
@@ -65,5 +66,6 @@ jobs:
         working-directory: app
         run: fastlane test_ui
         env:
+          CI: 1
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
