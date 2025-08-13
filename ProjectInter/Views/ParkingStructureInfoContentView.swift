@@ -57,17 +57,34 @@ struct ParkingStructureInfoContentView: NetworkView {
                     Text("Parking data not available.")
                 }
                 
-                Button {
-                    
-                } label: {
-                    HStack {
-                        Spacer()
-                        Text("Directions")
-                        Spacer()
+                VStack {
+                    Button {
+                        
+                    } label: {
+                        HStack {
+                            Spacer()
+                            Image(systemName: "arrow.turn.up.right")
+                            Text("Directions")
+                                .bold()
+                            Spacer()
+                        }
                     }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                    
+                    Button {
+                        
+                    } label: {
+                        HStack {
+                            Spacer()
+                            Text("Copy address")
+                            Spacer()
+                        }
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.large)
+
                 }
-                .buttonStyle(.bordered)
-                .controlSize(.large)
                 .padding()
                 
                 HStack {
