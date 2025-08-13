@@ -46,6 +46,7 @@ class BaseUITests: XCTestCase {
         mockSystems[defaultSystemId]!
     }
 
+    // MARK: - Setup
     override func setUpWithError() throws {
         // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
@@ -101,6 +102,7 @@ class BaseUITests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
     
+    // MARK: - UI testing reusable flows
     func selectStopFromRouteList(name: String) {
         let _ = app.buttons["Change stop"].waitForExistence(timeout: 20)
         app.buttons["Change stop"].tap()
@@ -222,6 +224,13 @@ class BaseUITests: XCTestCase {
         }
     }
     
+    func switchToParkingTab() {
+        let structuresButton = app.tabBars.buttons["Parking"]
+        let parkingTabExists = structuresButton.waitForExistence(timeout: 10)
+        XCTAssert(parkingTabExists)
+        structuresButton.tap()
+    }
+
     // MARK: - Mocks
     func mockGetAllStopsQueryAndResponse() async {
         let allStopsQuery = GetAllStopsBySystemIdQuery(systemId: defaultSystemId)

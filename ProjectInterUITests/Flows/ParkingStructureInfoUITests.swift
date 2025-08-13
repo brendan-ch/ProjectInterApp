@@ -12,6 +12,7 @@ import ProjectInterOperations
 
 final class ParkingStructureInfoUITests: BaseUITests {
     let calendar = Calendar.current
+    let mockAddress = "300 E Walnut Ave, Orange, CA 92867 United States"
     
     override func setUpWithError() throws {
         try super.setUpWithError()
@@ -34,7 +35,7 @@ final class ParkingStructureInfoUITests: BaseUITests {
             system: .init(
                 parkingSystem: .init(
                     parkingStructure: .init(
-                        address: "300 E Walnut Ave, Orange, CA 92867 United States",
+                        address: mockAddress,
                         capacity: 100,
                         id: "1",
                         name: "Anderson",
@@ -93,20 +94,20 @@ final class ParkingStructureInfoUITests: BaseUITests {
         await client.mock(query: query, response: response)
     }
     
+    func selectMockParkingStructure() {
+        let parkingStructureText = app.staticTexts["Anderson"]
+        XCTAssert(parkingStructureText.waitForExistence(timeout: 10))
+        parkingStructureText.tap()
+    }
+    
     @MainActor
     func testParkingStructureInfoDisplayWithHistorical() async {
         await mockGetParkingStructuresListData()
         await mockGetParkingStructureDataWithHistorical()
         app.launch()
         
-        let structuresButton = app.tabBars.buttons["Parking"]
-        let parkingTabExists = structuresButton.waitForExistence(timeout: 10)
-        XCTAssert(parkingTabExists)
-        structuresButton.tap()
-        
-        let parkingStructureText = app.staticTexts["Anderson"]
-        XCTAssert(parkingStructureText.waitForExistence(timeout: 10))
-        parkingStructureText.tap()
+        switchToParkingTab()
+        selectMockParkingStructure()
         
         XCTAssert(app.staticTexts["20 available"].waitForExistence(timeout: 5))
         XCTAssert(app.staticTexts["80/100"].waitForExistence(timeout: 5))
@@ -118,15 +119,47 @@ final class ParkingStructureInfoUITests: BaseUITests {
         await mockGetParkingStructuresDataWithoutHistorical()
         app.launch()
         
-        let structuresButton = app.tabBars.buttons["Parking"]
-        let parkingTabExists = structuresButton.waitForExistence(timeout: 10)
-        XCTAssert(parkingTabExists)
-        structuresButton.tap()
-        
+        switchToParkingTab()
+        selectMockParkingStructure()
+
         let parkingStructureText = app.staticTexts["Anderson"]
         XCTAssert(parkingStructureText.waitForExistence(timeout: 10))
         parkingStructureText.tap()
 
         XCTAssert(app.staticTexts["No historical data available. Check back later."].waitForExistence(timeout: 5))
+    }
+    
+    @MainActor
+    func testParkingStructureInfoCopyAddressCopiesTheAddress() async {
+        await mockGetParkingStructuresListData()
+        await mockGetParkingStructuresDataWithoutHistorical()
+        app.launch()
+
+        switchToParkingTab()
+        selectMockParkingStructure()
+        
+
+        let copyAddressButton = app.buttons["Copy address"]
+        XCTAssert(copyAddressButton.waitForExistence(timeout: 10))
+        copyAddressButton.tap()
+        
+        // On a fresh simulator, we can't simply check the Pasteboard
+        // because we would need to tap "Allow Paste" in the permissions dialog
+        // However, we can't tap the dialog if this thread is blocked when
+        // it's presented
+        
+        // Current solution is to launch another app and check if it pastes correctly
+        
+        let spotlightApp = XCUIApplication(bundleIdentifier: "com.apple.Spotlight")
+        spotlightApp.activate()
+        spotlightApp.textFields["Search"].firstMatch.tap()
+        spotlightApp.textFields["Search"].firstMatch.tap()
+        spotlightApp/*@START_MENU_TOKEN@*/.staticTexts["Paste"]/*[[".menuItems[\"Paste\"].staticTexts",".otherElements.staticTexts[\"Paste\"]",".staticTexts[\"Paste\"]"],[[[-1,2],[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.firstMatch.tap()
+
+        let matchingElement = spotlightApp.otherElements.containing(NSPredicate(format: "label CONTAINS '300 E Walnut Ave'")).element
+        XCTAssert(matchingElement.waitForExistence(timeout: 10))
+        
+        let springboardApp = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        springboardApp.activate()
     }
 }
