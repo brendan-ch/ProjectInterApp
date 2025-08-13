@@ -7,7 +7,7 @@ public class GetParkingStructureInfoDataQuery: GraphQLQuery {
   public static let operationName: String = "GetParkingStructureInfoData"
   public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
-      #"query GetParkingStructureInfoData($systemId: ID!, $parkingStructureId: ID!, $historicalAveragesInput: HistoricalParkingAverageQueryInput!) { system(id: $systemId) { __typename parkingSystem { __typename parkingStructure(id: $parkingStructureId) { __typename capacity name spotsAvailable id historicalAverages(input: $historicalAveragesInput) { __typename from to averageSpotsAvailable } } } } }"#
+      #"query GetParkingStructureInfoData($systemId: ID!, $parkingStructureId: ID!, $historicalAveragesInput: HistoricalParkingAverageQueryInput!) { system(id: $systemId) { __typename parkingSystem { __typename parkingStructure(id: $parkingStructureId) { __typename capacity name spotsAvailable id address historicalAverages(input: $historicalAveragesInput) { __typename from to averageSpotsAvailable } } } } }"#
     ))
 
   public var systemId: ID
@@ -85,6 +85,7 @@ public class GetParkingStructureInfoDataQuery: GraphQLQuery {
             .field("name", String.self),
             .field("spotsAvailable", Int.self),
             .field("id", ProjectInterOperations.ID.self),
+            .field("address", String.self),
             .field("historicalAverages", [HistoricalAverage]?.self, arguments: ["input": .variable("historicalAveragesInput")]),
           ] }
 
@@ -92,6 +93,7 @@ public class GetParkingStructureInfoDataQuery: GraphQLQuery {
           public var name: String { __data["name"] }
           public var spotsAvailable: Int { __data["spotsAvailable"] }
           public var id: ProjectInterOperations.ID { __data["id"] }
+          public var address: String { __data["address"] }
           public var historicalAverages: [HistoricalAverage]? { __data["historicalAverages"] }
 
           /// System.ParkingSystem.ParkingStructure.HistoricalAverage
