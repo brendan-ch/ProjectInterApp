@@ -7,13 +7,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  deploy:
     if: ${{ github.event.label.name != 'release' && !contains(github.event.pull_request.labels.*.name, 'bypass ci/cd') }}
     runs-on: macos-15
     steps:
       - name: Checkout current repository
         uses: actions/checkout@v4
-
 
       - name: Run Fastlane
         run: fastlane beta
