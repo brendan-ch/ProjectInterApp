@@ -17,8 +17,7 @@ jobs:
           path: app
 
       - name: Run Fastlane
-        with:
-          path: app
+        working-directory: app
         run: fastlane test
 
   test-ui:
@@ -59,6 +58,5 @@ jobs:
           npm run dev &
 
       - name: Run Fastlane
-        with:
-          path: app
+        working-directory: app
         run: fastlane test_ui
