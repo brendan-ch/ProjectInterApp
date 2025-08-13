@@ -34,6 +34,7 @@ final class ParkingStructureInfoUITests: BaseUITests {
             system: .init(
                 parkingSystem: .init(
                     parkingStructure: .init(
+                        address: "300 E Walnut Ave, Orange, CA 92867 United States",
                         capacity: 100,
                         id: "1",
                         name: "Anderson",
@@ -62,6 +63,7 @@ final class ParkingStructureInfoUITests: BaseUITests {
             system: .init(
                 parkingSystem: .init(
                     parkingStructure: .init(
+                        address: "300 E Walnut Ave, Orange, CA 92867 United States",
                         capacity: 100,
                         historicalAverages: [
                             .init(
