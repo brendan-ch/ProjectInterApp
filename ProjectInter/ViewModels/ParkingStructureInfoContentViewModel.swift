@@ -37,6 +37,7 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
     @Published var name: String?
     @Published var capacity: Int?
     @Published var spotsAvailable: Int?
+    @Published var address: String?
     
     @Published var averages: [ParkingAveragePerTimePeriod]?
     
@@ -123,6 +124,7 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
             name = parkingStructure.name
             capacity = parkingStructure.capacity
             spotsAvailable = parkingStructure.spotsAvailable
+            address = parkingStructure.address
             
             guard let averagesFromNetwork = parkingStructure.historicalAverages else {
                 clearHistoricalData()
