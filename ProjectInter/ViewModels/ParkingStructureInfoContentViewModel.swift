@@ -9,6 +9,8 @@ import Foundation
 import Apollo
 import ProjectInterOperations
 
+// MARK: - Models
+
 struct ParkingAveragePerTimePeriod {
     let from: Date
     let to: Date
@@ -34,6 +36,15 @@ struct ParkingStructureNetworkingArguments {
 // MARK: - View model implementation
 
 class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
+    // MARK: Constants
+    static let startingHour = 8
+    static let endingHour = 20
+    static let intervalMs = 1000 * 60 * 60 * 2
+    
+    private let calendar = Calendar.current
+
+    // MARK: Published properties
+    
     @Published var name: String?
     @Published var capacity: Int?
     @Published var spotsAvailable: Int?
@@ -41,17 +52,13 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
     
     @Published var averages: [ParkingAveragePerTimePeriod]?
     
-    // Historical average data
-    static let startingHour = 8
-    static let endingHour = 20
-    static let intervalMs = 1000 * 60 * 60 * 2
-    
-    private let calendar = Calendar.current
-    
     @Published var startOfCurrentTimePeriod: Date?
     @Published var endOfCurrentTimePeriod: Date?
     
     @Published var dataInitState: InitializationState = .notInitialized
+    
+    
+    // MARK: Conformance to protocol
 
     typealias NetworkArguments = ParkingStructureNetworkingArguments
     
