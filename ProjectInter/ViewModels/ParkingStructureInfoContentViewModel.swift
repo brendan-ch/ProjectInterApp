@@ -157,13 +157,20 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
         endOfCurrentTimePeriod = nil
     }
     
+    private var percentageEncodedAddress: String? {
+        guard let address else { return nil }
+        return address.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+    }
+    
     /// Get the Apple Maps URL of the parking structure, if exists.
     /// See [how to generate Maps links](https://developer.apple.com/library/archive/featuredarticles/iPhoneURLScheme_Reference/MapLinks/MapLinks.html).
     func getAppleMapsUrlForParkingStructure() -> URL? {
-        return nil
+        guard let percentageEncodedAddress = percentageEncodedAddress else { return nil }
+        return URL(string: "https://maps.apple.com/?address=\(percentageEncodedAddress)")
     }
     
     func getGoogleMapsUrlForParkingStructure() -> URL? {
-        return nil
+        guard let percentageEncodedAddress = percentageEncodedAddress else { return nil }
+        return URL(string: "https://www.google.com/maps?q=\(percentageEncodedAddress)")
     }
 }
