@@ -156,4 +156,14 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
         startOfCurrentTimePeriod = nil
         endOfCurrentTimePeriod = nil
     }
+    
+    /// Get the Apple Maps URL of the parking structure, if exists.
+    /// See [how to generate Maps links](https://developer.apple.com/library/archive/featuredarticles/iPhoneURLScheme_Reference/MapLinks/MapLinks.html).
+    func getAppleMapsUrlForParkingStructure() -> URL? {
+        return nil
+    }
+    
+    func getGoogleMapsUrlForParkingStructure() -> URL? {
+        return nil
+    }
 }

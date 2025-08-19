@@ -207,4 +207,22 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         await autoTest_refreshDataOnceDoesNothingIfNoApolloClient()
     }
     
+    @Test func getAppleMapsUrlGetsTheCorrectUrl() async {
+        let mockApolloClient = MockApolloClient()
+        mockApolloClient.queryMock = defaultMock
+        
+        let mockNetworkModel = ApolloNetworkModel(client: mockApolloClient)
+        
+        let viewModel = ParkingStructureInfoContentViewModel(apolloNetworkModel: mockNetworkModel)
+        await viewModel.refreshDataOnce(arguments: networkArguments)
+        
+        let url = viewModel.getAppleMapsUrlForParkingStructure()
+        let expectedAddress = defaultMock.system?.parkingSystem?.parkingStructure?.address
+        let percentageEncodedExpectedAddress = expectedAddress?.addingPercentEncoding(withAllowedCharacters: .alphanumerics)
+        #expect(url?.absoluteString == "https://maps.apple.com/?address=\(percentageEncodedExpectedAddress!)")
+    }
+    
+    @Test func getGoogleMapsUrlGetsTheCorrectUrl() async {
+        
+    }
 }
