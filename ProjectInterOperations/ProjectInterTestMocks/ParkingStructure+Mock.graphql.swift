@@ -10,6 +10,7 @@ public class ParkingStructure: MockObject {
   public typealias MockValueCollectionType = Array<Mock<ParkingStructure>>
 
   public struct MockFields {
+    @Field<String>("address") public var address
     @Field<Int>("capacity") public var capacity
     @Field<Coordinates>("coordinates") public var coordinates
     @Field<[HistoricalParkingAverageQueryResult]>("historicalAverages") public var historicalAverages
@@ -21,6 +22,7 @@ public class ParkingStructure: MockObject {
 
 public extension Mock where O == ParkingStructure {
   convenience init(
+    address: String? = nil,
     capacity: Int? = nil,
     coordinates: Mock<Coordinates>? = nil,
     historicalAverages: [Mock<HistoricalParkingAverageQueryResult>]? = nil,
@@ -29,6 +31,7 @@ public extension Mock where O == ParkingStructure {
     spotsAvailable: Int? = nil
   ) {
     self.init()
+    _setScalar(address, for: \.address)
     _setScalar(capacity, for: \.capacity)
     _setEntity(coordinates, for: \.coordinates)
     _setList(historicalAverages, for: \.historicalAverages)
