@@ -62,6 +62,7 @@ class ParkingStructureInfoContentViewModelPlaceholderBuilder: PlaceholderBuilder
             
             DispatchQueue.main.sync {
                 viewModel.dataInitState = .succeeded
+                viewModel.address = "300 E Walnut Ave, Orange, CA 92867 United States"
                 viewModel.name = "Anderson Structure"
                 viewModel.capacity = 100
                 viewModel.spotsAvailable = 80

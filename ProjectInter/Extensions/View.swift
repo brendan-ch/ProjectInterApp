@@ -23,4 +23,8 @@ extension View {
     func conditionalForegroundStyle(_ style: Color?) -> some View {
         modifier(ConditionalForegroundStyle(style: style))
     }
+    
+    func openNavigationDialog(_ address: String?, isPresented: Binding<Bool>) -> some View {
+        modifier(OpenNavigationDialog(isPresented: isPresented, address: address))
+    }
 }

@@ -24,6 +24,7 @@ class ParkingStructureInfoContentViewModelTestsMockData {
         system: .init(
             parkingSystem: .init(
                 parkingStructure: .init(
+                    address: "300 E Walnut Ave, Orange, CA 92867 United States",
                     capacity: 100,
                     historicalAverages: [
                         .init(
@@ -54,6 +55,7 @@ class ParkingStructureInfoContentViewModelTestsMockData {
         system: .init(
             parkingSystem: .init(
                 parkingStructure: .init(
+                    address: "200 W Sycamore Ave, Orange, CA 92866 United States",
                     capacity: 150,
                     historicalAverages: [
                         .init(
@@ -96,7 +98,8 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.capacity == 100)
         #expect(viewModel.spotsAvailable == 50)
         #expect(viewModel.name == "Anderson Structure")
-        
+        #expect(viewModel.address == "300 E Walnut Ave, Orange, CA 92867 United States")
+
         #expect(viewModel.averages?.count == 3)
     }
     
@@ -104,6 +107,7 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.capacity == 150)
         #expect(viewModel.spotsAvailable == 100)
         #expect(viewModel.name == "Barrera")
+        #expect(viewModel.address == "200 W Sycamore Ave, Orange, CA 92866 United States")
         
         #expect(viewModel.averages?.count == 4)
     }
@@ -202,5 +206,4 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
         await autoTest_refreshDataOnceDoesNothingIfNoApolloClient()
     }
-    
 }

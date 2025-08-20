@@ -6,9 +6,13 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 import Charts
 
 struct ParkingStructureInfoContentView: NetworkView {
+    private let addressCopyTimeout = Duration.seconds(3)
+    @State private var addressCopied = false
+    @State private var showingNavigationAppDialog = false
     @StateObject var viewModel = ParkingStructureInfoContentViewModel()
 
     @EnvironmentObject var globalIdSelectionModel: GlobalIdSelectionModel
@@ -57,17 +61,35 @@ struct ParkingStructureInfoContentView: NetworkView {
                     Text("Parking data not available.")
                 }
                 
-                Button {
-                    
-                } label: {
-                    HStack {
-                        Spacer()
-                        Text("Directions")
-                        Spacer()
+                VStack {
+                    Button {
+                        showingNavigationAppDialog = true
+                    } label: {
+                        HStack {
+                            Spacer()
+                            Image(systemName: "arrow.turn.up.right")
+                            Text("Directions")
+                                .bold()
+                            Spacer()
+                        }
                     }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                    .openNavigationDialog(viewModel.address, isPresented: $showingNavigationAppDialog)
+
+                    Button {
+                        copyAddress()
+                    } label: {
+                        HStack {
+                            Spacer()
+                            Text(addressCopied ? "Copied!" : "Copy address")
+                            Spacer()
+                        }
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.large)
+
                 }
-                .buttonStyle(.bordered)
-                .controlSize(.large)
                 .padding()
                 
                 HStack {
@@ -133,6 +155,18 @@ struct ParkingStructureInfoContentView: NetworkView {
         }
         .onChange(of: globalIdSelectionModel.selectedParkingStructureId) {
             restartDataUpdates()
+        }
+    }
+    
+    func copyAddress() {
+        guard let address = viewModel.address else { return }
+        UIPasteboard.general.setValue(address, forPasteboardType: UTType.text.identifier)
+        
+        addressCopied = true
+        
+        Task {
+            try? await Task.sleep(for: addressCopyTimeout)
+            addressCopied = false
         }
     }
 }
