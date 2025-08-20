@@ -14,6 +14,12 @@ jobs:
       - name: Checkout current repository
         uses: actions/checkout@v4
 
+      - name: Set Xcode version
+        run: |
+          # See https://github.com/actions/runner-images/blob/main/images/macos/macos-15-arm64-Readme.md
+          sudo xcode-select -s /Applications/Xcode_16.4.app
+
+
       - name: Run Fastlane
         run: fastlane beta
         env:
