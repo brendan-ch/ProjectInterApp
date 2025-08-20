@@ -159,7 +159,31 @@ final class ParkingStructureInfoUITests: BaseUITests {
         let matchingElement = spotlightApp.otherElements.containing(NSPredicate(format: "label CONTAINS '300 E Walnut Ave'")).element
         XCTAssert(matchingElement.waitForExistence(timeout: 10))
         
-        let springboardApp = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-        springboardApp.activate()
+        activateSpringboard()
+    }
+    
+    @MainActor
+    func testParkingStructureInfoOpensDirectionsInAppleMaps() async {
+        await mockGetParkingStructuresListData()
+        await mockGetParkingStructuresDataWithoutHistorical()
+        app.launch()
+        
+        switchToParkingTab()
+        selectMockParkingStructure()
+
+        let directionsButton = app.buttons["Directions"]
+        XCTAssert(directionsButton.waitForExistence(timeout: 10))
+        directionsButton.tap()
+        
+        let sheet = app.sheets["Select an app"]
+        XCTAssert(sheet.waitForExistence(timeout: 10))
+        sheet.buttons["Apple Maps"].tap()
+        
+        let mapsApp = XCUIApplication(bundleIdentifier: "com.apple.Maps")
+        mapsApp.activate()
+        let expectedAddressText = mapsApp.staticTexts["300 E Walnut Ave"]
+        XCTAssert(expectedAddressText.waitForExistence(timeout: 10))
+        
+        activateSpringboard()
     }
 }

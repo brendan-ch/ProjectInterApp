@@ -230,6 +230,13 @@ class BaseUITests: XCTestCase {
         XCTAssert(parkingTabExists)
         structuresButton.tap()
     }
+    
+    /// For tests that check for something outside of the app, calling this is required
+    /// to reset the device to its original state.
+    func activateSpringboard() {
+        let springboardApp = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        springboardApp.activate()
+    }
 
     // MARK: - Mocks
     func mockGetAllStopsQueryAndResponse() async {
