@@ -131,6 +131,9 @@ struct ParkingStructureInfoContentView: NetworkView {
         .onDisappear {
             stopDataUpdates()
         }
+        .onChange(of: globalIdSelectionModel.selectedParkingStructureId) {
+            restartDataUpdates()
+        }
     }
 }
 
