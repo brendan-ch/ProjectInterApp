@@ -172,11 +172,15 @@ extension MapView {
             coordinate: parkingStructure.coordinates,
             anchor: .center
         ) {
-            ParkingStructureAnnotationView(structure: parkingStructure)
+            ParkingStructureAnnotationView(structure: parkingStructure, shouldBeTransparent: shouldBeTransparent(for: parkingStructure))
         }
         .tag(
             AnnotationTag(id: parkingStructure.id, type: .parkingStructure)
         )
+    }
+    
+    private func shouldBeTransparent(for parkingStructure: MapViewParkingStructure) -> Bool {
+        return globalIdSelectionModel.selectedParkingStructureId != nil && globalIdSelectionModel.selectedParkingStructureId != parkingStructure.id
     }
 }
 
