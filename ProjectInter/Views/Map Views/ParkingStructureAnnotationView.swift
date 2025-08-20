@@ -26,6 +26,7 @@ struct ParkingStructureAnnotationView: View {
         .opacity(shouldBeTransparent ? 0.5 : 1.0)
         .accessibilityLabel("Parking structure")
         .accessibilityValue(structure.id)
+        .accessibilityAddTraits(.isButton)
     }
 
 }
