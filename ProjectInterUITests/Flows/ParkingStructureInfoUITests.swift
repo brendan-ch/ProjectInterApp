@@ -132,6 +132,25 @@ final class ParkingStructureInfoUITests: BaseUITests {
         activateSpringboard()
     }
     
+    func setupGoogleMapsWebsite() {
+        let mobilesafariApp = XCUIApplication(bundleIdentifier: "com.apple.mobilesafari")
+        mobilesafariApp.activate()
+        
+        let element = mobilesafariApp/*@START_MENU_TOKEN@*/.textFields["TabBarItemTitle"]/*[[".otherElements",".textFields[\"Address\"]",".textFields[\"Search or enter website\"]",".textFields[\"TabBarItemTitle\"]",".textFields"],[[[-1,3],[-1,2],[-1,1],[-1,4],[-1,0,1]],[[-1,3],[-1,2],[-1,1]]],[0]]@END_MENU_TOKEN@*/.firstMatch
+        element.tap()
+        
+        mobilesafariApp.typeText("maps.google.com")
+        mobilesafariApp.typeKey(XCUIKeyboardKey.enter, modifierFlags: [])
+        mobilesafariApp/*@START_MENU_TOKEN@*/.buttons["Go"]/*[[".otherElements",".buttons[\"go\"]",".buttons[\"Go\"]"],[[[-1,2],[-1,1],[-1,0,1]],[[-1,2],[-1,1]]],[0]]@END_MENU_TOKEN@*/.firstMatch.tap()
+        
+        let dismissButton = mobilesafariApp.buttons["Go back to web"]
+        if dismissButton.waitForExistence(timeout: 10) {
+            dismissButton.tap()
+        }
+        
+        activateSpringboard()
+    }
+    
     @MainActor
     func testParkingStructureInfoDisplayWithHistorical() async {
         await mockGetParkingStructuresListData()
@@ -225,6 +244,9 @@ final class ParkingStructureInfoUITests: BaseUITests {
     func testParkingStructureInfoOpensDirectionsInGoogleMaps() async {
         await mockGetParkingStructuresListData()
         await mockGetParkingStructuresDataWithoutHistorical()
+        
+        setupGoogleMapsWebsite()
+        
         app.launch()
         
         switchToParkingTab()
