@@ -88,11 +88,11 @@ final class ParkingStructureInfoUITests: BaseUITests {
         
         // Can appear during setup
         let notificationRequestDismissButton = mapsApp.buttons["Not Now"]
-        if notificationRequestDismissButton.waitForExistence(timeout: 5) {
+        if notificationRequestDismissButton.waitForExistence(timeout: 20) {
             notificationRequestDismissButton.tap()
         }
         let hikesCustomRoutesButton = mapsApp.buttons["Continue"]
-        if hikesCustomRoutesButton.waitForExistence(timeout: 5) {
+        if hikesCustomRoutesButton.waitForExistence(timeout: 20) {
             hikesCustomRoutesButton.tap()
         }
         
@@ -113,7 +113,7 @@ final class ParkingStructureInfoUITests: BaseUITests {
         mobilesafariApp/*@START_MENU_TOKEN@*/.buttons["Go"]/*[[".otherElements",".buttons[\"go\"]",".buttons[\"Go\"]"],[[[-1,2],[-1,1],[-1,0,1]],[[-1,2],[-1,1]]],[0]]@END_MENU_TOKEN@*/.firstMatch.tap()
         
         let dismissButton = mobilesafariApp.buttons["Go back to web"]
-        if dismissButton.waitForExistence(timeout: 10) {
+        if dismissButton.waitForExistence(timeout: 20) {
             dismissButton.tap()
         }
         
