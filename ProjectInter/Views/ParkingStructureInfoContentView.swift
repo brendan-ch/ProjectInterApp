@@ -75,7 +75,8 @@ struct ParkingStructureInfoContentView: NetworkView {
                     }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
-                    
+                    .openNavigationDialog(viewModel.address, isPresented: $showingNavigationAppDialog)
+
                     Button {
                         copyAddress()
                     } label: {
@@ -152,21 +153,6 @@ struct ParkingStructureInfoContentView: NetworkView {
         .onDisappear {
             stopDataUpdates()
         }
-        .confirmationDialog("Select an app", isPresented: $showingNavigationAppDialog, titleVisibility: .visible) {
-            Button {
-                let url = viewModel.getAppleMapsUrlForParkingStructure()
-                openUrl(url)
-            } label: {
-                Text("Apple Maps")
-            }
-            
-            Button {
-                let url = viewModel.getGoogleMapsUrlForParkingStructure()
-                openUrl(url)
-            } label: {
-                Text("Google Maps")
-            }
-        }
     }
     
     func copyAddress() {
@@ -179,11 +165,6 @@ struct ParkingStructureInfoContentView: NetworkView {
             try? await Task.sleep(for: addressCopyTimeout)
             addressCopied = false
         }
-    }
-    
-    func openUrl(_ url: URL?) {
-        guard let url = url else { return }
-        UIApplication.shared.open(url)
     }
 }
 
