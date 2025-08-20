@@ -12,6 +12,7 @@ import Charts
 struct ParkingStructureInfoContentView: NetworkView {
     private let addressCopyTimeout = Duration.seconds(3)
     @State private var addressCopied = false
+    @State private var showingNavigationAppDialog = false
     @StateObject var viewModel = ParkingStructureInfoContentViewModel()
 
     @EnvironmentObject var globalIdSelectionModel: GlobalIdSelectionModel
@@ -62,7 +63,7 @@ struct ParkingStructureInfoContentView: NetworkView {
                 
                 VStack {
                     Button {
-                        
+                        showingNavigationAppDialog = true
                     } label: {
                         HStack {
                             Spacer()
@@ -151,6 +152,21 @@ struct ParkingStructureInfoContentView: NetworkView {
         .onDisappear {
             stopDataUpdates()
         }
+        .confirmationDialog("Select an app", isPresented: $showingNavigationAppDialog, titleVisibility: .visible) {
+            Button {
+                let url = viewModel.getAppleMapsUrlForParkingStructure()
+                openUrl(url)
+            } label: {
+                Text("Apple Maps")
+            }
+            
+            Button {
+                let url = viewModel.getGoogleMapsUrlForParkingStructure()
+                openUrl(url)
+            } label: {
+                Text("Google Maps")
+            }
+        }
     }
     
     func copyAddress() {
@@ -163,6 +179,11 @@ struct ParkingStructureInfoContentView: NetworkView {
             try? await Task.sleep(for: addressCopyTimeout)
             addressCopied = false
         }
+    }
+    
+    func openUrl(_ url: URL?) {
+        guard let url = url else { return }
+        UIApplication.shared.open(url)
     }
 }
 
