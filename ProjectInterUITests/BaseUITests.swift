@@ -24,6 +24,7 @@ struct ShuttleInfoQueryMockOptions {
 }
 
 class BaseUITests: XCTestCase {
+    let calendar = Calendar.current
     var app: XCUIApplication = XCUIApplication()
     var client: MockServerClient = MockServerClient(url: .mockApiBaseUrl)
     
@@ -191,6 +192,24 @@ class BaseUITests: XCTestCase {
         
         return true
     }
+    
+    func attemptToSelectParkingStructureButton() -> Bool {
+        let firstMatchExists = app.otherElements.buttons["Parking structure"].waitForExistence(timeout: 5)
+        if !firstMatchExists {
+            return false
+        }
+        
+        sleep(5)
+        
+        app.buttons["Parking structure"].firstMatch.forceTapElement()
+        let shuttleTextExists = app.staticTexts["Parking structure name"].firstMatch.waitForExistence(timeout: 5)
+        if !shuttleTextExists {
+            app.buttons["Parking structure name"].firstMatch.forceTapElement()
+        }
+        
+        return true
+    }
+
     
     func executeCallbackForEachShuttle(shouldExitCallbackLoop: () -> Bool) {
         let shuttleButtons = app.buttons.matching(identifier: "Shuttle").allElementsBoundByIndex
@@ -416,6 +435,37 @@ class BaseUITests: XCTestCase {
                             spotsAvailable: 100
                         )
                     ]
+                )
+            )
+        )
+        
+        await client.mock(query: query, response: response)
+    }
+    
+    func mockGetParkingStructureDataWithoutHistorical() async {
+        let mockAddress = "300 E Walnut Ave, Orange, CA 92867 United States"
+        
+        let now = Date()
+        let query = GetParkingStructureInfoDataQuery(
+            systemId: defaultSystemId,
+            parkingStructureId: "1",
+            historicalAveragesInput: .init(
+                from: calendar.date(bySettingHour: 8, minute: 0, second: 0, of: now)!,
+                to: calendar.date(bySettingHour: 20, minute: 0, second: 0, of: now)!,
+                intervalMs: 1000 * 60 * 60 * 2
+            )
+        )
+        
+        let response = Mock<Query>(
+            system: .init(
+                parkingSystem: .init(
+                    parkingStructure: .init(
+                        address: mockAddress,
+                        capacity: 100,
+                        id: "1",
+                        name: "Anderson",
+                        spotsAvailable: 20
+                    )
                 )
             )
         )
