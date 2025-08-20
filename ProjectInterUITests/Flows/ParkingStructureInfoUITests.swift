@@ -100,6 +100,38 @@ final class ParkingStructureInfoUITests: BaseUITests {
         parkingStructureText.tap()
     }
     
+    /// Launch and set up Apple Maps at the beginning of the test, so pop-ups
+    /// don't interrupt the testing flow later.
+    func setupMapsApp() {
+        let locationDialogMonitor = addUIInterruptionMonitor(withDescription: "Allow Maps to use your location") { alertElement in
+            let allowButton = alertElement.buttons["Allow While Using App"]
+            if allowButton.waitForExistence(timeout: 10) {
+                allowButton.tap()
+                return true
+            }
+            
+            return false
+        }
+        
+        let mapsApp = XCUIApplication(bundleIdentifier: "com.apple.Maps")
+        mapsApp.activate()
+        mapsApp.swipeUp()
+        
+        // Can appear during setup
+        let notificationRequestDismissButton = mapsApp.buttons["Not Now"]
+        if notificationRequestDismissButton.waitForExistence(timeout: 5) {
+            notificationRequestDismissButton.tap()
+        }
+        let hikesCustomRoutesButton = mapsApp.buttons["Continue"]
+        if hikesCustomRoutesButton.waitForExistence(timeout: 5) {
+            hikesCustomRoutesButton.tap()
+        }
+        
+        removeUIInterruptionMonitor(locationDialogMonitor)
+        
+        activateSpringboard()
+    }
+    
     @MainActor
     func testParkingStructureInfoDisplayWithHistorical() async {
         await mockGetParkingStructuresListData()
@@ -166,6 +198,9 @@ final class ParkingStructureInfoUITests: BaseUITests {
     func testParkingStructureInfoOpensDirectionsInAppleMaps() async {
         await mockGetParkingStructuresListData()
         await mockGetParkingStructuresDataWithoutHistorical()
+        
+        setupMapsApp()
+        
         app.launch()
         
         switchToParkingTab()
