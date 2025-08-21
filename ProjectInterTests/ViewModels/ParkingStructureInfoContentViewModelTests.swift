@@ -131,6 +131,17 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.parkingInsight?.contains("9%") == true)
         #expect(viewModel.parkingInsight?.contains("less") == true)
     }
+    
+    @Test func viewModelCorrectlyGeneratesParkingInsightIfSameNumberOfSpotsAvailable() async {
+        let mockClient = MockApolloClient()
+        let mockNetworkModel = ApolloNetworkModel(client: mockClient)
+        let viewModel = ParkingStructureInfoContentViewModel(apolloNetworkModel: mockNetworkModel, referenceDate: calendar.date(bySettingHour: 13, minute: 0, second: 0, of: Date())!)
+        mockClient.queryMock = secondaryMock
+        
+        await viewModel.refreshDataOnce(arguments: networkArguments)
+        
+        #expect(viewModel.parkingInsight == "Barrera was also around this filled last week.")
+    }
 
 
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
@@ -217,7 +228,7 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
                                 to: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: MockData.oneWeekAgo)
                             ),
                             .init(
-                                averageSpotsAvailable: 102,
+                                averageSpotsAvailable: 100,
                                 from: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: MockData.oneWeekAgo),
                                 to: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: MockData.oneWeekAgo)
                             ),
