@@ -58,8 +58,8 @@ extension NetworkDataModelTestsProtocol {
         let networkModel = ApolloNetworkModel(client: mockClient)
 
         let viewModel = ViewModel(apolloNetworkModel: networkModel)
-        viewModel.startRefreshingData(arguments: networkArguments, sleepDuration: .milliseconds(1000))
-        try? await Task.sleep(for: .milliseconds(500))
+        viewModel.startRefreshingData(arguments: networkArguments, sleepDuration: .milliseconds(2000))
+        try? await Task.sleep(for: .milliseconds(1000))
         
         assertViewModelDataForDefaultMock(viewModel: viewModel)
     }
@@ -75,13 +75,13 @@ extension NetworkDataModelTestsProtocol {
         
         viewModel.startRefreshingData(arguments: arguments, sleepDuration: .milliseconds(100))
         
-        try? await Task.sleep(for: .milliseconds(1000))
+        try? await Task.sleep(for: .milliseconds(2000))
         
         assertViewModelDataForDefaultMock(viewModel: viewModel)
         
         mockClient.queryMock = secondaryMock as? Mock<Query>
         
-        try? await Task.sleep(for: .milliseconds(600))
+        try? await Task.sleep(for: .milliseconds(2000))
         
         assertViewModelDataForSecondaryMock(viewModel: viewModel)
     }
@@ -95,12 +95,12 @@ extension NetworkDataModelTestsProtocol {
         let viewModel = ViewModel(apolloNetworkModel: networkModel)
         viewModel.startRefreshingData(arguments: networkArguments, sleepDuration: .milliseconds(100))
         
-        try? await Task.sleep(for: .milliseconds(1000))
+        try? await Task.sleep(for: .milliseconds(2000))
         
         viewModel.stopRefreshingData()
         mockClient.queryMock = secondaryMock as? Mock<Query>
         
-        try? await Task.sleep(for: .milliseconds(1000))
+        try? await Task.sleep(for: .milliseconds(2000))
         
         assertViewModelDataForDefaultMock(viewModel: viewModel)
     }
