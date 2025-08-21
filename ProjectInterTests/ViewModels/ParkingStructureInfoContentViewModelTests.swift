@@ -176,10 +176,9 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         let viewModel = ParkingStructureInfoContentViewModel()
         let input = viewModel.generateHistoricalAverageInput()
         
-        
-        #expect(input.from == expectedFrom)
-        #expect(input.to == expectedTo)
-        #expect(input.intervalMs == ParkingStructureInfoContentViewModel.intervalMs)
+        #expect(input?.from == expectedFrom)
+        #expect(input?.to == expectedTo)
+        #expect(input?.intervalMs == ParkingStructureInfoContentViewModel.intervalMs)
     }
     
 
