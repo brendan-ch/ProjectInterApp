@@ -11,43 +11,47 @@ class ParkingStructureInfoContentViewModelPlaceholderBuilder: PlaceholderBuilder
     let calendar = Calendar.current
     let now = Date()
     
+    var oneWeekAgo: Date! {
+        calendar.date(byAdding: .day, value: -7, to: now)!
+    }
+    
     typealias PlaceholderType = ParkingStructureInfoContentViewModel
     
     func build() -> ParkingStructureInfoContentViewModel {
         let data: [ParkingAveragePerTimePeriod] = [
             .init(
-                from: calendar.date(bySettingHour: 8, minute: 0, second: 0, of: now)!,
-                to: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: now)!,
+                from: calendar.date(bySettingHour: 8, minute: 0, second: 0, of: oneWeekAgo)!,
+                to: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: oneWeekAgo)!,
                 averageSpotsAvailable: 50
             ),
             .init(
-                from: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: now)!,
-                to: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: now)!,
+                from: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: oneWeekAgo)!,
+                to: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: oneWeekAgo)!,
                 averageSpotsAvailable: 28
             ),
             .init(
-                from: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: now)!,
-                to: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: now)!,
+                from: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: oneWeekAgo)!,
+                to: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: oneWeekAgo)!,
                 averageSpotsAvailable: 15
             ),
             .init(
-                from: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: now)!,
-                to: calendar.date(bySettingHour: 16, minute: 0, second: 0, of: now)!,
+                from: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: oneWeekAgo)!,
+                to: calendar.date(bySettingHour: 16, minute: 0, second: 0, of: oneWeekAgo)!,
                 averageSpotsAvailable: 17
             ),
             .init(
-                from: calendar.date(bySettingHour: 16, minute: 0, second: 0, of: now)!,
-                to: calendar.date(bySettingHour: 18, minute: 0, second: 0, of: now)!,
+                from: calendar.date(bySettingHour: 16, minute: 0, second: 0, of: oneWeekAgo)!,
+                to: calendar.date(bySettingHour: 18, minute: 0, second: 0, of: oneWeekAgo)!,
                 averageSpotsAvailable: 21
             ),
             .init(
-                from: calendar.date(bySettingHour: 18, minute: 0, second: 0, of: now)!,
-                to: calendar.date(bySettingHour: 20, minute: 0, second: 0, of: now)!,
+                from: calendar.date(bySettingHour: 18, minute: 0, second: 0, of: oneWeekAgo)!,
+                to: calendar.date(bySettingHour: 20, minute: 0, second: 0, of: oneWeekAgo)!,
                 averageSpotsAvailable: 47
             ),
             .init(
-                from: calendar.date(bySettingHour: 20, minute: 0, second: 0, of: now)!,
-                to: calendar.date(bySettingHour: 22, minute: 0, second: 0, of: now)!,
+                from: calendar.date(bySettingHour: 20, minute: 0, second: 0, of: oneWeekAgo)!,
+                to: calendar.date(bySettingHour: 22, minute: 0, second: 0, of: oneWeekAgo)!,
                 averageSpotsAvailable: 76
             )
         ]
