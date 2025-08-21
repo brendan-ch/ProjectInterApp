@@ -43,7 +43,7 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
     
     private let calendar = Calendar.current
 
-    // MARK: Published properties
+    // MARK: Unique properties
     
     @Published var name: String?
     @Published var capacity: Int?
@@ -55,10 +55,13 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
     @Published var startOfCurrentTimePeriod: Date?
     @Published var endOfCurrentTimePeriod: Date?
     
-    @Published var dataInitState: InitializationState = .notInitialized
-    
+    var parkingInsight: String? {
+        return "Anderson Structure is currently 20% more full compared to this time last week."
+    }
     
     // MARK: Conformance to protocol
+    
+    @Published var dataInitState: InitializationState = .notInitialized
 
     typealias NetworkArguments = ParkingStructureNetworkingArguments
     
@@ -157,8 +160,5 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
         endOfCurrentTimePeriod = nil
     }
     
-    private var percentageEncodedAddress: String? {
-        guard let address else { return nil }
-        return address.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-    }
+    
 }

@@ -99,11 +99,13 @@ struct ParkingStructureInfoContentView: NetworkView {
                 }
                 .padding(.horizontal)
                 
-                HStack {
-                    Text("Anderson Structure is currently 20% more full compared to this time last week.")
-                    Spacer()
+                if let insight = viewModel.parkingInsight {
+                    HStack {
+                        Text(insight)
+                        Spacer()
+                    }
+                    .padding(.horizontal)
                 }
-                .padding(.horizontal)
                 
                 
                 if let averages = viewModel.averages,
