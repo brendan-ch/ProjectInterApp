@@ -56,7 +56,25 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
     @Published var endOfCurrentTimePeriod: Date?
     
     var parkingInsight: String? {
-        return "Anderson Structure is currently 20% more full compared to this time last week."
+        guard let name = name,
+              let spotsAvailable = spotsAvailable,
+              let capacity = capacity,
+              let oneWeekAgo = calendar.date(byAdding: .day, value: -7, to: Date()),
+              let average = findAverageCorrespondingToDate(oneWeekAgo) else {
+            return nil
+        }
+        
+        // Calculate from capacity to avoid division by 0
+        let percentage = (Double(capacity - spotsAvailable) / Double(capacity - average.averageSpotsAvailableRounded)) * 100 - 100
+        let roundedPercentage = Int(percentage.rounded())
+        if roundedPercentage == 0 {
+            return "\(name) was also around this filled last week."
+        }
+        if roundedPercentage < 0 {
+            return "\(name) is currently \(-roundedPercentage)% less filled compared to this time last week."
+        }
+        
+        return "\(name) is currently \(roundedPercentage)% more filled compared to this time last week."
     }
     
     // MARK: Conformance to protocol
