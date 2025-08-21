@@ -11,42 +11,11 @@ import ApolloTestSupport
 import ProjectInterOperations
 
 final class ParkingStructureInfoUITests: BaseUITests {
-    let calendar = Calendar.current
-    let mockAddress = "300 E Walnut Ave, Orange, CA 92867 United States"
-    
     override func setUpWithError() throws {
         try super.setUpWithError()
         skipSetupFlow()
     }
     
-    func mockGetParkingStructuresDataWithoutHistorical() async {
-        let now = Date()
-        let query = GetParkingStructureInfoDataQuery(
-            systemId: defaultSystemId,
-            parkingStructureId: "1",
-            historicalAveragesInput: .init(
-                from: calendar.date(bySettingHour: 8, minute: 0, second: 0, of: now)!,
-                to: calendar.date(bySettingHour: 20, minute: 0, second: 0, of: now)!,
-                intervalMs: 1000 * 60 * 60 * 2
-            )
-        )
-        
-        let response = Mock<Query>(
-            system: .init(
-                parkingSystem: .init(
-                    parkingStructure: .init(
-                        address: mockAddress,
-                        capacity: 100,
-                        id: "1",
-                        name: "Anderson",
-                        spotsAvailable: 20
-                    )
-                )
-            )
-        )
-
-        await client.mock(query: query, response: response)
-    }
     
     func mockGetParkingStructureDataWithHistorical() async {
         let now = Date()
@@ -119,11 +88,11 @@ final class ParkingStructureInfoUITests: BaseUITests {
         
         // Can appear during setup
         let notificationRequestDismissButton = mapsApp.buttons["Not Now"]
-        if notificationRequestDismissButton.waitForExistence(timeout: 5) {
+        if notificationRequestDismissButton.waitForExistence(timeout: 20) {
             notificationRequestDismissButton.tap()
         }
         let hikesCustomRoutesButton = mapsApp.buttons["Continue"]
-        if hikesCustomRoutesButton.waitForExistence(timeout: 5) {
+        if hikesCustomRoutesButton.waitForExistence(timeout: 20) {
             hikesCustomRoutesButton.tap()
         }
         
@@ -144,7 +113,7 @@ final class ParkingStructureInfoUITests: BaseUITests {
         mobilesafariApp/*@START_MENU_TOKEN@*/.buttons["Go"]/*[[".otherElements",".buttons[\"go\"]",".buttons[\"Go\"]"],[[[-1,2],[-1,1],[-1,0,1]],[[-1,2],[-1,1]]],[0]]@END_MENU_TOKEN@*/.firstMatch.tap()
         
         let dismissButton = mobilesafariApp.buttons["Go back to web"]
-        if dismissButton.waitForExistence(timeout: 10) {
+        if dismissButton.waitForExistence(timeout: 20) {
             dismissButton.tap()
         }
         
@@ -167,7 +136,7 @@ final class ParkingStructureInfoUITests: BaseUITests {
     @MainActor
     func testParkingStructureInfoDisplayWithoutHistorical() async {
         await mockGetParkingStructuresListData()
-        await mockGetParkingStructuresDataWithoutHistorical()
+        await mockGetParkingStructureDataWithoutHistorical()
         app.launch()
         
         switchToParkingTab()
@@ -183,7 +152,7 @@ final class ParkingStructureInfoUITests: BaseUITests {
     @MainActor
     func testParkingStructureInfoCopyAddressCopiesTheAddress() async {
         await mockGetParkingStructuresListData()
-        await mockGetParkingStructuresDataWithoutHistorical()
+        await mockGetParkingStructureDataWithoutHistorical()
         app.launch()
 
         switchToParkingTab()
@@ -216,7 +185,7 @@ final class ParkingStructureInfoUITests: BaseUITests {
     @MainActor
     func testParkingStructureInfoOpensDirectionsInAppleMaps() async {
         await mockGetParkingStructuresListData()
-        await mockGetParkingStructuresDataWithoutHistorical()
+        await mockGetParkingStructureDataWithoutHistorical()
         
         setupMapsApp()
         
@@ -243,7 +212,7 @@ final class ParkingStructureInfoUITests: BaseUITests {
     @MainActor
     func testParkingStructureInfoOpensDirectionsInGoogleMaps() async {
         await mockGetParkingStructuresListData()
-        await mockGetParkingStructuresDataWithoutHistorical()
+        await mockGetParkingStructureDataWithoutHistorical()
         
         setupGoogleMapsWebsite()
         

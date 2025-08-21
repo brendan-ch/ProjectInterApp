@@ -9,7 +9,8 @@ import SwiftUI
 
 struct ParkingStructureAnnotationView: View {
     var structure: MapViewParkingStructure
-    
+    var shouldBeTransparent = false
+
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 100)
@@ -22,8 +23,10 @@ struct ParkingStructureAnnotationView: View {
                 .padding(6)
                 .foregroundStyle(Color.white)
         }
+        .opacity(shouldBeTransparent ? 0.5 : 1.0)
         .accessibilityLabel("Parking structure")
         .accessibilityValue(structure.id)
+        .accessibilityAddTraits(.isButton)
     }
 
 }

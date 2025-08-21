@@ -13,6 +13,7 @@ import MapKit
 enum AnnotationType: Int {
     case shuttle = 0
     case stop = 1
+    case parkingStructure = 2
 }
 
 struct AnnotationTag: Hashable {
@@ -120,7 +121,7 @@ struct MapView: NetworkView {
         .onChange(of: globalIdSelectionModel.selectedRouteId) {
             viewModel.position = .automatic
         }
-        .onChange(of: [globalIdSelectionModel.selectedShuttleId, globalStopsModel.selectedStopIdOnMap]) {
+        .onChange(of: [globalIdSelectionModel.selectedShuttleId, globalStopsModel.selectedStopIdOnMap, globalIdSelectionModel.selectedParkingStructureId]) {
             // TODO: center the map around the selected shuttle
             viewModel.position = .automatic
             
@@ -128,6 +129,8 @@ struct MapView: NetworkView {
                 selectedTag = .init(id: selectedShuttleId, type: .shuttle)
             } else if let selectedStopId = globalStopsModel.selectedStopIdOnMap {
                 selectedTag = .init(id: selectedStopId, type: .stop)
+            } else if let selectedParkingStructureId = globalIdSelectionModel.selectedParkingStructureId {
+                selectedTag = .init(id: selectedParkingStructureId, type: .parkingStructure)
             } else {
                 selectedTag = nil
             }
@@ -148,13 +151,20 @@ struct MapView: NetworkView {
         if selectedTag.type == .shuttle {
             globalStopsModel.selectedStopIdOnMap = nil
             globalIdSelectionModel.selectedShuttleId = selectedTag.id
+            globalIdSelectionModel.selectedParkingStructureId = nil
+        } else if selectedTag.type == .parkingStructure {
+            globalStopsModel.selectedStopIdOnMap = nil
+            globalIdSelectionModel.selectedParkingStructureId = selectedTag.id
+            globalIdSelectionModel.selectedShuttleId = nil
         } else {
             globalStopsModel.selectedStopIdOnMap = selectedTag.id
             globalIdSelectionModel.selectedShuttleId = nil
+            globalIdSelectionModel.selectedParkingStructureId = nil
         }
     }
 }
 
+// MARK: - Parking rendering
 extension MapView {
     func buildParkingStructureAnnotation(parkingStructure: MapViewParkingStructure) -> some MapContent {
         Annotation(
@@ -162,8 +172,15 @@ extension MapView {
             coordinate: parkingStructure.coordinates,
             anchor: .center
         ) {
-            ParkingStructureAnnotationView(structure: parkingStructure)
+            ParkingStructureAnnotationView(structure: parkingStructure, shouldBeTransparent: shouldBeTransparent(for: parkingStructure))
         }
+        .tag(
+            AnnotationTag(id: parkingStructure.id, type: .parkingStructure)
+        )
+    }
+    
+    private func shouldBeTransparent(for parkingStructure: MapViewParkingStructure) -> Bool {
+        return globalIdSelectionModel.selectedParkingStructureId != nil && globalIdSelectionModel.selectedParkingStructureId != parkingStructure.id
     }
 }
 

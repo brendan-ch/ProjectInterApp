@@ -27,6 +27,26 @@ final class MapUITests: BaseUITests {
         let query = GetMapDataQuery(systemId: defaultSystemId)
         let response = Mock<ProjectInterTestMocks.Query>(
             system: Mock<ProjectInterTestMocks.System>(
+                parkingSystem: .init(
+                    parkingStructures: [
+                        .init(
+                            coordinates: .init(
+                                latitude: 33.78793,
+                                longitude: -117.86723
+                            ),
+                            id: "1",
+                            name: "Anderson",
+                        ),
+                        .init(
+                            coordinates: .init(
+                                latitude: 33.79330,
+                                longitude: -117.85296
+                            ),
+                            id: "2",
+                            name: "Barrera",
+                        )
+                    ]
+                ),
                 routes: [
                     route
                 ],
@@ -215,5 +235,21 @@ final class MapUITests: BaseUITests {
         XCTAssert(attemptToSelectShuttleButton())
         app.buttons["Stop"].firstMatch.tap()
         XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForNonExistence(timeout: 20))
+    }
+    
+    @MainActor
+    func testTapOnParkingStructureOpensParkingStructureInfo() async {
+        await mockGetAllStopsQueryAndResponse()
+        await mockGetMapDataQueryAndResponse()
+        await mockGetParkingStructureDataWithoutHistorical()
+        
+        app.launch()
+        
+        selectStopFromRouteList(name: "Chapman Court")
+        
+        switchToParkingTab()
+        
+        XCTAssert(attemptToSelectParkingStructureButton())
+        XCTAssert(app.staticTexts["Parking structure name"].firstMatch.waitForExistence(timeout: 20))
     }
 }

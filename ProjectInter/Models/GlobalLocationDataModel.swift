@@ -13,9 +13,9 @@ class GlobalLocationDataModel: NSObject, ObservableObject, CLLocationManagerDele
     var locationManager: CLLocationManager?
     
     /// Updated once when the app is first started.
-    @Published var authorizationStatusInitialized: Bool = false
-    @Published var authorizationStatus: CLAuthorizationStatus?
-    @Published var lastUpdatedLocation: CLLocationCoordinate2D?
+    @Published private(set) var authorizationStatusInitialized: Bool = false
+    @Published private(set) var authorizationStatus: CLAuthorizationStatus?
+    @Published private(set) var lastUpdatedLocation: CLLocationCoordinate2D?
     
     var isAuthorized: Bool {
         authorizationStatus == .authorizedAlways
