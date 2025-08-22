@@ -64,8 +64,13 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
             return nil
         }
         
-        // Calculate from capacity to avoid division by 0
-        let percentage = (Double(capacity - spotsAvailable) / Double(capacity - average.averageSpotsAvailableRounded)) * 100 - 100
+        // Avoid division by 0
+        let averageFilledSpots = capacity - average.averageSpotsAvailableRounded
+        if averageFilledSpots == 0 {
+            return nil
+        }
+        
+        let percentage = (Double(capacity - spotsAvailable) / Double(averageFilledSpots)) * 100 - 100
         let roundedPercentage = Int(percentage.rounded())
         if roundedPercentage == 0 {
             return "\(name) was also around this filled last week."
