@@ -17,6 +17,7 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     let calendar = Calendar.current
     let defaultMock = MockData.defaultMock
     let secondaryMock = MockData.secondaryMock
+    let tertiaryMock = MockData.tertiaryMock
     let networkArguments = MockData.defaultArguments
     
     func assertViewModelDataForDefaultMock(viewModel: ParkingStructureInfoContentViewModel) {
@@ -142,7 +143,17 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         
         #expect(viewModel.parkingInsight == "Barrera was also around this filled last week.")
     }
-
+    
+    @Test func viewModelCorrectlyGeneratesParkingInsightIfParkingLotEmpty() async {
+        let mockClient = MockApolloClient()
+        let mockNetworkModel = ApolloNetworkModel(client: mockClient)
+        let viewModel = ParkingStructureInfoContentViewModel(apolloNetworkModel: mockNetworkModel, referenceDate: calendar.date(bySettingHour: 13, minute: 0, second: 0, of: Date())!)
+        mockClient.queryMock = tertiaryMock
+        
+        await viewModel.refreshDataOnce(arguments: networkArguments)
+        
+        #expect(viewModel.parkingInsight == nil)
+    }
 
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
         await autoTest_startRefreshingDataRefreshesDataOnFirstCall()
@@ -244,6 +255,21 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
                     )
                 )
             )
+        )
+        
+        static let tertiaryMock = Mock<ProjectInterTestMocks.Query>(
+            system: .init(
+                parkingSystem: .init(
+                    parkingStructure: .init(
+                        address: "200 W Sycamore Ave, Orange, CA 92866 United States",
+                        capacity: 100,
+                        id: "2",
+                        name: "Barrera",
+                        spotsAvailable: 100
+                    )
+                )
+            )
+
         )
     }
 }
