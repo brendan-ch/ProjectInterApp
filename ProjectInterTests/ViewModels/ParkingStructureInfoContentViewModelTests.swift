@@ -12,87 +12,12 @@ import ProjectInterOperations
 import ApolloTestSupport
 import ProjectInterTestMocks
 
-class ParkingStructureInfoContentViewModelTestsMockData {
-    static let defaultArguments = ParkingStructureNetworkingArguments(
-        systemId: "1",
-        parkingStructureId: "1"
-    )
-    
-    static let calendar = Calendar.current
-    
-    static let defaultMock = Mock<ProjectInterTestMocks.Query>(
-        system: .init(
-            parkingSystem: .init(
-                parkingStructure: .init(
-                    address: "300 E Walnut Ave, Orange, CA 92867 United States",
-                    capacity: 100,
-                    historicalAverages: [
-                        .init(
-                            averageSpotsAvailable: 80,
-                            from: calendar.date(bySettingHour: 8, minute: 0, second: 0, of: Date()),
-                            to: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: Date())
-                        ),
-                        .init(
-                            averageSpotsAvailable: 67,
-                            from: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: Date()),
-                            to: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: Date())
-                        ),
-                        .init(
-                            averageSpotsAvailable: 55,
-                            from: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: Date()),
-                            to: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: Date())
-                        )
-                    ],
-                    id: "1",
-                    name: "Anderson Structure",
-                    spotsAvailable: 50
-                )
-            )
-        )
-    )
-    
-    static let secondaryMock = Mock<ProjectInterTestMocks.Query>(
-        system: .init(
-            parkingSystem: .init(
-                parkingStructure: .init(
-                    address: "200 W Sycamore Ave, Orange, CA 92866 United States",
-                    capacity: 150,
-                    historicalAverages: [
-                        .init(
-                            averageSpotsAvailable: 140,
-                            from: calendar.date(bySettingHour: 8, minute: 0, second: 0, of: Date()),
-                            to: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: Date())
-                        ),
-                        .init(
-                            averageSpotsAvailable: 110,
-                            from: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: Date()),
-                            to: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: Date())
-                        ),
-                        .init(
-                            averageSpotsAvailable: 102,
-                            from: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: Date()),
-                            to: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: Date())
-                        ),
-                        .init(
-                            averageSpotsAvailable: 95,
-                            from: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: Date()),
-                            to: calendar.date(bySettingHour: 16, minute: 0, second: 0, of: Date())
-                        )
-                    ],
-                    id: "2",
-                    name: "Barrera",
-                    spotsAvailable: 100
-                )
-            )
-        )
-    )
-}
 
 class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     let calendar = Calendar.current
-    let defaultMock = ParkingStructureInfoContentViewModelTestsMockData.defaultMock
-    let secondaryMock = ParkingStructureInfoContentViewModelTestsMockData.secondaryMock
-    let networkArguments = ParkingStructureInfoContentViewModelTestsMockData.defaultArguments
+    let defaultMock = MockData.defaultMock
+    let secondaryMock = MockData.secondaryMock
+    let networkArguments = MockData.defaultArguments
     
     func assertViewModelDataForDefaultMock(viewModel: ParkingStructureInfoContentViewModel) {
         #expect(viewModel.capacity == 100)
@@ -176,12 +101,48 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         let viewModel = ParkingStructureInfoContentViewModel()
         let input = viewModel.generateHistoricalAverageInput()
         
-        
-        #expect(input.from == expectedFrom)
-        #expect(input.to == expectedTo)
-        #expect(input.intervalMs == ParkingStructureInfoContentViewModel.intervalMs)
+        #expect(input?.from == expectedFrom)
+        #expect(input?.to == expectedTo)
+        #expect(input?.intervalMs == ParkingStructureInfoContentViewModel.intervalMs)
     }
     
+    @Test func viewModelCorrectlyGeneratesParkingInsightIfLessSpotsAvailable() async {
+        let mockClient = MockApolloClient()
+        let mockNetworkModel = ApolloNetworkModel(client: mockClient)
+        let viewModel = ParkingStructureInfoContentViewModel(apolloNetworkModel: mockNetworkModel, referenceDate: calendar.date(bySettingHour: 8, minute: 5, second: 0, of: Date())!)
+        mockClient.queryMock = defaultMock
+        
+        await viewModel.refreshDataOnce(arguments: networkArguments)
+        
+        #expect(viewModel.parkingInsight?.contains("Anderson Structure") == true)
+        #expect(viewModel.parkingInsight?.contains("150%") == true)
+        #expect(viewModel.parkingInsight?.contains("more") == true)
+    }
+    
+    @Test func viewModelCorrectlyGeneratesParkingInsightIfMoreSpotsAvailable() async {
+        let mockClient = MockApolloClient()
+        let mockNetworkModel = ApolloNetworkModel(client: mockClient)
+        let viewModel = ParkingStructureInfoContentViewModel(apolloNetworkModel: mockNetworkModel, referenceDate: calendar.date(bySettingHour: 15, minute: 0, second: 0, of: Date())!)
+        mockClient.queryMock = secondaryMock
+        
+        await viewModel.refreshDataOnce(arguments: networkArguments)
+        
+        #expect(viewModel.parkingInsight?.contains("Barrera") == true)
+        #expect(viewModel.parkingInsight?.contains("9%") == true)
+        #expect(viewModel.parkingInsight?.contains("less") == true)
+    }
+    
+    @Test func viewModelCorrectlyGeneratesParkingInsightIfSameNumberOfSpotsAvailable() async {
+        let mockClient = MockApolloClient()
+        let mockNetworkModel = ApolloNetworkModel(client: mockClient)
+        let viewModel = ParkingStructureInfoContentViewModel(apolloNetworkModel: mockNetworkModel, referenceDate: calendar.date(bySettingHour: 13, minute: 0, second: 0, of: Date())!)
+        mockClient.queryMock = secondaryMock
+        
+        await viewModel.refreshDataOnce(arguments: networkArguments)
+        
+        #expect(viewModel.parkingInsight == "Barrera was also around this filled last week.")
+    }
+
 
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
         await autoTest_startRefreshingDataRefreshesDataOnFirstCall()
@@ -205,5 +166,84 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     
     @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
         await autoTest_refreshDataOnceDoesNothingIfNoApolloClient()
+    }
+    
+    class MockData {
+        static let defaultArguments = ParkingStructureNetworkingArguments(
+            systemId: "1",
+            parkingStructureId: "1"
+        )
+        
+        static let calendar = Calendar.current
+        static var oneWeekAgo: Date! {
+            MockData.calendar.date(byAdding: .day, value: -7, to: Date())!
+        }
+        
+        static let defaultMock = Mock<ProjectInterTestMocks.Query>(
+            system: .init(
+                parkingSystem: .init(
+                    parkingStructure: .init(
+                        address: "300 E Walnut Ave, Orange, CA 92867 United States",
+                        capacity: 100,
+                        historicalAverages: [
+                            .init(
+                                averageSpotsAvailable: 80,
+                                from: calendar.date(bySettingHour: 8, minute: 0, second: 0, of: MockData.oneWeekAgo),
+                                to: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: MockData.oneWeekAgo)
+                            ),
+                            .init(
+                                averageSpotsAvailable: 67,
+                                from: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: MockData.oneWeekAgo),
+                                to: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: MockData.oneWeekAgo)
+                            ),
+                            .init(
+                                averageSpotsAvailable: 55,
+                                from: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: MockData.oneWeekAgo),
+                                to: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: MockData.oneWeekAgo)
+                            )
+                        ],
+                        id: "1",
+                        name: "Anderson Structure",
+                        spotsAvailable: 50
+                    )
+                )
+            )
+        )
+        
+        static let secondaryMock = Mock<ProjectInterTestMocks.Query>(
+            system: .init(
+                parkingSystem: .init(
+                    parkingStructure: .init(
+                        address: "200 W Sycamore Ave, Orange, CA 92866 United States",
+                        capacity: 150,
+                        historicalAverages: [
+                            .init(
+                                averageSpotsAvailable: 140,
+                                from: calendar.date(bySettingHour: 8, minute: 0, second: 0, of: MockData.oneWeekAgo),
+                                to: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: MockData.oneWeekAgo)
+                            ),
+                            .init(
+                                averageSpotsAvailable: 110,
+                                from: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: MockData.oneWeekAgo),
+                                to: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: MockData.oneWeekAgo)
+                            ),
+                            .init(
+                                averageSpotsAvailable: 100,
+                                from: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: MockData.oneWeekAgo),
+                                to: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: MockData.oneWeekAgo)
+                            ),
+                            .init(
+                                averageSpotsAvailable: 95,
+                                from: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: MockData.oneWeekAgo),
+                                to: calendar.date(bySettingHour: 16, minute: 0, second: 0, of: MockData.oneWeekAgo)
+                            )
+                        ],
+                        id: "2",
+                        name: "Barrera",
+                        spotsAvailable: 100
+                    )
+                )
+            )
+        )
     }
 }

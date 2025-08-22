@@ -99,6 +99,15 @@ struct ParkingStructureInfoContentView: NetworkView {
                 }
                 .padding(.horizontal)
                 
+                if let insight = viewModel.parkingInsight {
+                    HStack {
+                        Text(insight)
+                        Spacer()
+                    }
+                    .padding(.horizontal)
+                }
+                
+                
                 if let averages = viewModel.averages,
                    let capacity = viewModel.capacity,
                    let spotsAvailable = viewModel.spotsAvailable {
@@ -136,7 +145,7 @@ struct ParkingStructureInfoContentView: NetworkView {
                             }
                         }
                     }
-                    .frame(height: 320)
+                    .frame(height: 240)
                     .padding()
                 } else {
                     HStack {

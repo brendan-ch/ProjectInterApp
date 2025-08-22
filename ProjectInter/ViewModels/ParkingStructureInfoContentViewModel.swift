@@ -41,9 +41,9 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
     static let endingHour = 20
     static let intervalMs = 1000 * 60 * 60 * 2
     
-    private let calendar = Calendar.current
+    private let calendar: Calendar
 
-    // MARK: Published properties
+    // MARK: Unique properties
     
     @Published var name: String?
     @Published var capacity: Int?
@@ -55,10 +55,48 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
     @Published var startOfCurrentTimePeriod: Date?
     @Published var endOfCurrentTimePeriod: Date?
     
-    @Published var dataInitState: InitializationState = .notInitialized
+    var parkingInsight: String? {
+        guard let name = name,
+              let spotsAvailable = spotsAvailable,
+              let capacity = capacity,
+              let oneWeekAgo = calendar.date(byAdding: .day, value: -7, to: referenceDate),
+              let average = findAverageCorrespondingToDate(oneWeekAgo) else {
+            return nil
+        }
+        
+        // Calculate from capacity to avoid division by 0
+        let percentage = (Double(capacity - spotsAvailable) / Double(capacity - average.averageSpotsAvailableRounded)) * 100 - 100
+        let roundedPercentage = Int(percentage.rounded())
+        if roundedPercentage == 0 {
+            return "\(name) was also around this filled last week."
+        }
+        if roundedPercentage < 0 {
+            return "\(name) is currently \(-roundedPercentage)% less filled compared to this time last week."
+        }
+        
+        return "\(name) is currently \(roundedPercentage)% more filled compared to this time last week."
+    }
     
+    /// Can be initialized during testing to replace the "current" point in time.
+    private let fixedReferenceDate: Date?
     
+    var referenceDate: Date {
+        if let referenceDate = fixedReferenceDate {
+            return referenceDate
+        }
+        return Date()
+    }
+    
+    var oneWeekAgo: Date? {
+        if let oneWeekAgo = calendar.date(byAdding: .day, value: -7, to: referenceDate) {
+            return oneWeekAgo
+        }
+        return nil
+    }
+
     // MARK: Conformance to protocol
+    
+    @Published var dataInitState: InitializationState = .notInitialized
 
     typealias NetworkArguments = ParkingStructureNetworkingArguments
     
@@ -68,11 +106,19 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
 
     required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
         self.apolloNetworkModel = apolloNetworkModel
+        self.calendar = .current
+        self.fixedReferenceDate = nil
     }
-
+    
+    init(apolloNetworkModel: ApolloNetworkModel? = nil, referenceDate: Date) {
+        self.apolloNetworkModel = apolloNetworkModel
+        self.calendar = .current
+        self.fixedReferenceDate = referenceDate
+    }
+    
     private func setStartAndEndPeriodForCurrentCorrespondingAverage() {
-        let oneWeekAgo = calendar.date(byAdding: .day, value: -7, to: Date())!
-        guard let average = findAverageCorrespondingToDate(oneWeekAgo) else {
+        guard let oneWeekAgo = oneWeekAgo,
+              let average = findAverageCorrespondingToDate(oneWeekAgo) else {
             return
         }
 
@@ -95,9 +141,11 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
         return nil
     }
     
-    func generateHistoricalAverageInput() -> HistoricalParkingAverageQueryInput {
-        let oneWeekAgo = calendar.date(byAdding: .day, value: -7, to: Date())!
-        
+    func generateHistoricalAverageInput() -> HistoricalParkingAverageQueryInput? {
+        guard let oneWeekAgo = oneWeekAgo else {
+            return nil
+        }
+
         let from = calendar.date(bySettingHour: ParkingStructureInfoContentViewModel.startingHour, minute: 0, second: 0, of: oneWeekAgo)!
         let to = calendar.date(bySettingHour: ParkingStructureInfoContentViewModel.endingHour, minute: 0, second: 0, of: oneWeekAgo)!
         
@@ -115,7 +163,7 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
         return GetParkingStructureInfoDataQuery(
             systemId: arguments.systemId,
             parkingStructureId: arguments.parkingStructureId,
-            historicalAveragesInput: historicalAverageInput)
+            historicalAveragesInput: historicalAverageInput!)
     }
     
     func processRefreshDataResult(_ result: Result<GetParkingStructureInfoDataQuery.Data, any Error>) {
@@ -157,8 +205,5 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
         endOfCurrentTimePeriod = nil
     }
     
-    private var percentageEncodedAddress: String? {
-        guard let address else { return nil }
-        return address.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-    }
+    
 }
