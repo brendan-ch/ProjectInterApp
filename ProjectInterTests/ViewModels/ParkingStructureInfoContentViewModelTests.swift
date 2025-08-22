@@ -100,7 +100,7 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         let expectedTo = calendar.date(bySettingHour: ParkingStructureInfoContentViewModel.endingHour, minute: 0, second: 0, of: oneWeekAgo)!
         
         let viewModel = ParkingStructureInfoContentViewModel()
-        let input = viewModel.generateHistoricalAverageInput()
+        let input = viewModel.generateHistoricalAverageInput(for: oneWeekAgo)
         
         #expect(input?.from == expectedFrom)
         #expect(input?.to == expectedTo)

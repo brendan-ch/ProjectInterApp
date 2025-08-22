@@ -146,13 +146,9 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
         return nil
     }
     
-    func generateHistoricalAverageInput() -> HistoricalParkingAverageQueryInput? {
-        guard let oneWeekAgo = oneWeekAgo else {
-            return nil
-        }
-
-        let from = calendar.date(bySettingHour: ParkingStructureInfoContentViewModel.startingHour, minute: 0, second: 0, of: oneWeekAgo)!
-        let to = calendar.date(bySettingHour: ParkingStructureInfoContentViewModel.endingHour, minute: 0, second: 0, of: oneWeekAgo)!
+    func generateHistoricalAverageInput(for date: Date) -> HistoricalParkingAverageQueryInput? {
+        let from = calendar.date(bySettingHour: ParkingStructureInfoContentViewModel.startingHour, minute: 0, second: 0, of: date)!
+        let to = calendar.date(bySettingHour: ParkingStructureInfoContentViewModel.endingHour, minute: 0, second: 0, of: date)!
         
         let historicalAverageInput = HistoricalParkingAverageQueryInput(
             from: from,
@@ -164,7 +160,7 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
     }
     
     func convertNetworkArgumentsIntoQuery(_ arguments: NetworkArguments) -> GetParkingStructureInfoDataQuery {
-        let historicalAverageInput = generateHistoricalAverageInput()
+        let historicalAverageInput = generateHistoricalAverageInput(for: oneWeekAgo!)
         return GetParkingStructureInfoDataQuery(
             systemId: arguments.systemId,
             parkingStructureId: arguments.parkingStructureId,
