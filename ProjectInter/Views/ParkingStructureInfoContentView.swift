@@ -114,22 +114,35 @@ struct ParkingStructureInfoContentView: NetworkView {
                     Group {
                         VStack(alignment: .leading, spacing: 16)  {
                             Chart {
-                                if let startOfCurrentTimePeriod = viewModel.startOfCurrentTimePeriod,
-                                   let endOfCurrentTimePeriod = viewModel.endOfCurrentTimePeriod {
-                                    BarMark(
-                                        x: .value("Time", startOfCurrentTimePeriod ..< endOfCurrentTimePeriod),
-                                        y: .value("Average spots filled", capacity - spotsAvailable)
-                                    )
-                                    .foregroundStyle(Color.pink)
-                                    .zIndex(1)
-                                }
+//                                if let startOfCurrentTimePeriod = viewModel.startOfCurrentTimePeriod,
+//                                   let endOfCurrentTimePeriod = viewModel.endOfCurrentTimePeriod {
+//                                    BarMark(
+//                                        x: .value("Time", startOfCurrentTimePeriod ..< endOfCurrentTimePeriod),
+//                                        y: .value("Average spots filled", capacity - spotsAvailable)
+//                                    )
+//                                    .foregroundStyle(Color.pink)
+//                                    .zIndex(1)
+//                                }
                                 
                                 ForEach(averages, id: \.from) { item in
                                     BarMark(
                                         x: .value("Time", item.from ..< item.to),
                                         y: .value("Average spots filled", capacity - item.averageSpotsAvailableRounded)
                                     )
+                                    .position(by: .value("type", "One week ago"))
                                     .zIndex(0)
+                                }
+
+                                if let currentDayAverages = viewModel.currentDayAverages {
+                                    ForEach(currentDayAverages, id: \.from) { item in
+                                        BarMark(
+                                            x: .value("Time", item.from ..< item.to),
+                                            y: .value("Average spots filled", capacity - item.averageSpotsAvailableRounded)
+                                        )
+                                        .foregroundStyle(Color.pink)
+                                        .position(by: .value("type", "Today"))
+                                        .zIndex(1)
+                                    }
                                 }
                             }
                             .chartGesture { proxy in
@@ -158,6 +171,12 @@ struct ParkingStructureInfoContentView: NetworkView {
         }
         .onAppear {
             restartDataUpdates()
+            
+            if let networkArguments = networkArguments {
+                Task {
+                    await viewModel.loadCurrentDayHistorical(networkArguments)
+                }
+            }
         }
         .onDisappear {
             stopDataUpdates()

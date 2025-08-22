@@ -51,6 +51,7 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
     @Published var address: String?
     
     @Published var averages: [ParkingAveragePerTimePeriod]?
+    @Published var currentDayAverages: [ParkingAveragePerTimePeriod]?
     
     @Published var startOfCurrentTimePeriod: Date?
     @Published var endOfCurrentTimePeriod: Date?
@@ -192,6 +193,38 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
         }
     }
     
+    // Until we design a better way to handle multiple GraphQL queries,
+    // this solution keeps things testable
+    func loadCurrentDayHistorical(_ arguments: NetworkArguments) async {
+        let historicalAverageInput = generateHistoricalAverageInput(for: referenceDate)
+        let query = GetParkingStructureInfoDataQuery(
+            systemId: arguments.systemId,
+            parkingStructureId: arguments.parkingStructureId,
+            historicalAveragesInput: historicalAverageInput!)
+        
+        guard let result = try? await apolloNetworkModel?.fetchOnce(query),
+              let averagesFromNetwork = result.data?.system?.parkingSystem?.parkingStructure?.historicalAverages else {
+            return
+        }
+        
+        var averages: [ParkingAveragePerTimePeriod] = []
+        for averageFromNetwork in averagesFromNetwork {
+            let from = calendar.date(byAdding: .day, value: -7, to: averageFromNetwork.from)!
+            let to = calendar.date(byAdding: .day, value: -7, to: averageFromNetwork.to)!
+            let average = ParkingAveragePerTimePeriod(
+                from: from,
+                to: to,
+                averageSpotsAvailable: Float(averageFromNetwork.averageSpotsAvailable),
+            )
+            
+            averages.append(average)
+        }
+        
+        Task { @MainActor in
+            currentDayAverages = averages
+        }
+    }
+
     private func clearAllData() {
         name = nil
         capacity = nil
