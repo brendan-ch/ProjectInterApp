@@ -113,55 +113,12 @@ struct ParkingStructureInfoContentView: NetworkView {
                    let spotsAvailable = viewModel.spotsAvailable {
                     Group {
                         VStack(alignment: .leading, spacing: 16)  {
-                            Chart {
-                                ForEach(averages, id: \.from) { item in
-                                    BarMark(
-                                        x: .value("Time", item.from ..< item.to),
-                                        y: .value("Average spots filled", capacity - item.averageSpotsAvailableRounded)
-                                    )
-                                    .foregroundStyle(by: .value("type", "This day last week"))
-                                    .position(by: .value("type", "This day last week"))
-                                }
-
-                                if let currentDayAverages = viewModel.currentDayAverages {
-                                    ForEach(currentDayAverages, id: \.from) { item in
-                                        BarMark(
-                                            x: .value("Time", item.from ..< item.to),
-                                            y: .value("Average spots filled", capacity - item.averageSpotsAvailableRounded)
-                                        )
-                                        .foregroundStyle(by: .value("type", "Today"))
-                                        .position(by: .value("type", "Today"))
-                                    }
-                                }
-                                
-                                RuleMark(y: .value("Spots filled", capacity - spotsAvailable))
-                                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [2, 2]))
-                                    .foregroundStyle(.pink)
-                            }
-                            .chartGesture { proxy in
-                                SpatialTapGesture().onEnded { value in
-                                    if let (from, _) = proxy.value(at: value.location, as: (Date, Int).self),
-                                       let tappedIndex = averages.firstIndex(where: { $0.from == from }) {
-                                        print(tappedIndex)
-                                    }
-                                }
-                            }
-                            .chartYAxis {
-                                AxisMarks(position: .automatic, values: stride(from: 0, to: capacity, by: 100).map { $0 })
-                                
-                                AxisMarks(position: .leading, values: [capacity - spotsAvailable]) {
-                                    AxisValueLabel("\(capacity - spotsAvailable)")
-                                        .foregroundStyle(.pink)
-                                }
-                            }
-                            .chartXAxis {
-                                AxisMarks(values: .stride(by: .hour, count: ParkingStructureInfoContentViewModel.intervalHours))
-                            }
-                            .chartForegroundStyleScale([
-                                "This day last week": .blue,
-                                "Today": .pink
-                            ])
-                            .chartLegend(.visible)
+                            ParkingStructureInfoContentChart(
+                                capacity: capacity,
+                                spotsAvailable: spotsAvailable,
+                                averages: averages,
+                                intervalHours: ParkingStructureInfoContentViewModel.intervalHours,
+                                currentDayAverages: viewModel.currentDayAverages)
                         }
                     }
                     .frame(height: 240)
@@ -202,6 +159,66 @@ struct ParkingStructureInfoContentView: NetworkView {
             try? await Task.sleep(for: addressCopyTimeout)
             addressCopied = false
         }
+    }
+}
+
+struct ParkingStructureInfoContentChart: View {
+    let capacity: Int
+    let spotsAvailable: Int
+    let averages: [ParkingAveragePerTimePeriod]
+    let intervalHours: Int
+    let currentDayAverages: [ParkingAveragePerTimePeriod]?
+    
+    var body: some View {
+        Chart {
+            ForEach(averages, id: \.from) { item in
+                BarMark(
+                    x: .value("Time", item.from ..< item.to),
+                    y: .value("Average spots filled", capacity - item.averageSpotsAvailableRounded)
+                )
+                .foregroundStyle(by: .value("type", "This day last week"))
+                .position(by: .value("type", "This day last week"))
+            }
+            
+            if let currentDayAverages = currentDayAverages {
+                ForEach(currentDayAverages, id: \.from) { item in
+                    BarMark(
+                        x: .value("Time", item.from ..< item.to),
+                        y: .value("Average spots filled", capacity - item.averageSpotsAvailableRounded)
+                    )
+                    .foregroundStyle(by: .value("type", "Today"))
+                    .position(by: .value("type", "Today"))
+                }
+            }
+            
+            RuleMark(y: .value("Spots filled", capacity - spotsAvailable))
+                .lineStyle(StrokeStyle(lineWidth: 1, dash: [2, 2]))
+                .foregroundStyle(.pink)
+        }
+        .chartGesture { proxy in
+            SpatialTapGesture().onEnded { value in
+                if let (from, _) = proxy.value(at: value.location, as: (Date, Int).self),
+                   let tappedIndex = averages.firstIndex(where: { $0.from == from }) {
+                    print(tappedIndex)
+                }
+            }
+        }
+        .chartYAxis {
+            AxisMarks(position: .automatic, values: stride(from: 0, to: capacity, by: 100).map { $0 })
+            
+            AxisMarks(position: .leading, values: [capacity - spotsAvailable]) {
+                AxisValueLabel("\(capacity - spotsAvailable)")
+                    .foregroundStyle(.pink)
+            }
+        }
+        .chartXAxis {
+            AxisMarks(values: .stride(by: .hour, count: intervalHours))
+        }
+        .chartForegroundStyleScale([
+            "This day last week": .blue,
+            "Today": .pink
+        ])
+        .chartLegend(.visible)
     }
 }
 
