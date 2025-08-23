@@ -39,7 +39,8 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
     // MARK: Constants
     static let startingHour = 8
     static let endingHour = 20
-    static let intervalMs = 1000 * 60 * 60 * 2
+    static let intervalHours = 2
+    static let intervalMs = 1000 * 60 * 60 * intervalHours
     
     private let calendar: Calendar
 
@@ -51,6 +52,7 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
     @Published var address: String?
     
     @Published var averages: [ParkingAveragePerTimePeriod]?
+    @Published var currentDayAverages: [ParkingAveragePerTimePeriod]?
     
     @Published var startOfCurrentTimePeriod: Date?
     @Published var endOfCurrentTimePeriod: Date?
@@ -146,13 +148,9 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
         return nil
     }
     
-    func generateHistoricalAverageInput() -> HistoricalParkingAverageQueryInput? {
-        guard let oneWeekAgo = oneWeekAgo else {
-            return nil
-        }
-
-        let from = calendar.date(bySettingHour: ParkingStructureInfoContentViewModel.startingHour, minute: 0, second: 0, of: oneWeekAgo)!
-        let to = calendar.date(bySettingHour: ParkingStructureInfoContentViewModel.endingHour, minute: 0, second: 0, of: oneWeekAgo)!
+    func generateHistoricalAverageInput(for date: Date) -> HistoricalParkingAverageQueryInput? {
+        let from = calendar.date(bySettingHour: ParkingStructureInfoContentViewModel.startingHour, minute: 0, second: 0, of: date)!
+        let to = calendar.date(bySettingHour: ParkingStructureInfoContentViewModel.endingHour, minute: 0, second: 0, of: date)!
         
         let historicalAverageInput = HistoricalParkingAverageQueryInput(
             from: from,
@@ -164,7 +162,7 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
     }
     
     func convertNetworkArgumentsIntoQuery(_ arguments: NetworkArguments) -> GetParkingStructureInfoDataQuery {
-        let historicalAverageInput = generateHistoricalAverageInput()
+        let historicalAverageInput = generateHistoricalAverageInput(for: oneWeekAgo!)
         return GetParkingStructureInfoDataQuery(
             systemId: arguments.systemId,
             parkingStructureId: arguments.parkingStructureId,
@@ -196,6 +194,38 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
         }
     }
     
+    // Until we design a better way to handle multiple GraphQL queries,
+    // this solution keeps things testable
+    func loadCurrentDayHistorical(_ arguments: NetworkArguments) async {
+        let historicalAverageInput = generateHistoricalAverageInput(for: referenceDate)
+        let query = GetParkingStructureInfoDataQuery(
+            systemId: arguments.systemId,
+            parkingStructureId: arguments.parkingStructureId,
+            historicalAveragesInput: historicalAverageInput!)
+        
+        guard let result = try? await apolloNetworkModel?.fetchOnce(query),
+              let averagesFromNetwork = result.data?.system?.parkingSystem?.parkingStructure?.historicalAverages else {
+            return
+        }
+        
+        await MainActor.run {
+            var averages: [ParkingAveragePerTimePeriod] = []
+            for averageFromNetwork in averagesFromNetwork {
+                let from = calendar.date(byAdding: .day, value: -7, to: averageFromNetwork.from)!
+                let to = calendar.date(byAdding: .day, value: -7, to: averageFromNetwork.to)!
+                let average = ParkingAveragePerTimePeriod(
+                    from: from,
+                    to: to,
+                    averageSpotsAvailable: Float(averageFromNetwork.averageSpotsAvailable),
+                )
+                
+                averages.append(average)
+            }
+            
+            currentDayAverages = averages
+        }
+    }
+
     private func clearAllData() {
         name = nil
         capacity = nil
