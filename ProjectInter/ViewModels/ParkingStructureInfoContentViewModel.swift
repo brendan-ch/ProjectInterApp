@@ -39,7 +39,8 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
     // MARK: Constants
     static let startingHour = 8
     static let endingHour = 20
-    static let intervalMs = 1000 * 60 * 60 * 2
+    static let intervalHours = 2
+    static let intervalMs = 1000 * 60 * 60 * intervalHours
     
     private let calendar: Calendar
 

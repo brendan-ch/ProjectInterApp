@@ -156,6 +156,9 @@ struct ParkingStructureInfoContentView: NetworkView {
                             .chartYAxis {
                                 AxisMarks(position: .automatic, values: stride(from: 0, to: capacity, by: 100).map { $0 })
                             }
+                            .chartXAxis {
+                                AxisMarks(values: .stride(by: .hour, count: ParkingStructureInfoContentViewModel.intervalHours))
+                            }
                         }
                     }
                     .frame(height: 240)
