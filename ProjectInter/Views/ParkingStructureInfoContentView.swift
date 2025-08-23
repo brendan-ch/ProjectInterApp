@@ -114,23 +114,12 @@ struct ParkingStructureInfoContentView: NetworkView {
                     Group {
                         VStack(alignment: .leading, spacing: 16)  {
                             Chart {
-//                                if let startOfCurrentTimePeriod = viewModel.startOfCurrentTimePeriod,
-//                                   let endOfCurrentTimePeriod = viewModel.endOfCurrentTimePeriod {
-//                                    BarMark(
-//                                        x: .value("Time", startOfCurrentTimePeriod ..< endOfCurrentTimePeriod),
-//                                        y: .value("Average spots filled", capacity - spotsAvailable)
-//                                    )
-//                                    .foregroundStyle(Color.pink)
-//                                    .zIndex(1)
-//                                }
-                                
                                 ForEach(averages, id: \.from) { item in
                                     BarMark(
                                         x: .value("Time", item.from ..< item.to),
                                         y: .value("Average spots filled", capacity - item.averageSpotsAvailableRounded)
                                     )
                                     .position(by: .value("type", "One week ago"))
-                                    .zIndex(0)
                                 }
 
                                 if let currentDayAverages = viewModel.currentDayAverages {
@@ -141,9 +130,12 @@ struct ParkingStructureInfoContentView: NetworkView {
                                         )
                                         .foregroundStyle(Color.pink)
                                         .position(by: .value("type", "Today"))
-                                        .zIndex(1)
                                     }
                                 }
+                                
+                                RuleMark(y: .value("Spots filled", capacity - spotsAvailable))
+                                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [2, 2]))
+                                    .foregroundStyle(.pink)
                             }
                             .chartGesture { proxy in
                                 SpatialTapGesture().onEnded { value in
@@ -155,6 +147,11 @@ struct ParkingStructureInfoContentView: NetworkView {
                             }
                             .chartYAxis {
                                 AxisMarks(position: .automatic, values: stride(from: 0, to: capacity, by: 100).map { $0 })
+                                
+                                AxisMarks(position: .leading, values: [capacity - spotsAvailable]) {
+                                    AxisValueLabel("\(capacity - spotsAvailable)")
+                                        .foregroundStyle(.pink)
+                                }
                             }
                             .chartXAxis {
                                 AxisMarks(values: .stride(by: .hour, count: ParkingStructureInfoContentViewModel.intervalHours))
