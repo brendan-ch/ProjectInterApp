@@ -93,7 +93,7 @@ struct ParkingStructureInfoContentView: NetworkView {
                 .padding()
                 
                 HStack {
-                    Text("This day last week")
+                    Text("Compared to this day last week")
                         .font(.headline)
                     Spacer()
                 }
@@ -119,7 +119,8 @@ struct ParkingStructureInfoContentView: NetworkView {
                                         x: .value("Time", item.from ..< item.to),
                                         y: .value("Average spots filled", capacity - item.averageSpotsAvailableRounded)
                                     )
-                                    .position(by: .value("type", "One week ago"))
+                                    .foregroundStyle(by: .value("type", "This day last week"))
+                                    .position(by: .value("type", "This day last week"))
                                 }
 
                                 if let currentDayAverages = viewModel.currentDayAverages {
@@ -128,7 +129,7 @@ struct ParkingStructureInfoContentView: NetworkView {
                                             x: .value("Time", item.from ..< item.to),
                                             y: .value("Average spots filled", capacity - item.averageSpotsAvailableRounded)
                                         )
-                                        .foregroundStyle(Color.pink)
+                                        .foregroundStyle(by: .value("type", "Today"))
                                         .position(by: .value("type", "Today"))
                                     }
                                 }
@@ -156,6 +157,11 @@ struct ParkingStructureInfoContentView: NetworkView {
                             .chartXAxis {
                                 AxisMarks(values: .stride(by: .hour, count: ParkingStructureInfoContentViewModel.intervalHours))
                             }
+                            .chartForegroundStyleScale([
+                                "This day last week": .blue,
+                                "Today": .pink
+                            ])
+                            .chartLegend(.visible)
                         }
                     }
                     .frame(height: 240)
