@@ -208,20 +208,20 @@ class ParkingStructureInfoContentViewModel: NetworkDataModelProtocol {
             return
         }
         
-        var averages: [ParkingAveragePerTimePeriod] = []
-        for averageFromNetwork in averagesFromNetwork {
-            let from = calendar.date(byAdding: .day, value: -7, to: averageFromNetwork.from)!
-            let to = calendar.date(byAdding: .day, value: -7, to: averageFromNetwork.to)!
-            let average = ParkingAveragePerTimePeriod(
-                from: from,
-                to: to,
-                averageSpotsAvailable: Float(averageFromNetwork.averageSpotsAvailable),
-            )
+        await MainActor.run {
+            var averages: [ParkingAveragePerTimePeriod] = []
+            for averageFromNetwork in averagesFromNetwork {
+                let from = calendar.date(byAdding: .day, value: -7, to: averageFromNetwork.from)!
+                let to = calendar.date(byAdding: .day, value: -7, to: averageFromNetwork.to)!
+                let average = ParkingAveragePerTimePeriod(
+                    from: from,
+                    to: to,
+                    averageSpotsAvailable: Float(averageFromNetwork.averageSpotsAvailable),
+                )
+                
+                averages.append(average)
+            }
             
-            averages.append(average)
-        }
-        
-        Task { @MainActor in
             currentDayAverages = averages
         }
     }

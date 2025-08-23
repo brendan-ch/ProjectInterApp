@@ -72,6 +72,14 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         return viewModel
     }
     
+    func constructViewModelWithReferenceDate(_ date: Date) -> (MockApolloClient, ViewModel) {
+        let mockClient = MockApolloClient()
+        let mockNetworkModel = ApolloNetworkModel(client: mockClient)
+        let viewModel = ParkingStructureInfoContentViewModel(apolloNetworkModel: mockNetworkModel, referenceDate: date)
+        
+        return (mockClient, viewModel)
+    }
+    
     @Test func findAverageCorrespondingToDateReturnsCorrectAverage() {
         let now = Date()
         let viewModel = constructViewModelWithAverages()
@@ -108,9 +116,7 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func viewModelCorrectlyGeneratesParkingInsightIfLessSpotsAvailable() async {
-        let mockClient = MockApolloClient()
-        let mockNetworkModel = ApolloNetworkModel(client: mockClient)
-        let viewModel = ParkingStructureInfoContentViewModel(apolloNetworkModel: mockNetworkModel, referenceDate: calendar.date(bySettingHour: 8, minute: 5, second: 0, of: Date())!)
+        let (mockClient, viewModel) = constructViewModelWithReferenceDate(calendar.date(bySettingHour: 8, minute: 5, second: 0, of: Date())!)
         mockClient.queryMock = defaultMock
         
         await viewModel.refreshDataOnce(arguments: networkArguments)
@@ -121,9 +127,7 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func viewModelCorrectlyGeneratesParkingInsightIfMoreSpotsAvailable() async {
-        let mockClient = MockApolloClient()
-        let mockNetworkModel = ApolloNetworkModel(client: mockClient)
-        let viewModel = ParkingStructureInfoContentViewModel(apolloNetworkModel: mockNetworkModel, referenceDate: calendar.date(bySettingHour: 15, minute: 0, second: 0, of: Date())!)
+        let (mockClient, viewModel) = constructViewModelWithReferenceDate(calendar.date(bySettingHour: 15, minute: 0, second: 0, of: Date())!)
         mockClient.queryMock = secondaryMock
         
         await viewModel.refreshDataOnce(arguments: networkArguments)
@@ -134,9 +138,7 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func viewModelCorrectlyGeneratesParkingInsightIfSameNumberOfSpotsAvailable() async {
-        let mockClient = MockApolloClient()
-        let mockNetworkModel = ApolloNetworkModel(client: mockClient)
-        let viewModel = ParkingStructureInfoContentViewModel(apolloNetworkModel: mockNetworkModel, referenceDate: calendar.date(bySettingHour: 13, minute: 0, second: 0, of: Date())!)
+        let (mockClient, viewModel) = constructViewModelWithReferenceDate(calendar.date(bySettingHour: 13, minute: 0, second: 0, of: Date())!)
         mockClient.queryMock = secondaryMock
         
         await viewModel.refreshDataOnce(arguments: networkArguments)
@@ -145,14 +147,52 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func viewModelCorrectlyGeneratesParkingInsightIfParkingLotEmpty() async {
-        let mockClient = MockApolloClient()
-        let mockNetworkModel = ApolloNetworkModel(client: mockClient)
-        let viewModel = ParkingStructureInfoContentViewModel(apolloNetworkModel: mockNetworkModel, referenceDate: calendar.date(bySettingHour: 13, minute: 0, second: 0, of: Date())!)
+        let (mockClient, viewModel) = constructViewModelWithReferenceDate(calendar.date(bySettingHour: 13, minute: 0, second: 0, of: Date())!)
         mockClient.queryMock = tertiaryMock
         
         await viewModel.refreshDataOnce(arguments: networkArguments)
         
         #expect(viewModel.parkingInsight == nil)
+    }
+    
+    @Test func viewModelCorrectlyLoadsCurrentDayHistoricalData() async {
+        let (mockClient, viewModel) = constructViewModelWithReferenceDate(calendar.date(bySettingHour: 8, minute: 0, second: 0, of: Date())!)
+        
+        // Use the current date for the mock
+        mockClient.queryMock = .init(
+            system: .init(
+                parkingSystem: .init(
+                    parkingStructure: .init(
+                        address: "300 E Walnut Ave, Orange, CA 92867 United States",
+                        capacity: 100,
+                        historicalAverages: [
+                            .init(
+                                averageSpotsAvailable: 80,
+                                from: calendar.date(bySettingHour: 8, minute: 0, second: 0, of: Date()),
+                                to: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: Date())
+                            ),
+                            .init(
+                                averageSpotsAvailable: 67,
+                                from: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: Date()),
+                                to: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: Date())
+                            ),
+                            .init(
+                                averageSpotsAvailable: 55,
+                                from: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: Date()),
+                                to: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: Date())
+                            )
+                        ],
+                        id: "1",
+                        name: "Anderson Structure",
+                        spotsAvailable: 50
+                    )
+                )
+            )
+        )
+        
+        await viewModel.loadCurrentDayHistorical(networkArguments)
+        
+        #expect(viewModel.currentDayAverages?.count == 3)
     }
 
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
