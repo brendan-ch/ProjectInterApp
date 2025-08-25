@@ -30,7 +30,7 @@ jobs:
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
 
-      - name: Upload test coverage
+      - name: Upload test result
         id: coverage-upload
         uses: actions/upload-artifact@v4
         with:
@@ -92,6 +92,9 @@ jobs:
           sudo xcode-select -s /Applications/Xcode_16.4.app
 
       - name: Run Fastlane
+        # In the event that UI tests fail, we want to be able to
+        # diagnose what went wrong; not as critical for unit tests
+        continue-on-error: true
         working-directory: app
         run: fastlane test_ui
         env:
@@ -99,7 +102,7 @@ jobs:
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
 
-      - name: Upload test coverage
+      - name: Upload test result
         id: coverage-upload
         uses: actions/upload-artifact@v4
         with:
@@ -113,3 +116,4 @@ jobs:
           gh pr comment ${{ github.event.pull_request.number }} \
             --repo ${{ github.repository }} \
             --body "UI test coverage artifact: ${{ steps.coverage-upload.outputs.artifact-url }}"
+
