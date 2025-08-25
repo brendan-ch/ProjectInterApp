@@ -30,6 +30,23 @@ jobs:
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
 
+      - name: Upload test coverage
+        id: coverage-upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-coverage-report
+          path: app/test-output
+
+      - name: Post comment linking to artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} \
+            --repo ${{ github.repository }} \
+            --body "Unit test coverage artifact: ${{ steps.coverage-upload.outputs.artifact-url }}"
+
+ 
+
 
   test-ui:
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'bypass ci/cd') }}
@@ -81,3 +98,18 @@ jobs:
           CI: 1
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+
+      - name: Upload test coverage
+        id: coverage-upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-coverage-report
+          path: app/test-ui-output
+
+      - name: Post comment linking to artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} \
+            --repo ${{ github.repository }} \
+            --body "UI test coverage artifact: ${{ steps.coverage-upload.outputs.artifact-url }}"
