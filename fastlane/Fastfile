@@ -52,7 +52,7 @@ platform :ios do
         run_tests(
             testplan: "ProjectInterUITests",
             code_coverage: true,
-            output_directory: "./test-output",
+            output_directory: "./test-ui-output",
             result_bundle: true
         )
     end

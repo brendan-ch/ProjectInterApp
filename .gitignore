@@ -71,4 +71,5 @@ fastlane/test_output
 
 # fastlane test output
 test-output
+test-ui-output
 
