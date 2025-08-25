@@ -69,3 +69,6 @@ fastlane/screenshots/**/*.png
 fastlane/test_output
 *.p8
 
+# fastlane test output
+test-output
+
