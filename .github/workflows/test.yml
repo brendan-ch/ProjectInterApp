@@ -43,7 +43,7 @@ jobs:
         run: |
           gh pr comment ${{ github.event.pull_request.number }} \
             --repo ${{ github.repository }} \
-            --body "Unit test coverage artifact: ${{ steps.coverage-upload.outputs.artifact-url }}"
+            --body "Unit test coverage artifact: ${{ steps.unit-test-result.outputs.artifact-url }}"
 
  
 
@@ -115,5 +115,5 @@ jobs:
         run: |
           gh pr comment ${{ github.event.pull_request.number }} \
             --repo ${{ github.repository }} \
-            --body "UI test coverage artifact: ${{ steps.coverage-upload.outputs.artifact-url }}"
+            --body "UI test coverage artifact: ${{ steps.ui-test-result.outputs.artifact-url }}"
 
