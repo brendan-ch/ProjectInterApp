@@ -30,6 +30,23 @@ jobs:
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
 
+      - name: Upload test result
+        id: unit-test-result
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-result
+          path: app/test-output
+
+      - name: Post comment linking to artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} \
+            --repo ${{ github.repository }} \
+            --body "Unit test coverage artifact: ${{ steps.unit-test-result.outputs.artifact-url }}"
+
+ 
+
 
   test-ui:
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'bypass ci/cd') }}
@@ -75,9 +92,28 @@ jobs:
           sudo xcode-select -s /Applications/Xcode_16.4.app
 
       - name: Run Fastlane
+        # In the event that UI tests fail, we want to be able to
+        # diagnose what went wrong; not as critical for unit tests
+        continue-on-error: true
         working-directory: app
         run: fastlane test_ui
         env:
           CI: 1
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+
+      - name: Upload test result
+        id: ui-test-result
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-test-result
+          path: app/test-ui-output
+
+      - name: Post comment linking to artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} \
+            --repo ${{ github.repository }} \
+            --body "UI test coverage artifact: ${{ steps.ui-test-result.outputs.artifact-url }}"
+

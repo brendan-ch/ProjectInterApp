@@ -36,7 +36,12 @@ platform :ios do
         match(
             type: "development"
         )
-        run_tests(testplan: "ProjectInterTests")
+        run_tests(
+            testplan: "ProjectInterTests",
+            code_coverage: true,
+            output_directory: "./test-output",
+            result_bundle: true
+        )
     end
 
     lane :test_ui do
@@ -44,7 +49,12 @@ platform :ios do
         match(
             type: "development"
         )
-        run_tests(testplan: "ProjectInterUITests")
+        run_tests(
+            testplan: "ProjectInterUITests",
+            code_coverage: true,
+            output_directory: "./test-ui-output",
+            result_bundle: true
+        )
     end
 
     lane :beta do
