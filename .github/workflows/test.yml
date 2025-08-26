@@ -31,10 +31,10 @@ jobs:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
 
       - name: Upload test result
-        id: coverage-upload
+        id: unit-test-result
         uses: actions/upload-artifact@v4
         with:
-          name: code-coverage-report
+          name: unit-test-result
           path: app/test-output
 
       - name: Post comment linking to artifact
@@ -103,10 +103,10 @@ jobs:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
 
       - name: Upload test result
-        id: coverage-upload
+        id: ui-test-result
         uses: actions/upload-artifact@v4
         with:
-          name: code-coverage-report
+          name: ui-test-result
           path: app/test-ui-output
 
       - name: Post comment linking to artifact
