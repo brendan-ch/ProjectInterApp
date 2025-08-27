@@ -86,7 +86,7 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
     let secondaryMock = ParkingStructuresListContentViewModelTestsMockData.secondaryMock
     let tertiaryMock = ParkingStructuresListContentViewModelTestsMockData.tertiaryMock
     
-    func assertViewModelDataForDefaultMock(viewModel: ParkingStructuresListContentViewModel) {
+    func assertViewModelDataForDefaultMock(viewModel: ParkingStructuresListContentView.ViewModel) {
         #expect(viewModel.structures.count == 2)
         
         #expect(viewModel.structures[0].id == "1")
@@ -104,7 +104,7 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
         #expect(viewModel.structuresSupportedBySystem)
     }
     
-    func assertViewModelDataForSecondaryMock(viewModel: ParkingStructuresListContentViewModel) {
+    func assertViewModelDataForSecondaryMock(viewModel: ParkingStructuresListContentView.ViewModel) {
         #expect(viewModel.structures.count == 2)
         
         #expect(viewModel.structures[0].id == "3")
@@ -122,11 +122,11 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
         #expect(viewModel.structuresSupportedBySystem)
     }
     
-    func assertViewModelDataForEmptyMock(viewModel: ParkingStructuresListContentViewModel) {
+    func assertViewModelDataForEmptyMock(viewModel: ParkingStructuresListContentView.ViewModel) {
         #expect(viewModel.structures.isEmpty)
     }
     
-    func assertViewModelDataForTertiaryMock(viewModel: ParkingStructuresListContentViewModel) {
+    func assertViewModelDataForTertiaryMock(viewModel: ParkingStructuresListContentView.ViewModel) {
         #expect(viewModel.structuresSupportedBySystem == false)
     }
     
@@ -159,7 +159,7 @@ class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol 
         mockClient.queryMock = tertiaryMock
         
         let networkModel = ApolloNetworkModel(client: mockClient)
-        let viewModel = ParkingStructuresListContentViewModel(apolloNetworkModel: networkModel)
+        let viewModel = ParkingStructuresListContentView.ViewModel(apolloNetworkModel: networkModel)
         
         let networkArguments = networkArguments
         await viewModel.refreshDataOnce(arguments: networkArguments)

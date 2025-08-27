@@ -11,7 +11,7 @@ import SwiftUI
 /// including ETA from the currently selected stop ID.
 struct ShuttleInfoContentView: NetworkView {
     /// Backing view model.
-    @StateObject var viewModel = ShuttleInfoContentViewModel()
+    @StateObject var viewModel = ViewModel()
     
     /// Source of truth for the currently selected shuttle ID.
     @EnvironmentObject var globalIdSelectionModel: GlobalIdSelectionModel
@@ -220,7 +220,7 @@ struct ShuttleInfoContentView: NetworkView {
 }
 
 #Preview {
-    let builder = ShuttleInfoContentViewModelPlaceholderBuilder()
+    let builder = ShuttleInfoContentView.PlaceholderBuilder()
     let model = builder.build()
     
     return ShuttleInfoContentView(viewModel: model)

@@ -18,7 +18,7 @@ struct RouteInfoContentView: NetworkView {
     @EnvironmentObject var globalStopsState: GlobalStopsModel
     
     /// Backing ``RouteInfoContentView`` instance.
-    @StateObject var viewModel: RouteInfoContentViewModel = RouteInfoContentViewModel()
+    @StateObject var viewModel: ViewModel = ViewModel()
     
     var networkArguments: RouteInfoNetworkArguments? {
         guard let systemId = globalSystemsModel.selectedSystem?.id,
@@ -120,7 +120,7 @@ struct RouteInfoShuttleViewItem: View {
 }
 
 #Preview {
-    let builder = RouteInfoContentViewModelPlaceholderBuilder()
+    let builder = RouteInfoContentView.PlaceholderBuilder()
     let model = builder.build()
 //    model.shuttles = []
     

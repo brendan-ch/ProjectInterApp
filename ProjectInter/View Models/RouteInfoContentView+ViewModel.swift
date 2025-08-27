@@ -1,0 +1,114 @@
+//
+//  RouteInfoContentViewModel.swift
+//  ProjectInter
+//
+//  Created by Brendan Chen on 2024.12.26.
+//
+
+import SwiftUI
+import Apollo
+import ProjectInterOperations
+
+// MARK: - Models
+
+/// Represents a shuttle to render on ``RouteInfoContentView``.
+struct RouteInfoContentViewShuttle: Identifiable {
+    /// The name of the shuttle.
+    var name: String
+    
+    /// The number of seconds remaining (for sorting).
+    var secondsRemaining: Double?
+    
+    /// String representing how far away the shuttle is from a given stop,
+    /// rendered from server-side data.
+    var estimatedTimeAwayDisplay: String {
+        ETAFormatter.formatSecondsRemaining(secondsRemaining)
+    }
+    
+    /// The server-side ID of the shuttle.
+    var id: String
+}
+
+extension RouteInfoContentViewShuttle {
+    init(_ shuttle: GetRouteInfoDataQuery.Data.System.Route.Shuttle) {
+        self.name = shuttle.name
+        self.id = shuttle.id
+        self.secondsRemaining = shuttle.eta?.secondsRemaining
+    }
+}
+
+// MARK: - Network arguments
+
+/// Information to pass into the network request for route info.
+struct RouteInfoNetworkArguments {
+    let systemId: String
+    let stopId: String
+    let routeId: String
+}
+
+// MARK: - View model implementation
+
+extension RouteInfoContentView {
+    /// Backing view model for ``RouteInfoContentView``.
+    class ViewModel: NetworkDataModelProtocol {
+        typealias NetworkArguments = RouteInfoNetworkArguments
+        
+        /// The name of the currently viewed route.
+        @Published var routeName: String = ""
+        
+        /// The name of the next stop relative to the user's currently selected stop.
+        @Published var routeNextStopName: String? = nil
+        
+        /// Currently running shuttles to display for the route.
+        @Published var shuttles: [RouteInfoContentViewShuttle] = []
+        
+        @Published var dataInitState: InitializationState = .notInitialized
+        
+        var apolloNetworkModel: ApolloNetworkModel?
+        
+        var dataRefreshLoopTask: Task<Void, Error>?
+        
+        required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
+            self.apolloNetworkModel = apolloNetworkModel
+        }
+        
+        func convertNetworkArgumentsIntoQuery(_ arguments: RouteInfoNetworkArguments) -> GetRouteInfoDataQuery {
+            return GetRouteInfoDataQuery(
+                systemId: arguments.systemId,
+                stopId: arguments.stopId,
+                routeId: arguments.routeId
+            )
+        }
+        
+        func processRefreshDataResult(_ result: Result<GetRouteInfoDataQuery.Data, any Error>) {
+            switch result {
+            case .success(let response):
+                self.updateDataFromResponse(response)
+            case .failure(let error):
+                print("Error fetching data: \(error)")
+            }
+        }
+        
+        private func updateDataFromResponse(_ response: GetRouteInfoDataQuery.Data) {
+            if let route = response.system?.route {
+                // Set basic route data
+                self.routeName = route.name
+                if let nextStopName = route.orderedStop?.nextStop?.stop?.name {
+                    self.routeNextStopName = nextStopName
+                }
+                
+                self.shuttles = route.shuttles?.map(RouteInfoContentViewShuttle.init) ?? []
+                
+                self.shuttles.sort {
+                    if $0.secondsRemaining != nil {
+                        if $1.secondsRemaining != nil {
+                            return $0.secondsRemaining! < $1.secondsRemaining!
+                        }
+                        return true
+                    }
+                    return false
+                }
+            }
+        }
+    }
+}

@@ -9,9 +9,9 @@ import SwiftUI
 
 struct ParkingStructuresListContentView: NetworkView {
     typealias NetworkArguments = ParkingStructuresNetworkingArguments
-    typealias ViewModelType = ParkingStructuresListContentViewModel
+    typealias ViewModelType = ViewModel
     
-    @StateObject var viewModel = ParkingStructuresListContentViewModel()
+    @StateObject var viewModel = ViewModel()
     
     @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
     @EnvironmentObject var globalIdSelectionModel: GlobalIdSelectionModel
@@ -90,7 +90,7 @@ struct ParkingStructureItem: View {
 }
 
 #Preview {
-    let builder = ParkingStructuresListContentViewModelPlaceholderBuilder()
+    let builder = ParkingStructuresListContentView.PlaceholderBuilder()
     let viewModel = builder.build()
     viewModel.structuresSupportedBySystem = true
     viewModel.structures = [
