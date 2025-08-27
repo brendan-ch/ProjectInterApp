@@ -20,7 +20,7 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     let tertiaryMock = MockData.tertiaryMock
     let networkArguments = MockData.defaultArguments
     
-    func assertViewModelDataForDefaultMock(viewModel: ParkingStructureInfoContentViewModel) {
+    func assertViewModelDataForDefaultMock(viewModel: ParkingStructureInfoContentView.ViewModel) {
         #expect(viewModel.capacity == 100)
         #expect(viewModel.spotsAvailable == 50)
         #expect(viewModel.name == "Anderson Structure")
@@ -29,7 +29,7 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.averages?.count == 3)
     }
     
-    func assertViewModelDataForSecondaryMock(viewModel: ParkingStructureInfoContentViewModel) {
+    func assertViewModelDataForSecondaryMock(viewModel: ParkingStructureInfoContentView.ViewModel) {
         #expect(viewModel.capacity == 150)
         #expect(viewModel.spotsAvailable == 100)
         #expect(viewModel.name == "Barrera")
@@ -38,7 +38,7 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.averages?.count == 4)
     }
     
-    func assertViewModelDataForEmptyMock(viewModel: ProjectInter.ParkingStructureInfoContentViewModel) {
+    func assertViewModelDataForEmptyMock(viewModel: ProjectInter.ParkingStructureInfoContentView.ViewModel) {
         #expect(viewModel.capacity == nil)
         #expect(viewModel.spotsAvailable == nil)
         #expect(viewModel.name == nil)
@@ -48,9 +48,9 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.endOfCurrentTimePeriod == nil)
     }
     
-    func constructViewModelWithAverages() -> ParkingStructureInfoContentViewModel {
+    func constructViewModelWithAverages() -> ParkingStructureInfoContentView.ViewModel {
         let now = Date()
-        let viewModel = ParkingStructureInfoContentViewModel()
+        let viewModel = ParkingStructureInfoContentView.ViewModel()
         viewModel.averages = [
             .init(
                 from: calendar.date(bySettingHour: 8, minute: 0, second: 0, of: now)!,
@@ -75,7 +75,7 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     func constructViewModelWithReferenceDate(_ date: Date) -> (MockApolloClient, ViewModel) {
         let mockClient = MockApolloClient()
         let mockNetworkModel = ApolloNetworkModel(client: mockClient)
-        let viewModel = ParkingStructureInfoContentViewModel(apolloNetworkModel: mockNetworkModel, referenceDate: date)
+        let viewModel = ParkingStructureInfoContentView.ViewModel(apolloNetworkModel: mockNetworkModel, referenceDate: date)
         
         return (mockClient, viewModel)
     }
@@ -104,15 +104,15 @@ class ParkingStructureInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     
     @Test func viewModelCorrectlyGeneratesHistoricalAverageInput() {
         let oneWeekAgo = calendar.date(byAdding: .day, value: -7, to: Date())!
-        let expectedFrom = calendar.date(bySettingHour: ParkingStructureInfoContentViewModel.startingHour, minute: 0, second: 0, of: oneWeekAgo)!
-        let expectedTo = calendar.date(bySettingHour: ParkingStructureInfoContentViewModel.endingHour, minute: 0, second: 0, of: oneWeekAgo)!
+        let expectedFrom = calendar.date(bySettingHour: ParkingStructureInfoContentView.ViewModel.startingHour, minute: 0, second: 0, of: oneWeekAgo)!
+        let expectedTo = calendar.date(bySettingHour: ParkingStructureInfoContentView.ViewModel.endingHour, minute: 0, second: 0, of: oneWeekAgo)!
         
-        let viewModel = ParkingStructureInfoContentViewModel()
+        let viewModel = ParkingStructureInfoContentView.ViewModel()
         let input = viewModel.generateHistoricalAverageInput(for: oneWeekAgo)
         
         #expect(input?.from == expectedFrom)
         #expect(input?.to == expectedTo)
-        #expect(input?.intervalMs == ParkingStructureInfoContentViewModel.intervalMs)
+        #expect(input?.intervalMs == ParkingStructureInfoContentView.ViewModel.intervalMs)
     }
     
     @Test func viewModelCorrectlyGeneratesParkingInsightIfLessSpotsAvailable() async {

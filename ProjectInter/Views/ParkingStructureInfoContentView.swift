@@ -13,7 +13,7 @@ struct ParkingStructureInfoContentView: NetworkView {
     private let addressCopyTimeout = Duration.seconds(3)
     @State private var addressCopied = false
     @State private var showingNavigationAppDialog = false
-    @StateObject var viewModel = ParkingStructureInfoContentViewModel()
+    @StateObject var viewModel = ViewModel()
 
     @EnvironmentObject var globalIdSelectionModel: GlobalIdSelectionModel
     @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
@@ -117,7 +117,7 @@ struct ParkingStructureInfoContentView: NetworkView {
                                 capacity: capacity,
                                 spotsAvailable: spotsAvailable,
                                 averages: averages,
-                                intervalHours: ParkingStructureInfoContentViewModel.intervalHours,
+                                intervalHours: ViewModel.intervalHours,
                                 currentDayAverages: viewModel.currentDayAverages)
                         }
                     }
@@ -223,7 +223,7 @@ struct ParkingStructureInfoContentChart: View {
 }
 
 #Preview {
-    let viewModel = ParkingStructureInfoContentViewModelPlaceholderBuilder().build()
+    let viewModel = ParkingStructureInfoContentView.PlaceholderBuilder().build()
     
     ParkingStructureInfoContentView(viewModel: viewModel)
         .environmentObject(GlobalIdSelectionModel())
