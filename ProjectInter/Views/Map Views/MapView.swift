@@ -34,7 +34,7 @@ struct MapView: NetworkView {
     @EnvironmentObject var globalStopsModel: GlobalStopsModel
     
     /// Backing view model.
-    @StateObject var viewModel = MapViewModel()
+    @StateObject var viewModel = ViewModel()
     
     var tabSelection: Tabs
     
@@ -259,7 +259,7 @@ extension MapView {
 
 // MARK: - Preview
 #Preview {
-    let builder = MapViewModelPlaceholderBuilder()
+    let builder = MapView.PlaceholderBuilder()
     let viewModel = builder.build()
     
     let stopToSelectFromViewModel = viewModel.stops.first!

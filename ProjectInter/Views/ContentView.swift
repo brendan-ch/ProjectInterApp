@@ -56,7 +56,7 @@ struct ContentView: View {
     }
     
     // For dependency injection in previews
-    var mapViewModel: MapViewModel?
+    var mapViewModel: MapView.ViewModel?
     var routeListContentViewModel: RouteListContentViewModel?
     var routeInfoContentViewModel: RouteInfoContentViewModel?
     var shuttleInfoContentViewModel: ShuttleInfoContentViewModel?
@@ -193,7 +193,7 @@ struct ContentView: View {
     let globalStopsModelBuilder = GlobalStopsModelPlaceholderBuilder()
     let globalStopsModel = globalStopsModelBuilder.build()
     
-    let mapViewModelBuilder = MapViewModelPlaceholderBuilder()
+    let mapViewModelBuilder = MapView.PlaceholderBuilder()
     let mapViewModel = mapViewModelBuilder.build()
     
     let routeListContentViewModelBuilder = RouteListContentViewModelPlaceholderBuilder()
