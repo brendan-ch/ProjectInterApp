@@ -124,39 +124,41 @@ struct MapViewNetworkArguments {
 
 // MARK: - View model implementation
 
-/// Backing view model for ``MapView``.
-class MapViewModel: NetworkDataModelProtocol {
-    /// Position of the map camera on the associated Map view.
-    @Published var position: MapCameraPosition = .automatic
-    
-    @Published var routes: [MapViewRoute] = []
-    @Published var shuttles: [MapViewShuttle] = []
-    @Published var stops: [MapViewStop] = []
-    @Published var parkingStructures: [MapViewParkingStructure] = []
-    
-    @Published var dataInitState: InitializationState = .notInitialized
-
-    var dataRefreshLoopTask: Task<Void, any Error>?
-    
-    var apolloNetworkModel: ApolloNetworkModel? = ApolloNetworkModel.shared
-
-    required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
-        self.apolloNetworkModel = apolloNetworkModel
-    }
-    
-    func convertNetworkArgumentsIntoQuery(_ arguments: MapViewNetworkArguments) -> GetMapDataQuery {
-        return GetMapDataQuery(systemId: arguments.systemId)
-    }
-    
-    func processRefreshDataResult(_ result: Result<GetMapDataQuery.Data, Error>) {
-        guard let data = try? result.get() else {
-            Loggers.shared.networkingLogger.warning("No data received for map data query in \(type(of: self))")
-            return
+extension MapView {
+    /// Backing view model for ``MapView``.
+    class ViewModel: NetworkDataModelProtocol {
+        /// Position of the map camera on the associated Map view.
+        @Published var position: MapCameraPosition = .automatic
+        
+        @Published var routes: [MapViewRoute] = []
+        @Published var shuttles: [MapViewShuttle] = []
+        @Published var stops: [MapViewStop] = []
+        @Published var parkingStructures: [MapViewParkingStructure] = []
+        
+        @Published var dataInitState: InitializationState = .notInitialized
+        
+        var dataRefreshLoopTask: Task<Void, any Error>?
+        
+        var apolloNetworkModel: ApolloNetworkModel? = ApolloNetworkModel.shared
+        
+        required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
+            self.apolloNetworkModel = apolloNetworkModel
         }
         
-        self.shuttles = data.system?.shuttles?.map(MapViewShuttle.init) ?? []
-        self.routes = data.system?.routes?.map(MapViewRoute.init) ?? []
-        self.stops = data.system?.stops?.map(MapViewStop.init) ?? []
-        self.parkingStructures = data.system?.parkingSystem?.parkingStructures?.map(MapViewParkingStructure.init) ?? []
+        func convertNetworkArgumentsIntoQuery(_ arguments: MapViewNetworkArguments) -> GetMapDataQuery {
+            return GetMapDataQuery(systemId: arguments.systemId)
+        }
+        
+        func processRefreshDataResult(_ result: Result<GetMapDataQuery.Data, Error>) {
+            guard let data = try? result.get() else {
+                Loggers.shared.networkingLogger.warning("No data received for map data query in \(type(of: self))")
+                return
+            }
+            
+            self.shuttles = data.system?.shuttles?.map(MapViewShuttle.init) ?? []
+            self.routes = data.system?.routes?.map(MapViewRoute.init) ?? []
+            self.stops = data.system?.stops?.map(MapViewStop.init) ?? []
+            self.parkingStructures = data.system?.parkingSystem?.parkingStructures?.map(MapViewParkingStructure.init) ?? []
+        }
     }
 }

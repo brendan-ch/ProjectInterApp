@@ -86,51 +86,52 @@ struct RouteListNetworkArguments {
 
 // MARK: - View model implementation
 
-/// Backing view model for ``RouteListContentView``.
-class RouteListContentViewModel: NetworkDataModelProtocol {
-    typealias NetworkArguments = RouteListNetworkArguments
+extension RouteListContentView {
+    /// Backing view model for ``RouteListContentView``.
+    class ViewModel: NetworkDataModelProtocol {
+        typealias NetworkArguments = RouteListNetworkArguments
 
-    /// All routes to render on ``RouteListContentView``.
-    @Published var routes: [RouteListContentViewRoute] = []
-    
-    @Published var dataInitState: InitializationState = .notInitialized
-    
-    var apolloNetworkModel: ApolloNetworkModel?
+        /// All routes to render on ``RouteListContentView``.
+        @Published var routes: [RouteListContentViewRoute] = []
+        
+        @Published var dataInitState: InitializationState = .notInitialized
+        
+        var apolloNetworkModel: ApolloNetworkModel?
 
-    var dataRefreshLoopTask: Task<Void, Error>?
-    
-    required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
-        self.apolloNetworkModel = apolloNetworkModel
-    }
-
-    func convertNetworkArgumentsIntoQuery(_ arguments: RouteListNetworkArguments) -> GetRouteListDataQuery {
-        return GetRouteListDataQuery(systemId: arguments.systemId, stopId: arguments.stopId)
-    }
-    
-    func processRefreshDataResult(_ result: Result<GetRouteListDataQuery.Data, any Error>) {
-        switch result {
-        case .success(let response):
-            self.updateDataFromResponse(data: response)
-        case .failure(let error):
-            print("Error fetching data: \(error)")
+        var dataRefreshLoopTask: Task<Void, Error>?
+        
+        required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
+            self.apolloNetworkModel = apolloNetworkModel
         }
-    }
-    
-    private func updateDataFromResponse(data: GetRouteListDataQuery.Data) {
-        if let orderedStops = data.system?.stop?.orderedStops {
-            self.routes = []
-            orderedStops.forEach { orderedStop in
-                if let route = orderedStop.route {
-                    var constructedRoute = RouteListContentViewRoute(route)
-                    if let nextStop = orderedStop.nextStop?.stop {
-                        constructedRoute.nextStopName = nextStop.name
+
+        func convertNetworkArgumentsIntoQuery(_ arguments: RouteListNetworkArguments) -> GetRouteListDataQuery {
+            return GetRouteListDataQuery(systemId: arguments.systemId, stopId: arguments.stopId)
+        }
+        
+        func processRefreshDataResult(_ result: Result<GetRouteListDataQuery.Data, any Error>) {
+            switch result {
+            case .success(let response):
+                self.updateDataFromResponse(data: response)
+            case .failure(let error):
+                print("Error fetching data: \(error)")
+            }
+        }
+        
+        private func updateDataFromResponse(data: GetRouteListDataQuery.Data) {
+            if let orderedStops = data.system?.stop?.orderedStops {
+                self.routes = []
+                orderedStops.forEach { orderedStop in
+                    if let route = orderedStop.route {
+                        var constructedRoute = RouteListContentViewRoute(route)
+                        if let nextStop = orderedStop.nextStop?.stop {
+                            constructedRoute.nextStopName = nextStop.name
+                        }
+                        
+                        self.routes.append(constructedRoute)
                     }
-                    
-                    self.routes.append(constructedRoute)
                 }
             }
         }
+        
     }
-    
 }
-

@@ -78,7 +78,8 @@ class RouteListContentViewRouteTests {
             id: "1",
             name: "Chapman Court",
             colorHex: "#000000",
-            nextStopName: "Panther Village"
+            nextStopName: "Panther Village",
+            etasInSeconds: []
         )
     }
     
@@ -139,16 +140,16 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
     let defaultMock = RouteListContentViewModelMockData.defaultMock
     let secondaryMock = RouteListContentViewModelMockData.secondaryMock
     
-    func assertViewModelDataForDefaultMock(viewModel: RouteListContentViewModel) {
+    func assertViewModelDataForDefaultMock(viewModel: RouteListContentView.ViewModel) {
         #expect(viewModel.routes.count == 1)
         #expect(viewModel.routes[0].etasInSeconds.count == 2)
     }
 
-    func assertViewModelDataForSecondaryMock(viewModel: ProjectInter.RouteListContentViewModel) {
+    func assertViewModelDataForSecondaryMock(viewModel: ProjectInter.RouteListContentView.ViewModel) {
         #expect(viewModel.routes[0].etasInSeconds.count == 1)
     }
     
-    func assertViewModelDataForEmptyMock(viewModel: RouteListContentViewModel) {
+    func assertViewModelDataForEmptyMock(viewModel: RouteListContentView.ViewModel) {
         #expect(viewModel.routes.isEmpty)
     }
     

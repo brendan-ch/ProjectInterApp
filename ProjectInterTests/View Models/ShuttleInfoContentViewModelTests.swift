@@ -83,7 +83,7 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     let defaultMock = ShuttleInfoContentViewModelMockData.defaultMock
     let secondaryMock = ShuttleInfoContentViewModelMockData.secondaryMock
     
-    func assertViewModelDataForDefaultMock(viewModel: ShuttleInfoContentViewModel) {
+    func assertViewModelDataForDefaultMock(viewModel: ShuttleInfoContentView.ViewModel) {
         #expect(viewModel.name == "Shuttle 1")
         #expect(viewModel.etaDisplay == "2 min to Stop 1")
         
@@ -98,7 +98,7 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.notificationButtonText == "Cancel 3-minute notification")
     }
     
-    func assertViewModelDataForSecondaryMock(viewModel: ShuttleInfoContentViewModel) {
+    func assertViewModelDataForSecondaryMock(viewModel: ShuttleInfoContentView.ViewModel) {
         #expect(viewModel.name == "Shuttle 2")
         #expect(viewModel.etaDisplay == "5 min to Stop 1")
         
@@ -114,7 +114,7 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         #expect(viewModel.notificationButtonText == "Notify me when nearby")
     }
     
-    func assertViewModelDataForEmptyMock(viewModel: ShuttleInfoContentViewModel) {
+    func assertViewModelDataForEmptyMock(viewModel: ShuttleInfoContentView.ViewModel) {
         #expect(viewModel.name == "")
         #expect(viewModel.etaDisplay == "ETA currently not available")
     }
@@ -170,7 +170,7 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     @Test func availableNotificationOptionsReturnsAllOptionsWhenNoETA() {
-        let viewModel = ShuttleInfoContentViewModel()
+        let viewModel = ShuttleInfoContentView.ViewModel()
         #expect(viewModel.availableNotificationOptions == [2, 5, 10])
     }
     

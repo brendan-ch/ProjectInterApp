@@ -56,11 +56,11 @@ struct ContentView: View {
     }
     
     // For dependency injection in previews
-    var mapViewModel: MapViewModel?
-    var routeListContentViewModel: RouteListContentViewModel?
-    var routeInfoContentViewModel: RouteInfoContentViewModel?
-    var shuttleInfoContentViewModel: ShuttleInfoContentViewModel?
-    var parkingStructuresListContentViewModel: ParkingStructuresListContentViewModel?
+    var mapViewModel: MapView.ViewModel?
+    var routeListContentViewModel: RouteListContentView.ViewModel?
+    var routeInfoContentViewModel: RouteInfoContentView.ViewModel?
+    var shuttleInfoContentViewModel: ShuttleInfoContentView.ViewModel?
+    var parkingStructuresListContentViewModel: ParkingStructuresListContentView.ViewModel?
     
     @EnvironmentObject var globalIdSelectionModel: GlobalIdSelectionModel
     @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
@@ -193,19 +193,19 @@ struct ContentView: View {
     let globalStopsModelBuilder = GlobalStopsModelPlaceholderBuilder()
     let globalStopsModel = globalStopsModelBuilder.build()
     
-    let mapViewModelBuilder = MapViewModelPlaceholderBuilder()
+    let mapViewModelBuilder = MapView.PlaceholderBuilder()
     let mapViewModel = mapViewModelBuilder.build()
     
-    let routeListContentViewModelBuilder = RouteListContentViewModelPlaceholderBuilder()
+    let routeListContentViewModelBuilder = RouteListContentView.PlaceholderBuilder()
     let routeListContentViewModel = routeListContentViewModelBuilder.build()
     
-    let routeInfoContentViewModelBuilder = RouteInfoContentViewModelPlaceholderBuilder()
+    let routeInfoContentViewModelBuilder = RouteInfoContentView.PlaceholderBuilder()
     let routeInfoContentViewModel = routeInfoContentViewModelBuilder.build()
     
-    let shuttleInfoContentViewModelBuilder = ShuttleInfoContentViewModelPlaceholderBuilder()
+    let shuttleInfoContentViewModelBuilder = ShuttleInfoContentView.PlaceholderBuilder()
     let shuttleInfoContentViewModel = shuttleInfoContentViewModelBuilder.build()
     
-    let parkingStructuresContentViewModelBuilder = ParkingStructuresListContentViewModelPlaceholderBuilder()
+    let parkingStructuresContentViewModelBuilder = ParkingStructuresListContentView.PlaceholderBuilder()
     let parkingStructuresViewModel = parkingStructuresContentViewModelBuilder.build()
     
     return ContentView(

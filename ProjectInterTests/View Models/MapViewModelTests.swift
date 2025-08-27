@@ -249,21 +249,21 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
     let defaultMock = MapViewModelTestsMockData.defaultMock
     let secondaryMock = MapViewModelTestsMockData.secondaryMock
     
-    func assertViewModelDataForDefaultMock(viewModel: MapViewModel) {
+    func assertViewModelDataForDefaultMock(viewModel: MapView.ViewModel) {
         #expect(viewModel.routes.count == 1)
         #expect(viewModel.shuttles.count == 1)
         #expect(viewModel.stops.count == 2)
         #expect(viewModel.parkingStructures.count == 2)
     }
     
-    func assertViewModelDataForSecondaryMock(viewModel: MapViewModel) {
+    func assertViewModelDataForSecondaryMock(viewModel: MapView.ViewModel) {
         #expect(viewModel.routes.count == 2)
         #expect(viewModel.shuttles.count == 2)
         #expect(viewModel.stops.count == 1)
         #expect(viewModel.parkingStructures.count == 0)
     }
     
-    func assertViewModelDataForEmptyMock(viewModel: MapViewModel) {
+    func assertViewModelDataForEmptyMock(viewModel: MapView.ViewModel) {
         #expect(viewModel.routes.isEmpty)
         #expect(viewModel.shuttles.isEmpty)
         #expect(viewModel.parkingStructures.isEmpty)

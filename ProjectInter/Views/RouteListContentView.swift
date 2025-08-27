@@ -13,7 +13,7 @@ import Apollo
 /// the passed ``GlobalDataState`` instance.
 struct RouteListContentView: NetworkView {
     /// Backing view model.
-    @StateObject var viewModel: RouteListContentViewModel = RouteListContentViewModel()
+    @StateObject var viewModel: ViewModel = ViewModel()
     
     @EnvironmentObject var globalIdSelectionModel: GlobalIdSelectionModel
     @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
@@ -122,7 +122,7 @@ struct RouteListItem: View {
     let globalDataModelBuilder = GlobalIdSelectionModelPlaceholderBuilder()
     let globalDataStateObject = globalDataModelBuilder.build()
     
-    let viewModelBuilder = RouteListContentViewModelPlaceholderBuilder()
+    let viewModelBuilder = RouteListContentView.PlaceholderBuilder()
     let viewModel = viewModelBuilder.build()
     
     let globalStopModelBuilder = GlobalStopsModelPlaceholderBuilder()
