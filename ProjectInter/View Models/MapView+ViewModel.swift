@@ -126,16 +126,17 @@ struct MapViewNetworkArguments {
 
 extension MapView {
     /// Backing view model for ``MapView``.
+    @Observable
     class ViewModel: NetworkDataModelProtocol {
         /// Position of the map camera on the associated Map view.
-        @Published var position: MapCameraPosition = .automatic
+        var position: MapCameraPosition = .automatic
         
-        @Published var routes: [MapViewRoute] = []
-        @Published var shuttles: [MapViewShuttle] = []
-        @Published var stops: [MapViewStop] = []
-        @Published var parkingStructures: [MapViewParkingStructure] = []
+        var routes: [MapViewRoute] = []
+        var shuttles: [MapViewShuttle] = []
+        var stops: [MapViewStop] = []
+        var parkingStructures: [MapViewParkingStructure] = []
         
-        @Published var dataInitState: InitializationState = .notInitialized
+        var dataInitState: InitializationState = .notInitialized
         
         var dataRefreshLoopTask: Task<Void, any Error>?
         

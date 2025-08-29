@@ -11,15 +11,15 @@ import SwiftUI
 /// including ETA from the currently selected stop ID.
 struct ShuttleInfoContentView: NetworkView {
     /// Backing view model.
-    @StateObject var viewModel = ViewModel()
+    @State var viewModel = ViewModel()
     
     /// Source of truth for the currently selected shuttle ID.
-    @EnvironmentObject var globalIdSelectionModel: GlobalIdSelectionModel
-    @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
+    @Environment(GlobalIdSelectionModel.self) var globalIdSelectionModel: GlobalIdSelectionModel
+    @Environment(GlobalSystemsModel.self) var globalSystemsModel: GlobalSystemsModel
     
-    @EnvironmentObject var globalStopsModel: GlobalStopsModel
+    @Environment(GlobalStopsModel.self) var globalStopsModel: GlobalStopsModel
     
-    @EnvironmentObject var notificationSchedulingState: GlobalNotificationSchedulingModel
+    @Environment(ShuttleNotificationSchedulingModel.self) var notificationSchedulingState: ShuttleNotificationSchedulingModel
     
     @EnvironmentObject var customAppDelegate: CustomAppDelegate
     
@@ -224,9 +224,9 @@ struct ShuttleInfoContentView: NetworkView {
     let model = builder.build()
     
     return ShuttleInfoContentView(viewModel: model)
-        .environmentObject(GlobalSystemsModel())
-        .environmentObject(GlobalIdSelectionModel())
-        .environmentObject(GlobalStopsModel())
-        .environmentObject(GlobalNotificationSchedulingModel())
+        .environment(GlobalSystemsModel())
+        .environment(GlobalIdSelectionModel())
+        .environment(GlobalStopsModel())
+        .environment(ShuttleNotificationSchedulingModel())
         .environmentObject(CustomAppDelegate())
 }

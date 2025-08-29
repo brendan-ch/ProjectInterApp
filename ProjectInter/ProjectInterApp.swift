@@ -12,19 +12,19 @@ import Combine
 
 @main
 struct ProjectInterApp: App {
-    @StateObject var locationManagerStateObject = GlobalLocationDataModel()
+    @State var locationManagerStateObject = LocationDataModel()
     
-    @StateObject var globalIdSelectionStateObject = GlobalIdSelectionModel()
+    @State var globalIdSelectionStateObject = GlobalIdSelectionModel()
     
-    @StateObject var globalSystemsStateObject = GlobalSystemsModel(apolloNetworkModel: ApolloNetworkModelSingleton.shared.apolloNetworkModel)
+    @State var globalSystemsStateObject = GlobalSystemsModel(apolloNetworkModel: ApolloNetworkModelSingleton.shared.apolloNetworkModel)
     
-    @StateObject var globalStopsStateObject = GlobalStopsModel(apolloNetworkModel: ApolloNetworkModelSingleton.shared.apolloNetworkModel)
+    @State var globalStopsStateObject = GlobalStopsModel(apolloNetworkModel: ApolloNetworkModelSingleton.shared.apolloNetworkModel)
     
-    @StateObject var globalNotificationsStateObject = GlobalNotificationSchedulingModel(apolloClient: ApolloClientHolderSingleton.shared.apolloClient)
+    @State var globalNotificationsStateObject = ShuttleNotificationSchedulingModel(apolloClient: ApolloClientHolderSingleton.shared.apolloClient)
     
-    @StateObject var setupStateModel = SetupStateModel()
+    @State var setupStateModel = SetupStateModel()
     
-    @StateObject var schemaVersionModel = SchemaVersionModel(
+    @State var schemaVersionModel = SchemaVersionModel(
         apolloNetworkModel: ApolloNetworkModelSingleton.shared.apolloNetworkModel,
         appSchemaVersion: Bundle.main.infoDictionary?["APP_SCHEMA_VERSION"] as? Int
     )
@@ -46,9 +46,9 @@ struct ProjectInterApp: App {
                     ContentViewWrapper()
                 } else {
                     WelcomeContentView()
-                        .environmentObject(setupStateModel)
+                        .environment(setupStateModel)
                         .environmentObject(customAppDelegate)
-                        .environmentObject(globalSystemsStateObject)
+                        .environment(globalSystemsStateObject)
                         .task {
                             await globalSystemsStateObject.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
                         }
@@ -58,11 +58,11 @@ struct ProjectInterApp: App {
                 restartSchemaVersionModelRefresh()
             }
         }
-        .environmentObject(globalIdSelectionStateObject)
-        .environmentObject(globalSystemsStateObject)
-        .environmentObject(globalStopsStateObject)
-        .environmentObject(locationManagerStateObject)
-        .environmentObject(globalNotificationsStateObject)
+        .environment(globalIdSelectionStateObject)
+        .environment(globalSystemsStateObject)
+        .environment(globalStopsStateObject)
+        .environment(locationManagerStateObject)
+        .environment(globalNotificationsStateObject)
         .environmentObject(customAppDelegate.notificationCenterDelegate)
     }
     
@@ -74,10 +74,10 @@ struct ProjectInterApp: App {
 }
 
 struct ContentViewWrapper: View {
-    @EnvironmentObject var globalSystemsStateObject: GlobalSystemsModel
-    @EnvironmentObject var globalIdSelectionStateObject: GlobalIdSelectionModel
-    @EnvironmentObject var globalStopsStateObject: GlobalStopsModel
-    @EnvironmentObject var locationManagerStateObject: GlobalLocationDataModel
+    @Environment(GlobalSystemsModel.self) var globalSystemsStateObject: GlobalSystemsModel
+    @Environment(GlobalIdSelectionModel.self) var globalIdSelectionStateObject: GlobalIdSelectionModel
+    @Environment(GlobalStopsModel.self) var globalStopsStateObject: GlobalStopsModel
+    @Environment(LocationDataModel.self) var locationManagerStateObject: LocationDataModel
     @EnvironmentObject var customAppDelegate: CustomAppDelegate
     @EnvironmentObject var notificationCenterDelegate: CustomNotificationCenterDelegate
     

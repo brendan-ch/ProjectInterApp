@@ -13,12 +13,12 @@ import Apollo
 /// the passed ``GlobalDataState`` instance.
 struct RouteListContentView: NetworkView {
     /// Backing view model.
-    @StateObject var viewModel: ViewModel = ViewModel()
+    @State var viewModel: ViewModel = ViewModel()
     
-    @EnvironmentObject var globalIdSelectionModel: GlobalIdSelectionModel
-    @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
-    @EnvironmentObject var globalStopsState: GlobalStopsModel
-    @EnvironmentObject var locationManagerState: GlobalLocationDataModel
+    @Environment(GlobalIdSelectionModel.self) var globalIdSelectionModel: GlobalIdSelectionModel
+    @Environment(GlobalSystemsModel.self) var globalSystemsModel: GlobalSystemsModel
+    @Environment(GlobalStopsModel.self) var globalStopsState: GlobalStopsModel
+    @Environment(LocationDataModel.self) var locationManagerState: LocationDataModel
     
     // State that only has to do with presentation logic
     
@@ -132,8 +132,8 @@ struct RouteListItem: View {
     let globalSystemsModel = globalSystemsModelBuilder.build()
     
     return RouteListContentView(viewModel: viewModel)
-        .environmentObject(globalDataStateObject)
-        .environmentObject(GlobalLocationDataModel())
-        .environmentObject(globalStopsModel)
-        .environmentObject(globalSystemsModel)
+        .environment(globalDataStateObject)
+        .environment(LocationDataModel())
+        .environment(globalStopsModel)
+        .environment(globalSystemsModel)
 }

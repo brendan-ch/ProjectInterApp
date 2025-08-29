@@ -8,21 +8,22 @@
 import SwiftUI
 import CoreLocation
 
-/// Global data model which manages location permissions.
-class GlobalLocationDataModel: NSObject, ObservableObject, CLLocationManagerDelegate {
+/// Global data model which manages location permission and stores the last location.
+@Observable
+class LocationDataModel: NSObject, CLLocationManagerDelegate {
     var locationManager: CLLocationManager?
     
     /// Updated once when the app is first started.
-    @Published private(set) var authorizationStatusInitialized: Bool = false
-    @Published private(set) var authorizationStatus: CLAuthorizationStatus?
-    @Published private(set) var lastUpdatedLocation: CLLocationCoordinate2D?
+    private(set) var authorizationStatusInitialized: Bool = false
+    private(set) var authorizationStatus: CLAuthorizationStatus?
+    private(set) var lastUpdatedLocation: CLLocationCoordinate2D?
     
     var isAuthorized: Bool {
         authorizationStatus == .authorizedAlways
         || authorizationStatus == .authorizedWhenInUse
     }
     
-    @Published private(set) var locationIsUpdating: Bool = false
+    private(set) var locationIsUpdating: Bool = false
     
     convenience override init() {
         self.init(locationManager: CLLocationManager())

@@ -10,9 +10,9 @@ import SwiftUI
 struct SettingsContentView: View {
     @State private var showChangelogView = false
     
-    @StateObject var changelogVersionModel = AppVersionModel()
+    @State var changelogVersionModel = AppVersionModel()
     
-    @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
+    @Environment(GlobalSystemsModel.self) var globalSystemsModel: GlobalSystemsModel
     
     @State private var showFeedbackView = false
     
@@ -107,5 +107,5 @@ struct SettingsContentView: View {
 
 #Preview {
     SettingsContentView()
-        .environmentObject(GlobalSystemsModel())
+        .environment(GlobalSystemsModel())
 }

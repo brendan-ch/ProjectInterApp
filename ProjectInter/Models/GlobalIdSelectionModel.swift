@@ -11,18 +11,19 @@ import ProjectInterOperations
 
 /// Contains globally selected IDs for the app.
 /// For a sheet-based app, this is used for responding to notification events.
-class GlobalIdSelectionModel: ObservableObject {
-    @Published var selectedRouteId: String? = nil {
+@Observable
+class GlobalIdSelectionModel {
+    var selectedRouteId: String? = nil {
         didSet {
             Loggers.shared.globalStateEventsLogger.log("Selected route ID changed to: \(self.selectedRouteId ?? "nil")")
         }
     }
-    @Published var selectedShuttleId: String? = nil {
+    var selectedShuttleId: String? = nil {
         didSet {
             Loggers.shared.globalStateEventsLogger.log("Selected shuttle ID changed to: \(self.selectedShuttleId ?? "nil")")
         }
     }
-    @Published var selectedParkingStructureId: String? = nil {
+    var selectedParkingStructureId: String? = nil {
         didSet {
             Loggers.shared.globalStateEventsLogger.log("Selected parking structure ID changed to: \(self.selectedParkingStructureId ?? "nil")")
         }

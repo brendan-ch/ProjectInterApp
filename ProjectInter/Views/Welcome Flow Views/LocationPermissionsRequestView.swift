@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct LocationPermissionsRequestView: View {
-    @EnvironmentObject var locationDataModel: GlobalLocationDataModel
+    @Environment(LocationDataModel.self) var locationDataModel: LocationDataModel
     
     var onContinue: () -> Void
     
@@ -65,5 +65,5 @@ struct LocationPermissionsRequestView: View {
     LocationPermissionsRequestView {
         print("Continue pressed")
     }
-    .environmentObject(GlobalLocationDataModel())
+    .environment(LocationDataModel())
 }

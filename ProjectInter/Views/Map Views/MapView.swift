@@ -27,14 +27,14 @@ struct AnnotationTag: Hashable {
 /// on a map.
 struct MapView: NetworkView {
     /// Source of truth for the currently selected route ID and shuttle ID.
-    @EnvironmentObject var globalIdSelectionModel: GlobalIdSelectionModel
-    @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
+    @Environment(GlobalIdSelectionModel.self) var globalIdSelectionModel: GlobalIdSelectionModel
+    @Environment(GlobalSystemsModel.self) var globalSystemsModel: GlobalSystemsModel
     
     /// Source of truth for the currently selected stop ID and the list of stops.
-    @EnvironmentObject var globalStopsModel: GlobalStopsModel
+    @Environment(GlobalStopsModel.self) var globalStopsModel: GlobalStopsModel
     
     /// Backing view model.
-    @StateObject var viewModel = ViewModel()
+    @State var viewModel = ViewModel()
     
     var tabSelection: Tabs
     
@@ -275,8 +275,8 @@ extension MapView {
     globalDataModel.selectedRouteId = routeToSelect.id
     
     return MapView(viewModel: viewModel, tabSelection: .shuttles)
-        .environmentObject(globalDataModel)
-        .environmentObject(globalStopsModel)
-        .environmentObject(GlobalSystemsModel())
+        .environment(globalDataModel)
+        .environment(globalStopsModel)
+        .environment(GlobalSystemsModel())
 }
 

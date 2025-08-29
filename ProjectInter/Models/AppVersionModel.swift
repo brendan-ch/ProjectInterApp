@@ -7,8 +7,9 @@
 
 import Foundation
 
-class AppVersionModel: ObservableObject {
-    @Published var shouldShowNewUpdatesIndicator: Bool
+@Observable
+class AppVersionModel {
+    var shouldShowNewUpdatesIndicator: Bool
     
     private let bundle: Bundle
     private let userDefaults: UserDefaults

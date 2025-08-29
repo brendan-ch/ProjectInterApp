@@ -41,7 +41,7 @@ class GlobalNotificationSchedulingModelTests {
 
         let mockApolloClient = MockApolloClient()
         mockApolloClient.mutationMock = successfulScheduleNotificationResponse
-        let model = GlobalNotificationSchedulingModel(apolloClient: mockApolloClient)
+        let model = ShuttleNotificationSchedulingModel(apolloClient: mockApolloClient)
         
         await #expect(throws: Never.self) {
             try await model.scheduleNotification(arguments)
@@ -55,7 +55,7 @@ class GlobalNotificationSchedulingModelTests {
         
         let mockApolloClient = MockApolloClient()
         mockApolloClient.mutationMock = failedScheduleNotificationResponse
-        let model = GlobalNotificationSchedulingModel(apolloClient: mockApolloClient)
+        let model = ShuttleNotificationSchedulingModel(apolloClient: mockApolloClient)
         
         await #expect(throws: NotificationSchedulingFailedError.operationFailed) {
             try await model.scheduleNotification(arguments)
@@ -69,7 +69,7 @@ class GlobalNotificationSchedulingModelTests {
         
         let mockApolloClient = MockApolloClient()
         mockApolloClient.mutationMock = successfulCancelNotificationResponse
-        let model = GlobalNotificationSchedulingModel(apolloClient: mockApolloClient)
+        let model = ShuttleNotificationSchedulingModel(apolloClient: mockApolloClient)
         
         await #expect(throws: Never.self) {
             try await model.cancelNotification(arguments)
@@ -83,7 +83,7 @@ class GlobalNotificationSchedulingModelTests {
         
         let mockApolloClient = MockApolloClient()
         mockApolloClient.mutationMock = successfulCancelNotificationResponse
-        let model = GlobalNotificationSchedulingModel(apolloClient: mockApolloClient)
+        let model = ShuttleNotificationSchedulingModel(apolloClient: mockApolloClient)
         
         await #expect(throws: NotificationSchedulingFailedError.operationFailed) {
             try await model.cancelNotification(arguments)

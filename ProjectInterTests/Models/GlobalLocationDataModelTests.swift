@@ -12,7 +12,7 @@ class GlobalLocationDataModelTests {
     @Test func requestAuthorizationSetsAuthorizationStatusAndLocation() async {
         let locationManager = MockCLLocationManager()
         locationManager.authorizationStatusToGrant = .authorizedWhenInUse
-        let locationDataModel = GlobalLocationDataModel(locationManager: locationManager)
+        let locationDataModel = LocationDataModel(locationManager: locationManager)
         
         locationDataModel.requestAuthorization()
         
@@ -23,7 +23,7 @@ class GlobalLocationDataModelTests {
     @Test func creatingDataModelUpdatesLocationIfAuthorized() async {
         let locationManager = MockCLLocationManager()
         locationManager.authorizationStatusToGrant = .authorizedWhenInUse
-        let locationDataModel = GlobalLocationDataModel(locationManager: locationManager)
+        let locationDataModel = LocationDataModel(locationManager: locationManager)
         
         #expect(locationDataModel.lastUpdatedLocation != nil)
     }
@@ -31,7 +31,7 @@ class GlobalLocationDataModelTests {
     @Test func creatingDataModelDoesNotUpdateLocationIfNotAuthorized() async {
         let locationManager = MockCLLocationManager()
         locationManager.authorizationStatusToGrant = .denied
-        let locationDataModel = GlobalLocationDataModel(locationManager: locationManager)
+        let locationDataModel = LocationDataModel(locationManager: locationManager)
         
         #expect(locationDataModel.lastUpdatedLocation == nil)
     }

@@ -36,11 +36,12 @@ struct ParkingStructuresNetworkingArguments {
 // MARK: - View model implementation
 
 extension ParkingStructuresListContentView {
+    @Observable
     class ViewModel: NetworkDataModelProtocol {
-        @Published var structures: [ParkingStructuresListParkingStructure] = []
-        @Published var structuresSupportedBySystem = false
+        var structures: [ParkingStructuresListParkingStructure] = []
+        var structuresSupportedBySystem = false
         
-        @Published var dataInitState: InitializationState = .notInitialized
+        var dataInitState: InitializationState = .notInitialized
         
         typealias NetworkArguments = ParkingStructuresNetworkingArguments
         

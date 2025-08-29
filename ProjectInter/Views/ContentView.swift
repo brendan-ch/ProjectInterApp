@@ -62,9 +62,9 @@ struct ContentView: View {
     var shuttleInfoContentViewModel: ShuttleInfoContentView.ViewModel?
     var parkingStructuresListContentViewModel: ParkingStructuresListContentView.ViewModel?
     
-    @EnvironmentObject var globalIdSelectionModel: GlobalIdSelectionModel
-    @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
-    @EnvironmentObject var locationManagerState: GlobalLocationDataModel
+    @Environment(GlobalIdSelectionModel.self) var globalIdSelectionModel: GlobalIdSelectionModel
+    @Environment(GlobalSystemsModel.self) var globalSystemsModel: GlobalSystemsModel
+    @Environment(LocationDataModel.self) var locationManagerState: LocationDataModel
     
     @State var routeListSheetSelectedDetent: PresentationDetent = .height(360)
     @State var routeInfoSheetSelectedDetent: PresentationDetent = .height(360)
@@ -215,8 +215,8 @@ struct ContentView: View {
         shuttleInfoContentViewModel: shuttleInfoContentViewModel,
         parkingStructuresListContentViewModel: parkingStructuresViewModel
     )
-        .environmentObject(globalIdSelectionModel)
-        .environmentObject(globalSystemsModel)
-        .environmentObject(globalStopsModel)
-        .environmentObject(GlobalLocationDataModel())
+        .environment(globalIdSelectionModel)
+        .environment(globalSystemsModel)
+        .environment(globalStopsModel)
+        .environment(LocationDataModel())
 }

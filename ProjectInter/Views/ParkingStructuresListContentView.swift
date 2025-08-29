@@ -11,10 +11,10 @@ struct ParkingStructuresListContentView: NetworkView {
     typealias NetworkArguments = ParkingStructuresNetworkingArguments
     typealias ViewModelType = ViewModel
     
-    @StateObject var viewModel = ViewModel()
+    @State var viewModel = ViewModel()
     
-    @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
-    @EnvironmentObject var globalIdSelectionModel: GlobalIdSelectionModel
+    @Environment(GlobalSystemsModel.self) var globalSystemsModel: GlobalSystemsModel
+    @Environment(GlobalIdSelectionModel.self) var globalIdSelectionModel: GlobalIdSelectionModel
 
     var networkArguments: ParkingStructuresNetworkingArguments? {
         if let systemId = globalSystemsModel.selectedSystem?.id {
@@ -99,6 +99,6 @@ struct ParkingStructureItem: View {
     ]
     
     return ParkingStructuresListContentView(viewModel: viewModel)
-        .environmentObject(GlobalSystemsModelPlaceholderBuilder().build())
-        .environmentObject(GlobalIdSelectionModel())
+        .environment(GlobalSystemsModelPlaceholderBuilder().build())
+        .environment(GlobalIdSelectionModel())
 }

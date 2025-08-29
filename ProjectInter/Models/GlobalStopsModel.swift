@@ -40,6 +40,7 @@ extension GlobalStopsModelStop {
 
 // MARK: - Data model implementation
 
+@Observable
 class GlobalStopsModel: NetworkDataModelProtocol {
     
     typealias NetworkArguments = GlobalStopsNetworkArguments
@@ -48,11 +49,11 @@ class GlobalStopsModel: NetworkDataModelProtocol {
     
     var dataRefreshLoopTask: Task<Void, any Error>?
     
-    @Published var dataInitState: InitializationState = .notInitialized
+    var dataInitState: InitializationState = .notInitialized
     
-    @Published var stops: [GlobalStopsModelStop] = []
+    var stops: [GlobalStopsModelStop] = []
     
-    @Published private var selectedStopId: String? = nil {
+    private var selectedStopId: String? = nil {
         didSet {
             Loggers.shared.globalStateEventsLogger.notice("Selected stop ID changed to: \(self.selectedStopId ?? "nil")")
         }
@@ -61,13 +62,13 @@ class GlobalStopsModel: NetworkDataModelProtocol {
         stops.first { $0.id == selectedStopId }
     }
     
-    @Published var selectedStopIdOnMap: String? = nil
+    var selectedStopIdOnMap: String? = nil
     
     /// Indicates whether the stop is automatically being selected via location
     /// (via coordination with ``GlobalLocationDataModel``). Manual
     /// selection of a stop by calling ``selectStopManually(stop:)``
     /// sets this to false.
-    @Published var isAutomaticWhenLocationIsAvailable: Bool = false
+    var isAutomaticWhenLocationIsAvailable: Bool = false
     
     var apolloNetworkModel: ApolloNetworkModel?
     
