@@ -16,7 +16,7 @@ enum InitializationState {
     case failed
 }
 
-protocol NetworkDataModelProtocol: ObservableObject {
+protocol NetworkDataModelProtocol: AnyObject {
     associatedtype NetworkArguments
     associatedtype GraphQLQueryType: GraphQLQuery
     
