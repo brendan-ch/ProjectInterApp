@@ -117,3 +117,9 @@ jobs:
             --repo ${{ github.repository }} \
             --body "UI test coverage artifact: ${{ steps.ui-test-result.outputs.artifact-url }}"
 
+      - name: Check for UI test failure
+        if: steps.fastlane-tests.outcome == 'failure'
+        run: |
+          echo "UI tests failed. Check the uploaded artifacts for details."
+          exit 1
+

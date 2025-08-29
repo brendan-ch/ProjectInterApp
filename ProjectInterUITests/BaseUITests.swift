@@ -442,13 +442,13 @@ class BaseUITests: XCTestCase {
         await client.mock(query: query, response: response)
     }
     
-    func mockGetParkingStructureDataWithoutHistorical() async {
+    func mockGetParkingStructureDataWithoutHistorical(parkingStructureId: String = "1") async {
         let mockAddress = "300 E Walnut Ave, Orange, CA 92867 United States"
         
         let now = Date()
         let query = GetParkingStructureInfoDataQuery(
             systemId: defaultSystemId,
-            parkingStructureId: "1",
+            parkingStructureId: parkingStructureId,
             historicalAveragesInput: .init(
                 from: calendar.date(bySettingHour: 8, minute: 0, second: 0, of: now)!,
                 to: calendar.date(bySettingHour: 20, minute: 0, second: 0, of: now)!,
@@ -462,7 +462,7 @@ class BaseUITests: XCTestCase {
                     parkingStructure: .init(
                         address: mockAddress,
                         capacity: 100,
-                        id: "1",
+                        id: parkingStructureId,
                         name: "Anderson",
                         spotsAvailable: 20
                     )
