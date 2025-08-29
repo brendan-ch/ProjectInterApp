@@ -15,7 +15,7 @@ struct StopSelectionView: View {
     
     @Environment(GlobalSystemsModel.self) var globalSystemsModel: GlobalSystemsModel
     
-    @Environment(GlobalLocationDataModel.self) var locationModel: GlobalLocationDataModel
+    @Environment(LocationDataModel.self) var locationModel: LocationDataModel
     
     @Environment(\.dismiss) var dismiss
     
@@ -98,5 +98,5 @@ struct StopSelectionView: View {
     StopSelectionView()
         .environment(globalStopsModel)
         .environment(GlobalSystemsModelPlaceholderBuilder().build())
-        .environment(GlobalLocationDataModel())
+        .environment(LocationDataModel())
 }

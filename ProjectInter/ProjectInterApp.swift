@@ -12,7 +12,7 @@ import Combine
 
 @main
 struct ProjectInterApp: App {
-    @State var locationManagerStateObject = GlobalLocationDataModel()
+    @State var locationManagerStateObject = LocationDataModel()
     
     @State var globalIdSelectionStateObject = GlobalIdSelectionModel()
     
@@ -20,7 +20,7 @@ struct ProjectInterApp: App {
     
     @State var globalStopsStateObject = GlobalStopsModel(apolloNetworkModel: ApolloNetworkModelSingleton.shared.apolloNetworkModel)
     
-    @State var globalNotificationsStateObject = GlobalNotificationSchedulingModel(apolloClient: ApolloClientHolderSingleton.shared.apolloClient)
+    @State var globalNotificationsStateObject = ShuttleNotificationSchedulingModel(apolloClient: ApolloClientHolderSingleton.shared.apolloClient)
     
     @State var setupStateModel = SetupStateModel()
     
@@ -77,7 +77,7 @@ struct ContentViewWrapper: View {
     @Environment(GlobalSystemsModel.self) var globalSystemsStateObject: GlobalSystemsModel
     @Environment(GlobalIdSelectionModel.self) var globalIdSelectionStateObject: GlobalIdSelectionModel
     @Environment(GlobalStopsModel.self) var globalStopsStateObject: GlobalStopsModel
-    @Environment(GlobalLocationDataModel.self) var locationManagerStateObject: GlobalLocationDataModel
+    @Environment(LocationDataModel.self) var locationManagerStateObject: LocationDataModel
     @EnvironmentObject var customAppDelegate: CustomAppDelegate
     @EnvironmentObject var notificationCenterDelegate: CustomNotificationCenterDelegate
     

@@ -64,7 +64,7 @@ struct ContentView: View {
     
     @Environment(GlobalIdSelectionModel.self) var globalIdSelectionModel: GlobalIdSelectionModel
     @Environment(GlobalSystemsModel.self) var globalSystemsModel: GlobalSystemsModel
-    @Environment(GlobalLocationDataModel.self) var locationManagerState: GlobalLocationDataModel
+    @Environment(LocationDataModel.self) var locationManagerState: LocationDataModel
     
     @State var routeListSheetSelectedDetent: PresentationDetent = .height(360)
     @State var routeInfoSheetSelectedDetent: PresentationDetent = .height(360)
@@ -218,5 +218,5 @@ struct ContentView: View {
         .environment(globalIdSelectionModel)
         .environment(globalSystemsModel)
         .environment(globalStopsModel)
-        .environment(GlobalLocationDataModel())
+        .environment(LocationDataModel())
 }

@@ -18,7 +18,7 @@ struct RouteListContentView: NetworkView {
     @Environment(GlobalIdSelectionModel.self) var globalIdSelectionModel: GlobalIdSelectionModel
     @Environment(GlobalSystemsModel.self) var globalSystemsModel: GlobalSystemsModel
     @Environment(GlobalStopsModel.self) var globalStopsState: GlobalStopsModel
-    @Environment(GlobalLocationDataModel.self) var locationManagerState: GlobalLocationDataModel
+    @Environment(LocationDataModel.self) var locationManagerState: LocationDataModel
     
     // State that only has to do with presentation logic
     
@@ -133,7 +133,7 @@ struct RouteListItem: View {
     
     return RouteListContentView(viewModel: viewModel)
         .environment(globalDataStateObject)
-        .environment(GlobalLocationDataModel())
+        .environment(LocationDataModel())
         .environment(globalStopsModel)
         .environment(globalSystemsModel)
 }

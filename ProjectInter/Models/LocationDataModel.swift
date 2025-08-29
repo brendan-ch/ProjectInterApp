@@ -8,9 +8,9 @@
 import SwiftUI
 import CoreLocation
 
-/// Global data model which manages location permissions.
+/// Global data model which manages location permission and stores the last location.
 @Observable
-class GlobalLocationDataModel: NSObject, CLLocationManagerDelegate {
+class LocationDataModel: NSObject, CLLocationManagerDelegate {
     var locationManager: CLLocationManager?
     
     /// Updated once when the app is first started.

@@ -24,7 +24,7 @@ enum NotificationSchedulingFailedError: Error {
 }
 
 @Observable
-class GlobalNotificationSchedulingModel {
+class ShuttleNotificationSchedulingModel {
     var apolloClient: ApolloClientProtocol?
     
     init(apolloClient: ApolloClientProtocol? = nil) {

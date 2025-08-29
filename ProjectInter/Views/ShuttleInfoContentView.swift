@@ -19,7 +19,7 @@ struct ShuttleInfoContentView: NetworkView {
     
     @Environment(GlobalStopsModel.self) var globalStopsModel: GlobalStopsModel
     
-    @Environment(GlobalNotificationSchedulingModel.self) var notificationSchedulingState: GlobalNotificationSchedulingModel
+    @Environment(ShuttleNotificationSchedulingModel.self) var notificationSchedulingState: ShuttleNotificationSchedulingModel
     
     @EnvironmentObject var customAppDelegate: CustomAppDelegate
     
@@ -227,6 +227,6 @@ struct ShuttleInfoContentView: NetworkView {
         .environment(GlobalSystemsModel())
         .environment(GlobalIdSelectionModel())
         .environment(GlobalStopsModel())
-        .environment(GlobalNotificationSchedulingModel())
+        .environment(ShuttleNotificationSchedulingModel())
         .environmentObject(CustomAppDelegate())
 }
