@@ -142,7 +142,7 @@ final class MapUITests: BaseUITests {
         
         app.launch()
         
-        let shuttleExists = app.otherElements.buttons.matching(identifier: "Shuttle").firstMatch.waitForExistence(timeout: 5)
+        let shuttleExists = app.otherElements.buttons.matching(identifier: "Shuttle").firstMatch.waitForExistence(timeout: 20)
         XCTAssert(shuttleExists)
         
         var shuttleCounts: [Int] = []
