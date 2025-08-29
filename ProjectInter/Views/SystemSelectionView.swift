@@ -10,7 +10,7 @@ import SwiftUI
 struct SystemSelectionView: View {
     @State private var searchText = ""
     
-    @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
+    @Environment(GlobalSystemsModel.self) var globalSystemsModel: GlobalSystemsModel
     
     @Environment(\.dismiss) var dismiss
 
@@ -59,5 +59,5 @@ struct SystemSelectionView: View {
     var globalDataModel = globalSystemsModelBuilder.build()
     
     SystemSelectionView()
-        .environmentObject(globalDataModel)
+        .environment(globalDataModel)
 }

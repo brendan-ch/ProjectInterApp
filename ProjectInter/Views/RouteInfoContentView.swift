@@ -12,13 +12,13 @@ import SwiftUI
 struct RouteInfoContentView: NetworkView {
     /// ``GlobalDataState`` instance containing the currently selected route
     /// and `ApolloClient` instance.
-    @EnvironmentObject var globalIdSelectionModel: GlobalIdSelectionModel
-    @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
+    @Environment(GlobalIdSelectionModel.self) var globalIdSelectionModel: GlobalIdSelectionModel
+    @Environment(GlobalSystemsModel.self) var globalSystemsModel: GlobalSystemsModel
     
-    @EnvironmentObject var globalStopsState: GlobalStopsModel
+    @Environment(GlobalStopsModel.self) var globalStopsState: GlobalStopsModel
     
     /// Backing ``RouteInfoContentView`` instance.
-    @StateObject var viewModel: ViewModel = ViewModel()
+    @State var viewModel: ViewModel = ViewModel()
     
     var networkArguments: RouteInfoNetworkArguments? {
         guard let systemId = globalSystemsModel.selectedSystem?.id,
@@ -125,7 +125,7 @@ struct RouteInfoShuttleViewItem: View {
 //    model.shuttles = []
     
     return RouteInfoContentView(viewModel: model)
-        .environmentObject(GlobalIdSelectionModel())
-        .environmentObject(GlobalStopsModel())
-        .environmentObject(GlobalSystemsModelPlaceholderBuilder().build())
+        .environment(GlobalIdSelectionModel())
+        .environment(GlobalStopsModel())
+        .environment(GlobalSystemsModelPlaceholderBuilder().build())
 }

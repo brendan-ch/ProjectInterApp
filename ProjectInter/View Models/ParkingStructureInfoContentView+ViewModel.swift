@@ -105,7 +105,7 @@ extension ParkingStructureInfoContentView {
         
         // MARK: Conformance to protocol
         
-        @Published var dataInitState: InitializationState = .notInitialized
+        var dataInitState: InitializationState = .notInitialized
         
         typealias NetworkArguments = ParkingStructureNetworkingArguments
         

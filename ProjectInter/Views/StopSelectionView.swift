@@ -11,11 +11,11 @@ import SwiftUI
 struct StopSelectionView: View {
     @State var searchText: String = ""
     
-    @EnvironmentObject var globalStopsModel: GlobalStopsModel
+    @Environment(GlobalStopsModel.self) var globalStopsModel: GlobalStopsModel
     
-    @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
+    @Environment(GlobalSystemsModel.self) var globalSystemsModel: GlobalSystemsModel
     
-    @EnvironmentObject var locationModel: GlobalLocationDataModel
+    @Environment(GlobalLocationDataModel.self) var locationModel: GlobalLocationDataModel
     
     @Environment(\.dismiss) var dismiss
     
@@ -96,7 +96,7 @@ struct StopSelectionView: View {
     let globalStopsModel = builder.build()
     
     StopSelectionView()
-        .environmentObject(globalStopsModel)
-        .environmentObject(GlobalSystemsModelPlaceholderBuilder().build())
-        .environmentObject(GlobalLocationDataModel())
+        .environment(globalStopsModel)
+        .environment(GlobalSystemsModelPlaceholderBuilder().build())
+        .environment(GlobalLocationDataModel())
 }

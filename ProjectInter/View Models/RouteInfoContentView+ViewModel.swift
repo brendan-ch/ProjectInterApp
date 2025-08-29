@@ -50,19 +50,20 @@ struct RouteInfoNetworkArguments {
 
 extension RouteInfoContentView {
     /// Backing view model for ``RouteInfoContentView``.
+    @Observable
     class ViewModel: NetworkDataModelProtocol {
         typealias NetworkArguments = RouteInfoNetworkArguments
         
         /// The name of the currently viewed route.
-        @Published var routeName: String = ""
+        var routeName: String = ""
         
         /// The name of the next stop relative to the user's currently selected stop.
-        @Published var routeNextStopName: String? = nil
+        var routeNextStopName: String? = nil
         
         /// Currently running shuttles to display for the route.
-        @Published var shuttles: [RouteInfoContentViewShuttle] = []
+        var shuttles: [RouteInfoContentViewShuttle] = []
         
-        @Published var dataInitState: InitializationState = .notInitialized
+        var dataInitState: InitializationState = .notInitialized
         
         var apolloNetworkModel: ApolloNetworkModel?
         

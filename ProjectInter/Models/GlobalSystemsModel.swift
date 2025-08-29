@@ -24,10 +24,11 @@ struct GlobalDataModelNetworkArguments {
     
 }
 
+@Observable
 class GlobalSystemsModel: NetworkDataModelProtocol {
     typealias NetworkArguments = GlobalDataModelNetworkArguments
     
-    @Published var dataInitState: InitializationState = .notInitialized
+    var dataInitState: InitializationState = .notInitialized
     
     var dataRefreshLoopTask: Task<Void, any Error>?
     
@@ -35,8 +36,8 @@ class GlobalSystemsModel: NetworkDataModelProtocol {
     
     var apolloNetworkModel: ApolloNetworkModel?
     
-    @Published var systems: [System] = []
-    @Published private var selectedSystemId: String? = nil {
+    var systems: [System] = []
+    private var selectedSystemId: String? = nil {
         didSet {
             Loggers.shared.globalStateEventsLogger.notice("Selected system ID changed to: \(self.selectedSystemId ?? "nil")")
         }

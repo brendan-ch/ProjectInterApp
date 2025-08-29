@@ -8,8 +8,9 @@
 import SwiftUI
 
 /// Tracks whether to display the setup flow for the app.
-class SetupStateModel: ObservableObject {
-    @Published private(set) var setupCompleted: Bool
+@Observable
+class SetupStateModel {
+    private(set) var setupCompleted: Bool
     
     let userDefaults: UserDefaults
     

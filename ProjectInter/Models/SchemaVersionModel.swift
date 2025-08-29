@@ -14,6 +14,7 @@ struct SchemaVersionModelNetworkArguments {
     
 }
 
+@Observable
 class SchemaVersionModel: NetworkDataModelProtocol {
     typealias T = SchemaVersionModelNetworkArguments
     
@@ -21,14 +22,14 @@ class SchemaVersionModel: NetworkDataModelProtocol {
     
     var apolloNetworkModel: ApolloNetworkModel?
     
-    @Published var dataInitState: InitializationState = .notInitialized
+    var dataInitState: InitializationState = .notInitialized
     
-    @Published private(set) var compatibilityCheckCompleted = false
+    private(set) var compatibilityCheckCompleted = false
      
-    @Published private(set) var serverMinSchemaVersion: Int?
-    @Published private(set) var serverCurrentSchemaVersion: Int?
+    private(set) var serverMinSchemaVersion: Int?
+    private(set) var serverCurrentSchemaVersion: Int?
     
-    @Published var appSchemaVersion: Int?
+    var appSchemaVersion: Int?
     
     var isCompatible: Bool {
         if let appSchemaVersion = appSchemaVersion,

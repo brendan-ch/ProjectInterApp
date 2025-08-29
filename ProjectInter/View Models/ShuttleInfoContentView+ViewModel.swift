@@ -43,16 +43,17 @@ extension ShuttleInfoEtaListItem {
 
 extension ShuttleInfoContentView {
     /// Backing view model for ``ShuttleInfoContentView``.
+    @Observable
     class ViewModel: NetworkDataModelProtocol {
         typealias NetworkArguments = ShuttleInfoNetworkArguments
         
-        @Published var dataInitState: InitializationState = .notInitialized
+        var dataInitState: InitializationState = .notInitialized
 
         /// Name of the shuttle to display.
-        @Published var name: String = ""
+        var name: String = ""
         
-        @Published var etaSecondsRemaining: Double? = nil
-        @Published var nameOfStop: String? = nil
+        var etaSecondsRemaining: Double? = nil
+        var nameOfStop: String? = nil
         
         private var stopId: String? = nil
         
@@ -66,9 +67,9 @@ extension ShuttleInfoContentView {
             return dataInitState == .initializing ? "" : "ETA currently not available"
         }
         
-        @Published var etaListItems: [ShuttleInfoEtaListItem] = []
+        var etaListItems: [ShuttleInfoEtaListItem] = []
         
-        @Published private(set) var secondsThresholdForNotification: Int? = nil
+        private(set) var secondsThresholdForNotification: Int? = nil
         var isNotificationScheduled: Bool {
             return secondsThresholdForNotification != nil
         }

@@ -88,13 +88,14 @@ struct RouteListNetworkArguments {
 
 extension RouteListContentView {
     /// Backing view model for ``RouteListContentView``.
+    @Observable
     class ViewModel: NetworkDataModelProtocol {
         typealias NetworkArguments = RouteListNetworkArguments
 
         /// All routes to render on ``RouteListContentView``.
-        @Published var routes: [RouteListContentViewRoute] = []
+        var routes: [RouteListContentViewRoute] = []
         
-        @Published var dataInitState: InitializationState = .notInitialized
+        var dataInitState: InitializationState = .notInitialized
         
         var apolloNetworkModel: ApolloNetworkModel?
 

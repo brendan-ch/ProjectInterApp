@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SystemSelectionSetupView: View {
-    @EnvironmentObject var systemsModel: GlobalSystemsModel
+    @Environment(GlobalSystemsModel.self) var systemsModel: GlobalSystemsModel
     
     var onContinue: () -> Void
     
@@ -85,5 +85,5 @@ struct SystemSelectionSetupView: View {
     SystemSelectionSetupView {
         print("Continue pressed")
     }
-        .environmentObject(GlobalSystemsModel())
+        .environment(GlobalSystemsModel())
 }

@@ -15,8 +15,8 @@ struct ParkingStructureInfoContentView: NetworkView {
     @State private var showingNavigationAppDialog = false
     @State var viewModel = ViewModel()
 
-    @EnvironmentObject var globalIdSelectionModel: GlobalIdSelectionModel
-    @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
+    @Environment(GlobalIdSelectionModel.self) var globalIdSelectionModel: GlobalIdSelectionModel
+    @Environment(GlobalSystemsModel.self) var globalSystemsModel: GlobalSystemsModel
     
     var networkArguments: ParkingStructureNetworkingArguments? {
         if let systemId = globalSystemsModel.selectedSystem?.id,
@@ -226,6 +226,6 @@ struct ParkingStructureInfoContentChart: View {
     let viewModel = ParkingStructureInfoContentView.PlaceholderBuilder().build()
     
     ParkingStructureInfoContentView(viewModel: viewModel)
-        .environmentObject(GlobalIdSelectionModel())
-        .environmentObject(GlobalSystemsModel())
+        .environment(GlobalIdSelectionModel())
+        .environment(GlobalSystemsModel())
 }
