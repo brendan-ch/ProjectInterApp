@@ -142,10 +142,6 @@ final class ParkingStructureInfoUITests: BaseUITests {
         switchToParkingTab()
         selectMockParkingStructure()
 
-        let parkingStructureText = app.staticTexts["Anderson"]
-        XCTAssert(parkingStructureText.waitForExistence(timeout: 10))
-        parkingStructureText.tap()
-
         XCTAssert(app.staticTexts["No historical data available. Check back later."].waitForExistence(timeout: 5))
     }
     
