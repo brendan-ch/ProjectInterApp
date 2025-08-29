@@ -241,8 +241,9 @@ final class MapUITests: BaseUITests {
     func testTapOnParkingStructureOpensParkingStructureInfo() async {
         await mockGetAllStopsQueryAndResponse()
         await mockGetMapDataQueryAndResponse()
-        await mockGetParkingStructureDataWithoutHistorical()
-        
+        await mockGetParkingStructureDataWithoutHistorical(parkingStructureId: "1")
+        await mockGetParkingStructureDataWithoutHistorical(parkingStructureId: "2")
+
         app.launch()
         
         selectStopFromRouteList(name: "Chapman Court")
