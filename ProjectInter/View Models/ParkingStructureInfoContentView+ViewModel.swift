@@ -36,6 +36,7 @@ struct ParkingStructureNetworkingArguments {
 // MARK: - View model implementation
 
 extension ParkingStructureInfoContentView {
+    @Observable
     class ViewModel: NetworkDataModelProtocol {
         // MARK: Constants
         static let startingHour = 8
@@ -47,16 +48,16 @@ extension ParkingStructureInfoContentView {
         
         // MARK: Unique properties
         
-        @Published var name: String?
-        @Published var capacity: Int?
-        @Published var spotsAvailable: Int?
-        @Published var address: String?
+        var name: String?
+        var capacity: Int?
+        var spotsAvailable: Int?
+        var address: String?
         
-        @Published var averages: [ParkingAveragePerTimePeriod]?
-        @Published var currentDayAverages: [ParkingAveragePerTimePeriod]?
+        var averages: [ParkingAveragePerTimePeriod]?
+        var currentDayAverages: [ParkingAveragePerTimePeriod]?
         
-        @Published var startOfCurrentTimePeriod: Date?
-        @Published var endOfCurrentTimePeriod: Date?
+        var startOfCurrentTimePeriod: Date?
+        var endOfCurrentTimePeriod: Date?
         
         var parkingInsight: String? {
             guard let name = name,

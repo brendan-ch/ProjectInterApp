@@ -13,7 +13,7 @@ struct ParkingStructureInfoContentView: NetworkView {
     private let addressCopyTimeout = Duration.seconds(3)
     @State private var addressCopied = false
     @State private var showingNavigationAppDialog = false
-    @StateObject var viewModel = ViewModel()
+    @State var viewModel = ViewModel()
 
     @EnvironmentObject var globalIdSelectionModel: GlobalIdSelectionModel
     @EnvironmentObject var globalSystemsModel: GlobalSystemsModel
