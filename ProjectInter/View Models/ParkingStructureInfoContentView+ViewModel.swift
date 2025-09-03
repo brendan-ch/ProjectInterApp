@@ -37,14 +37,14 @@ struct ParkingStructureNetworkingArguments {
 
 extension ParkingStructureInfoContentView {
     @Observable
-    class ViewModel: NetworkDataModelProtocol {
+    class ViewModel: NetworkDataModel<ParkingStructureNetworkingArguments, GetParkingStructureInfoDataQuery> {
         // MARK: Constants
         static let startingHour = 8
         static let endingHour = 20
         static let intervalHours = 2
         static let intervalMs = 1000 * 60 * 60 * intervalHours
         
-        private let calendar: Calendar
+        private var calendar: Calendar = .current
         
         // MARK: Unique properties
         
@@ -87,7 +87,7 @@ extension ParkingStructureInfoContentView {
         }
         
         /// Can be initialized during testing to replace the "current" point in time.
-        private let fixedReferenceDate: Date?
+        private var fixedReferenceDate: Date? = .now
         
         var referenceDate: Date {
             if let referenceDate = fixedReferenceDate {
@@ -103,28 +103,16 @@ extension ParkingStructureInfoContentView {
             return nil
         }
         
-        // MARK: Conformance to protocol
-        
-        var dataInitState: InitializationState = .notInitialized
-        
-        typealias NetworkArguments = ParkingStructureNetworkingArguments
-        
-        var dataRefreshLoopTask: Task<Void, any Error>?
-        
-        var apolloNetworkModel: ApolloNetworkModel?
-        
         required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
-            self.apolloNetworkModel = apolloNetworkModel
-            self.calendar = .current
-            self.fixedReferenceDate = nil
+            super.init(apolloNetworkModel: apolloNetworkModel)
         }
-        
+
         init(apolloNetworkModel: ApolloNetworkModel? = nil, referenceDate: Date) {
-            self.apolloNetworkModel = apolloNetworkModel
+            super.init(apolloNetworkModel: apolloNetworkModel)
             self.calendar = .current
             self.fixedReferenceDate = referenceDate
         }
-        
+
         private func setStartAndEndPeriodForCurrentCorrespondingAverage() {
             guard let oneWeekAgo = oneWeekAgo,
                   let average = findAverageCorrespondingToDate(oneWeekAgo) else {

@@ -89,22 +89,10 @@ struct RouteListNetworkArguments {
 extension RouteListContentView {
     /// Backing view model for ``RouteListContentView``.
     @Observable
-    class ViewModel: NetworkDataModelProtocol {
-        typealias NetworkArguments = RouteListNetworkArguments
-
+    class ViewModel: NetworkDataModel<RouteListNetworkArguments, GetRouteListDataQuery> {
         /// All routes to render on ``RouteListContentView``.
         var routes: [RouteListContentViewRoute] = []
         
-        var dataInitState: InitializationState = .notInitialized
-        
-        var apolloNetworkModel: ApolloNetworkModel?
-
-        var dataRefreshLoopTask: Task<Void, Error>?
-        
-        required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
-            self.apolloNetworkModel = apolloNetworkModel
-        }
-
         func convertNetworkArgumentsIntoQuery(_ arguments: RouteListNetworkArguments) -> GetRouteListDataQuery {
             return GetRouteListDataQuery(systemId: arguments.systemId, stopId: arguments.stopId)
         }

@@ -15,17 +15,10 @@ struct SchemaVersionModelNetworkArguments {
 }
 
 @Observable
-class SchemaVersionModel: NetworkDataModelProtocol {
+class SchemaVersionModel: NetworkDataModel<SchemaVersionModelNetworkArguments, GetSchemaVersionQuery> {
     typealias T = SchemaVersionModelNetworkArguments
     
-    var dataRefreshLoopTask: Task<Void, any Error>?
-    
-    var apolloNetworkModel: ApolloNetworkModel?
-    
-    var dataInitState: InitializationState = .notInitialized
-    
     private(set) var compatibilityCheckCompleted = false
-     
     private(set) var serverMinSchemaVersion: Int?
     private(set) var serverCurrentSchemaVersion: Int?
     
@@ -38,10 +31,6 @@ class SchemaVersionModel: NetworkDataModelProtocol {
             return appSchemaVersion >= serverMinSchemaVersion && appSchemaVersion <= serverCurrentSchemaVersion
         }
         return false
-    }
-    
-    required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
-        self.apolloNetworkModel = apolloNetworkModel
     }
     
     convenience init(apolloNetworkModel: ApolloNetworkModel? = nil, appSchemaVersion: Int?) {

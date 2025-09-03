@@ -127,7 +127,7 @@ struct MapViewNetworkArguments {
 extension MapView {
     /// Backing view model for ``MapView``.
     @Observable
-    class ViewModel: NetworkDataModelProtocol {
+    class ViewModel: NetworkDataModel<MapViewNetworkArguments, GetMapDataQuery> {
         /// Position of the map camera on the associated Map view.
         var position: MapCameraPosition = .automatic
         
@@ -135,16 +135,6 @@ extension MapView {
         var shuttles: [MapViewShuttle] = []
         var stops: [MapViewStop] = []
         var parkingStructures: [MapViewParkingStructure] = []
-        
-        var dataInitState: InitializationState = .notInitialized
-        
-        var dataRefreshLoopTask: Task<Void, any Error>?
-        
-        var apolloNetworkModel: ApolloNetworkModel? = ApolloNetworkModel.shared
-        
-        required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
-            self.apolloNetworkModel = apolloNetworkModel
-        }
         
         func convertNetworkArgumentsIntoQuery(_ arguments: MapViewNetworkArguments) -> GetMapDataQuery {
             return GetMapDataQuery(systemId: arguments.systemId)

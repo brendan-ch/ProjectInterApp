@@ -41,15 +41,11 @@ extension GlobalStopsModelStop {
 // MARK: - Data model implementation
 
 @Observable
-class GlobalStopsModel: NetworkDataModelProtocol {
-    
-    typealias NetworkArguments = GlobalStopsNetworkArguments
+class GlobalStopsModel: NetworkDataModel<GlobalStopsNetworkArguments, GetAllStopsBySystemIdQuery> {
     
     var apolloClient: ApolloClientProtocol?
     
     var dataRefreshLoopTask: Task<Void, any Error>?
-    
-    var dataInitState: InitializationState = .notInitialized
     
     var stops: [GlobalStopsModelStop] = []
     
@@ -70,17 +66,11 @@ class GlobalStopsModel: NetworkDataModelProtocol {
     /// sets this to false.
     var isAutomaticWhenLocationIsAvailable: Bool = false
     
-    var apolloNetworkModel: ApolloNetworkModel?
-    
-    required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
-        self.apolloNetworkModel = apolloNetworkModel
-    }
-    
     func convertNetworkArgumentsIntoQuery(_ arguments: GlobalStopsNetworkArguments) -> GetAllStopsBySystemIdQuery {
         return GetAllStopsBySystemIdQuery(systemId: arguments.systemId)
     }
     
-    internal func processRefreshDataResult(_ result: Result<GetAllStopsBySystemIdQuery.Data, any Error>) {
+    func processRefreshDataResult(_ result: Result<GetAllStopsBySystemIdQuery.Data, any Error>) {
         guard let data = try? result.get() else {
             return
         }

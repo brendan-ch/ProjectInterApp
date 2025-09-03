@@ -51,9 +51,7 @@ struct RouteInfoNetworkArguments {
 extension RouteInfoContentView {
     /// Backing view model for ``RouteInfoContentView``.
     @Observable
-    class ViewModel: NetworkDataModelProtocol {
-        typealias NetworkArguments = RouteInfoNetworkArguments
-        
+    class ViewModel: NetworkDataModel<RouteInfoNetworkArguments, GetRouteInfoDataQuery> {
         /// The name of the currently viewed route.
         var routeName: String = ""
         
@@ -62,16 +60,6 @@ extension RouteInfoContentView {
         
         /// Currently running shuttles to display for the route.
         var shuttles: [RouteInfoContentViewShuttle] = []
-        
-        var dataInitState: InitializationState = .notInitialized
-        
-        var apolloNetworkModel: ApolloNetworkModel?
-        
-        var dataRefreshLoopTask: Task<Void, Error>?
-        
-        required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
-            self.apolloNetworkModel = apolloNetworkModel
-        }
         
         func convertNetworkArgumentsIntoQuery(_ arguments: RouteInfoNetworkArguments) -> GetRouteInfoDataQuery {
             return GetRouteInfoDataQuery(

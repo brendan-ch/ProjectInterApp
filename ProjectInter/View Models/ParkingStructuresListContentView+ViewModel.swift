@@ -37,21 +37,9 @@ struct ParkingStructuresNetworkingArguments {
 
 extension ParkingStructuresListContentView {
     @Observable
-    class ViewModel: NetworkDataModelProtocol {
+    class ViewModel: NetworkDataModel<ParkingStructuresNetworkingArguments, GetParkingStructuresListDataQuery> {
         var structures: [ParkingStructuresListParkingStructure] = []
         var structuresSupportedBySystem = false
-        
-        var dataInitState: InitializationState = .notInitialized
-        
-        typealias NetworkArguments = ParkingStructuresNetworkingArguments
-        
-        var dataRefreshLoopTask: Task<Void, any Error>?
-        
-        var apolloNetworkModel: ApolloNetworkModel?
-
-        required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
-            self.apolloNetworkModel = apolloNetworkModel
-        }
         
         func convertNetworkArgumentsIntoQuery(_ arguments: ParkingStructuresNetworkingArguments) -> GetParkingStructuresListDataQuery {
             return GetParkingStructuresListDataQuery(systemId: arguments.systemId)

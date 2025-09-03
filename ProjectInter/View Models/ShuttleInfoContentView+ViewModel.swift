@@ -44,11 +44,7 @@ extension ShuttleInfoEtaListItem {
 extension ShuttleInfoContentView {
     /// Backing view model for ``ShuttleInfoContentView``.
     @Observable
-    class ViewModel: NetworkDataModelProtocol {
-        typealias NetworkArguments = ShuttleInfoNetworkArguments
-        
-        var dataInitState: InitializationState = .notInitialized
-
+    class ViewModel: NetworkDataModel<ShuttleInfoNetworkArguments, GetShuttleInfoDataQuery> {
         /// Name of the shuttle to display.
         var name: String = ""
         
@@ -93,14 +89,6 @@ extension ShuttleInfoContentView {
                 Double(minutes) < etaMinutes
             }
         }
-        
-        var apolloNetworkModel: ApolloNetworkModel?
-
-        required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
-            self.apolloNetworkModel = apolloNetworkModel
-        }
-
-        var dataRefreshLoopTask: Task<Void, any Error>?
         
         func convertNetworkArgumentsIntoQuery(_ arguments: ShuttleInfoNetworkArguments) -> GetShuttleInfoDataQuery {
             let systemId = arguments.systemId

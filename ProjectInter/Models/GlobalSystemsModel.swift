@@ -25,16 +25,10 @@ struct GlobalDataModelNetworkArguments {
 }
 
 @Observable
-class GlobalSystemsModel: NetworkDataModelProtocol {
+class GlobalSystemsModel: NetworkDataModel<GlobalDataModelNetworkArguments, GetAllSystemsQuery> {
     typealias NetworkArguments = GlobalDataModelNetworkArguments
     
-    var dataInitState: InitializationState = .notInitialized
-    
-    var dataRefreshLoopTask: Task<Void, any Error>?
-    
-    let userDefaults: UserDefaults
-    
-    var apolloNetworkModel: ApolloNetworkModel?
+    private(set) var userDefaults: UserDefaults = .standard
     
     var systems: [System] = []
     private var selectedSystemId: String? = nil {
@@ -47,7 +41,7 @@ class GlobalSystemsModel: NetworkDataModelProtocol {
     }
     
     required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
-        self.apolloNetworkModel = apolloNetworkModel
+        super.init(apolloNetworkModel: apolloNetworkModel)
         self.userDefaults = UserDefaults.standard
         
         selectedSystemId = self.userDefaults.string(forKey: UserDefaults.selectedSystemIdKey)
@@ -57,9 +51,8 @@ class GlobalSystemsModel: NetworkDataModelProtocol {
         apolloNetworkModel: ApolloNetworkModel? = nil,
         userDefaults: UserDefaults = UserDefaults.standard
     ) {
-        self.apolloNetworkModel = apolloNetworkModel
+        super.init(apolloNetworkModel: apolloNetworkModel)
         self.userDefaults = userDefaults
-        
         selectedSystemId = self.userDefaults.string(forKey: UserDefaults.selectedSystemIdKey)
     }
     

@@ -12,7 +12,7 @@ class NetworkDataModel<NetworkArguments, GraphQLQueryType: GraphQLQuery>: Networ
     private var dataRefreshLoopTask: Task<Void, Error>?
     var apolloNetworkModel: ApolloNetworkModel?
     
-    required init(apolloNetworkModel: ApolloNetworkModel?) {
+    required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
         self.apolloNetworkModel = apolloNetworkModel
     }
     
