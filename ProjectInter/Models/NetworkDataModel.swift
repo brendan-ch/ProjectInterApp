@@ -38,12 +38,12 @@ class NetworkDataModel<NetworkArguments, GraphQLQueryType: GraphQLQuery>: Networ
 
         Loggers.shared.networkingLogger.notice("Starting data refresh for \(type(of: self))")
         
+        guard let stream = apolloNetworkModel?.getStream(query, sleepDuration: sleepDuration) else {
+            return
+        }
         dataRefreshLoopTask = Task {
             await setDataInitState(.initializing)
-            guard let stream = apolloNetworkModel?.getStream(query, sleepDuration: sleepDuration) else {
-                return
-            }
-            
+
             for try await result in stream {
                 switch result {
                 case .failure:
