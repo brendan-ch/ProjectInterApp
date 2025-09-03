@@ -42,9 +42,11 @@ extension ShuttleInfoEtaListItem {
 // MARK: - View model implementation
 
 extension ShuttleInfoContentView {
+    typealias NetworkDataModelAlias = NetworkDataModel<ShuttleInfoNetworkArguments, GetShuttleInfoDataQuery>
+    
     /// Backing view model for ``ShuttleInfoContentView``.
     @Observable
-    class ViewModel: NetworkDataModel<ShuttleInfoNetworkArguments, GetShuttleInfoDataQuery> {
+    class ViewModel: NetworkDataModelAlias {
         /// Name of the shuttle to display.
         var name: String = ""
         
@@ -130,6 +132,12 @@ extension ShuttleInfoContentView {
             }
             
             self.secondsThresholdForNotification = data.secondsThresholdForNotification
+        }
+        
+        class Builder: NetworkDataModelAlias.Builder<ViewModel> {
+            func withShuttleName(_ name: String) {
+                model.name = "Test Shuttle"
+            }
         }
     }
 }

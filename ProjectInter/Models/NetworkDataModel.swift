@@ -89,4 +89,17 @@ class NetworkDataModel<NetworkArguments, GraphQLQueryType: GraphQLQuery>: Networ
             await processRefreshDataResult(.failure(error))
         }
     }
+    
+    class Builder<DataModel: NetworkDataModel> {
+        var model = DataModel()
+        
+        func withDataInitState(_ state: InitializationState) -> DataModel.Builder<DataModel> {
+            model.dataInitState = .initializing
+            return self
+        }
+        
+        func build() -> NetworkDataModel {
+            return model
+        }
+    }
 }
