@@ -28,5 +28,9 @@ class GlobalIdSelectionModel {
             Loggers.shared.globalStateEventsLogger.log("Selected parking structure ID changed to: \(self.selectedParkingStructureId ?? "nil")")
         }
     }
+    
+    static func buildPlaceholder() -> GlobalIdSelectionModel {
+        return GlobalIdSelectionModel()
+    }
 }
 

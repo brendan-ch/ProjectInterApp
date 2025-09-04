@@ -92,11 +92,10 @@ struct StopSelectionView: View {
 }
 
 #Preview {
-    let builder = GlobalStopsModelPlaceholderBuilder()
-    let globalStopsModel = builder.build()
+    let globalStopsModel = GlobalStopsModel.buildPlaceholder()
     
     StopSelectionView()
         .environment(globalStopsModel)
-        .environment(GlobalSystemsModelPlaceholderBuilder().build())
+        .environment(GlobalSystemsModel.buildPlaceholder())
         .environment(LocationDataModel())
 }

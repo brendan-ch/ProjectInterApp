@@ -125,5 +125,5 @@ struct RouteInfoShuttleViewItem: View {
     return RouteInfoContentView(viewModel: model)
         .environment(GlobalIdSelectionModel())
         .environment(GlobalStopsModel())
-        .environment(GlobalSystemsModelPlaceholderBuilder().build())
+        .environment(GlobalSystemsModel.buildPlaceholder())
 }

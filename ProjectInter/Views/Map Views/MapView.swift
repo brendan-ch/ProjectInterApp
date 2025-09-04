@@ -259,8 +259,7 @@ extension MapView {
 
 // MARK: - Preview
 #Preview {
-    let builder = MapView.PlaceholderBuilder()
-    let viewModel = builder.build()
+    let viewModel = MapView.ViewModel.buildPlaceholder()
     
     let stopToSelectFromViewModel = viewModel.stops.first!
     

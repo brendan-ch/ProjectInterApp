@@ -25,7 +25,7 @@ struct GlobalDataModelNetworkArguments {
 }
 
 @Observable
-class GlobalSystemsModel: NetworkDataModel<GlobalDataModelNetworkArguments, GetAllSystemsQuery> {
+class GlobalSystemsModel: NetworkDataModel<GlobalDataModelNetworkArguments, GetAllSystemsQuery>, PlaceholderBuildable {
     typealias NetworkArguments = GlobalDataModelNetworkArguments
     
     private(set) var userDefaults: UserDefaults = .standard
@@ -56,6 +56,10 @@ class GlobalSystemsModel: NetworkDataModel<GlobalDataModelNetworkArguments, GetA
         selectedSystemId = self.userDefaults.string(forKey: UserDefaults.selectedSystemIdKey)
     }
     
+    required init(dataInitState: InitializationState) {
+        super.init(dataInitState: dataInitState)
+    }
+    
     func convertNetworkArgumentsIntoQuery(_ arguments: GlobalDataModelNetworkArguments) -> GetAllSystemsQuery {
         return GetAllSystemsQuery()
     }
@@ -74,5 +78,15 @@ class GlobalSystemsModel: NetworkDataModel<GlobalDataModelNetworkArguments, GetA
     func selectSystemId(_ id: String) {
         selectedSystemId = id
         userDefaults.setValue(id, forKey: UserDefaults.selectedSystemIdKey)
+    }
+    
+    static func buildPlaceholder() -> Self {
+        let model = Self(dataInitState: .succeeded)
+        model.systems = [
+            System(name: "Chapman University", id: "1"),
+            System(name: "City of Monterey Park", id: "2")
+        ]
+        
+        return model
     }
 }

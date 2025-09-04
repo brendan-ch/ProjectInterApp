@@ -89,7 +89,7 @@ struct RouteListNetworkArguments {
 extension RouteListContentView {
     /// Backing view model for ``RouteListContentView``.
     @Observable
-    class ViewModel: NetworkDataModel<RouteListNetworkArguments, GetRouteListDataQuery> {
+    class ViewModel: NetworkDataModel<RouteListNetworkArguments, GetRouteListDataQuery>, PlaceholderBuildable {
         /// All routes to render on ``RouteListContentView``.
         var routes: [RouteListContentViewRoute] = []
         
@@ -120,6 +120,28 @@ extension RouteListContentView {
                     }
                 }
             }
+        }
+        
+        static func buildPlaceholder() -> Self {
+            let newModel = Self(dataInitState: .succeeded)
+            newModel.routes = [
+                RouteListContentViewRoute(
+                    id: "1",
+                    name: "Red Route",
+                    colorHex: "#db2316",
+                    nextStopName: "Chapman Grand",
+                    etasInSeconds: [480, 720]
+                ),
+                RouteListContentViewRoute(
+                    id: "2",
+                    name: "Teal Route",
+                    colorHex: "#21bdd1",
+                    nextStopName: "Panther Village",
+                    etasInSeconds: [300, 900]
+                ),
+            ]
+            
+            return newModel
         }
         
     }

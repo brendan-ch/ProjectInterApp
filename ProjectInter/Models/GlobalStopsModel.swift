@@ -41,7 +41,7 @@ extension GlobalStopsModelStop {
 // MARK: - Data model implementation
 
 @Observable
-class GlobalStopsModel: NetworkDataModel<GlobalStopsNetworkArguments, GetAllStopsBySystemIdQuery> {
+class GlobalStopsModel: NetworkDataModel<GlobalStopsNetworkArguments, GetAllStopsBySystemIdQuery>, PlaceholderBuildable {
     
     var apolloClient: ApolloClientProtocol?
     
@@ -66,7 +66,7 @@ class GlobalStopsModel: NetworkDataModel<GlobalStopsNetworkArguments, GetAllStop
     /// sets this to false.
     var isAutomaticWhenLocationIsAvailable: Bool = false
     
-    func convertNetworkArgumentsIntoQuery(_ arguments: GlobalStopsNetworkArguments) -> GetAllStopsBySystemIdQuery {
+    func convertNetworkArgumentsIntoQuery(_ arguments: GlobalStopsNetworkArguments) -> GetAllStopsBySystemIdQuery? {
         return GetAllStopsBySystemIdQuery(systemId: arguments.systemId)
     }
     
@@ -116,6 +116,17 @@ class GlobalStopsModel: NetworkDataModel<GlobalStopsNetworkArguments, GetAllStop
         let location2 = CLLocation(latitude: location2.latitude, longitude: location2.longitude)
         
         return location1.distance(from: location2)
+    }
+    
+    static func buildPlaceholder() -> Self {
+        let newModel = Self(dataInitState: .succeeded)
+        newModel.stops = [
+            GlobalStopsModelStop(name: "Chapman Court", id: "1", coordinates: RawCoordinates(latitude: 33.796796, longitude: -117.889293)),
+            GlobalStopsModelStop(name: "Schmid Gate", id: "2", coordinates: RawCoordinates(latitude: 33.793292, longitude: -117.852904))
+        ]
+        newModel.selectStopId(newModel.stops.first!.id)
+        
+        return newModel
     }
 }
 

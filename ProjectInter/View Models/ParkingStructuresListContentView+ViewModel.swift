@@ -37,7 +37,7 @@ struct ParkingStructuresNetworkingArguments {
 
 extension ParkingStructuresListContentView {
     @Observable
-    class ViewModel: NetworkDataModel<ParkingStructuresNetworkingArguments, GetParkingStructuresListDataQuery> {
+    class ViewModel: NetworkDataModel<ParkingStructuresNetworkingArguments, GetParkingStructuresListDataQuery>, PlaceholderBuildable {
         var structures: [ParkingStructuresListParkingStructure] = []
         var structuresSupportedBySystem = false
         
@@ -63,6 +63,26 @@ extension ParkingStructuresListContentView {
                     self.structures = []
                 }
             }
+        }
+        
+        static func buildPlaceholder() -> Self {
+            let viewModel = Self(dataInitState: .succeeded)
+            viewModel.structures = [
+                .init(
+                    spotsAvailable: 680,
+                    capacity: 871,
+                    name: "Anderson Structure",
+                    id: "1"
+                ),
+                .init(
+                    spotsAvailable: 425,
+                    capacity: 692,
+                    name: "Barrera",
+                    id: "2"
+                )
+            ]
+            
+            return viewModel
         }
     }
 }
