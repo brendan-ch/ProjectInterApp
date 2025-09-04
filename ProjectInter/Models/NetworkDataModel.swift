@@ -7,6 +7,12 @@
 
 import ApolloAPI
 
+/// Base class for networking models. Subclass this class for data models/view
+/// models which receive data from the server.
+///
+/// - Warning: You must override ``convertNetworkArgumentsIntoQuery(_:)`` and
+/// ``processRefreshDataResult(_:)`` when subclassing. Otherwise, the class will cause
+/// a runtime error.
 class NetworkDataModel<NetworkArguments, GraphQLQueryType: GraphQLQuery>: NetworkDataModelProtocol {
     private(set) var dataInitState: InitializationState = .notInitialized
     private var dataRefreshLoopTask: Task<Void, Error>?

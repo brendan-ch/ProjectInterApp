@@ -16,6 +16,8 @@ enum InitializationState {
     case failed
 }
 
+/// Protocol for network models which receive data from the server.
+/// To create a class which implements this, subclass ``NetworkDataModel``.
 protocol NetworkDataModelProtocol: AnyObject {
     associatedtype NetworkArguments
     associatedtype GraphQLQueryType: GraphQLQuery
