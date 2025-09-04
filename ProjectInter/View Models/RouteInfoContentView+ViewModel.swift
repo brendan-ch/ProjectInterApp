@@ -61,14 +61,6 @@ extension RouteInfoContentView {
         /// Currently running shuttles to display for the route.
         var shuttles: [RouteInfoContentViewShuttle] = []
         
-        required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
-            super.init(apolloNetworkModel: apolloNetworkModel)
-        }
-        
-        required override init(dataInitState: InitializationState) {
-            super.init(dataInitState: dataInitState)
-        }
-        
         func convertNetworkArgumentsIntoQuery(_ arguments: RouteInfoNetworkArguments) -> GetRouteInfoDataQuery {
             return GetRouteInfoDataQuery(
                 systemId: arguments.systemId,

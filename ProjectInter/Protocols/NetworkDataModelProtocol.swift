@@ -45,6 +45,7 @@ protocol NetworkDataModelProtocol: AnyObject {
     var apolloNetworkModel: ApolloNetworkModel? { get set }
     
     init(apolloNetworkModel: ApolloNetworkModel?)
+    init(dataInitState: InitializationState)
 }
 
 extension NetworkDataModelProtocol {

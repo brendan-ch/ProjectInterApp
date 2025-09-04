@@ -9,3 +9,9 @@ protocol PlaceholderBuildable: AnyObject {
     init(dataInitState: InitializationState)
     static func buildPlaceholder() -> Self
 }
+
+extension PlaceholderBuildable where Self: NetworkDataModelProtocol {
+    init(dataInitState: InitializationState) {
+        self.init(dataInitState: dataInitState)
+    }
+}

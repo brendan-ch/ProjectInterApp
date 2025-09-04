@@ -55,14 +55,6 @@ extension ShuttleInfoContentView {
         
         private(set) var stopId: String? = nil
         
-        required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
-            super.init(apolloNetworkModel: apolloNetworkModel)
-        }
-        
-        required override init(dataInitState: InitializationState) {
-            super.init(dataInitState: dataInitState)
-        }
-        
         /// Text representing the ETA of the shuttle relative to the user's selected stop.
         var etaDisplay: String {
             if let nameOfStop = nameOfStop,
