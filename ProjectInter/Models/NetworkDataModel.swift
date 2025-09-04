@@ -96,16 +96,12 @@ class NetworkDataModel<NetworkArguments, GraphQLQueryType: GraphQLQuery>: Networ
         }
     }
     
-    class Builder<DataModel: NetworkDataModel> {
-        var model = DataModel()
-        
-        func withDataInitState(_ state: InitializationState) -> DataModel.Builder<DataModel> {
-            model.dataInitState = .initializing
-            return self
-        }
-        
-        func build() -> NetworkDataModel {
-            return model
-        }
+    func convertNetworkArgumentsIntoQuery(_ arguments: NetworkArguments) -> GraphQLQueryType? {
+        fatalError("convertNetworkArgumentsIntoQuery was not implemented for a subclass of NetworkDataModel")
+    }
+    
+    @MainActor
+    func processRefreshDataResult(_ result: Result<GraphQLQueryType.Data, any Error>) {
+        fatalError("processRefreshDataResult was not implemented for a subclass of NetworkDataModel")
     }
 }

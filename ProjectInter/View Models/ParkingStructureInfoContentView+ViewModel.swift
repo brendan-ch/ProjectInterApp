@@ -155,7 +155,7 @@ extension ParkingStructureInfoContentView {
             return historicalAverageInput
         }
         
-        func convertNetworkArgumentsIntoQuery(_ arguments: NetworkArguments) -> GetParkingStructureInfoDataQuery {
+        override func convertNetworkArgumentsIntoQuery(_ arguments: NetworkArguments) -> GetParkingStructureInfoDataQuery {
             let historicalAverageInput = generateHistoricalAverageInput(for: oneWeekAgo!)
             return GetParkingStructureInfoDataQuery(
                 systemId: arguments.systemId,
@@ -163,7 +163,7 @@ extension ParkingStructureInfoContentView {
                 historicalAveragesInput: historicalAverageInput!)
         }
         
-        func processRefreshDataResult(_ result: Result<GetParkingStructureInfoDataQuery.Data, any Error>) {
+        override func processRefreshDataResult(_ result: Result<GetParkingStructureInfoDataQuery.Data, any Error>) {
             switch result {
             case .failure(let error):
                 Loggers.shared.networkingLogger.log("Failed to fetch parking structure info: \(error)")

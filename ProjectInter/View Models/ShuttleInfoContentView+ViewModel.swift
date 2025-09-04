@@ -92,7 +92,7 @@ extension ShuttleInfoContentView {
             }
         }
         
-        func convertNetworkArgumentsIntoQuery(_ arguments: ShuttleInfoNetworkArguments) -> GetShuttleInfoDataQuery {
+        override func convertNetworkArgumentsIntoQuery(_ arguments: ShuttleInfoNetworkArguments) -> GetShuttleInfoDataQuery {
             let systemId = arguments.systemId
             let stopId = arguments.stopId
             let shuttleId = arguments.shuttleId
@@ -105,7 +105,7 @@ extension ShuttleInfoContentView {
             return GetShuttleInfoDataQuery(systemId: systemId, shuttleId: shuttleId, notificationInput: notificationInput)
         }
         
-        func processRefreshDataResult(_ result: Result<GetShuttleInfoDataQuery.Data, any Error>) {
+        override func processRefreshDataResult(_ result: Result<GetShuttleInfoDataQuery.Data, any Error>) {
             guard let data = try? result.get() else {
                 return
             }

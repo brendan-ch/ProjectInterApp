@@ -49,12 +49,4 @@ protocol NetworkDataModelProtocol: AnyObject {
 }
 
 extension NetworkDataModelProtocol {
-    func convertNetworkArgumentsIntoQuery(_ arguments: NetworkArguments) -> GraphQLQueryType? {
-        fatalError("convertNetworkArgumentsIntoQuery not implemented for \(type(of: self))")
-    }
-    
-    @MainActor
-    func processRefreshDataResult(_ result: Result<GraphQLQueryType.Data, any Error>) {
-        fatalError("processRefreshDataResult not implemented for \(type(of: self))")
-    }
 }

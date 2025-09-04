@@ -93,11 +93,11 @@ extension RouteListContentView {
         /// All routes to render on ``RouteListContentView``.
         var routes: [RouteListContentViewRoute] = []
         
-        func convertNetworkArgumentsIntoQuery(_ arguments: RouteListNetworkArguments) -> GetRouteListDataQuery {
+        override func convertNetworkArgumentsIntoQuery(_ arguments: RouteListNetworkArguments) -> GetRouteListDataQuery {
             return GetRouteListDataQuery(systemId: arguments.systemId, stopId: arguments.stopId)
         }
         
-        func processRefreshDataResult(_ result: Result<GetRouteListDataQuery.Data, any Error>) {
+        override func processRefreshDataResult(_ result: Result<GetRouteListDataQuery.Data, any Error>) {
             switch result {
             case .success(let response):
                 self.updateDataFromResponse(data: response)

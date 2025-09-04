@@ -38,11 +38,11 @@ class SchemaVersionModel: NetworkDataModel<SchemaVersionModelNetworkArguments, G
         self.appSchemaVersion = appSchemaVersion
     }
     
-    func convertNetworkArgumentsIntoQuery(_ arguments: SchemaVersionModelNetworkArguments) -> GetSchemaVersionQuery {
+    override func convertNetworkArgumentsIntoQuery(_ arguments: SchemaVersionModelNetworkArguments) -> GetSchemaVersionQuery {
         return GetSchemaVersionQuery()
     }
     
-    func processRefreshDataResult(_ result: Result<GetSchemaVersionQuery.Data, any Error>) {
+    override func processRefreshDataResult(_ result: Result<GetSchemaVersionQuery.Data, any Error>) {
         switch result {
         case .failure(let error):
             print("Error fetching schema versions: \(error)")

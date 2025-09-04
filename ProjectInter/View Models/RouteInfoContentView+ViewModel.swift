@@ -61,7 +61,7 @@ extension RouteInfoContentView {
         /// Currently running shuttles to display for the route.
         var shuttles: [RouteInfoContentViewShuttle] = []
         
-        func convertNetworkArgumentsIntoQuery(_ arguments: RouteInfoNetworkArguments) -> GetRouteInfoDataQuery {
+        override func convertNetworkArgumentsIntoQuery(_ arguments: RouteInfoNetworkArguments) -> GetRouteInfoDataQuery {
             return GetRouteInfoDataQuery(
                 systemId: arguments.systemId,
                 stopId: arguments.stopId,
@@ -69,7 +69,7 @@ extension RouteInfoContentView {
             )
         }
         
-        func processRefreshDataResult(_ result: Result<GetRouteInfoDataQuery.Data, any Error>) {
+        override func processRefreshDataResult(_ result: Result<GetRouteInfoDataQuery.Data, any Error>) {
             switch result {
             case .success(let response):
                 self.updateDataFromResponse(response)

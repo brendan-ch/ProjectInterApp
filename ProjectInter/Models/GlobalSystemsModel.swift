@@ -60,11 +60,11 @@ class GlobalSystemsModel: NetworkDataModel<GlobalDataModelNetworkArguments, GetA
         super.init(dataInitState: dataInitState)
     }
     
-    func convertNetworkArgumentsIntoQuery(_ arguments: GlobalDataModelNetworkArguments) -> GetAllSystemsQuery {
+    override func convertNetworkArgumentsIntoQuery(_ arguments: GlobalDataModelNetworkArguments) -> GetAllSystemsQuery {
         return GetAllSystemsQuery()
     }
     
-    func processRefreshDataResult(_ result: Result<GetAllSystemsQuery.Data, any Error>) {
+    override func processRefreshDataResult(_ result: Result<GetAllSystemsQuery.Data, any Error>) {
         switch result {
         case .success(let data):
             self.systems = data.systems.map { system in

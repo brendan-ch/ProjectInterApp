@@ -66,11 +66,11 @@ class GlobalStopsModel: NetworkDataModel<GlobalStopsNetworkArguments, GetAllStop
     /// sets this to false.
     var isAutomaticWhenLocationIsAvailable: Bool = false
     
-    func convertNetworkArgumentsIntoQuery(_ arguments: GlobalStopsNetworkArguments) -> GetAllStopsBySystemIdQuery? {
+    override func convertNetworkArgumentsIntoQuery(_ arguments: GlobalStopsNetworkArguments) -> GetAllStopsBySystemIdQuery? {
         return GetAllStopsBySystemIdQuery(systemId: arguments.systemId)
     }
     
-    func processRefreshDataResult(_ result: Result<GetAllStopsBySystemIdQuery.Data, any Error>) {
+    override func processRefreshDataResult(_ result: Result<GetAllStopsBySystemIdQuery.Data, any Error>) {
         guard let data = try? result.get() else {
             return
         }

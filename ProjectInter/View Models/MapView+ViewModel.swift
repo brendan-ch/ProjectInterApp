@@ -136,11 +136,11 @@ extension MapView {
         var stops: [MapViewStop] = []
         var parkingStructures: [MapViewParkingStructure] = []
         
-        func convertNetworkArgumentsIntoQuery(_ arguments: MapViewNetworkArguments) -> GetMapDataQuery {
+        override func convertNetworkArgumentsIntoQuery(_ arguments: MapViewNetworkArguments) -> GetMapDataQuery {
             return GetMapDataQuery(systemId: arguments.systemId)
         }
         
-        func processRefreshDataResult(_ result: Result<GetMapDataQuery.Data, Error>) {
+        override func processRefreshDataResult(_ result: Result<GetMapDataQuery.Data, Error>) {
             guard let data = try? result.get() else {
                 Loggers.shared.networkingLogger.warning("No data received for map data query in \(type(of: self))")
                 return
