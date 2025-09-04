@@ -46,7 +46,7 @@ extension ShuttleInfoContentView {
     
     /// Backing view model for ``ShuttleInfoContentView``.
     @Observable
-    class ViewModel: NetworkDataModelAlias {
+    class ViewModel: NetworkDataModelAlias, PlaceholderBuildable {
         /// Name of the shuttle to display.
         private(set) var name: String = ""
         
@@ -54,6 +54,14 @@ extension ShuttleInfoContentView {
         private(set) var nameOfStop: String? = nil
         
         private(set) var stopId: String? = nil
+        
+        required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
+            super.init(apolloNetworkModel: apolloNetworkModel)
+        }
+        
+        required override init(dataInitState: InitializationState) {
+            super.init(dataInitState: dataInitState)
+        }
         
         /// Text representing the ETA of the shuttle relative to the user's selected stop.
         var etaDisplay: String {
@@ -134,8 +142,8 @@ extension ShuttleInfoContentView {
             self.secondsThresholdForNotification = data.secondsThresholdForNotification
         }
         
-        static func buildPlaceholder() -> ViewModel {
-            let model = ViewModel(dataInitState: .succeeded)
+        static func buildPlaceholder() -> Self {
+            let model = Self(dataInitState: .succeeded)
             model.name = "Red Shuttle 17"
             model.nameOfStop = "Chapman Court"
             model.etaSecondsRemaining = 20

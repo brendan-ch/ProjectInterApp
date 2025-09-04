@@ -51,7 +51,7 @@ struct RouteInfoNetworkArguments {
 extension RouteInfoContentView {
     /// Backing view model for ``RouteInfoContentView``.
     @Observable
-    class ViewModel: NetworkDataModel<RouteInfoNetworkArguments, GetRouteInfoDataQuery> {
+    class ViewModel: NetworkDataModel<RouteInfoNetworkArguments, GetRouteInfoDataQuery>, PlaceholderBuildable {
         /// The name of the currently viewed route.
         var routeName: String = ""
         
@@ -60,6 +60,14 @@ extension RouteInfoContentView {
         
         /// Currently running shuttles to display for the route.
         var shuttles: [RouteInfoContentViewShuttle] = []
+        
+        required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
+            super.init(apolloNetworkModel: apolloNetworkModel)
+        }
+        
+        required override init(dataInitState: InitializationState) {
+            super.init(dataInitState: dataInitState)
+        }
         
         func convertNetworkArgumentsIntoQuery(_ arguments: RouteInfoNetworkArguments) -> GetRouteInfoDataQuery {
             return GetRouteInfoDataQuery(
@@ -98,6 +106,19 @@ extension RouteInfoContentView {
                     return false
                 }
             }
+        }
+        
+        static func buildPlaceholder() -> Self {
+            let newModel = Self(dataInitState: .succeeded)
+            newModel.routeName = "Red Route"
+            newModel.routeNextStopName = "Chapman Grand"
+            
+            newModel.shuttles = [
+                RouteInfoContentViewShuttle(name: "Red Shuttle 17", secondsRemaining: 20, id: "1"),
+                RouteInfoContentViewShuttle(name: "Red Shuttle 5", secondsRemaining: 120, id: "2"),
+            ]
+            
+            return newModel
         }
     }
 }
