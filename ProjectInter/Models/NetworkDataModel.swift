@@ -16,6 +16,12 @@ class NetworkDataModel<NetworkArguments, GraphQLQueryType: GraphQLQuery>: Networ
         self.apolloNetworkModel = apolloNetworkModel
     }
     
+    /// Initialize the model with a custom loading state and no network model.
+    /// Useful for building placeholders or simulation during tests.
+    init(dataInitState: InitializationState) {
+        self.dataInitState = dataInitState
+    }
+    
     @MainActor
     private func setDataInitState(_ newState: InitializationState) {
         if newState == .initializing && (dataInitState == .notInitialized || dataInitState == .failed) {
