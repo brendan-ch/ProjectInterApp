@@ -223,7 +223,7 @@ struct ParkingStructureInfoContentChart: View {
 }
 
 #Preview {
-    let viewModel = ParkingStructureInfoContentView.PlaceholderBuilder().build()
+    let viewModel = ParkingStructureInfoContentView.ViewModel.buildPlaceholder()
     
     ParkingStructureInfoContentView(viewModel: viewModel)
         .environment(GlobalIdSelectionModel())

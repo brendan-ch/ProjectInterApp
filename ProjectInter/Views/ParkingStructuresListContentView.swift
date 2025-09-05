@@ -90,8 +90,7 @@ struct ParkingStructureItem: View {
 }
 
 #Preview {
-    let builder = ParkingStructuresListContentView.PlaceholderBuilder()
-    let viewModel = builder.build()
+    let viewModel = ParkingStructuresListContentView.ViewModel.buildPlaceholder()
     viewModel.structuresSupportedBySystem = true
     viewModel.structures = [
         .init(spotsAvailable: 50, capacity: 100, name: "Anderson", id: "1"),
@@ -99,6 +98,6 @@ struct ParkingStructureItem: View {
     ]
     
     return ParkingStructuresListContentView(viewModel: viewModel)
-        .environment(GlobalSystemsModelPlaceholderBuilder().build())
+        .environment(GlobalSystemsModel.buildPlaceholder())
         .environment(GlobalIdSelectionModel())
 }

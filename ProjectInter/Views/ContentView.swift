@@ -184,29 +184,21 @@ struct ContentView: View {
 }
 
 #Preview {
-    let globalIdSelectionModelBuilder = GlobalIdSelectionModelPlaceholderBuilder()
-    let globalIdSelectionModel = globalIdSelectionModelBuilder.build()
+    let globalIdSelectionModel = GlobalIdSelectionModel.buildPlaceholder()
     
-    let globalSystemsModelBuilder = GlobalSystemsModelPlaceholderBuilder()
-    let globalSystemsModel = globalSystemsModelBuilder.build()
+    let globalSystemsModel = GlobalSystemsModel.buildPlaceholder()
     
-    let globalStopsModelBuilder = GlobalStopsModelPlaceholderBuilder()
-    let globalStopsModel = globalStopsModelBuilder.build()
+    let globalStopsModel = GlobalStopsModel.buildPlaceholder()
     
-    let mapViewModelBuilder = MapView.PlaceholderBuilder()
-    let mapViewModel = mapViewModelBuilder.build()
+    let mapViewModel = MapView.ViewModel.buildPlaceholder()
     
-    let routeListContentViewModelBuilder = RouteListContentView.PlaceholderBuilder()
-    let routeListContentViewModel = routeListContentViewModelBuilder.build()
+    let routeListContentViewModel = RouteListContentView.ViewModel.buildPlaceholder()
     
-    let routeInfoContentViewModelBuilder = RouteInfoContentView.PlaceholderBuilder()
-    let routeInfoContentViewModel = routeInfoContentViewModelBuilder.build()
+    let routeInfoContentViewModel = RouteInfoContentView.ViewModel.buildPlaceholder()
     
-    let shuttleInfoContentViewModelBuilder = ShuttleInfoContentView.PlaceholderBuilder()
-    let shuttleInfoContentViewModel = shuttleInfoContentViewModelBuilder.build()
+    let shuttleInfoContentViewModel = ShuttleInfoContentView.ViewModel.buildPlaceholder()
     
-    let parkingStructuresContentViewModelBuilder = ParkingStructuresListContentView.PlaceholderBuilder()
-    let parkingStructuresViewModel = parkingStructuresContentViewModelBuilder.build()
+    let parkingStructuresViewModel = ParkingStructuresListContentView.ViewModel.buildPlaceholder()
     
     return ContentView(
         mapViewModel: mapViewModel,

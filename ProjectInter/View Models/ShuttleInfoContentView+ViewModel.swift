@@ -42,20 +42,18 @@ extension ShuttleInfoEtaListItem {
 // MARK: - View model implementation
 
 extension ShuttleInfoContentView {
+    typealias NetworkDataModelAlias = NetworkDataModel<ShuttleInfoNetworkArguments, GetShuttleInfoDataQuery>
+    
     /// Backing view model for ``ShuttleInfoContentView``.
     @Observable
-    class ViewModel: NetworkDataModelProtocol {
-        typealias NetworkArguments = ShuttleInfoNetworkArguments
-        
-        var dataInitState: InitializationState = .notInitialized
-
+    class ViewModel: NetworkDataModelAlias, PlaceholderBuildable {
         /// Name of the shuttle to display.
-        var name: String = ""
+        private(set) var name: String = ""
         
-        var etaSecondsRemaining: Double? = nil
-        var nameOfStop: String? = nil
+        private(set) var etaSecondsRemaining: Double? = nil
+        private(set) var nameOfStop: String? = nil
         
-        private var stopId: String? = nil
+        private(set) var stopId: String? = nil
         
         /// Text representing the ETA of the shuttle relative to the user's selected stop.
         var etaDisplay: String {
@@ -94,15 +92,7 @@ extension ShuttleInfoContentView {
             }
         }
         
-        var apolloNetworkModel: ApolloNetworkModel?
-
-        required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
-            self.apolloNetworkModel = apolloNetworkModel
-        }
-
-        var dataRefreshLoopTask: Task<Void, any Error>?
-        
-        func convertNetworkArgumentsIntoQuery(_ arguments: ShuttleInfoNetworkArguments) -> GetShuttleInfoDataQuery {
+        override func convertNetworkArgumentsIntoQuery(_ arguments: ShuttleInfoNetworkArguments) -> GetShuttleInfoDataQuery {
             let systemId = arguments.systemId
             let stopId = arguments.stopId
             let shuttleId = arguments.shuttleId
@@ -115,7 +105,7 @@ extension ShuttleInfoContentView {
             return GetShuttleInfoDataQuery(systemId: systemId, shuttleId: shuttleId, notificationInput: notificationInput)
         }
         
-        func processRefreshDataResult(_ result: Result<GetShuttleInfoDataQuery.Data, any Error>) {
+        override func processRefreshDataResult(_ result: Result<GetShuttleInfoDataQuery.Data, any Error>) {
             guard let data = try? result.get() else {
                 return
             }
@@ -142,6 +132,22 @@ extension ShuttleInfoContentView {
             }
             
             self.secondsThresholdForNotification = data.secondsThresholdForNotification
+        }
+        
+        static func buildPlaceholder() -> Self {
+            let model = Self(dataInitState: .succeeded)
+            model.name = "Red Shuttle 17"
+            model.nameOfStop = "Chapman Court"
+            model.etaSecondsRemaining = 20
+            
+            model.etaListItems = [
+                .init(stopName: "Chapman Court", secondsRemaining: 20, stopId: "0"),
+                .init(stopName: "Schmid Gate", secondsRemaining: 125, stopId: "1"),
+                .init(stopName: "Panther Village", secondsRemaining: 300, stopId: "2"),
+                .init(stopName: "Chapman Grand", secondsRemaining: 1430, stopId: "3")
+            ]
+            
+            return model
         }
     }
 }

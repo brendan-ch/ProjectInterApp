@@ -29,7 +29,7 @@ extension NetworkView {
         
         if let networkArguments = networkArguments {
             viewModel.stopRefreshingData()
-            viewModel.startRefreshingData(arguments: networkArguments)
+            viewModel.startRefreshingData(arguments: networkArguments, sleepDuration: .seconds(5))
         }
     }
     

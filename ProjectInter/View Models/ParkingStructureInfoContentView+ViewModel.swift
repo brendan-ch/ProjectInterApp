@@ -37,14 +37,14 @@ struct ParkingStructureNetworkingArguments {
 
 extension ParkingStructureInfoContentView {
     @Observable
-    class ViewModel: NetworkDataModelProtocol {
+    class ViewModel: NetworkDataModel<ParkingStructureNetworkingArguments, GetParkingStructureInfoDataQuery>, PlaceholderBuildable {
         // MARK: Constants
         static let startingHour = 8
         static let endingHour = 20
         static let intervalHours = 2
         static let intervalMs = 1000 * 60 * 60 * intervalHours
         
-        private let calendar: Calendar
+        private var calendar: Calendar = .current
         
         // MARK: Unique properties
         
@@ -87,7 +87,7 @@ extension ParkingStructureInfoContentView {
         }
         
         /// Can be initialized during testing to replace the "current" point in time.
-        private let fixedReferenceDate: Date?
+        private var fixedReferenceDate: Date? = .now
         
         var referenceDate: Date {
             if let referenceDate = fixedReferenceDate {
@@ -103,26 +103,18 @@ extension ParkingStructureInfoContentView {
             return nil
         }
         
-        // MARK: Conformance to protocol
-        
-        var dataInitState: InitializationState = .notInitialized
-        
-        typealias NetworkArguments = ParkingStructureNetworkingArguments
-        
-        var dataRefreshLoopTask: Task<Void, any Error>?
-        
-        var apolloNetworkModel: ApolloNetworkModel?
-        
         required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
-            self.apolloNetworkModel = apolloNetworkModel
-            self.calendar = .current
-            self.fixedReferenceDate = nil
+            super.init(apolloNetworkModel: apolloNetworkModel)
         }
-        
+
         init(apolloNetworkModel: ApolloNetworkModel? = nil, referenceDate: Date) {
-            self.apolloNetworkModel = apolloNetworkModel
+            super.init(apolloNetworkModel: apolloNetworkModel)
             self.calendar = .current
             self.fixedReferenceDate = referenceDate
+        }
+        
+        required init(dataInitState: InitializationState) {
+            super.init(dataInitState: dataInitState)
         }
         
         private func setStartAndEndPeriodForCurrentCorrespondingAverage() {
@@ -163,7 +155,7 @@ extension ParkingStructureInfoContentView {
             return historicalAverageInput
         }
         
-        func convertNetworkArgumentsIntoQuery(_ arguments: NetworkArguments) -> GetParkingStructureInfoDataQuery {
+        override func convertNetworkArgumentsIntoQuery(_ arguments: NetworkArguments) -> GetParkingStructureInfoDataQuery {
             let historicalAverageInput = generateHistoricalAverageInput(for: oneWeekAgo!)
             return GetParkingStructureInfoDataQuery(
                 systemId: arguments.systemId,
@@ -171,7 +163,7 @@ extension ParkingStructureInfoContentView {
                 historicalAveragesInput: historicalAverageInput!)
         }
         
-        func processRefreshDataResult(_ result: Result<GetParkingStructureInfoDataQuery.Data, any Error>) {
+        override func processRefreshDataResult(_ result: Result<GetParkingStructureInfoDataQuery.Data, any Error>) {
             switch result {
             case .failure(let error):
                 Loggers.shared.networkingLogger.log("Failed to fetch parking structure info: \(error)")
@@ -240,6 +232,59 @@ extension ParkingStructureInfoContentView {
             averages = nil
             startOfCurrentTimePeriod = nil
             endOfCurrentTimePeriod = nil
+        }
+        
+        static func buildPlaceholder() -> Self {
+            let calendar = Calendar.current
+            let now = Date()
+            let oneWeekAgo = calendar.date(byAdding: .day, value: -7, to: now)!
+            
+            let data: [ParkingAveragePerTimePeriod] = [
+                .init(
+                    from: calendar.date(bySettingHour: 8, minute: 0, second: 0, of: oneWeekAgo)!,
+                    to: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: oneWeekAgo)!,
+                    averageSpotsAvailable: 50
+                ),
+                .init(
+                    from: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: oneWeekAgo)!,
+                    to: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: oneWeekAgo)!,
+                    averageSpotsAvailable: 28
+                ),
+                .init(
+                    from: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: oneWeekAgo)!,
+                    to: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: oneWeekAgo)!,
+                    averageSpotsAvailable: 15
+                ),
+                .init(
+                    from: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: oneWeekAgo)!,
+                    to: calendar.date(bySettingHour: 16, minute: 0, second: 0, of: oneWeekAgo)!,
+                    averageSpotsAvailable: 17
+                ),
+                .init(
+                    from: calendar.date(bySettingHour: 16, minute: 0, second: 0, of: oneWeekAgo)!,
+                    to: calendar.date(bySettingHour: 18, minute: 0, second: 0, of: oneWeekAgo)!,
+                    averageSpotsAvailable: 21
+                ),
+                .init(
+                    from: calendar.date(bySettingHour: 18, minute: 0, second: 0, of: oneWeekAgo)!,
+                    to: calendar.date(bySettingHour: 20, minute: 0, second: 0, of: oneWeekAgo)!,
+                    averageSpotsAvailable: 47
+                ),
+                .init(
+                    from: calendar.date(bySettingHour: 20, minute: 0, second: 0, of: oneWeekAgo)!,
+                    to: calendar.date(bySettingHour: 22, minute: 0, second: 0, of: oneWeekAgo)!,
+                    averageSpotsAvailable: 76
+                )
+            ]
+            
+            let viewModel = Self(dataInitState: .succeeded)
+            viewModel.address = "300 E Walnut Ave, Orange, CA 92867 United States"
+            viewModel.name = "Anderson Structure"
+            viewModel.capacity = 100
+            viewModel.spotsAvailable = 80
+            viewModel.averages = data
+            
+            return viewModel
         }
         
         

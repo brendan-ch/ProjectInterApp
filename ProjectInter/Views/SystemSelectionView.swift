@@ -55,8 +55,7 @@ struct SystemSelectionView: View {
 }
 
 #Preview {
-    var globalSystemsModelBuilder = GlobalSystemsModelPlaceholderBuilder()
-    var globalDataModel = globalSystemsModelBuilder.build()
+    var globalDataModel = GlobalSystemsModel.buildPlaceholder()
     
     SystemSelectionView()
         .environment(globalDataModel)

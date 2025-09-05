@@ -220,8 +220,7 @@ struct ShuttleInfoContentView: NetworkView {
 }
 
 #Preview {
-    let builder = ShuttleInfoContentView.PlaceholderBuilder()
-    let model = builder.build()
+    let model = ShuttleInfoContentView.ViewModel.buildPlaceholder()
     
     return ShuttleInfoContentView(viewModel: model)
         .environment(GlobalSystemsModel())

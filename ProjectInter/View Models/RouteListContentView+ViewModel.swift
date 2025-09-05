@@ -89,27 +89,15 @@ struct RouteListNetworkArguments {
 extension RouteListContentView {
     /// Backing view model for ``RouteListContentView``.
     @Observable
-    class ViewModel: NetworkDataModelProtocol {
-        typealias NetworkArguments = RouteListNetworkArguments
-
+    class ViewModel: NetworkDataModel<RouteListNetworkArguments, GetRouteListDataQuery>, PlaceholderBuildable {
         /// All routes to render on ``RouteListContentView``.
         var routes: [RouteListContentViewRoute] = []
         
-        var dataInitState: InitializationState = .notInitialized
-        
-        var apolloNetworkModel: ApolloNetworkModel?
-
-        var dataRefreshLoopTask: Task<Void, Error>?
-        
-        required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
-            self.apolloNetworkModel = apolloNetworkModel
-        }
-
-        func convertNetworkArgumentsIntoQuery(_ arguments: RouteListNetworkArguments) -> GetRouteListDataQuery {
+        override func convertNetworkArgumentsIntoQuery(_ arguments: RouteListNetworkArguments) -> GetRouteListDataQuery {
             return GetRouteListDataQuery(systemId: arguments.systemId, stopId: arguments.stopId)
         }
         
-        func processRefreshDataResult(_ result: Result<GetRouteListDataQuery.Data, any Error>) {
+        override func processRefreshDataResult(_ result: Result<GetRouteListDataQuery.Data, any Error>) {
             switch result {
             case .success(let response):
                 self.updateDataFromResponse(data: response)
@@ -132,6 +120,28 @@ extension RouteListContentView {
                     }
                 }
             }
+        }
+        
+        static func buildPlaceholder() -> Self {
+            let newModel = Self(dataInitState: .succeeded)
+            newModel.routes = [
+                RouteListContentViewRoute(
+                    id: "1",
+                    name: "Red Route",
+                    colorHex: "#db2316",
+                    nextStopName: "Chapman Grand",
+                    etasInSeconds: [480, 720]
+                ),
+                RouteListContentViewRoute(
+                    id: "2",
+                    name: "Teal Route",
+                    colorHex: "#21bdd1",
+                    nextStopName: "Panther Village",
+                    etasInSeconds: [300, 900]
+                ),
+            ]
+            
+            return newModel
         }
         
     }

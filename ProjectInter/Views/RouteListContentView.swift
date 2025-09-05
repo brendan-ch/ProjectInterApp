@@ -119,17 +119,13 @@ struct RouteListItem: View {
 }
 
 #Preview {
-    let globalDataModelBuilder = GlobalIdSelectionModelPlaceholderBuilder()
-    let globalDataStateObject = globalDataModelBuilder.build()
+    let globalDataStateObject = GlobalIdSelectionModel.buildPlaceholder()
     
-    let viewModelBuilder = RouteListContentView.PlaceholderBuilder()
-    let viewModel = viewModelBuilder.build()
+    let viewModel = RouteListContentView.ViewModel.buildPlaceholder()
     
-    let globalStopModelBuilder = GlobalStopsModelPlaceholderBuilder()
-    let globalStopsModel = globalStopModelBuilder.build()
+    let globalStopsModel = GlobalStopsModel.buildPlaceholder()
     
-    let globalSystemsModelBuilder = GlobalSystemsModelPlaceholderBuilder()
-    let globalSystemsModel = globalSystemsModelBuilder.build()
+    let globalSystemsModel = GlobalSystemsModel.buildPlaceholder()
     
     return RouteListContentView(viewModel: viewModel)
         .environment(globalDataStateObject)

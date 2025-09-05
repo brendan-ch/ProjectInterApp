@@ -25,16 +25,10 @@ struct GlobalDataModelNetworkArguments {
 }
 
 @Observable
-class GlobalSystemsModel: NetworkDataModelProtocol {
+class GlobalSystemsModel: NetworkDataModel<GlobalDataModelNetworkArguments, GetAllSystemsQuery>, PlaceholderBuildable {
     typealias NetworkArguments = GlobalDataModelNetworkArguments
     
-    var dataInitState: InitializationState = .notInitialized
-    
-    var dataRefreshLoopTask: Task<Void, any Error>?
-    
-    let userDefaults: UserDefaults
-    
-    var apolloNetworkModel: ApolloNetworkModel?
+    private(set) var userDefaults: UserDefaults = .standard
     
     var systems: [System] = []
     private var selectedSystemId: String? = nil {
@@ -47,7 +41,7 @@ class GlobalSystemsModel: NetworkDataModelProtocol {
     }
     
     required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
-        self.apolloNetworkModel = apolloNetworkModel
+        super.init(apolloNetworkModel: apolloNetworkModel)
         self.userDefaults = UserDefaults.standard
         
         selectedSystemId = self.userDefaults.string(forKey: UserDefaults.selectedSystemIdKey)
@@ -57,17 +51,20 @@ class GlobalSystemsModel: NetworkDataModelProtocol {
         apolloNetworkModel: ApolloNetworkModel? = nil,
         userDefaults: UserDefaults = UserDefaults.standard
     ) {
-        self.apolloNetworkModel = apolloNetworkModel
+        super.init(apolloNetworkModel: apolloNetworkModel)
         self.userDefaults = userDefaults
-        
         selectedSystemId = self.userDefaults.string(forKey: UserDefaults.selectedSystemIdKey)
     }
     
-    func convertNetworkArgumentsIntoQuery(_ arguments: GlobalDataModelNetworkArguments) -> GetAllSystemsQuery {
+    required init(dataInitState: InitializationState) {
+        super.init(dataInitState: dataInitState)
+    }
+    
+    override func convertNetworkArgumentsIntoQuery(_ arguments: GlobalDataModelNetworkArguments) -> GetAllSystemsQuery {
         return GetAllSystemsQuery()
     }
     
-    func processRefreshDataResult(_ result: Result<GetAllSystemsQuery.Data, any Error>) {
+    override func processRefreshDataResult(_ result: Result<GetAllSystemsQuery.Data, any Error>) {
         switch result {
         case .success(let data):
             self.systems = data.systems.map { system in
@@ -81,5 +78,15 @@ class GlobalSystemsModel: NetworkDataModelProtocol {
     func selectSystemId(_ id: String) {
         selectedSystemId = id
         userDefaults.setValue(id, forKey: UserDefaults.selectedSystemIdKey)
+    }
+    
+    static func buildPlaceholder() -> Self {
+        let model = Self(dataInitState: .succeeded)
+        model.systems = [
+            System(name: "Chapman University", id: "1"),
+            System(name: "City of Monterey Park", id: "2")
+        ]
+        
+        return model
     }
 }

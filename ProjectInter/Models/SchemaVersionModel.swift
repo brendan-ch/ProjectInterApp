@@ -15,17 +15,10 @@ struct SchemaVersionModelNetworkArguments {
 }
 
 @Observable
-class SchemaVersionModel: NetworkDataModelProtocol {
+class SchemaVersionModel: NetworkDataModel<SchemaVersionModelNetworkArguments, GetSchemaVersionQuery> {
     typealias T = SchemaVersionModelNetworkArguments
     
-    var dataRefreshLoopTask: Task<Void, any Error>?
-    
-    var apolloNetworkModel: ApolloNetworkModel?
-    
-    var dataInitState: InitializationState = .notInitialized
-    
     private(set) var compatibilityCheckCompleted = false
-     
     private(set) var serverMinSchemaVersion: Int?
     private(set) var serverCurrentSchemaVersion: Int?
     
@@ -40,20 +33,16 @@ class SchemaVersionModel: NetworkDataModelProtocol {
         return false
     }
     
-    required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
-        self.apolloNetworkModel = apolloNetworkModel
-    }
-    
     convenience init(apolloNetworkModel: ApolloNetworkModel? = nil, appSchemaVersion: Int?) {
         self.init(apolloNetworkModel: apolloNetworkModel)
         self.appSchemaVersion = appSchemaVersion
     }
     
-    func convertNetworkArgumentsIntoQuery(_ arguments: SchemaVersionModelNetworkArguments) -> GetSchemaVersionQuery {
+    override func convertNetworkArgumentsIntoQuery(_ arguments: SchemaVersionModelNetworkArguments) -> GetSchemaVersionQuery {
         return GetSchemaVersionQuery()
     }
     
-    func processRefreshDataResult(_ result: Result<GetSchemaVersionQuery.Data, any Error>) {
+    override func processRefreshDataResult(_ result: Result<GetSchemaVersionQuery.Data, any Error>) {
         switch result {
         case .failure(let error):
             print("Error fetching schema versions: \(error)")

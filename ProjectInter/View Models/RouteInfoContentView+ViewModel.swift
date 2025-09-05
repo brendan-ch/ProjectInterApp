@@ -51,9 +51,7 @@ struct RouteInfoNetworkArguments {
 extension RouteInfoContentView {
     /// Backing view model for ``RouteInfoContentView``.
     @Observable
-    class ViewModel: NetworkDataModelProtocol {
-        typealias NetworkArguments = RouteInfoNetworkArguments
-        
+    class ViewModel: NetworkDataModel<RouteInfoNetworkArguments, GetRouteInfoDataQuery>, PlaceholderBuildable {
         /// The name of the currently viewed route.
         var routeName: String = ""
         
@@ -63,17 +61,7 @@ extension RouteInfoContentView {
         /// Currently running shuttles to display for the route.
         var shuttles: [RouteInfoContentViewShuttle] = []
         
-        var dataInitState: InitializationState = .notInitialized
-        
-        var apolloNetworkModel: ApolloNetworkModel?
-        
-        var dataRefreshLoopTask: Task<Void, Error>?
-        
-        required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
-            self.apolloNetworkModel = apolloNetworkModel
-        }
-        
-        func convertNetworkArgumentsIntoQuery(_ arguments: RouteInfoNetworkArguments) -> GetRouteInfoDataQuery {
+        override func convertNetworkArgumentsIntoQuery(_ arguments: RouteInfoNetworkArguments) -> GetRouteInfoDataQuery {
             return GetRouteInfoDataQuery(
                 systemId: arguments.systemId,
                 stopId: arguments.stopId,
@@ -81,7 +69,7 @@ extension RouteInfoContentView {
             )
         }
         
-        func processRefreshDataResult(_ result: Result<GetRouteInfoDataQuery.Data, any Error>) {
+        override func processRefreshDataResult(_ result: Result<GetRouteInfoDataQuery.Data, any Error>) {
             switch result {
             case .success(let response):
                 self.updateDataFromResponse(response)
@@ -110,6 +98,19 @@ extension RouteInfoContentView {
                     return false
                 }
             }
+        }
+        
+        static func buildPlaceholder() -> Self {
+            let newModel = Self(dataInitState: .succeeded)
+            newModel.routeName = "Red Route"
+            newModel.routeNextStopName = "Chapman Grand"
+            
+            newModel.shuttles = [
+                RouteInfoContentViewShuttle(name: "Red Shuttle 17", secondsRemaining: 20, id: "1"),
+                RouteInfoContentViewShuttle(name: "Red Shuttle 5", secondsRemaining: 120, id: "2"),
+            ]
+            
+            return newModel
         }
     }
 }

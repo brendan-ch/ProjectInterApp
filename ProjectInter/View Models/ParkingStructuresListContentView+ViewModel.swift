@@ -37,27 +37,15 @@ struct ParkingStructuresNetworkingArguments {
 
 extension ParkingStructuresListContentView {
     @Observable
-    class ViewModel: NetworkDataModelProtocol {
+    class ViewModel: NetworkDataModel<ParkingStructuresNetworkingArguments, GetParkingStructuresListDataQuery>, PlaceholderBuildable {
         var structures: [ParkingStructuresListParkingStructure] = []
         var structuresSupportedBySystem = false
         
-        var dataInitState: InitializationState = .notInitialized
-        
-        typealias NetworkArguments = ParkingStructuresNetworkingArguments
-        
-        var dataRefreshLoopTask: Task<Void, any Error>?
-        
-        var apolloNetworkModel: ApolloNetworkModel?
-
-        required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
-            self.apolloNetworkModel = apolloNetworkModel
-        }
-        
-        func convertNetworkArgumentsIntoQuery(_ arguments: ParkingStructuresNetworkingArguments) -> GetParkingStructuresListDataQuery {
+        override func convertNetworkArgumentsIntoQuery(_ arguments: ParkingStructuresNetworkingArguments) -> GetParkingStructuresListDataQuery {
             return GetParkingStructuresListDataQuery(systemId: arguments.systemId)
         }
         
-        func processRefreshDataResult(_ result: Result<GetParkingStructuresListDataQuery.Data, any Error>) {
+        override func processRefreshDataResult(_ result: Result<GetParkingStructuresListDataQuery.Data, any Error>) {
             switch result {
             case .failure(let error):
                 print("Error fetching parking structures list data: \(error)")
@@ -75,6 +63,26 @@ extension ParkingStructuresListContentView {
                     self.structures = []
                 }
             }
+        }
+        
+        static func buildPlaceholder() -> Self {
+            let viewModel = Self(dataInitState: .succeeded)
+            viewModel.structures = [
+                .init(
+                    spotsAvailable: 680,
+                    capacity: 871,
+                    name: "Anderson Structure",
+                    id: "1"
+                ),
+                .init(
+                    spotsAvailable: 425,
+                    capacity: 692,
+                    name: "Barrera",
+                    id: "2"
+                )
+            ]
+            
+            return viewModel
         }
     }
 }

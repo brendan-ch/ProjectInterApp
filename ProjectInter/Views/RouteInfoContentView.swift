@@ -120,12 +120,10 @@ struct RouteInfoShuttleViewItem: View {
 }
 
 #Preview {
-    let builder = RouteInfoContentView.PlaceholderBuilder()
-    let model = builder.build()
-//    model.shuttles = []
+    let model = RouteInfoContentView.ViewModel.buildPlaceholder()
     
     return RouteInfoContentView(viewModel: model)
         .environment(GlobalIdSelectionModel())
         .environment(GlobalStopsModel())
-        .environment(GlobalSystemsModelPlaceholderBuilder().build())
+        .environment(GlobalSystemsModel.buildPlaceholder())
 }

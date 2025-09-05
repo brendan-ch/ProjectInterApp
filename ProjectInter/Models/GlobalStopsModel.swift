@@ -41,15 +41,11 @@ extension GlobalStopsModelStop {
 // MARK: - Data model implementation
 
 @Observable
-class GlobalStopsModel: NetworkDataModelProtocol {
-    
-    typealias NetworkArguments = GlobalStopsNetworkArguments
+class GlobalStopsModel: NetworkDataModel<GlobalStopsNetworkArguments, GetAllStopsBySystemIdQuery>, PlaceholderBuildable {
     
     var apolloClient: ApolloClientProtocol?
     
     var dataRefreshLoopTask: Task<Void, any Error>?
-    
-    var dataInitState: InitializationState = .notInitialized
     
     var stops: [GlobalStopsModelStop] = []
     
@@ -70,17 +66,11 @@ class GlobalStopsModel: NetworkDataModelProtocol {
     /// sets this to false.
     var isAutomaticWhenLocationIsAvailable: Bool = false
     
-    var apolloNetworkModel: ApolloNetworkModel?
-    
-    required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
-        self.apolloNetworkModel = apolloNetworkModel
-    }
-    
-    func convertNetworkArgumentsIntoQuery(_ arguments: GlobalStopsNetworkArguments) -> GetAllStopsBySystemIdQuery {
+    override func convertNetworkArgumentsIntoQuery(_ arguments: GlobalStopsNetworkArguments) -> GetAllStopsBySystemIdQuery? {
         return GetAllStopsBySystemIdQuery(systemId: arguments.systemId)
     }
     
-    internal func processRefreshDataResult(_ result: Result<GetAllStopsBySystemIdQuery.Data, any Error>) {
+    override func processRefreshDataResult(_ result: Result<GetAllStopsBySystemIdQuery.Data, any Error>) {
         guard let data = try? result.get() else {
             return
         }
@@ -126,6 +116,17 @@ class GlobalStopsModel: NetworkDataModelProtocol {
         let location2 = CLLocation(latitude: location2.latitude, longitude: location2.longitude)
         
         return location1.distance(from: location2)
+    }
+    
+    static func buildPlaceholder() -> Self {
+        let newModel = Self(dataInitState: .succeeded)
+        newModel.stops = [
+            GlobalStopsModelStop(name: "Chapman Court", id: "1", coordinates: RawCoordinates(latitude: 33.796796, longitude: -117.889293)),
+            GlobalStopsModelStop(name: "Schmid Gate", id: "2", coordinates: RawCoordinates(latitude: 33.793292, longitude: -117.852904))
+        ]
+        newModel.selectStopId(newModel.stops.first!.id)
+        
+        return newModel
     }
 }
 
