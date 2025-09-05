@@ -126,15 +126,17 @@ struct MapViewNetworkArguments {
 
 extension MapView {
     /// Backing view model for ``MapView``.
-    @Observable
-    class ViewModel: NetworkDataModel<MapViewNetworkArguments, GetMapDataQuery>, PlaceholderBuildable {
+    ///
+    /// - TODO: Migrate to the `Observable` macro. Currently, doing this breaks
+    /// some rendering updates on the map view.
+    class ViewModel: NetworkDataModel<MapViewNetworkArguments, GetMapDataQuery>, PlaceholderBuildable, ObservableObject {
         /// Position of the map camera on the associated Map view.
-        var position: MapCameraPosition = .automatic
+        @Published var position: MapCameraPosition = .automatic
         
-        var routes: [MapViewRoute] = []
-        var shuttles: [MapViewShuttle] = []
-        var stops: [MapViewStop] = []
-        var parkingStructures: [MapViewParkingStructure] = []
+        @Published var routes: [MapViewRoute] = []
+        @Published var shuttles: [MapViewShuttle] = []
+        @Published var stops: [MapViewStop] = []
+        @Published var parkingStructures: [MapViewParkingStructure] = []
         
         override func convertNetworkArgumentsIntoQuery(_ arguments: MapViewNetworkArguments) -> GetMapDataQuery {
             return GetMapDataQuery(systemId: arguments.systemId)
