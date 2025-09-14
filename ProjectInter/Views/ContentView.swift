@@ -11,7 +11,7 @@ import MapKit
 
 struct SheetViewModifier: ViewModifier {
     let detentSelection: Binding<PresentationDetent>
-    let standardPresentationDetents: Set<PresentationDetent> = [.height(96), .height(360), .height(720)]
+    let standardPresentationDetents: Set<PresentationDetent> = [.height(160), .height(360), .height(720)]
     
     func body(content: Content) -> some View {
         content

@@ -8,7 +8,7 @@ jobs:
   test:
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'bypass ci/cd') }}
     name: Run unit tests on iOS
-    runs-on: macos-15
+    runs-on: macos-26
 
     steps:
       - name: Checkout current repository
@@ -19,8 +19,8 @@ jobs:
       - name: Set Xcode version
         working-directory: app
         run: |
-          # See https://github.com/actions/runner-images/blob/main/images/macos/macos-15-arm64-Readme.md
-          sudo xcode-select -s /Applications/Xcode_16.4.app
+          # See https://github.com/actions/runner-images/blob/main/images/macos/macos-26-arm64-Readme.md
+          sudo xcode-select -s /Applications/Xcode.app
 
       - name: Run Fastlane
         working-directory: app
@@ -88,8 +88,8 @@ jobs:
       - name: Set Xcode version
         working-directory: app
         run: |
-          # See https://github.com/actions/runner-images/blob/main/images/macos/macos-15-arm64-Readme.md
-          sudo xcode-select -s /Applications/Xcode_16.4.app
+          # See https://github.com/actions/runner-images/blob/main/images/macos/macos-26-arm64-Readme.md
+          sudo xcode-select -s /Applications/Xcode.app
 
       - name: Run Fastlane
         # In the event that UI tests fail, we want to be able to
