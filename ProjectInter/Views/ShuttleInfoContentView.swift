@@ -72,7 +72,8 @@ struct ShuttleInfoContentView: NetworkView {
                 }
             }
             .padding()
-            
+            .padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
+
             WithInitializationView(dataInitState: viewModel.dataInitState) {
                 Button(action: {
                     if customAppDelegate.notificationTokenString == nil {
