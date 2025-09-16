@@ -45,7 +45,8 @@ struct ParkingStructuresListContentView: NetworkView {
                     }
                 }
             }
-            
+            .padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
+
         }
         .onAppear {
             restartDataUpdates()

@@ -27,7 +27,7 @@ struct ParkingStructureInfoContentView: NetworkView {
     }
 
     var body: some View {
-        ScrollView(.vertical) {
+        RootSheetContentView {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
                     Text(viewModel.name ?? "")
@@ -42,7 +42,7 @@ struct ParkingStructureInfoContentView: NetworkView {
             }
             .padding()
             .padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
-
+        } content: {
             WithInitializationView(dataInitState: viewModel.dataInitState) {
                 if let capacity = viewModel.capacity,
                    let spotsAvailable = viewModel.spotsAvailable {
@@ -77,7 +77,7 @@ struct ParkingStructureInfoContentView: NetworkView {
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
                     .openNavigationDialog(viewModel.address, isPresented: $showingNavigationAppDialog)
-
+                    
                     Button {
                         copyAddress()
                     } label: {
@@ -89,7 +89,7 @@ struct ParkingStructureInfoContentView: NetworkView {
                     }
                     .buttonStyle(.bordered)
                     .controlSize(.large)
-
+                    
                 }
                 .padding()
                 
@@ -132,6 +132,7 @@ struct ParkingStructureInfoContentView: NetworkView {
                     .padding(.horizontal)
                 }
             }
+            .padding(EdgeInsets(top: 16, leading: 0, bottom: 0, trailing: 0))
         }
         .onAppear {
             restartDataUpdates()

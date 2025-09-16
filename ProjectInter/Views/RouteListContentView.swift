@@ -58,6 +58,7 @@ struct RouteListContentView: NetworkView {
                 Spacer()
             }
             .padding(.horizontal)
+            .padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
             
             WithInitializationView(dataInitState: viewModel.dataInitState) {
                 Divider()

@@ -41,8 +41,6 @@ struct RootSheetContentView<Header, Content>: View where Header: View, Content: 
         VStack(spacing: 0) {
             header
             Divider()
-                .padding(EdgeInsets(top: 0, leading: 0, bottom: 8, trailing: 0))
-
             ScrollView {
                 content
             }
