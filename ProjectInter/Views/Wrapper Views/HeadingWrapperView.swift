@@ -23,7 +23,7 @@ struct RootSheetDefaultHeader: View {
     }
 }
 
-struct RootSheetContentView<Header, Content>: View where Header: View, Content: View {
+struct HeadingWrapperView<Header, Content>: View where Header: View, Content: View {
     let header: Header
     let content: Content
     
@@ -51,10 +51,10 @@ struct RootSheetContentView<Header, Content>: View where Header: View, Content: 
 
 #Preview {
     VStack {
-        RootSheetContentView(title: "Title") {
+        HeadingWrapperView(title: "Title") {
             Text("View content")
         }
-        RootSheetContentView(header: {
+        HeadingWrapperView(header: {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
                     Text("Custom heading")

@@ -24,7 +24,7 @@ struct ParkingStructuresListContentView: NetworkView {
     }
     
     var body: some View {
-        RootSheetContentView(title: "Structures") {
+        HeadingWrapperView(title: "Structures") {
             WithInitializationView(dataInitState: viewModel.dataInitState) {
                 if !viewModel.structuresSupportedBySystem {
                     Spacer()

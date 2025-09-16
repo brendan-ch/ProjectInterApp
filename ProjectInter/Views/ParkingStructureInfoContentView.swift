@@ -27,7 +27,7 @@ struct ParkingStructureInfoContentView: NetworkView {
     }
 
     var body: some View {
-        RootSheetContentView {
+        HeadingWrapperView {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
                     Text(viewModel.name ?? "")

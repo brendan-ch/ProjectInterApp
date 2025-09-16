@@ -29,7 +29,7 @@ struct RouteInfoContentView: NetworkView {
     }
     
     var body: some View {
-        RootSheetContentView {
+        HeadingWrapperView {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
                     Text(viewModel.routeName)

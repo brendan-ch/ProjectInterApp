@@ -36,7 +36,7 @@ struct RouteListContentView: NetworkView {
     }
     
     var body: some View {
-        RootSheetContentView(title: "Routes") {
+        HeadingWrapperView(title: "Routes") {
             HStack {
                 VStack(alignment: .leading) {
                     HStack(spacing: 4) {
