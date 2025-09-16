@@ -36,7 +36,7 @@ struct RouteListContentView: NetworkView {
     }
     
     var body: some View {
-        RootSheetContentView(title: "Routes") {
+        HeadingWrapperView(title: "Routes") {
             HStack {
                 VStack(alignment: .leading) {
                     HStack(spacing: 4) {
@@ -58,17 +58,21 @@ struct RouteListContentView: NetworkView {
                 Spacer()
             }
             .padding(.horizontal)
+            .padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
             
             WithInitializationView(dataInitState: viewModel.dataInitState) {
                 Divider()
-                ForEach(viewModel.routes) { route in
-                    RouteListItem(route: route) { selectedRoute in
-                        globalIdSelectionModel.selectedRouteId = route.id
+                
+                DataWrapperView(shouldDisplayNoDataMessage: viewModel.routes.isEmpty, noDataMessage: "No routes available.") {
+                    ForEach(viewModel.routes) { route in
+                        RouteListItem(route: route) { selectedRoute in
+                            globalIdSelectionModel.selectedRouteId = route.id
+                        }
+                        .padding(.horizontal)
+                        .buttonStyle(.plain)
+                        
+                        Divider()
                     }
-                    .padding(.horizontal)
-                    .buttonStyle(.plain)
-                    
-                    Divider()
                 }
             }
         }

@@ -115,7 +115,7 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     }
     
     func assertViewModelDataForEmptyMock(viewModel: ShuttleInfoContentView.ViewModel) {
-        #expect(viewModel.name == "")
+        #expect(viewModel.name == nil)
         #expect(viewModel.etaDisplay == "ETA currently not available")
     }
     

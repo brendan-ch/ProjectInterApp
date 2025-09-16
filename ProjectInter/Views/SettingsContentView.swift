@@ -21,7 +21,7 @@ struct SettingsContentView: View {
     @State private var showAcknowledgmentsView = false
     
     var body: some View {
-        RootSheetContentView(title: "Settings") {
+        HeadingWrapperView(title: "Settings") {
             VStack(spacing: 0) {
                 GroupBox {
                     Button {

@@ -29,7 +29,7 @@ struct RouteInfoContentView: NetworkView {
     }
     
     var body: some View {
-        VStack {
+        HeadingWrapperView {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
                     Text(viewModel.routeName)
@@ -50,14 +50,7 @@ struct RouteInfoContentView: NetworkView {
             }
             .padding()
             .padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
-
-            HStack {
-                Text("Upcoming departures")
-                    .bold()
-                Spacer()
-            }
-            .padding(.horizontal)
-            
+        } content: {
             WithInitializationView(dataInitState: viewModel.dataInitState) {
                 DataWrapperView(
                     shouldDisplayNoDataMessage: viewModel.shuttles.isEmpty,

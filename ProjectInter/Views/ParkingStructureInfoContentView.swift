@@ -27,7 +27,7 @@ struct ParkingStructureInfoContentView: NetworkView {
     }
 
     var body: some View {
-        ScrollView(.vertical) {
+        HeadingWrapperView {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
                     Text(viewModel.name ?? "")
@@ -42,96 +42,99 @@ struct ParkingStructureInfoContentView: NetworkView {
             }
             .padding()
             .padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
-
+        } content: {
             WithInitializationView(dataInitState: viewModel.dataInitState) {
-                if let capacity = viewModel.capacity,
-                   let spotsAvailable = viewModel.spotsAvailable {
-                    let currentCount = capacity - spotsAvailable
+                DataWrapperView(shouldDisplayNoDataMessage: !viewModel.dataAvailable, noDataMessage: "This parking structure is currently unavailable") {
+                    if let capacity = viewModel.capacity,
+                       let spotsAvailable = viewModel.spotsAvailable {
+                        let currentCount = capacity - spotsAvailable
+                        
+                        VStack {
+                            HStack {
+                                Text("\(capacity - currentCount) available")
+                                Spacer()
+                                Text("\(currentCount)/\(capacity)")
+                            }
+                            ProgressView(value: Double(currentCount) / Double(capacity))
+                                .progressViewStyle(LinearProgressViewStyle())
+                        }
+                        .padding(.horizontal)
+                    } else {
+                        Text("Parking data not available.")
+                    }
                     
                     VStack {
-                        HStack {
-                            Text("\(capacity - currentCount) available")
-                            Spacer()
-                            Text("\(currentCount)/\(capacity)")
+                        Button {
+                            showingNavigationAppDialog = true
+                        } label: {
+                            HStack {
+                                Spacer()
+                                Image(systemName: "arrow.turn.up.right")
+                                Text("Directions")
+                                    .bold()
+                                Spacer()
+                            }
                         }
-                        ProgressView(value: Double(currentCount) / Double(capacity))
-                            .progressViewStyle(LinearProgressViewStyle())
-                    }
-                    .padding(.horizontal)
-                } else {
-                    Text("Parking data not available.")
-                }
-                
-                VStack {
-                    Button {
-                        showingNavigationAppDialog = true
-                    } label: {
-                        HStack {
-                            Spacer()
-                            Image(systemName: "arrow.turn.up.right")
-                            Text("Directions")
-                                .bold()
-                            Spacer()
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.large)
+                        .openNavigationDialog(viewModel.address, isPresented: $showingNavigationAppDialog)
+                        
+                        Button {
+                            copyAddress()
+                        } label: {
+                            HStack {
+                                Spacer()
+                                Text(addressCopied ? "Copied!" : "Copy address")
+                                Spacer()
+                            }
                         }
+                        .buttonStyle(.bordered)
+                        .controlSize(.large)
+                        
                     }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
-                    .openNavigationDialog(viewModel.address, isPresented: $showingNavigationAppDialog)
-
-                    Button {
-                        copyAddress()
-                    } label: {
-                        HStack {
-                            Spacer()
-                            Text(addressCopied ? "Copied!" : "Copy address")
-                            Spacer()
-                        }
-                    }
-                    .buttonStyle(.bordered)
-                    .controlSize(.large)
-
-                }
-                .padding()
-                
-                HStack {
-                    Text("Compared to this day last week")
-                        .font(.headline)
-                    Spacer()
-                }
-                .padding(.horizontal)
-                
-                if let insight = viewModel.parkingInsight {
-                    HStack {
-                        Text(insight)
-                        Spacer()
-                    }
-                    .padding(.horizontal)
-                }
-                
-                
-                if let averages = viewModel.averages,
-                   let capacity = viewModel.capacity,
-                   let spotsAvailable = viewModel.spotsAvailable {
-                    Group {
-                        VStack(alignment: .leading, spacing: 16)  {
-                            ParkingStructureInfoContentChart(
-                                capacity: capacity,
-                                spotsAvailable: spotsAvailable,
-                                averages: averages,
-                                intervalHours: ViewModel.intervalHours,
-                                currentDayAverages: viewModel.currentDayAverages)
-                        }
-                    }
-                    .frame(height: 240)
                     .padding()
-                } else {
+                    
                     HStack {
-                        Text("No historical data available. Check back later.")
+                        Text("Compared to this day last week")
+                            .font(.headline)
                         Spacer()
                     }
                     .padding(.horizontal)
+                    
+                    if let insight = viewModel.parkingInsight {
+                        HStack {
+                            Text(insight)
+                            Spacer()
+                        }
+                        .padding(.horizontal)
+                    }
+                    
+                    
+                    if let averages = viewModel.averages,
+                       let capacity = viewModel.capacity,
+                       let spotsAvailable = viewModel.spotsAvailable {
+                        Group {
+                            VStack(alignment: .leading, spacing: 16)  {
+                                ParkingStructureInfoContentChart(
+                                    capacity: capacity,
+                                    spotsAvailable: spotsAvailable,
+                                    averages: averages,
+                                    intervalHours: ViewModel.intervalHours,
+                                    currentDayAverages: viewModel.currentDayAverages)
+                            }
+                        }
+                        .frame(height: 240)
+                        .padding()
+                    } else {
+                        HStack {
+                            Text("No historical data available. Check back later.")
+                            Spacer()
+                        }
+                        .padding(.horizontal)
+                    }
                 }
             }
+            .padding(EdgeInsets(top: 16, leading: 0, bottom: 0, trailing: 0))
         }
         .onAppear {
             restartDataUpdates()

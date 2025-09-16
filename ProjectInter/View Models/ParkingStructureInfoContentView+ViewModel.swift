@@ -53,6 +53,10 @@ extension ParkingStructureInfoContentView {
         var spotsAvailable: Int?
         var address: String?
         
+        var dataAvailable: Bool {
+            name != nil
+        }
+        
         var averages: [ParkingAveragePerTimePeriod]?
         var currentDayAverages: [ParkingAveragePerTimePeriod]?
         

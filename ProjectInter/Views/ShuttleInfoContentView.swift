@@ -55,10 +55,10 @@ struct ShuttleInfoContentView: NetworkView {
     }
     
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
+        HeadingWrapperView {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
-                    Text(viewModel.name)
+                    Text(viewModel.name ?? "Unknown shuttle")
                         .font(.title2)
                         .bold()
                         .accessibilityLabel("Shuttle name")
@@ -73,103 +73,101 @@ struct ShuttleInfoContentView: NetworkView {
             }
             .padding()
             .padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
-
+        } content: {
             WithInitializationView(dataInitState: viewModel.dataInitState) {
-                Button(action: {
-                    if customAppDelegate.notificationTokenString == nil {
-                        showingNotificationPermissionsNotGrantedAlert = true
-                        return
-                    } else if isNotificationScheduled {
-                        Task {
-                            await cancelNotification()
-                        }
-                    } else {
-                        showingNotificationConfirmationDialog = true
-                    }
-                    
-                }) {
-                    HStack {
-                        Spacer()
-                        if isNotificationScheduled {
-                            Image(systemName: "multiply")
-                        } else {
-                            Image(systemName: "bell.badge")
-                        }
-                        Text(viewModel.notificationButtonText)
-                        Spacer()
-                    }
-                }
-                .disabled(hasNoNotificationOptions)
-                .buttonStyle(.bordered)
-                .conditionalForegroundStyle(buttonForegroundStyle)
-                .controlSize(.large)
-                .padding()
-                .alert("Turn on notifications", isPresented: $showingNotificationPermissionsNotGrantedAlert) {
-                    Button("Dismiss", role: .cancel) { }
-                    Button("Open Settings") {
-                        if let url = URL(string: UIApplication.openSettingsURLString) {
-                            UIApplication.shared.open(url)
-                        }
-                    }
-                } message: {
-                    Text("To schedule a notification, turn on app notifications.")
-                }
-                .confirmationDialog("Select a timeframe", isPresented: $showingNotificationConfirmationDialog, titleVisibility: .visible) {
-                    ForEach(viewModel.availableNotificationOptions, id: \.self) { minutes in
-                        Button("\(minutes) minutes") {
+                DataWrapperView(shouldDisplayNoDataMessage: !viewModel.dataAvailable, noDataMessage: "This shuttle is currently unavailable.") {
+                    Button(action: {
+                        if customAppDelegate.notificationTokenString == nil {
+                            showingNotificationPermissionsNotGrantedAlert = true
+                            return
+                        } else if isNotificationScheduled {
                             Task {
-                                if !isNotificationScheduled {
-                                    let secondsThreshold = (minutes * 60)
-                                    await scheduleNotification(secondsThreshold: secondsThreshold)
+                                await cancelNotification()
+                            }
+                        } else {
+                            showingNotificationConfirmationDialog = true
+                        }
+                        
+                    }) {
+                        HStack {
+                            Spacer()
+                            Image(systemName: isNotificationScheduled ? "multiply" : "bell.badge")
+                            Text(viewModel.notificationButtonText)
+                            Spacer()
+                        }
+                    }
+                    .disabled(hasNoNotificationOptions)
+                    .buttonStyle(.bordered)
+                    .conditionalForegroundStyle(buttonForegroundStyle)
+                    .controlSize(.large)
+                    .padding()
+                    .alert("Turn on notifications", isPresented: $showingNotificationPermissionsNotGrantedAlert) {
+                        Button("Dismiss", role: .cancel) { }
+                        Button("Open Settings") {
+                            if let url = URL(string: UIApplication.openSettingsURLString) {
+                                UIApplication.shared.open(url)
+                            }
+                        }
+                    } message: {
+                        Text("To schedule a notification, turn on app notifications.")
+                    }
+                    .confirmationDialog("Select a timeframe", isPresented: $showingNotificationConfirmationDialog, titleVisibility: .visible) {
+                        ForEach(viewModel.availableNotificationOptions, id: \.self) { minutes in
+                            Button("\(minutes) minutes") {
+                                Task {
+                                    if !isNotificationScheduled {
+                                        let secondsThreshold = (minutes * 60)
+                                        await scheduleNotification(secondsThreshold: secondsThreshold)
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                
-                // MARK: Upcoming stops
-                // TODO: Display using the route's color
-                // TODO: Gray out stops before the user's current stop
-                VStack(spacing: 0) {
-                    HStack {
-                        ZStack {
-                            Rectangle()
-                                .frame(width: 2, height: 40)
-                                .foregroundStyle(Color.blue)
-                            Circle()
-                                .frame(width: 24, height: 24)
-                                .foregroundStyle(Color.blue)
-                            Image(systemName: "bus.fill")
-                                .resizable()
-                                .frame(width: 16, height: 16)
-                                .foregroundStyle(Color.white)
-                        }
-                        Spacer()
-                    }
-                    .padding(.horizontal)
-                    ForEach(viewModel.etaListItems, id: \.stopId) { etaListItem in
+                    
+                    // MARK: Upcoming stops
+                    // TODO: Display using the route's color
+                    // TODO: Gray out stops before the user's current stop
+                    VStack(spacing: 0) {
                         HStack {
                             ZStack {
                                 Rectangle()
-                                    .frame(minWidth: 2, idealWidth: 2, maxWidth: 2, minHeight: 40, idealHeight: 40, maxHeight: .infinity)
+                                    .frame(width: 2, height: 40)
                                     .foregroundStyle(Color.blue)
                                 Circle()
-                                    .frame(width: 24, height: 12)
+                                    .frame(width: 24, height: 24)
                                     .foregroundStyle(Color.blue)
+                                Image(systemName: "bus.fill")
+                                    .resizable()
+                                    .frame(width: 16, height: 16)
+                                    .foregroundStyle(Color.white)
                             }
-                            Text(etaListItem.stopName ?? "N/A")
                             Spacer()
-                            Text(etaListItem.estimatedTimeAwayDisplay)
-                                .multilineTextAlignment(.trailing)
                         }
                         .padding(.horizontal)
+                        ForEach(viewModel.etaListItems, id: \.stopId) { etaListItem in
+                            HStack {
+                                ZStack {
+                                    Rectangle()
+                                        .frame(minWidth: 2, idealWidth: 2, maxWidth: 2, minHeight: 40, idealHeight: 40, maxHeight: .infinity)
+                                        .foregroundStyle(Color.blue)
+                                    Circle()
+                                        .frame(width: 24, height: 12)
+                                        .foregroundStyle(Color.blue)
+                                }
+                                Text(etaListItem.stopName ?? "N/A")
+                                Spacer()
+                                Text(etaListItem.estimatedTimeAwayDisplay)
+                                    .multilineTextAlignment(.trailing)
+                            }
+                            .padding(.horizontal)
+                        }
                     }
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .foregroundStyle(.background.secondary)
+                    )
+                    .padding(.horizontal)
                 }
-                .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .foregroundStyle(.background.secondary)
-                )
-                .padding(.horizontal)
             }
         }
         .onAppear {
