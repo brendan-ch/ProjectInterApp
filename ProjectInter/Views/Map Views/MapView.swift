@@ -77,12 +77,13 @@ struct MapView: NetworkView {
                 
                 // MARK: Shuttle rendering
                 
-                ForEach(viewModel.shuttles) { shuttle in
-                    let associatedStop = getAssociatedStop(for: shuttle, in: viewModel.stops)
+                let shuttlesToDisplay = viewModel.shuttles.filter {
+                    let associatedStop = getAssociatedStop(for: $0, in: viewModel.stops)
                     
-                    if shouldDisplayShuttleOnMap(shuttle, associatedStop: associatedStop) {
-                        buildShuttleAnnotation(shuttle: shuttle)
-                    }
+                    return shouldDisplayShuttleOnMap($0, associatedStop: associatedStop)
+                }
+                ForEach(shuttlesToDisplay) { shuttle in
+                    buildShuttleAnnotation(shuttle: shuttle)
                 }
                 
                 // MARK: Stop rendering
