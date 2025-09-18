@@ -34,7 +34,7 @@ struct MapView: NetworkView {
     @Environment(GlobalStopsModel.self) var globalStopsModel: GlobalStopsModel
     
     /// Backing view model.
-    @StateObject var viewModel = ViewModel()
+    @State var viewModel = ViewModel()
     
     var tabSelection: Tabs
     
