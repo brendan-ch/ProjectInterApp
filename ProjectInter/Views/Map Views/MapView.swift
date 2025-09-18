@@ -56,22 +56,23 @@ struct MapView: NetworkView {
                 // MARK: Polyline rendering
                 
                 if let selectedRouteId = globalIdSelectionModel.selectedRouteId {
-                    let routeToDisplay = viewModel.routes.first { route in
-                        route.id == selectedRouteId
-                    }
-                    
-                    if let routeToDisplay = routeToDisplay {
+                    if let routeToDisplay = getFirstRouteOnMapMatchingId(selectedRouteId) {
                         MapPolyline(coordinates: routeToDisplay.polylineCoordinates)
                             .stroke(Color(hex: routeToDisplay.colorHex), lineWidth: 5)
                     }
                 } else {
-                    ForEach(viewModel.routes) { route in
+                    let routesToDisplay = viewModel.routes.filter {
                         if let selectedStop = globalStopsModel.selectedStop {
-                            if selectedStop.routeIds.contains(route.id) {
-                                MapPolyline(coordinates: route.polylineCoordinates)
-                                    .stroke(Color(hex: route.colorHex).opacity(0.2), lineWidth: 5)
+                            if selectedStop.routeIds.contains($0.id) {
+                                return true
                             }
                         }
+                        return false
+                    }
+                    
+                    ForEach(routesToDisplay) { route in
+                        MapPolyline(coordinates: route.polylineCoordinates)
+                            .stroke(Color(hex: route.colorHex).opacity(0.2), lineWidth: 5)
                     }
                 }
                 
@@ -163,6 +164,13 @@ struct MapView: NetworkView {
             globalIdSelectionModel.selectedParkingStructureId = nil
         }
     }
+    
+    private func getFirstRouteOnMapMatchingId(_ selectedRouteId: String) -> MapViewRoute? {
+        return viewModel.routes.first { route in
+            route.id == selectedRouteId
+        }
+    }
+    
 }
 
 // MARK: - Parking rendering
