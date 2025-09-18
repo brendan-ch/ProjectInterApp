@@ -126,9 +126,6 @@ struct MapViewNetworkArguments {
 
 extension MapView {
     /// Backing view model for ``MapView``.
-    ///
-    /// - TODO: Migrate to the `Observable` macro. Currently, doing this breaks
-    /// some rendering updates on the map view.
     @Observable
     class ViewModel: NetworkDataModel<MapViewNetworkArguments, GetMapDataQuery>, PlaceholderBuildable {
         /// Position of the map camera on the associated Map view.
