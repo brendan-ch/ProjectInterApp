@@ -279,6 +279,23 @@ class BaseUITests: XCTestCase {
                                 routeId: "2"
                             )
                         ]
+                    ),
+                    .init(
+                        coordinates: .init(
+                            // 33.79330° N, 117.85273° W
+                            latitude: 33.79330,
+                            longitude: -117.85273
+                        ),
+                        id: "2",
+                        name: "Schmid Gate",
+                        orderedStops: [
+                            .init(
+                                routeId: "3"
+                            ),
+                            .init(
+                                routeId: "4"
+                            )
+                        ]
                     )
                 ]
             )
