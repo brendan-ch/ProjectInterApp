@@ -17,13 +17,6 @@ final class MapUITests: BaseUITests {
     }
     
     func mockGetMapDataQueryAndResponse() async {
-        let route = Mock<ProjectInterTestMocks.Route>(
-            color: "#ff0000",
-            id: "1",
-            polylineCoordinates: Mock<Query>.mapRouteMock
-        )
-
-        
         let query = GetMapDataQuery(systemId: defaultSystemId)
         let response = Mock<ProjectInterTestMocks.Query>(
             system: Mock<ProjectInterTestMocks.System>(
@@ -48,7 +41,18 @@ final class MapUITests: BaseUITests {
                     ]
                 ),
                 routes: [
-                    route
+                    .init(
+                        color: "#ff0000",
+                        id: "1",
+                        polylineCoordinates: Mock<Query>.mapRouteMock
+                    ),
+                    .init(
+                        color: "#0000ff",
+                        // To match the other stop
+                        id: "3",
+                        // For simplicity, just check that the color changed
+                        polylineCoordinates: Mock<Query>.mapRouteMock
+                    )
                 ],
                 shuttles: [
                     .init(
@@ -128,10 +132,22 @@ final class MapUITests: BaseUITests {
         selectStopFromRouteList(name: "Chapman Court")
         selectFirstMatchButton(textIdentifier: "Red Route")
         
-        let screenshot = XCUIScreen.main.screenshot()
-        let attachment = XCTAttachment(screenshot: screenshot)
-        attachment.lifetime = .keepAlways
-        add(attachment)
+        takeScreenshot()
+    }
+    
+    @MainActor
+    func testRoutesAreChangedWhenSwitchingStops() async {
+        await mockGetAllStopsQueryAndResponse()
+        await mockGetRouteListQueryAndResponse()
+        await mockGetMapDataQueryAndResponse()
+        
+        app.launch()
+        
+        selectStopFromRouteList(name: "Chapman Court")
+        takeScreenshot()
+
+        selectStopFromRouteList(name: "Schmid Gate")
+        takeScreenshot()
     }
     
     @MainActor
