@@ -103,6 +103,14 @@ class BaseUITests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
     
+    // MARK: - UI testing utilities
+    func takeScreenshot() {
+        let screenshot = XCUIScreen.main.screenshot()
+        let attachment = XCTAttachment(screenshot: screenshot)
+        attachment.lifetime = .keepAlways
+        add(attachment)
+    }
+    
     // MARK: - UI testing reusable flows
     func selectStopFromRouteList(name: String) {
         let _ = app.buttons["Change stop"].waitForExistence(timeout: 20)
@@ -277,6 +285,23 @@ class BaseUITests: XCTestCase {
                             ),
                             .init(
                                 routeId: "2"
+                            )
+                        ]
+                    ),
+                    .init(
+                        coordinates: .init(
+                            // 33.79330° N, 117.85273° W
+                            latitude: 33.79330,
+                            longitude: -117.85273
+                        ),
+                        id: "2",
+                        name: "Schmid Gate",
+                        orderedStops: [
+                            .init(
+                                routeId: "3"
+                            ),
+                            .init(
+                                routeId: "4"
                             )
                         ]
                     )

@@ -34,7 +34,7 @@ struct MapView: NetworkView {
     @Environment(GlobalStopsModel.self) var globalStopsModel: GlobalStopsModel
     
     /// Backing view model.
-    @StateObject var viewModel = ViewModel()
+    @State var viewModel = ViewModel()
     
     var tabSelection: Tabs
     
@@ -56,33 +56,35 @@ struct MapView: NetworkView {
                 // MARK: Polyline rendering
                 
                 if let selectedRouteId = globalIdSelectionModel.selectedRouteId {
-                    let routeToDisplay = viewModel.routes.first { route in
-                        route.id == selectedRouteId
-                    }
-                    
-                    if let routeToDisplay = routeToDisplay {
+                    if let routeToDisplay = getFirstRouteOnMapMatchingId(selectedRouteId) {
                         MapPolyline(coordinates: routeToDisplay.polylineCoordinates)
                             .stroke(Color(hex: routeToDisplay.colorHex), lineWidth: 5)
                     }
                 } else {
-                    ForEach(viewModel.routes) { route in
+                    let routesToDisplay = viewModel.routes.filter {
                         if let selectedStop = globalStopsModel.selectedStop {
-                            if selectedStop.routeIds.contains(route.id) {
-                                MapPolyline(coordinates: route.polylineCoordinates)
-                                    .stroke(Color(hex: route.colorHex).opacity(0.2), lineWidth: 5)
+                            if selectedStop.routeIds.contains($0.id) {
+                                return true
                             }
                         }
+                        return false
+                    }
+                    
+                    ForEach(routesToDisplay) { route in
+                        MapPolyline(coordinates: route.polylineCoordinates)
+                            .stroke(Color(hex: route.colorHex).opacity(0.2), lineWidth: 5)
                     }
                 }
                 
                 // MARK: Shuttle rendering
                 
-                ForEach(viewModel.shuttles) { shuttle in
-                    let associatedStop = getAssociatedStop(for: shuttle, in: viewModel.stops)
+                let shuttlesToDisplay = viewModel.shuttles.filter {
+                    let associatedStop = getAssociatedStop(for: $0, in: viewModel.stops)
                     
-                    if shouldDisplayShuttleOnMap(shuttle, associatedStop: associatedStop) {
-                        buildShuttleAnnotation(shuttle: shuttle)
-                    }
+                    return shouldDisplayShuttleOnMap($0, associatedStop: associatedStop)
+                }
+                ForEach(shuttlesToDisplay) { shuttle in
+                    buildShuttleAnnotation(shuttle: shuttle)
                 }
                 
                 // MARK: Stop rendering
@@ -162,6 +164,13 @@ struct MapView: NetworkView {
             globalIdSelectionModel.selectedParkingStructureId = nil
         }
     }
+    
+    private func getFirstRouteOnMapMatchingId(_ selectedRouteId: String) -> MapViewRoute? {
+        return viewModel.routes.first { route in
+            route.id == selectedRouteId
+        }
+    }
+    
 }
 
 // MARK: - Parking rendering
