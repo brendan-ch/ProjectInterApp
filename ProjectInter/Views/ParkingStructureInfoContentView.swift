@@ -31,12 +31,13 @@ struct ParkingStructureInfoContentView: NetworkView {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
                     Text(viewModel.name ?? "")
-                        .font(.title2)
+                        .font(.title)
                         .bold()
                         .accessibilityLabel("Parking structure name")
                 }
                 Spacer()
-                Button("Close") {
+                
+                CloseButton {
                     globalIdSelectionModel.selectedParkingStructureId = nil
                 }
             }
