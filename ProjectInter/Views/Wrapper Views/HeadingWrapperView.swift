@@ -13,7 +13,7 @@ struct RootSheetDefaultHeader: View {
         HStack(alignment: .top) {
             VStack(alignment: .leading) {
                 Text(title)
-                    .font(.title2)
+                    .font(.title)
                     .bold()
             }
             .padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
@@ -58,7 +58,7 @@ struct HeadingWrapperView<Header, Content>: View where Header: View, Content: Vi
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
                     Text("Custom heading")
-                        .font(.title2)
+                        .font(.title)
                         .bold()
                     Text("Subheading")
                 }

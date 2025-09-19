@@ -33,7 +33,7 @@ struct RouteInfoContentView: NetworkView {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
                     Text(viewModel.routeName)
-                        .font(.title2)
+                        .font(.title)
                         .bold()
                     Text("Towards \(viewModel.routeNextStopName ?? "unknown stop")")
                         .font(.callout)

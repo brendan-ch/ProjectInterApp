@@ -59,7 +59,7 @@ struct ShuttleInfoContentView: NetworkView {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
                     Text(viewModel.name ?? "Unknown shuttle")
-                        .font(.title2)
+                        .font(.title)
                         .bold()
                         .accessibilityLabel("Shuttle name")
                     Text(viewModel.etaDisplay)
