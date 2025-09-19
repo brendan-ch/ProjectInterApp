@@ -61,7 +61,7 @@ struct ShuttleInfoContentView: NetworkView {
                         .foregroundStyle(.secondary)
                 }
                 Spacer()
-                Button("Close") {
+                CloseButton {
                     globalIdSelectionModel.selectedShuttleId = nil
                 }
             }

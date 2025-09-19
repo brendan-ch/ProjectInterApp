@@ -42,7 +42,7 @@ struct RouteInfoContentView: NetworkView {
                 Spacer()
                 
                 if globalIdSelectionModel.selectedShuttleId == nil {
-                    Button("Close") {
+                    CloseButton {
                         globalIdSelectionModel.selectedRouteId = nil
                         globalIdSelectionModel.selectedShuttleId = nil
                     }
