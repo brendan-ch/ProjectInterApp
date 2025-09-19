@@ -65,7 +65,7 @@ struct ParkingStructureInfoContentView: NetworkView {
                     }
                     
                     VStack {
-                        Button {
+                        let directionsButton = Button {
                             showingNavigationAppDialog = true
                         } label: {
                             HStack {
@@ -76,11 +76,16 @@ struct ParkingStructureInfoContentView: NetworkView {
                                 Spacer()
                             }
                         }
-                        .buttonStyle(.borderedProminent)
                         .controlSize(.large)
                         .openNavigationDialog(viewModel.address, isPresented: $showingNavigationAppDialog)
+
+                        if #available(iOS 26.0, *) {
+                            directionsButton.buttonStyle(.glassProminent)
+                        } else {
+                            directionsButton.buttonStyle(.borderedProminent)
+                        }
                         
-                        Button {
+                        let copyAddressButton = Button {
                             copyAddress()
                         } label: {
                             HStack {
@@ -91,6 +96,16 @@ struct ParkingStructureInfoContentView: NetworkView {
                         }
                         .buttonStyle(.bordered)
                         .controlSize(.large)
+                        
+                        if #available(iOS 26.0, *) {
+                            copyAddressButton.buttonStyle(
+                                .glass
+                            )
+                        } else {
+                            copyAddressButton.buttonStyle(
+                                .bordered
+                            )
+                        }
                         
                     }
                     .padding()
@@ -234,3 +249,4 @@ struct ParkingStructureInfoContentChart: View {
         .environment(GlobalIdSelectionModel())
         .environment(GlobalSystemsModel())
 }
+
