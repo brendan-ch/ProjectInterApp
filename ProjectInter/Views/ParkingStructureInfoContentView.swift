@@ -65,7 +65,7 @@ struct ParkingStructureInfoContentView: NetworkView {
                     }
                     
                     VStack {
-                        let directionsButton = Button {
+                        Button {
                             showingNavigationAppDialog = true
                         } label: {
                             HStack {
@@ -78,14 +78,9 @@ struct ParkingStructureInfoContentView: NetworkView {
                         }
                         .controlSize(.large)
                         .openNavigationDialog(viewModel.address, isPresented: $showingNavigationAppDialog)
+                        .prominentButtonStyleByAvailability()
 
-                        if #available(iOS 26.0, *) {
-                            directionsButton.buttonStyle(.glassProminent)
-                        } else {
-                            directionsButton.buttonStyle(.borderedProminent)
-                        }
-                        
-                        let copyAddressButton = Button {
+                        Button {
                             copyAddress()
                         } label: {
                             HStack {
@@ -94,18 +89,8 @@ struct ParkingStructureInfoContentView: NetworkView {
                                 Spacer()
                             }
                         }
-                        .buttonStyle(.bordered)
                         .controlSize(.large)
-                        
-                        if #available(iOS 26.0, *) {
-                            copyAddressButton.buttonStyle(
-                                .glass
-                            )
-                        } else {
-                            copyAddressButton.buttonStyle(
-                                .bordered
-                            )
-                        }
+                        .secondaryButtonStyleByAvailability()
                         
                     }
                     .padding()
@@ -249,4 +234,3 @@ struct ParkingStructureInfoContentChart: View {
         .environment(GlobalIdSelectionModel())
         .environment(GlobalSystemsModel())
 }
-

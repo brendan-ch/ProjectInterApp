@@ -27,4 +27,23 @@ extension View {
     func openNavigationDialog(_ address: String?, isPresented: Binding<Bool>) -> some View {
         modifier(OpenNavigationDialog(isPresented: isPresented, address: address))
     }
+    
+    @ViewBuilder
+    func prominentButtonStyleByAvailability() -> some View {
+        if #available(iOS 26.0, *) {
+            self.buttonStyle(.glassProminent)
+        } else {
+            self.buttonStyle(.borderedProminent)
+        }
+    }
+    
+    @ViewBuilder
+    func secondaryButtonStyleByAvailability() -> some View {
+        if #available(iOS 26.0, *) {
+            self.buttonStyle(.glass)
+        } else {
+            self.buttonStyle(.bordered)
+        }
+    }
+
 }
