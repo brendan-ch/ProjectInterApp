@@ -47,19 +47,13 @@ struct ShuttleInfoContentView: NetworkView {
     var hasNoNotificationOptions: Bool {
         viewModel.availableNotificationOptions.isEmpty
     }
-    var buttonForegroundStyle: Color? {
-        if hasNoNotificationOptions {
-            return nil  // Let SwiftUI handle disabled styling
-        }
-        return isNotificationScheduled ? .red : .blue
-    }
     
     var body: some View {
         HeadingWrapperView {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
                     Text(viewModel.name ?? "Unknown shuttle")
-                        .font(.title2)
+                        .font(.title)
                         .bold()
                         .accessibilityLabel("Shuttle name")
                     Text(viewModel.etaDisplay)
@@ -67,7 +61,7 @@ struct ShuttleInfoContentView: NetworkView {
                         .foregroundStyle(.secondary)
                 }
                 Spacer()
-                Button("Close") {
+                CloseButton {
                     globalIdSelectionModel.selectedShuttleId = nil
                 }
             }
@@ -76,7 +70,7 @@ struct ShuttleInfoContentView: NetworkView {
         } content: {
             WithInitializationView(dataInitState: viewModel.dataInitState) {
                 DataWrapperView(shouldDisplayNoDataMessage: !viewModel.dataAvailable, noDataMessage: "This shuttle is currently unavailable.") {
-                    Button(action: {
+                    let notificationSchedulingButton = Button(role: isNotificationScheduled ? .destructive : nil) {
                         if customAppDelegate.notificationTokenString == nil {
                             showingNotificationPermissionsNotGrantedAlert = true
                             return
@@ -88,7 +82,7 @@ struct ShuttleInfoContentView: NetworkView {
                             showingNotificationConfirmationDialog = true
                         }
                         
-                    }) {
+                    } label: {
                         HStack {
                             Spacer()
                             Image(systemName: isNotificationScheduled ? "multiply" : "bell.badge")
@@ -97,8 +91,6 @@ struct ShuttleInfoContentView: NetworkView {
                         }
                     }
                     .disabled(hasNoNotificationOptions)
-                    .buttonStyle(.bordered)
-                    .conditionalForegroundStyle(buttonForegroundStyle)
                     .controlSize(.large)
                     .padding()
                     .alert("Turn on notifications", isPresented: $showingNotificationPermissionsNotGrantedAlert) {
@@ -122,6 +114,12 @@ struct ShuttleInfoContentView: NetworkView {
                                 }
                             }
                         }
+                    }
+                    
+                    if isNotificationScheduled {
+                        notificationSchedulingButton.secondaryButtonStyleByAvailability()
+                    } else {
+                        notificationSchedulingButton.prominentButtonStyleByAvailability()
                     }
                     
                     // MARK: Upcoming stops

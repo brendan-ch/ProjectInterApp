@@ -31,12 +31,13 @@ struct ParkingStructureInfoContentView: NetworkView {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
                     Text(viewModel.name ?? "")
-                        .font(.title2)
+                        .font(.title)
                         .bold()
                         .accessibilityLabel("Parking structure name")
                 }
                 Spacer()
-                Button("Close") {
+                
+                CloseButton {
                     globalIdSelectionModel.selectedParkingStructureId = nil
                 }
             }
@@ -75,10 +76,10 @@ struct ParkingStructureInfoContentView: NetworkView {
                                 Spacer()
                             }
                         }
-                        .buttonStyle(.borderedProminent)
                         .controlSize(.large)
                         .openNavigationDialog(viewModel.address, isPresented: $showingNavigationAppDialog)
-                        
+                        .prominentButtonStyleByAvailability()
+
                         Button {
                             copyAddress()
                         } label: {
@@ -88,8 +89,8 @@ struct ParkingStructureInfoContentView: NetworkView {
                                 Spacer()
                             }
                         }
-                        .buttonStyle(.bordered)
                         .controlSize(.large)
+                        .secondaryButtonStyleByAvailability()
                         
                     }
                     .padding()

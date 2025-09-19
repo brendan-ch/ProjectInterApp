@@ -15,6 +15,7 @@ struct SheetViewModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         content
+            .background(.ultraThickMaterial)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .presentationDetents(standardPresentationDetents, selection: detentSelection)
             .presentationBackgroundInteraction(.enabled)
@@ -129,7 +130,7 @@ struct ContentView: View {
             // the currently selected one
             // https://stackoverflow.com/questions/74423799/how-to-size-content-for-presentation-detents-in-swiftui
             GeometryReader { proxy in
-                Color.clear
+                Color.clear.opacity(0.0)
                     .onChange(of: proxy.size.height) {
                         if proxy.size.height <= 360 {
                             currentSheetHeight = proxy.size.height
@@ -137,6 +138,7 @@ struct ContentView: View {
                     }
             }
         }
+        .background(.ultraThickMaterial)
     }
     
     func buildSettingsView() -> some View {
