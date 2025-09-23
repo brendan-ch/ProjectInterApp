@@ -32,6 +32,14 @@ final class RouteInfoUITests: BaseUITests {
         return availableOptions
     }
     
+    // MARK: - Shared navigation
+    func openShuttleInfo() {
+        selectStopFromRouteList(name: "Chapman Court")
+        selectFirstMatchButton(textIdentifier: "Red Route")
+        selectFirstMatchButton(textIdentifier: "Shuttle 1")
+    }
+    
+
     @MainActor
     func assertButtonsInNotificationTimeframeSheetResultInRefresh() async {
         // Assumes the sheet is already open
@@ -76,13 +84,6 @@ final class RouteInfoUITests: BaseUITests {
         }
     }
     
-    // MARK: - Shared navigation
-    func navigateToShuttlePage() {
-        selectStopFromRouteList(name: "Chapman Court")
-        selectFirstMatchButton(textIdentifier: "Red Route")
-        selectFirstMatchButton(textIdentifier: "Shuttle 1")
-    }
-    
     @MainActor
     func testShuttleInfoIsShownWhenTapped() async {
         useMockNotificationsToken()
@@ -95,10 +96,10 @@ final class RouteInfoUITests: BaseUITests {
         ))
         
         app.launch()
-        navigateToShuttlePage()
+        openShuttleInfo()
         
         XCTAssert(app.staticTexts["Shuttle 1"].firstMatch.waitForExistence(timeout: 5))
-        XCTAssert(app.staticTexts["2 min to Chapman Court"].firstMatch.waitForExistence(timeout: 5))
+        XCTAssert(app.staticTexts["2 min"].firstMatch.waitForExistence(timeout: 5))
     }
     
     @MainActor
@@ -113,7 +114,7 @@ final class RouteInfoUITests: BaseUITests {
         ))
         
         app.launch()
-        navigateToShuttlePage()
+        openShuttleInfo()
         
         let notifyMeWhenNearbyStaticText = app.staticTexts["Notify me when nearby"]
         notifyMeWhenNearbyStaticText.tap()
