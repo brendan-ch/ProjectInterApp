@@ -17,6 +17,8 @@ struct RouteInfoContentView: NetworkView {
     
     @Environment(GlobalStopsModel.self) var globalStopsState: GlobalStopsModel
     
+    @Environment(ShuttleInfoContentView.ViewModel.self) var shuttleViewModel: ShuttleInfoContentView.ViewModel?
+    
     /// Backing ``RouteInfoContentView`` instance.
     @State var viewModel: ViewModel = ViewModel()
     
@@ -74,10 +76,14 @@ struct RouteInfoContentView: NetworkView {
                                 .prominentButtonStyleByAvailability()
                             }
                         }
+                        .padding()
                     }
-                    .padding()
                     
-                    ShuttleInfoContentView()
+                    if let shuttleViewModel = shuttleViewModel {
+                        ShuttleInfoContentView(viewModel: shuttleViewModel)
+                    } else {
+                        ShuttleInfoContentView()
+                    }
                 }
             }
         }
@@ -119,11 +125,13 @@ struct RouteInfoShuttleViewItem: View {
 
 #Preview {
     let model = RouteInfoContentView.ViewModel.buildPlaceholder()
+    let shuttleViewModel = ShuttleInfoContentView.ViewModel.buildPlaceholder()
     
     return RouteInfoContentView(viewModel: model)
         .environment(GlobalIdSelectionModel())
         .environment(GlobalStopsModel())
         .environment(GlobalSystemsModel.buildPlaceholder())
         .environment(ShuttleNotificationSchedulingModel())
+        .environment(shuttleViewModel)
         .environmentObject(CustomAppDelegate())
 }
