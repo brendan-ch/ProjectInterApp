@@ -41,11 +41,9 @@ struct RouteInfoContentView: NetworkView {
                 }
                 Spacer()
                 
-                if globalIdSelectionModel.selectedShuttleId == nil {
-                    CloseButton {
-                        globalIdSelectionModel.selectedRouteId = nil
-                        globalIdSelectionModel.selectedShuttleId = nil
-                    }
+                CloseButton {
+                    globalIdSelectionModel.selectedRouteId = nil
+                    globalIdSelectionModel.selectedShuttleId = nil
                 }
             }
             .padding()
