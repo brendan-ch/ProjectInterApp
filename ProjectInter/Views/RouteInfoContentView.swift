@@ -71,6 +71,7 @@ struct RouteInfoContentView: NetworkView {
                                             Text("N/A")
                                         }
                                     }
+                                    .frame(minWidth: 96)
                                 }
                                 .controlSize(.regular)
                                 .apply(shuttle.id == globalIdSelectionModel.selectedShuttleId) {
@@ -84,11 +85,20 @@ struct RouteInfoContentView: NetworkView {
                         .padding()
                     }
                     
+                    Divider()
+                    
                     if let shuttleViewModel = shuttleViewModel {
                         ShuttleInfoContentView(viewModel: shuttleViewModel)
                     } else {
                         ShuttleInfoContentView()
                     }
+                }
+            }
+        }
+        .onChange(of: viewModel.dataInitState) {
+            if viewModel.dataInitState == .succeeded {
+                if !viewModel.shuttles.isEmpty {
+                    globalIdSelectionModel.selectedShuttleId = viewModel.shuttles[0].id
                 }
             }
         }

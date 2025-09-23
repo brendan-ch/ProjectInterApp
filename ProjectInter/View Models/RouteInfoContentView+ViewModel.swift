@@ -12,7 +12,7 @@ import ProjectInterOperations
 // MARK: - Models
 
 /// Represents a shuttle to render on ``RouteInfoContentView``.
-struct RouteInfoContentViewShuttle: Identifiable {
+struct RouteInfoContentViewShuttle: Identifiable, Equatable {
     /// The name of the shuttle.
     var name: String
     
