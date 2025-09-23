@@ -56,41 +56,43 @@ struct RouteInfoContentView: NetworkView {
                     shouldDisplayNoDataMessage: viewModel.shuttles.isEmpty,
                     noDataMessage: "No shuttles available"
                 ) {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                            ForEach(viewModel.shuttles) { shuttle in
-                                Button {
-                                    globalIdSelectionModel.selectedShuttleId = shuttle.id
-                                } label: {
-                                    VStack {
-                                        Text(shuttle.name)
-                                            .bold()
-                                        if let secondsRemaining = shuttle.secondsRemaining {
-                                            Text(secondsRemaining.convertToMinutesAsString() + " min")
-                                        } else {
-                                            Text("N/A")
+                    VStack(spacing: 0) {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack {
+                                ForEach(viewModel.shuttles) { shuttle in
+                                    Button {
+                                        globalIdSelectionModel.selectedShuttleId = shuttle.id
+                                    } label: {
+                                        VStack {
+                                            Text(shuttle.name)
+                                                .bold()
+                                            if let secondsRemaining = shuttle.secondsRemaining {
+                                                Text(secondsRemaining.convertToMinutesAsString() + " min")
+                                            } else {
+                                                Text("N/A")
+                                            }
                                         }
+                                        .frame(minWidth: 80)
                                     }
-                                    .frame(minWidth: 96)
-                                }
-                                .controlSize(.regular)
-                                .apply(shuttle.id == globalIdSelectionModel.selectedShuttleId) {
-                                    $0.prominentButtonStyleByAvailability()
-                                }
-                                .apply(shuttle.id != globalIdSelectionModel.selectedShuttleId) {
-                                    $0.secondaryButtonStyleByAvailability()
+                                    .controlSize(.regular)
+                                    .apply(shuttle.id == globalIdSelectionModel.selectedShuttleId) {
+                                        $0.prominentButtonStyleByAvailability()
+                                    }
+                                    .apply(shuttle.id != globalIdSelectionModel.selectedShuttleId) {
+                                        $0.secondaryButtonStyleByAvailability()
+                                    }
                                 }
                             }
+                            .padding()
                         }
-                        .padding()
-                    }
-                    
-                    Divider()
-                    
-                    if let shuttleViewModel = shuttleViewModel {
-                        ShuttleInfoContentView(viewModel: shuttleViewModel)
-                    } else {
-                        ShuttleInfoContentView()
+                        
+                        Divider()
+                        
+                        if let shuttleViewModel = shuttleViewModel {
+                            ShuttleInfoContentView(viewModel: shuttleViewModel)
+                        } else {
+                            ShuttleInfoContentView()
+                        }
                     }
                 }
             }
