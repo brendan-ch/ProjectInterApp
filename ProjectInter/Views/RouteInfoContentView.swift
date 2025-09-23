@@ -54,24 +54,30 @@ struct RouteInfoContentView: NetworkView {
                     shouldDisplayNoDataMessage: viewModel.shuttles.isEmpty,
                     noDataMessage: "No shuttles available"
                 ) {
-                    ScrollView(.vertical, showsIndicators: false) {
-                        VStack {
-                            ForEach(viewModel.shuttles) { upcomingDeparture in
-                                Divider()
-                                
-                                RouteInfoShuttleViewItem(shuttle: upcomingDeparture) { shuttle in
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            ForEach(viewModel.shuttles) { shuttle in
+                                Button {
                                     globalIdSelectionModel.selectedShuttleId = shuttle.id
+                                } label: {
+                                    VStack {
+                                        Text(shuttle.name)
+                                            .bold()
+                                        if let secondsRemaining = shuttle.secondsRemaining {
+                                            Text(secondsRemaining.convertToMinutesAsString() + " min")
+                                        } else {
+                                            Text("N/A")
+                                        }
+                                    }
                                 }
-                                .accessibilityLabel("Shuttle label in route info page")
-                                .accessibilityIdentifier(upcomingDeparture.id)
-                                .buttonStyle(.plain)
-                                .padding(.horizontal)
-                                
+                                .controlSize(.regular)
+                                .prominentButtonStyleByAvailability()
                             }
-                            
                         }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
+                    .padding()
+                    
+                    ShuttleInfoContentView()
                 }
             }
         }
@@ -118,4 +124,6 @@ struct RouteInfoShuttleViewItem: View {
         .environment(GlobalIdSelectionModel())
         .environment(GlobalStopsModel())
         .environment(GlobalSystemsModel.buildPlaceholder())
+        .environment(ShuttleNotificationSchedulingModel())
+        .environmentObject(CustomAppDelegate())
 }
