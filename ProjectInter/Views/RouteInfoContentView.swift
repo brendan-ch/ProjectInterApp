@@ -73,7 +73,12 @@ struct RouteInfoContentView: NetworkView {
                                     }
                                 }
                                 .controlSize(.regular)
-                                .prominentButtonStyleByAvailability()
+                                .apply(shuttle.id == globalIdSelectionModel.selectedShuttleId) {
+                                    $0.prominentButtonStyleByAvailability()
+                                }
+                                .apply(shuttle.id != globalIdSelectionModel.selectedShuttleId) {
+                                    $0.secondaryButtonStyleByAvailability()
+                                }
                             }
                         }
                         .padding()
