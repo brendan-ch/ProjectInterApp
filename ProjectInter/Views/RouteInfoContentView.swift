@@ -97,7 +97,7 @@ struct RouteInfoContentView: NetworkView {
         }
         .onChange(of: viewModel.dataInitState) {
             if viewModel.dataInitState == .succeeded {
-                if !viewModel.shuttles.isEmpty {
+                if !viewModel.shuttles.isEmpty && globalIdSelectionModel.selectedShuttleId == nil {
                     globalIdSelectionModel.selectedShuttleId = viewModel.shuttles[0].id
                 }
             }

@@ -153,15 +153,22 @@ struct MapView: NetworkView {
         if selectedTag.type == .shuttle {
             globalStopsModel.selectedStopIdOnMap = nil
             globalIdSelectionModel.selectedShuttleId = selectedTag.id
+            
+            if let selectedShuttle = viewModel.shuttles.first(where: { $0.id == selectedTag.id }) {
+                globalIdSelectionModel.selectedRouteId = selectedShuttle.routeId
+            }
+            
             globalIdSelectionModel.selectedParkingStructureId = nil
         } else if selectedTag.type == .parkingStructure {
             globalStopsModel.selectedStopIdOnMap = nil
             globalIdSelectionModel.selectedParkingStructureId = selectedTag.id
             globalIdSelectionModel.selectedShuttleId = nil
+            globalIdSelectionModel.selectedRouteId = nil
         } else {
             globalStopsModel.selectedStopIdOnMap = selectedTag.id
             globalIdSelectionModel.selectedShuttleId = nil
             globalIdSelectionModel.selectedParkingStructureId = nil
+            globalIdSelectionModel.selectedRouteId = nil
         }
     }
     
