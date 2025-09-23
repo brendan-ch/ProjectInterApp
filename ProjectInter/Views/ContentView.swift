@@ -102,15 +102,7 @@ struct ContentView: View {
                 buildRouteListView()
                     .sheet(isPresented: .constant(showRouteInfo)) {
                         buildRouteInfoView()
-                            .sheet(isPresented: .constant(showShuttleInfoOverRouteInfo)) {
-                                buildShuttleInfoView()
-                                    .sheetViewModifier(detentSelection: $shuttleInfoSheetSelectedDetent)
-                            }
                             .sheetViewModifier(detentSelection: $routeInfoSheetSelectedDetent)
-                    }
-                    .sheet(isPresented: .constant(showShuttleInfoOverRouteList)) {
-                        buildShuttleInfoView()
-                            .sheetViewModifier(detentSelection: $shuttleInfoSheetSelectedDetent)
                     }
             }
             Tab("Parking", systemImage: "parkingsign.square.fill", value: .parking) {
@@ -175,13 +167,6 @@ struct ContentView: View {
             return RouteInfoContentView(viewModel: routeInfoContentViewModel)
         }
         return RouteInfoContentView()
-    }
-    
-    func buildShuttleInfoView() -> some View {
-        if let shuttleInfoContentViewModel = shuttleInfoContentViewModel {
-            return ShuttleInfoContentView(viewModel: shuttleInfoContentViewModel)
-        }
-        return ShuttleInfoContentView()
     }
 }
 
