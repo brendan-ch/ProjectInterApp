@@ -14,7 +14,7 @@ import Combine
 struct ProjectInterApp: App {
     @State var locationManagerStateObject = LocationDataModel()
     
-    @State var globalIdSelectionStateObject = GlobalIdSelectionModel()
+    @State var globalIdSelectionStateObject = GlobalIdSelectionModel(routeIdSyncModel: RouteIdSelectionSyncModel(apolloNetworkModel: ApolloNetworkModelSingleton.shared.apolloNetworkModel))
     
     @State var globalSystemsStateObject = GlobalSystemsModel(apolloNetworkModel: ApolloNetworkModelSingleton.shared.apolloNetworkModel)
     
