@@ -74,8 +74,10 @@ struct RouteInfoContentView: NetworkView {
                                         .frame(minWidth: 80)
                                     }
                                     .controlSize(.regular)
+                                    .accessibilityAddTraits(shuttle.id == globalIdSelectionModel.selectedShuttleId ? .isSelected : [])
                                     .apply(shuttle.id == globalIdSelectionModel.selectedShuttleId) {
-                                        $0.prominentButtonStyleByAvailability()
+                                        $0
+                                            .prominentButtonStyleByAvailability()
                                     }
                                     .apply(shuttle.id != globalIdSelectionModel.selectedShuttleId) {
                                         $0.secondaryButtonStyleByAvailability()
