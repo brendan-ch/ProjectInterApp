@@ -8,8 +8,6 @@
 import Foundation
 import CoreLocation
 
-// TODO: apply this model to objects in MapViewModel
-
 /// A raw set of coordinates from the server, which can be converted into
 /// other types of coordinates such as `CLLocationCoordinate2D`.
 struct RawCoordinates: Equatable {
