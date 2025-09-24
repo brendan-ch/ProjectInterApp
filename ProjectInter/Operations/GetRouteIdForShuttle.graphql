@@ -1,0 +1,9 @@
+query GetRouteIdForShuttle($systemId: ID!, $shuttleId: ID!) {
+  system(id: $systemId) {
+    shuttle(id: $shuttleId) {
+      route {
+        id
+      }
+    }
+  }
+}
