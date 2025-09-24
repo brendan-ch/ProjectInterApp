@@ -232,7 +232,8 @@ final class MapUITests: BaseUITests {
         XCTAssert(attemptToSelectShuttleButton())
         app.buttons["Close"].tap()
         XCTAssert(attemptToSelectShuttleButton())
-        XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
+        XCTAssert(app.staticTexts["Shuttle 1"].firstMatch.waitForExistence(timeout: 20))
+        XCTAssert(app.staticTexts["Shuttle 2"].firstMatch.waitForExistence(timeout: 20))
     }
     
     @MainActor
