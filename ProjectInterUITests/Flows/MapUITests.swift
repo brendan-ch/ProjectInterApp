@@ -157,7 +157,8 @@ final class MapUITests: BaseUITests {
         await mockGetMapDataQueryAndResponse()
         
         app.launch()
-        
+        selectStopFromRouteList(name: "Chapman Court")
+
         let shuttleExists = app.otherElements.buttons.matching(identifier: "Shuttle").firstMatch.waitForExistence(timeout: 20)
         XCTAssert(shuttleExists)
         
@@ -191,6 +192,7 @@ final class MapUITests: BaseUITests {
         await mockGetAllStopsQueryAndResponse()
         await mockGetRouteListQueryAndResponse()
         await mockGetMapDataQueryAndResponse()
+        await mockGetRouteInfoDataQueryAndResponse()
         await mockShuttleInfoQueryAndResponse(.init(
             id: "1"
         ))
@@ -203,7 +205,10 @@ final class MapUITests: BaseUITests {
         selectStopFromRouteList(name: "Chapman Court")
         
         XCTAssert(attemptToSelectShuttleButton())
-        XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForExistence(timeout: 20))
+        
+        // Based on route info
+        XCTAssert(app.staticTexts["Shuttle 1"].firstMatch.waitForExistence(timeout: 20))
+        XCTAssert(app.staticTexts["Shuttle 2"].firstMatch.waitForExistence(timeout: 20))
     }
     
     @MainActor
