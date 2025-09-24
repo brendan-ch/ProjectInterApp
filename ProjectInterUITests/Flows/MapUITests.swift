@@ -217,6 +217,7 @@ final class MapUITests: BaseUITests {
 
         await mockGetAllStopsQueryAndResponse()
         await mockGetRouteListQueryAndResponse()
+        await mockGetRouteInfoDataQueryAndResponse()
         await mockGetMapDataQueryAndResponse()
         await mockShuttleInfoQueryAndResponse(.init(
             id: "1"
@@ -242,6 +243,7 @@ final class MapUITests: BaseUITests {
 
         await mockGetAllStopsQueryAndResponse()
         await mockGetRouteListQueryAndResponse()
+        await mockGetRouteInfoDataQueryAndResponse()
         await mockGetMapDataQueryAndResponse()
         await mockShuttleInfoQueryAndResponse(.init(
             id: "1"
@@ -256,7 +258,7 @@ final class MapUITests: BaseUITests {
         
         XCTAssert(attemptToSelectShuttleButton())
         app.buttons["Stop"].firstMatch.tap()
-        XCTAssert(app.staticTexts["Shuttle name"].firstMatch.waitForNonExistence(timeout: 20))
+        XCTAssert(app.staticTexts["Routes"].firstMatch.waitForExistence(timeout: 20))
     }
     
     @MainActor
