@@ -58,12 +58,11 @@ class GlobalIdSelectionModel {
     }
     
     func autoSelectRouteIdFromShuttleId(_ arguments: RouteIdSelectionSyncNetworkArguments) async {
-        selectedShuttleId = arguments.shuttleId
-        
         guard let routeIdSyncModel = routeIdSyncModel else { return }
         
         await routeIdSyncModel.refreshDataOnce(arguments: arguments)
         selectedRouteId = routeIdSyncModel.routeId
+        selectedShuttleId = arguments.shuttleId
     }
     
     func selectParkingStructureId(_ id: String?) {
