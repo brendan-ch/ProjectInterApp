@@ -152,23 +152,17 @@ struct MapView: NetworkView {
         
         if selectedTag.type == .shuttle {
             globalStopsModel.selectedStopIdOnMap = nil
-            globalIdSelectionModel.selectedShuttleId = selectedTag.id
             
             if let selectedShuttle = viewModel.shuttles.first(where: { $0.id == selectedTag.id }) {
-                globalIdSelectionModel.selectedRouteId = selectedShuttle.routeId
+                globalIdSelectionModel.selectRouteId(selectedShuttle.routeId)
+                globalIdSelectionModel.selectShuttleIdIfRouteIdSelected(selectedTag.id)
             }
-            
-            globalIdSelectionModel.selectedParkingStructureId = nil
         } else if selectedTag.type == .parkingStructure {
             globalStopsModel.selectedStopIdOnMap = nil
-            globalIdSelectionModel.selectedParkingStructureId = selectedTag.id
-            globalIdSelectionModel.selectedShuttleId = nil
-            globalIdSelectionModel.selectedRouteId = nil
+            globalIdSelectionModel.selectParkingStructureId(selectedTag.id)
         } else {
             globalStopsModel.selectedStopIdOnMap = selectedTag.id
-            globalIdSelectionModel.selectedShuttleId = nil
-            globalIdSelectionModel.selectedParkingStructureId = nil
-            globalIdSelectionModel.selectedRouteId = nil
+            globalIdSelectionModel.clearAllIds()
         }
     }
     
@@ -287,7 +281,7 @@ extension MapView {
     
     let globalDataModel = GlobalIdSelectionModel()
     let routeToSelect = viewModel.routes.first!
-    globalDataModel.selectedRouteId = routeToSelect.id
+    globalDataModel.selectRouteId(routeToSelect.id)
     
     return MapView(viewModel: viewModel, tabSelection: .shuttles)
         .environment(globalDataModel)

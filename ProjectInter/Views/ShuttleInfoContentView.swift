@@ -178,7 +178,7 @@ struct ShuttleInfoContentView: NetworkView {
                     }
                     Spacer()
                     CloseButton {
-                        globalIdSelectionModel.selectedShuttleId = nil
+                        globalIdSelectionModel.clearAllIds()
                     }
                 }
                 .padding()

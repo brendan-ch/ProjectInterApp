@@ -44,8 +44,7 @@ struct RouteInfoContentView: NetworkView {
                 Spacer()
                 
                 CloseButton {
-                    globalIdSelectionModel.selectedRouteId = nil
-                    globalIdSelectionModel.selectedShuttleId = nil
+                    globalIdSelectionModel.clearAllIds()
                 }
             }
             .padding()
@@ -61,7 +60,7 @@ struct RouteInfoContentView: NetworkView {
                             HStack {
                                 ForEach(viewModel.shuttles) { shuttle in
                                     Button {
-                                        globalIdSelectionModel.selectedShuttleId = shuttle.id
+                                        globalIdSelectionModel.selectShuttleIdIfRouteIdSelected(shuttle.id)
                                     } label: {
                                         VStack {
                                             Text(shuttle.name)
@@ -100,7 +99,7 @@ struct RouteInfoContentView: NetworkView {
         .onChange(of: viewModel.dataInitState) {
             if viewModel.dataInitState == .succeeded {
                 if !viewModel.shuttles.isEmpty && globalIdSelectionModel.selectedShuttleId == nil {
-                    globalIdSelectionModel.selectedShuttleId = viewModel.shuttles[0].id
+                    globalIdSelectionModel.selectShuttleIdIfRouteIdSelected(viewModel.shuttles[0].id)
                 }
             }
         }

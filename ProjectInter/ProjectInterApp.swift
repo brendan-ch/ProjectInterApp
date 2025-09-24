@@ -96,7 +96,7 @@ struct ContentViewWrapper: View {
                     // Account for cases where system ID does not exist due to
                     // lack of value in UserDefaults
                     Task {
-                        setSelectionStateBasedOnLastTappedNotificationDetails()
+                        await setSelectionStateBasedOnLastTappedNotificationDetails()
                     }
                     return
                 }
@@ -113,7 +113,7 @@ struct ContentViewWrapper: View {
                         globalStopsStateObject.selectStopId(globalStopsStateObject.stops[0].id)
                     }
                     
-                    setSelectionStateBasedOnLastTappedNotificationDetails()
+                    await setSelectionStateBasedOnLastTappedNotificationDetails()
                 }
             }
             .task {
@@ -127,16 +127,21 @@ struct ContentViewWrapper: View {
                 tryAutomaticallySelectStop()
             }
             .onChange(of: notificationCenterDelegate.lastTappedNotificationDetails) {
-                setSelectionStateBasedOnLastTappedNotificationDetails()
+                Task {
+                    await setSelectionStateBasedOnLastTappedNotificationDetails()
+                }
             }
     }
     
-    func setSelectionStateBasedOnLastTappedNotificationDetails() {
+    func setSelectionStateBasedOnLastTappedNotificationDetails() async {
         guard let details = notificationCenterDelegate.lastTappedNotificationDetails else { return }
         
         globalStopsStateObject.selectStopId(details.stopId)
         globalSystemsStateObject.selectSystemId(details.systemId)
-        globalIdSelectionStateObject.selectedShuttleId = details.shuttleId
+        await globalIdSelectionStateObject.autoSelectRouteIdFromShuttleId(.init(
+            systemId: details.systemId,
+            shuttleId: details.shuttleId
+        ))
         
         notificationCenterDelegate.lastTappedNotificationDetails = nil
     }
