@@ -48,10 +48,6 @@ struct ContentView: View {
     var showRouteInfo: Bool {
         globalIdSelectionModel.selectedRouteId != nil
     }
-    var showShuttleInfoOverRouteInfo: Bool {
-        globalIdSelectionModel.selectedRouteId != nil
-        && globalIdSelectionModel.selectedShuttleId != nil
-    }
     var showParkingStructureInfo: Bool {
         globalIdSelectionModel.selectedParkingStructureId != nil
     }
