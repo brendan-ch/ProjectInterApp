@@ -52,6 +52,7 @@ type Route {
   id: ID!
   systemId: ID!
   orderedStop(forStopId: ID): OrderedStop
+  orderedStops: [OrderedStop]
   shuttles: [Shuttle!]
   polylineCoordinates: [Coordinates!]!
   color: String!

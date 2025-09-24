@@ -10,6 +10,10 @@ import SwiftUI
 /// View which displays information about a single shuttle,
 /// including ETA from the currently selected stop ID.
 struct ShuttleInfoContentView: NetworkView {
+    /// Display the view with the heading, for when the view is fully displayed
+    /// in its own sheet.
+    var withHeading = false
+    
     /// Backing view model.
     @State var viewModel = ViewModel()
     
@@ -48,48 +52,29 @@ struct ShuttleInfoContentView: NetworkView {
         viewModel.availableNotificationOptions.isEmpty
     }
     
-    var body: some View {
-        HeadingWrapperView {
-            HStack(alignment: .top) {
-                VStack(alignment: .leading) {
-                    Text(viewModel.name ?? "Unknown shuttle")
-                        .font(.title)
-                        .bold()
-                        .accessibilityLabel("Shuttle name")
-                    Text(viewModel.etaDisplay)
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                }
-                Spacer()
-                CloseButton {
-                    globalIdSelectionModel.selectedShuttleId = nil
-                }
-            }
-            .padding()
-            .padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
-        } content: {
-            WithInitializationView(dataInitState: viewModel.dataInitState) {
-                DataWrapperView(shouldDisplayNoDataMessage: !viewModel.dataAvailable, noDataMessage: "This shuttle is currently unavailable.") {
-                    let notificationSchedulingButton = Button(role: isNotificationScheduled ? .destructive : nil) {
-                        if customAppDelegate.notificationTokenString == nil {
-                            showingNotificationPermissionsNotGrantedAlert = true
-                            return
-                        } else if isNotificationScheduled {
-                            Task {
-                                await cancelNotification()
-                            }
-                        } else {
-                            showingNotificationConfirmationDialog = true
+    var content: some View {
+        WithInitializationView(dataInitState: viewModel.dataInitState) {
+            DataWrapperView(shouldDisplayNoDataMessage: !viewModel.dataAvailable, noDataMessage: "This shuttle is currently unavailable.") {
+                let notificationSchedulingButton = Button(role: isNotificationScheduled ? .destructive : nil) {
+                    if customAppDelegate.notificationTokenString == nil {
+                        showingNotificationPermissionsNotGrantedAlert = true
+                        return
+                    } else if isNotificationScheduled {
+                        Task {
+                            await cancelNotification()
                         }
-                        
-                    } label: {
-                        HStack {
-                            Spacer()
-                            Image(systemName: isNotificationScheduled ? "multiply" : "bell.badge")
-                            Text(viewModel.notificationButtonText)
-                            Spacer()
-                        }
+                    } else {
+                        showingNotificationConfirmationDialog = true
                     }
+                    
+                } label: {
+                    HStack {
+                        Spacer()
+                        Image(systemName: isNotificationScheduled ? "multiply" : "bell.badge")
+                        Text(viewModel.notificationButtonText)
+                        Spacer()
+                    }
+                }
                     .disabled(hasNoNotificationOptions)
                     .controlSize(.large)
                     .padding()
@@ -115,57 +100,56 @@ struct ShuttleInfoContentView: NetworkView {
                             }
                         }
                     }
-                    
-                    if isNotificationScheduled {
-                        notificationSchedulingButton.secondaryButtonStyleByAvailability()
-                    } else {
-                        notificationSchedulingButton.prominentButtonStyleByAvailability()
+                
+                if isNotificationScheduled {
+                    notificationSchedulingButton.secondaryButtonStyleByAvailability()
+                } else {
+                    notificationSchedulingButton.prominentButtonStyleByAvailability()
+                }
+                
+                // MARK: Upcoming stops
+                // TODO: Display using the route's color
+                // TODO: Gray out stops before the user's current stop
+                VStack(spacing: 0) {
+                    HStack {
+                        ZStack {
+                            Rectangle()
+                                .frame(width: 2, height: 40)
+                                .foregroundStyle(Color.blue)
+                            Circle()
+                                .frame(width: 24, height: 24)
+                                .foregroundStyle(Color.blue)
+                            Image(systemName: "bus.fill")
+                                .resizable()
+                                .frame(width: 16, height: 16)
+                                .foregroundStyle(Color.white)
+                        }
+                        Spacer()
                     }
-                    
-                    // MARK: Upcoming stops
-                    // TODO: Display using the route's color
-                    // TODO: Gray out stops before the user's current stop
-                    VStack(spacing: 0) {
+                    .padding(.horizontal)
+                    ForEach(viewModel.etaListItems, id: \.stopId) { etaListItem in
                         HStack {
                             ZStack {
                                 Rectangle()
-                                    .frame(width: 2, height: 40)
+                                    .frame(minWidth: 2, idealWidth: 2, maxWidth: 2, minHeight: 40, idealHeight: 40, maxHeight: .infinity)
                                     .foregroundStyle(Color.blue)
                                 Circle()
-                                    .frame(width: 24, height: 24)
+                                    .frame(width: 24, height: 12)
                                     .foregroundStyle(Color.blue)
-                                Image(systemName: "bus.fill")
-                                    .resizable()
-                                    .frame(width: 16, height: 16)
-                                    .foregroundStyle(Color.white)
                             }
+                            Text(etaListItem.stopName ?? "N/A")
                             Spacer()
+                            Text(etaListItem.estimatedTimeAwayDisplay)
+                                .multilineTextAlignment(.trailing)
                         }
                         .padding(.horizontal)
-                        ForEach(viewModel.etaListItems, id: \.stopId) { etaListItem in
-                            HStack {
-                                ZStack {
-                                    Rectangle()
-                                        .frame(minWidth: 2, idealWidth: 2, maxWidth: 2, minHeight: 40, idealHeight: 40, maxHeight: .infinity)
-                                        .foregroundStyle(Color.blue)
-                                    Circle()
-                                        .frame(width: 24, height: 12)
-                                        .foregroundStyle(Color.blue)
-                                }
-                                Text(etaListItem.stopName ?? "N/A")
-                                Spacer()
-                                Text(etaListItem.estimatedTimeAwayDisplay)
-                                    .multilineTextAlignment(.trailing)
-                            }
-                            .padding(.horizontal)
-                        }
                     }
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .foregroundStyle(.background.secondary)
-                    )
-                    .padding(.horizontal)
                 }
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .foregroundStyle(.background.secondary)
+                )
+                .padding(.horizontal)
             }
         }
         .onAppear {
@@ -176,6 +160,34 @@ struct ShuttleInfoContentView: NetworkView {
         }
         .onDisappear {
             stopDataUpdates()
+        }
+    }
+    
+    var body: some View {
+        if withHeading {
+            HeadingWrapperView {
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading) {
+                        Text(viewModel.name ?? "Unknown shuttle")
+                            .font(.title)
+                            .bold()
+                            .accessibilityLabel("Shuttle name")
+                        Text(viewModel.etaDisplay)
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    CloseButton {
+                        globalIdSelectionModel.clearAllIds()
+                    }
+                }
+                .padding()
+                .padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
+            } content: {
+                content
+            }
+        } else {
+            content
         }
     }
     

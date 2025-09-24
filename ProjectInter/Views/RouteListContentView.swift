@@ -66,7 +66,7 @@ struct RouteListContentView: NetworkView {
                 DataWrapperView(shouldDisplayNoDataMessage: viewModel.routes.isEmpty, noDataMessage: "No routes available.") {
                     ForEach(viewModel.routes) { route in
                         RouteListItem(route: route) { selectedRoute in
-                            globalIdSelectionModel.selectedRouteId = route.id
+                            globalIdSelectionModel.selectRouteId(route.id)
                         }
                         .padding(.horizontal)
                         .buttonStyle(.plain)

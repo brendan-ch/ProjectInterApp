@@ -17,6 +17,8 @@ struct RouteInfoContentView: NetworkView {
     
     @Environment(GlobalStopsModel.self) var globalStopsState: GlobalStopsModel
     
+    @Environment(ShuttleInfoContentView.ViewModel.self) var shuttleViewModel: ShuttleInfoContentView.ViewModel?
+    
     /// Backing ``RouteInfoContentView`` instance.
     @State var viewModel: ViewModel = ViewModel()
     
@@ -41,11 +43,8 @@ struct RouteInfoContentView: NetworkView {
                 }
                 Spacer()
                 
-                if globalIdSelectionModel.selectedShuttleId == nil {
-                    CloseButton {
-                        globalIdSelectionModel.selectedRouteId = nil
-                        globalIdSelectionModel.selectedShuttleId = nil
-                    }
+                CloseButton {
+                    globalIdSelectionModel.clearAllIds()
                 }
             }
             .padding()
@@ -56,24 +55,53 @@ struct RouteInfoContentView: NetworkView {
                     shouldDisplayNoDataMessage: viewModel.shuttles.isEmpty,
                     noDataMessage: "No shuttles available"
                 ) {
-                    ScrollView(.vertical, showsIndicators: false) {
-                        VStack {
-                            ForEach(viewModel.shuttles) { upcomingDeparture in
-                                Divider()
-                                
-                                RouteInfoShuttleViewItem(shuttle: upcomingDeparture) { shuttle in
-                                    globalIdSelectionModel.selectedShuttleId = shuttle.id
+                    VStack(spacing: 0) {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack {
+                                ForEach(viewModel.shuttles) { shuttle in
+                                    Button {
+                                        globalIdSelectionModel.selectShuttleIdIfRouteIdSelected(shuttle.id)
+                                    } label: {
+                                        VStack {
+                                            Text(shuttle.name)
+                                                .bold()
+                                            if let secondsRemaining = shuttle.secondsRemaining {
+                                                Text(secondsRemaining.convertToMinutesAsString() + " min")
+                                            } else {
+                                                Text("N/A")
+                                            }
+                                        }
+                                        .frame(minWidth: 80)
+                                    }
+                                    .controlSize(.regular)
+                                    .accessibilityAddTraits(shuttle.id == globalIdSelectionModel.selectedShuttleId ? .isSelected : [])
+                                    .apply(shuttle.id == globalIdSelectionModel.selectedShuttleId) {
+                                        $0
+                                            .prominentButtonStyleByAvailability()
+                                    }
+                                    .apply(shuttle.id != globalIdSelectionModel.selectedShuttleId) {
+                                        $0.secondaryButtonStyleByAvailability()
+                                    }
                                 }
-                                .accessibilityLabel("Shuttle label in route info page")
-                                .accessibilityIdentifier(upcomingDeparture.id)
-                                .buttonStyle(.plain)
-                                .padding(.horizontal)
-                                
                             }
-                            
+                            .padding()
                         }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        
+                        Divider()
+                        
+                        if let shuttleViewModel = shuttleViewModel {
+                            ShuttleInfoContentView(viewModel: shuttleViewModel)
+                        } else {
+                            ShuttleInfoContentView()
+                        }
                     }
+                }
+            }
+        }
+        .onChange(of: viewModel.dataInitState) {
+            if viewModel.dataInitState == .succeeded {
+                if !viewModel.shuttles.isEmpty && globalIdSelectionModel.selectedShuttleId == nil {
+                    globalIdSelectionModel.selectShuttleIdIfRouteIdSelected(viewModel.shuttles[0].id)
                 }
             }
         }
@@ -115,9 +143,13 @@ struct RouteInfoShuttleViewItem: View {
 
 #Preview {
     let model = RouteInfoContentView.ViewModel.buildPlaceholder()
+    let shuttleViewModel = ShuttleInfoContentView.ViewModel.buildPlaceholder()
     
     return RouteInfoContentView(viewModel: model)
         .environment(GlobalIdSelectionModel())
         .environment(GlobalStopsModel())
         .environment(GlobalSystemsModel.buildPlaceholder())
+        .environment(ShuttleNotificationSchedulingModel())
+        .environment(shuttleViewModel)
+        .environmentObject(CustomAppDelegate())
 }

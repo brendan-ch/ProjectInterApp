@@ -46,4 +46,12 @@ extension View {
         }
     }
 
+    @ViewBuilder
+    func apply<T: View>(_ condition: Bool, transform: (Self) -> T) -> some View {
+        if condition {
+            transform(self)
+        } else {
+            self
+        }
+    }
 }

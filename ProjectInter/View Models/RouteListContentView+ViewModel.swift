@@ -43,14 +43,7 @@ struct RouteListContentViewRoute: Identifiable {
             return "N/A"
         }
         
-        let etasInMinutesAsStrings: [String] = etasInSeconds.map { etaInSeconds in
-            let etaInMinutes = Int(etaInSeconds / 60)
-            if etaInMinutes < 1 {
-                return "<1"
-            } else {
-                return String(etaInMinutes)
-            }
-        }
+        let etasInMinutesAsStrings: [String] = etasInSeconds.map { $0.convertToMinutesAsString() }
         
         var constructedString = etasInMinutesAsStrings.joined(separator: ", ")
         constructedString.append(" min")

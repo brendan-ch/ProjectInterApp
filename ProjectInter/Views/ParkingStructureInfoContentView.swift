@@ -38,7 +38,7 @@ struct ParkingStructureInfoContentView: NetworkView {
                 Spacer()
                 
                 CloseButton {
-                    globalIdSelectionModel.selectedParkingStructureId = nil
+                    globalIdSelectionModel.clearAllIds()
                 }
             }
             .padding()

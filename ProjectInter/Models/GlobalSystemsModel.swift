@@ -71,7 +71,7 @@ class GlobalSystemsModel: NetworkDataModel<GlobalDataModelNetworkArguments, GetA
                 System(name: system.name, id: system.id)
             }
         case .failure(let error):
-            print("Error fetching data: \(error)")
+            Loggers.shared.networkingLogger.error("Error fetching data: \(error)")
         }
     }
 

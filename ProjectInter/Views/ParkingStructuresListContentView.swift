@@ -36,7 +36,7 @@ struct ParkingStructuresListContentView: NetworkView {
                     DataWrapperView(shouldDisplayNoDataMessage: viewModel.structures.isEmpty, noDataMessage: "No parking structures available.") {
                         ForEach(viewModel.structures) { structure in
                             ParkingStructureItem(structure: structure) { structure in
-                                globalIdSelectionModel.selectedParkingStructureId = structure.id
+                                globalIdSelectionModel.selectParkingStructureId(structure.id)
                             }
                             .buttonStyle(.plain)
                             
