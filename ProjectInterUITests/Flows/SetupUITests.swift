@@ -111,6 +111,8 @@ final class SetupUITests: BaseUITests {
     func testSetupWithoutLocationAccessStillLoadsStop() async {
         await mockGetAllStopsQueryAndResponse()
         
+        sleep(5)
+        
         app.launch()
         performSetup(.init(
             shouldGrantLocationAccess: false,
