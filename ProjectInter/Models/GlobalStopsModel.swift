@@ -60,11 +60,10 @@ class GlobalStopsModel: NetworkDataModel<GlobalStopsNetworkArguments, GetAllStop
     
     var selectedStopIdOnMap: String? = nil
     
-    /// Indicates whether the stop is automatically being selected via location
-    /// (via coordination with ``GlobalLocationDataModel``). Manual
-    /// selection of a stop by calling ``selectStopManually(stop:)``
-    /// sets this to false.
-    var isAutomaticWhenLocationIsAvailable: Bool = false
+    /// Indicates whether the stop has been manually selected by the user.
+    /// Consumers of this class should take this into account when determining
+    /// whether to automatically select a stop.
+    private(set) var stopSelectionManuallyOverridenByUser: Bool = false
     
     override func convertNetworkArgumentsIntoQuery(_ arguments: GlobalStopsNetworkArguments) -> GetAllStopsBySystemIdQuery? {
         return GetAllStopsBySystemIdQuery(systemId: arguments.systemId)
@@ -84,11 +83,21 @@ class GlobalStopsModel: NetworkDataModel<GlobalStopsNetworkArguments, GetAllStop
     
     func selectStopId(_ stopId: String) {
         selectedStopId = stopId
-        isAutomaticWhenLocationIsAvailable = false
+        stopSelectionManuallyOverridenByUser = true
+    }
+    
+    /// Automatically select a stop, either based on the passed location, or by selecting
+    /// the first available stop.
+    func automaticallySelectStop(for location: CLLocationCoordinate2D? = nil) {
+        if let location = location {
+            selectClosestStopBasedOnLocation(location: location)
+        } else {
+            selectedStopId = stops.first?.id
+        }
     }
     
     /// From the currently saved stops, select the one that is closest to the provided location.
-    func selectClosestStopBasedOnLocation(location: CLLocationCoordinate2D) {
+    private func selectClosestStopBasedOnLocation(location: CLLocationCoordinate2D) {
         guard var closest = stops.first else {
             Loggers.shared.globalStateEventsLogger.warning("Attempted to select stop based on location, but no stops available")
             

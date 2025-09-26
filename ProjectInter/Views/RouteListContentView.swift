@@ -46,7 +46,7 @@ struct RouteListContentView: NetworkView {
                             Text("Loading...")
                         }
                         
-                        if globalStopsState.isAutomaticWhenLocationIsAvailable {
+                        if globalStopsState.stopSelectionManuallyOverridenByUser {
                             Image(systemName: "location.fill")
                                 .accessibilityLabel("Automatic selection enabled")
                         }

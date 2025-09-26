@@ -32,7 +32,7 @@ struct StopSelectionView: View {
             List {
                 Section {
                     Button {
-                        globalStopsModel.isAutomaticWhenLocationIsAvailable = true
+                        automaticallySelectStop()
                         dismiss()
                     } label: {
                         HStack {
@@ -87,6 +87,14 @@ struct StopSelectionView: View {
                 systemId: systemId
             )
             await globalStopsModel.refreshDataOnce(arguments: stopsNetworkArguments)
+        }
+    }
+    
+    func automaticallySelectStop() {
+        if let location = locationModel.lastUpdatedLocation {
+            globalStopsModel.automaticallySelectStop(for: location)
+        } else {
+            globalStopsModel.automaticallySelectStop()
         }
     }
 }
