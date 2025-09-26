@@ -96,7 +96,7 @@ class GlobalStopsModelTests {
         #expect(globalStopsModel.stops[1].name == "Schmid Gate")
     }
     
-    @Test func selectStopBasedOnClosestLocation() async throws {
+    @Test func automaticallySelectStopBasedOnClosestLocation() async throws {
         let stops: [ProjectInter.GlobalStopsModelStop] = [
             ProjectInter.GlobalStopsModelStop(
                 name: "Panther Village",
@@ -113,25 +113,39 @@ class GlobalStopsModelTests {
         let state = GlobalStopsModel()
         state.stops = stops
         
-        state.selectClosestStopBasedOnLocation(
-            location: CLLocationCoordinate2D(latitude: stops[0].coordinates.latitude, longitude: stops[0].coordinates.longitude)
+        state.automaticallySelectStop(
+            for: CLLocationCoordinate2D(latitude: stops[0].coordinates.latitude, longitude: stops[0].coordinates.longitude)
         )
         
         #expect(state.selectedStop == stops[0])
     }
     
-    @Test func selectStopBasedOnClosestLocationWithNoStopsAvailable() async throws {
+    @Test func automaticallySelectStopBasedOnClosestLocationWithNoStopsAvailable() async throws {
         let state = GlobalStopsModel()
-        state.selectClosestStopBasedOnLocation(
-            location: CLLocationCoordinate2D(latitude: 33.789730, longitude: -117.886539)
+        state.automaticallySelectStop(
+            for: CLLocationCoordinate2D(latitude: 33.789730, longitude: -117.886539)
         )
         
         #expect(state.selectedStop == nil)
     }
     
+    @Test func automaticallySelectStopWithoutLocationSetsFirstStop() async throws {
+        let mockClient = MockApolloClient()
+        mockClient.queryMock = mock
+        
+        let networkModel = ApolloNetworkModel(client: mockClient)
+        
+        let globalStopsModel = GlobalStopsModel(apolloNetworkModel: networkModel)
+        let arguments = GlobalStopsNetworkArguments(systemId: "1")
+        
+        await globalStopsModel.refreshDataOnce(arguments: arguments)
+        globalStopsModel.automaticallySelectStop()
+        
+        #expect(globalStopsModel.selectedStop != nil)
+    }
+    
     @Test func selectStopManuallySetsCorrectState() {
         let state = GlobalStopsModel()
-        state.isAutomaticWhenLocationIsAvailable = true
         
         let stop = GlobalStopsModelStop(name: "Chapman Court", id: "1", coordinates: RawCoordinates(latitude: 33.789730, longitude: -117.886539))
         state.stops = [
@@ -141,6 +155,6 @@ class GlobalStopsModelTests {
         state.selectStopId(stop.id)
         
         #expect(state.selectedStop == stop)
-        #expect(state.isAutomaticWhenLocationIsAvailable == false)
+        #expect(state.stopSelectionManuallyOverridenByUser == true)
     }
 }

@@ -73,6 +73,7 @@ struct ProjectInterApp: App {
     
 }
 
+/// The content of the primary application, after the setup phase.
 struct ContentViewWrapper: View {
     @Environment(GlobalSystemsModel.self) var globalSystemsStateObject: GlobalSystemsModel
     @Environment(GlobalIdSelectionModel.self) var globalIdSelectionStateObject: GlobalIdSelectionModel
@@ -80,18 +81,13 @@ struct ContentViewWrapper: View {
     @Environment(LocationDataModel.self) var locationManagerStateObject: LocationDataModel
     @EnvironmentObject var customAppDelegate: CustomAppDelegate
     @EnvironmentObject var notificationCenterDelegate: CustomNotificationCenterDelegate
-    
-    var canAutomaticallySelectStop: Bool {
-        globalStopsStateObject.isAutomaticWhenLocationIsAvailable
-        && globalStopsStateObject.stops.count > 0
-    }
 
     var body: some View {
         ContentView()
             .task {
                 await globalSystemsStateObject.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
             }
-            .onChange(of: globalSystemsStateObject.selectedSystem) {
+            .onChange(of: globalSystemsStateObject.selectedSystem, initial: true) {
                 guard let systemId = globalSystemsStateObject.selectedSystem?.id else {
                     // Account for cases where system ID does not exist due to
                     // lack of value in UserDefaults
@@ -107,24 +103,17 @@ struct ContentViewWrapper: View {
                     )
                     await globalStopsStateObject.refreshDataOnce(arguments: stopsNetworkArguments)
                     
-                    if canAutomaticallySelectStop {
-                        tryAutomaticallySelectStop()
-                    } else if globalStopsStateObject.stops.count > 0 {
-                        globalStopsStateObject.selectStopId(globalStopsStateObject.stops[0].id)
-                    }
+                    automaticallySelectStop()
                     
                     await setSelectionStateBasedOnLastTappedNotificationDetails()
                 }
             }
-            .task {
-                updateGlobalStopsStateAutomaticState()
-            }
-            .onChange(of: canAutomaticallySelectStop) {
-                // Run on startup in addition to location changes
-                tryAutomaticallySelectStop()
-            }
             .onChange(of: locationManagerStateObject.lastUpdatedLocation) {
-                tryAutomaticallySelectStop()
+                // If we're automatically selecting based on *location*,
+                // we want to respect the user's override preferences if they have one
+                if !globalStopsStateObject.stopSelectionManuallyOverridenByUser {
+                    automaticallySelectStop()
+                }
             }
             .onChange(of: notificationCenterDelegate.lastTappedNotificationDetails) {
                 Task {
@@ -146,21 +135,12 @@ struct ContentViewWrapper: View {
         notificationCenterDelegate.lastTappedNotificationDetails = nil
     }
     
-    func tryAutomaticallySelectStop() {
-        guard let location = locationManagerStateObject.lastUpdatedLocation else { return }
-        
-        if canAutomaticallySelectStop {
-            globalStopsStateObject.selectClosestStopBasedOnLocation(location: location)
+    func automaticallySelectStop() {
+        if let location = locationManagerStateObject.lastUpdatedLocation {
+            globalStopsStateObject.automaticallySelectStop(for: location)
+        } else {
+            globalStopsStateObject.automaticallySelectStop()
         }
     }
-    
-    func updateGlobalStopsStateAutomaticState() {
-        if locationManagerStateObject.authorizationStatusInitialized {
-            if locationManagerStateObject.isAuthorized {
-                globalStopsStateObject.isAutomaticWhenLocationIsAvailable = true
-            }
-        }
-    }
-    
 }
 

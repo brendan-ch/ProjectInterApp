@@ -35,6 +35,10 @@ struct RouteListContentView: NetworkView {
         return RouteListNetworkArguments(systemId: systemId, stopId: stopId)
     }
     
+    var locationIsBeingAutomaticallySelected: Bool {
+        locationManagerState.isAuthorized && !globalStopsState.stopSelectionManuallyOverridenByUser
+    }
+    
     var body: some View {
         HeadingWrapperView(title: "Routes") {
             HStack {
@@ -46,7 +50,7 @@ struct RouteListContentView: NetworkView {
                             Text("Loading...")
                         }
                         
-                        if globalStopsState.isAutomaticWhenLocationIsAvailable {
+                        if locationIsBeingAutomaticallySelected {
                             Image(systemName: "location.fill")
                                 .accessibilityLabel("Automatic selection enabled")
                         }

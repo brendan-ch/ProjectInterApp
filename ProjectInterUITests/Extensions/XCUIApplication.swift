@@ -1,0 +1,58 @@
+//
+//  XCUIApplication.swift
+//  ProjectInter
+//
+//  Created by Brendan Chen on 2025.09.25.
+//
+
+// Adopted from https://www.jessesquires.com/blog/2021/10/25/delete-app-during-ui-tests/
+
+import XCTest
+
+extension XCUIApplication {
+    func uninstallIfExists(name: String? = nil) {
+        self.terminate()
+        
+        let timeout = TimeInterval(10)
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        
+        let appName: String
+        if let name = name {
+            appName = name
+        } else {
+            let uiTestRunnerName = Bundle.main.infoDictionary?["CFBundleName"] as! String
+            appName = uiTestRunnerName.replacingOccurrences(of: "UITests-Runner", with: "")
+        }
+        
+        /// use `firstMatch` because icon may appear in iPad dock
+        let appIcon = springboard.icons[appName].firstMatch
+        if appIcon.waitForExistence(timeout: timeout) {
+            // If pressed for too long, Springboard switches to the "edit home screen" mode
+            appIcon.press(forDuration: 1.6)
+        } else {
+            // Stop the uninstall process if the app is not installed
+            return
+        }
+        
+        let removeAppButton = springboard.buttons["Remove App"]
+        if removeAppButton.waitForExistence(timeout: timeout) {
+            removeAppButton.tap()
+        } else {
+            XCTFail("Failed to find 'Remove App'")
+        }
+        
+        let deleteAppButton = springboard.alerts.buttons["Delete App"]
+        if deleteAppButton.waitForExistence(timeout: timeout) {
+            deleteAppButton.tap()
+        } else {
+            XCTFail("Failed to find 'Delete App'")
+        }
+        
+        let finalDeleteButton = springboard.alerts.buttons["Delete"]
+        if finalDeleteButton.waitForExistence(timeout: timeout) {
+            finalDeleteButton.tap()
+        } else {
+            XCTFail("Failed to find 'Delete'")
+        }
+    }
+}

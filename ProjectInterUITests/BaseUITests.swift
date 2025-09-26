@@ -47,7 +47,8 @@ class BaseUITests: XCTestCase {
         mockSystems[defaultSystemId]!
     }
 
-    // MARK: - Setup
+    // MARK: - Testing setup
+    // MARK: Overrides
     override func setUpWithError() throws {
         // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
@@ -57,41 +58,22 @@ class BaseUITests: XCTestCase {
         
         Task {
             await client.clear()
-            await setupServerSchemaVersion()
-            await setupSystems()
+            await mockServerSchemaVersion()
+            await mockSystems()
         }
         
-        app.launchArguments += ["-uiTests", "1", "-selectedSystemId", defaultSystemId]
+        app.launchArguments += ["-uiTests", "1"]
     }
     
-    func setupServerSchemaVersion() async {
-        let query = GetSchemaVersionQuery()
-        let response = Mock<Query>(
-            schemaCurrentVersion: 1,
-            schemaMinVersion: 1
-        )
-        await client.mock(query: query, response: response)
-    }
-    
-    func setupSystems() async {
-        let systems = mockSystems.map { key, value in
-            return Mock<System>(
-                id: key,
-                name: value
-            )
-        }
-        
-        let query = GetAllSystemsQuery()
-        let response = Mock<Query>(
-            systems: systems
-        )
-        await client.mock(query: query, response: response)
-    }
-    
+    // MARK: Launch arguments
     func skipSetupFlow() {
         // These launch arguments are automatically set in UserDefaults
         // https://sarunw.com/posts/how-to-set-userdefaults-value-with-launch-arguments/
         app.launchArguments += ["-setupCompleted", "1"]
+    }
+    
+    func selectDefaultSystem() {
+        app.launchArguments += ["-selectedSystemId", defaultSystemId]
     }
     
     func useMockNotificationsToken() {
@@ -260,6 +242,30 @@ class BaseUITests: XCTestCase {
     }
 
     // MARK: - Mocks
+    func mockServerSchemaVersion() async {
+        let query = GetSchemaVersionQuery()
+        let response = Mock<Query>(
+            schemaCurrentVersion: 1,
+            schemaMinVersion: 1
+        )
+        await client.mock(query: query, response: response)
+    }
+    
+    func mockSystems() async {
+        let systems = mockSystems.map { key, value in
+            return Mock<System>(
+                id: key,
+                name: value
+            )
+        }
+        
+        let query = GetAllSystemsQuery()
+        let response = Mock<Query>(
+            systems: systems
+        )
+        await client.mock(query: query, response: response)
+    }
+    
     func mockGetAllStopsQueryAndResponse() async {
         let allStopsQuery = GetAllStopsBySystemIdQuery(systemId: defaultSystemId)
         let allStopsResponse = Mock<Query>(
