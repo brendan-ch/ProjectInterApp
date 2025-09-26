@@ -19,6 +19,7 @@ final class SetupUITests: BaseUITests {
         try super.setUpWithError()
         
         // During setup tests, we want to uninstall the app before running the test
+        // This will reset any permissions we've set
         app.uninstallIfExists(name: "Interchange")
     }
     
@@ -83,11 +84,16 @@ final class SetupUITests: BaseUITests {
         }
         app.swipeUp()
         
-        let pickSystemButton = app.buttons["Change system"]
-        if pickSystemButton.waitForExistence(timeout: 10) {
+        let pickSystemButton = app.buttons["Select system"]
+        if pickSystemButton.waitForExistence(timeout: 5) {
             pickSystemButton.tap()
         } else {
-            XCTFail("Select system button not found")
+            let changeSystemButton = app.buttons["Change system"]
+            if changeSystemButton.waitForExistence(timeout: 5) {
+                changeSystemButton.tap()
+            } else {
+                XCTFail("Select/change system button not found")
+            }
         }
         
         let systemButton = app.collectionViews.cells.buttons["Chapman University"]
