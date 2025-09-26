@@ -47,7 +47,7 @@ class BaseUITests: XCTestCase {
         mockSystems[defaultSystemId]!
     }
 
-    // MARK: - Setup
+    // MARK: - Testing setup
     override func setUpWithError() throws {
         // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
@@ -61,7 +61,7 @@ class BaseUITests: XCTestCase {
             await setupSystems()
         }
         
-        app.launchArguments += ["-uiTests", "1", "-selectedSystemId", defaultSystemId]
+        app.launchArguments += ["-uiTests", "1"]
     }
     
     func setupServerSchemaVersion() async {
@@ -92,6 +92,10 @@ class BaseUITests: XCTestCase {
         // These launch arguments are automatically set in UserDefaults
         // https://sarunw.com/posts/how-to-set-userdefaults-value-with-launch-arguments/
         app.launchArguments += ["-setupCompleted", "1"]
+    }
+    
+    func selectDefaultSystem() {
+        app.launchArguments += ["-selectedSystemId", defaultSystemId]
     }
     
     func useMockNotificationsToken() {

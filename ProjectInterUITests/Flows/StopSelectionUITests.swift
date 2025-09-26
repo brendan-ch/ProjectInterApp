@@ -11,6 +11,7 @@ final class StopSelectionUITests: BaseUITests {
     override func setUpWithError() throws {
         try super.setUpWithError()
         skipSetupFlow()
+        selectDefaultSystem()
     }
     
     @MainActor

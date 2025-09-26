@@ -14,6 +14,7 @@ final class RouteInfoUITests: BaseUITests {
     override func setUpWithError() throws {
         try super.setUpWithError()
         skipSetupFlow()
+        selectDefaultSystem()
     }
     
     // MARK: - Helpers

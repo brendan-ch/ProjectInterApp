@@ -14,6 +14,7 @@ final class MapUITests: BaseUITests {
     override func setUpWithError() throws {
         try super.setUpWithError()
         skipSetupFlow()
+        selectDefaultSystem()
     }
     
     func mockGetMapDataQueryAndResponse() async {
