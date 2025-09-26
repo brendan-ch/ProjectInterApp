@@ -94,6 +94,7 @@ class GlobalStopsModel: NetworkDataModel<GlobalStopsNetworkArguments, GetAllStop
         } else {
             selectedStopId = stops.first?.id
         }
+        stopSelectionManuallyOverridenByUser = false
     }
     
     /// From the currently saved stops, select the one that is closest to the provided location.
