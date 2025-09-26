@@ -109,7 +109,11 @@ struct ContentViewWrapper: View {
                 }
             }
             .onChange(of: locationManagerStateObject.lastUpdatedLocation) {
-                automaticallySelectStop()
+                // If we're automatically selecting based on *location*,
+                // we want to respect the user's override preferences if they have one
+                if !globalStopsStateObject.stopSelectionManuallyOverridenByUser {
+                    automaticallySelectStop()
+                }
             }
             .onChange(of: notificationCenterDelegate.lastTappedNotificationDetails) {
                 Task {
