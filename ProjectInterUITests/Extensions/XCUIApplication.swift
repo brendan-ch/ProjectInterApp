@@ -13,7 +13,7 @@ extension XCUIApplication {
     func uninstallIfExists(name: String? = nil) {
         self.terminate()
         
-        let timeout = TimeInterval(5)
+        let timeout = TimeInterval(10)
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         
         let appName: String
@@ -27,7 +27,8 @@ extension XCUIApplication {
         /// use `firstMatch` because icon may appear in iPad dock
         let appIcon = springboard.icons[appName].firstMatch
         if appIcon.waitForExistence(timeout: timeout) {
-            appIcon.press(forDuration: 2)
+            // If pressed for too long, Springboard switches to the "edit home screen" mode
+            appIcon.press(forDuration: 1.6)
         } else {
             // Stop the uninstall process if the app is not installed
             return
