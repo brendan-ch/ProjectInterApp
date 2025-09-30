@@ -8,6 +8,7 @@
 import SwiftUI
 import Apollo
 import ProjectInterOperations
+import ProjectInterLogging
 
 /// Contains globally selected IDs for the app.
 /// For a sheet-based app, this is used for responding to notification events.

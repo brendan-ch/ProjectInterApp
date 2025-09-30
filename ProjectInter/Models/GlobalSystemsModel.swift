@@ -8,6 +8,7 @@
 import Foundation
 import Apollo
 import ProjectInterOperations
+import ProjectInterLogging
 
 // MARK: - Models
 

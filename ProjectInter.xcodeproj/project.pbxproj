@@ -18,6 +18,7 @@
 		205077142D1B79FC004CAA04 /* ProjectInterOperations in Frameworks */ = {isa = PBXBuildFile; productRef = 205077132D1B79FC004CAA04 /* ProjectInterOperations */; };
 		205077162D1B79FC004CAA04 /* ProjectInterTestMocks in Frameworks */ = {isa = PBXBuildFile; productRef = 205077152D1B79FC004CAA04 /* ProjectInterTestMocks */; };
 		208238562D2E730D00DA9820 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 208238552D2E730D00DA9820 /* README.md */; };
+		20F5D3372E8C9476002B25DE /* ProjectInterLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 20F5D3362E8C9476002B25DE /* ProjectInterLogging */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -134,6 +135,7 @@
 				205077162D1B79FC004CAA04 /* ProjectInterTestMocks in Frameworks */,
 				2050766A2D1B46B5004CAA04 /* Apollo in Frameworks */,
 				205077142D1B79FC004CAA04 /* ProjectInterOperations in Frameworks */,
+				20F5D3372E8C9476002B25DE /* ProjectInterLogging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -214,6 +216,7 @@
 				205076692D1B46B5004CAA04 /* Apollo */,
 				205077132D1B79FC004CAA04 /* ProjectInterOperations */,
 				205077152D1B79FC004CAA04 /* ProjectInterTestMocks */,
+				20F5D3362E8C9476002B25DE /* ProjectInterLogging */,
 			);
 			productName = InterMVP1;
 			productReference = 20FA7B742D10E11E00D4EAD1 /* ProjectInter.app */;
@@ -306,6 +309,7 @@
 			packageReferences = (
 				205076682D1B46B5004CAA04 /* XCRemoteSwiftPackageReference "apollo-ios" */,
 				205077122D1B79FC004CAA04 /* XCLocalSwiftPackageReference "ProjectInterOperations" */,
+				20F5D3352E8C9476002B25DE /* XCLocalSwiftPackageReference "ProjectInterLogging" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 20FA7B752D10E11E00D4EAD1 /* Products */;
@@ -719,6 +723,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ProjectInterOperations;
 		};
+		20F5D3352E8C9476002B25DE /* XCLocalSwiftPackageReference "ProjectInterLogging" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ProjectInterLogging;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -770,6 +778,10 @@
 		205077152D1B79FC004CAA04 /* ProjectInterTestMocks */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ProjectInterTestMocks;
+		};
+		20F5D3362E8C9476002B25DE /* ProjectInterLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ProjectInterLogging;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

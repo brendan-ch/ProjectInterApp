@@ -7,6 +7,7 @@
 
 import Foundation
 import ProjectInterOperations
+import ProjectInterLogging
 
 // TODO: Remove this
 
