@@ -9,7 +9,7 @@ import SwiftUI
 
 protocol NetworkView: View {
     associatedtype NetworkArguments
-    associatedtype ViewModelType: NetworkDataModelProtocol where ViewModelType.NetworkArguments == NetworkArguments
+    associatedtype ViewModelType: GraphQLQueryable & Clearable where ViewModelType.NetworkArguments == NetworkArguments
     
     var globalSystemsModel: GlobalSystemsModel { get }
     
@@ -27,6 +27,7 @@ extension NetworkView {
             viewModel.apolloNetworkModel = apolloNetworkModel
         }
         
+        viewModel.clearData()
         if let networkArguments = networkArguments {
             viewModel.stopRefreshingData()
             viewModel.startRefreshingData(arguments: networkArguments, sleepDuration: .seconds(5))

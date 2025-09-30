@@ -21,6 +21,9 @@ final class SetupUITests: BaseUITests {
         // During setup tests, we want to uninstall the app before running the test
         // This will reset any permissions we've set
         app.uninstallIfExists(name: "Interchange")
+        
+        app = XCUIApplication()
+        app.launchArguments += ["-uiTests", "1"]
     }
     
     func performSetup(_ options: SetupOptions) {
@@ -96,7 +99,7 @@ final class SetupUITests: BaseUITests {
             }
         }
         
-        let systemButton = app.collectionViews.cells.buttons["Chapman University"]
+        let systemButton = app.collectionViews.cells.buttons[defaultSystemName]
         if systemButton.waitForExistence(timeout: 10) {
             systemButton.tap()
         } else {
@@ -110,8 +113,6 @@ final class SetupUITests: BaseUITests {
     @MainActor
     func testSetupWithoutLocationAccessStillLoadsStop() async {
         await mockGetAllStopsQueryAndResponse()
-        
-        sleep(5)
         
         app.launch()
         performSetup(.init(

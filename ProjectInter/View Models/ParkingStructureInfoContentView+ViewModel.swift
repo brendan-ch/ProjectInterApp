@@ -37,7 +37,7 @@ struct ParkingStructureNetworkingArguments {
 
 extension ParkingStructureInfoContentView {
     @Observable
-    class ViewModel: NetworkDataModel<ParkingStructureNetworkingArguments, GetParkingStructureInfoDataQuery>, PlaceholderBuildable {
+    class ViewModel: NetworkDataModel<ParkingStructureNetworkingArguments, GetParkingStructureInfoDataQuery>, PlaceholderBuildable, Clearable {
         // MARK: Constants
         static let startingHour = 8
         static let endingHour = 20
@@ -173,7 +173,7 @@ extension ParkingStructureInfoContentView {
                 Loggers.shared.networkingLogger.log("Failed to fetch parking structure info: \(error)")
             case .success(let result):
                 guard let parkingStructure = result.system?.parkingSystem?.parkingStructure else {
-                    clearAllData()
+                    clearData()
                     return
                 }
                 
@@ -224,7 +224,9 @@ extension ParkingStructureInfoContentView {
             }
         }
         
-        private func clearAllData() {
+        func clearData() {
+            resetDataInitState()
+            
             name = nil
             capacity = nil
             spotsAvailable = nil

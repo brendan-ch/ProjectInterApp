@@ -127,7 +127,7 @@ struct MapViewNetworkArguments {
 extension MapView {
     /// Backing view model for ``MapView``.
     @Observable
-    class ViewModel: NetworkDataModel<MapViewNetworkArguments, GetMapDataQuery>, PlaceholderBuildable {
+    class ViewModel: NetworkDataModel<MapViewNetworkArguments, GetMapDataQuery>, PlaceholderBuildable, Clearable {
         /// Position of the map camera on the associated Map view.
         var position: MapCameraPosition = .automatic
         
@@ -150,6 +150,14 @@ extension MapView {
             self.routes = data.system?.routes?.map(MapViewRoute.init) ?? []
             self.stops = data.system?.stops?.map(MapViewStop.init) ?? []
             self.parkingStructures = data.system?.parkingSystem?.parkingStructures?.map(MapViewParkingStructure.init) ?? []
+        }
+        
+        func clearData() {
+            resetDataInitState()
+            routes = []
+            shuttles = []
+            stops = []
+            parkingStructures = []
         }
         
         static func buildPlaceholder() -> Self {

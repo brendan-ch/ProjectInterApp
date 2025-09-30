@@ -46,7 +46,7 @@ extension ShuttleInfoContentView {
     
     /// Backing view model for ``ShuttleInfoContentView``.
     @Observable
-    class ViewModel: NetworkDataModelAlias, PlaceholderBuildable {
+    class ViewModel: NetworkDataModelAlias, PlaceholderBuildable, Clearable {
         /// Name of the shuttle to display.
         private(set) var name: String? = nil
         
@@ -138,6 +138,14 @@ extension ShuttleInfoContentView {
             self.secondsThresholdForNotification = data.secondsThresholdForNotification
         }
         
+        func clearData() {
+            resetDataInitState()
+            name = nil
+            etaSecondsRemaining = nil
+            nameOfStop = nil
+            stopId = nil
+        }
+
         static func buildPlaceholder() -> Self {
             let model = Self(dataInitState: .succeeded)
             model.name = "Red Shuttle 17"

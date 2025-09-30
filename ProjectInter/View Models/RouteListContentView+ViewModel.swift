@@ -82,7 +82,7 @@ struct RouteListNetworkArguments {
 extension RouteListContentView {
     /// Backing view model for ``RouteListContentView``.
     @Observable
-    class ViewModel: NetworkDataModel<RouteListNetworkArguments, GetRouteListDataQuery>, PlaceholderBuildable {
+    class ViewModel: NetworkDataModel<RouteListNetworkArguments, GetRouteListDataQuery>, PlaceholderBuildable, Clearable {
         /// All routes to render on ``RouteListContentView``.
         var routes: [RouteListContentViewRoute] = []
         
@@ -115,6 +115,11 @@ extension RouteListContentView {
             }
         }
         
+        func clearData() {
+            resetDataInitState()
+            routes = []
+        }
+
         static func buildPlaceholder() -> Self {
             let newModel = Self(dataInitState: .succeeded)
             newModel.routes = [

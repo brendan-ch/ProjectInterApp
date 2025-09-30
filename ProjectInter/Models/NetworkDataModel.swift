@@ -7,13 +7,20 @@
 
 import ApolloAPI
 
+enum InitializationState {
+    case notInitialized
+    case initializing
+    case succeeded
+    case failed
+}
+
 /// Base class for networking models. Subclass this class for data models/view
 /// models which receive data from the server.
 ///
 /// - Warning: You must override ``convertNetworkArgumentsIntoQuery(_:)`` and
 /// ``processRefreshDataResult(_:)`` when subclassing. Otherwise, the class will cause
 /// a runtime error.
-class NetworkDataModel<NetworkArguments, GraphQLQueryType: GraphQLQuery>: NetworkDataModelProtocol {
+class NetworkDataModel<NetworkArguments, GraphQLQueryType: GraphQLQuery>: GraphQLQueryable {
     private(set) var dataInitState: InitializationState = .notInitialized
     private var dataRefreshLoopTask: Task<Void, Error>?
     var apolloNetworkModel: ApolloNetworkModel?
@@ -35,6 +42,10 @@ class NetworkDataModel<NetworkArguments, GraphQLQueryType: GraphQLQuery>: Networ
         } else if (newState == .succeeded || newState == .failed) && dataInitState == .initializing {
             self.dataInitState = newState
         }
+    }
+    
+    func resetDataInitState() {
+        self.dataInitState = .notInitialized
     }
 
     func startRefreshingData(arguments: NetworkArguments, sleepDuration: Duration = .seconds(5)) {

@@ -266,8 +266,8 @@ class BaseUITests: XCTestCase {
         await client.mock(query: query, response: response)
     }
     
-    func mockGetAllStopsQueryAndResponse() async {
-        let allStopsQuery = GetAllStopsBySystemIdQuery(systemId: defaultSystemId)
+    func mockGetAllStopsQueryAndResponse(systemId: String? = nil) async {
+        let allStopsQuery = GetAllStopsBySystemIdQuery(systemId: systemId ?? defaultSystemId)
         let allStopsResponse = Mock<Query>(
             system: .init(
                 stops: [
