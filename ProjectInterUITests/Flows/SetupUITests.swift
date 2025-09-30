@@ -21,6 +21,8 @@ final class SetupUITests: BaseUITests {
         // During setup tests, we want to uninstall the app before running the test
         // This will reset any permissions we've set
         app.uninstallIfExists(name: "Interchange")
+        
+        app = XCUIApplication()
     }
     
     func performSetup(_ options: SetupOptions) {
