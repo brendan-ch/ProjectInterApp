@@ -14,7 +14,7 @@ protocol NetworkDataModelTestsProtocol {
     associatedtype DefaultMock
     associatedtype SecondaryMock
     associatedtype NetworkArguments
-    associatedtype ViewModel: NetworkDataModelProtocol where ViewModel.NetworkArguments == NetworkArguments
+    associatedtype ViewModel: GraphQLQueryable where ViewModel.NetworkArguments == NetworkArguments
     
     func assertViewModelDataForDefaultMock(viewModel: ViewModel)
     func assertViewModelDataForSecondaryMock(viewModel: ViewModel)

@@ -1,26 +1,14 @@
 //
-//  ViewModel.swift
+//  Refreshable.swift
 //  ProjectInter
 //
-//  Created by Brendan Chen on 2024.12.31.
+//  Created by Brendan Chen on 2025.09.30.
 //
 
-import SwiftUI
-import Apollo
-import ApolloAPI
+import Foundation
 
-enum InitializationState {
-    case notInitialized
-    case initializing
-    case succeeded
-    case failed
-}
-
-/// Protocol for network models which receive data from the server.
-/// To create a class which implements this, subclass ``NetworkDataModel``.
-protocol NetworkDataModelProtocol: AnyObject {
+protocol Refreshable: AnyObject {
     associatedtype NetworkArguments
-    associatedtype GraphQLQueryType: GraphQLQuery
     
     /// Starts looping a repeating task to refresh data.
     /// Waits for data to complete refreshing and waits for the specified
@@ -38,17 +26,4 @@ protocol NetworkDataModelProtocol: AnyObject {
     /// Refreshes the data once and blocks the calling thread.
     /// Resumes when the refresh is done.
     func refreshDataOnce(arguments: NetworkArguments) async
-    
-    func convertNetworkArgumentsIntoQuery(_ arguments: NetworkArguments) -> GraphQLQueryType?
-    
-    @MainActor
-    func processRefreshDataResult(_ result: Result<GraphQLQueryType.Data, Error>)
-
-    var apolloNetworkModel: ApolloNetworkModel? { get set }
-    
-    init(apolloNetworkModel: ApolloNetworkModel?)
-    init(dataInitState: InitializationState)
-}
-
-extension NetworkDataModelProtocol {
 }
