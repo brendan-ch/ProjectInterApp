@@ -17,6 +17,7 @@
 		205077112D1B78EF004CAA04 /* apollo-codegen-config.json in Resources */ = {isa = PBXBuildFile; fileRef = 205077102D1B78EF004CAA04 /* apollo-codegen-config.json */; };
 		205077142D1B79FC004CAA04 /* ProjectInterOperations in Frameworks */ = {isa = PBXBuildFile; productRef = 205077132D1B79FC004CAA04 /* ProjectInterOperations */; };
 		205077162D1B79FC004CAA04 /* ProjectInterTestMocks in Frameworks */ = {isa = PBXBuildFile; productRef = 205077152D1B79FC004CAA04 /* ProjectInterTestMocks */; };
+		207534352E8CA07200E164A5 /* ProjectInterLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 207534342E8CA07200E164A5 /* ProjectInterLogging */; };
 		208238562D2E730D00DA9820 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 208238552D2E730D00DA9820 /* README.md */; };
 		20F5D3372E8C9476002B25DE /* ProjectInterLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 20F5D3362E8C9476002B25DE /* ProjectInterLogging */; };
 /* End PBXBuildFile section */
@@ -153,6 +154,7 @@
 				200765492E19E10700117172 /* ApolloAPI in Frameworks */,
 				2007654D2E19E10700117172 /* ApolloTestSupport in Frameworks */,
 				200765532E19E10700117172 /* ProjectInterTestMocks in Frameworks */,
+				207534352E8CA07200E164A5 /* ProjectInterLogging in Frameworks */,
 				200765512E19E10700117172 /* ProjectInterOperations in Frameworks */,
 				200765442E19E10700117172 /* Apollo in Frameworks */,
 			);
@@ -269,6 +271,7 @@
 				2007654C2E19E10700117172 /* ApolloTestSupport */,
 				200765502E19E10700117172 /* ProjectInterOperations */,
 				200765522E19E10700117172 /* ProjectInterTestMocks */,
+				207534342E8CA07200E164A5 /* ProjectInterLogging */,
 			);
 			productName = InterMVP1UITests;
 			productReference = 20FA7B8E2D10E11F00D4EAD1 /* ProjectInterUITests.xctest */;
@@ -778,6 +781,11 @@
 		205077152D1B79FC004CAA04 /* ProjectInterTestMocks */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ProjectInterTestMocks;
+		};
+		207534342E8CA07200E164A5 /* ProjectInterLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 20F5D3352E8C9476002B25DE /* XCLocalSwiftPackageReference "ProjectInterLogging" */;
+			productName = ProjectInterLogging;
 		};
 		20F5D3362E8C9476002B25DE /* ProjectInterLogging */ = {
 			isa = XCSwiftPackageProductDependency;

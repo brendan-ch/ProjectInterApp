@@ -11,6 +11,7 @@ import ApolloAPI
 import ProjectInterOperations
 import ApolloTestSupport
 import ProjectInterTestMocks
+import ProjectInterLogging
 import Network
 
 struct Response: Codable {
@@ -19,7 +20,8 @@ struct Response: Codable {
     var message: String?
 }
 
-// Mock server code: https://github.com/brendan-ch/project-inter-mock-server
+/// Mock GraphQL requests with a mock server running alongside the app.
+/// See the corresponding [mock server code](https://github.com/brendan-ch/project-inter-mock-server).
 class MockServerClient {
     private let bodyCreator = ApolloRequestBodyCreator()
     private let baseUrl: URL
@@ -58,12 +60,12 @@ class MockServerClient {
         let jsonDictionary = constructJsonSerializableDictionary(query: query, response: response)
         
         guard let jsonBody = try? JSONSerialization.data(withJSONObject: jsonDictionary) else {
-            print("Failed to construct JSON representation of data")
+            Loggers.shared.networkingLogger.error("Failed to construct JSON representation of data: \(jsonDictionary)")
             return
         }
 
         guard let url = buildMockApiUrl(paths: ["mocks"]) else {
-            print("Failed to build mock URL")
+            Loggers.shared.networkingLogger.error("Failed to build mock URL using buildMockApiUrl")
             return
         }
         var request = URLRequest(url: url)
@@ -75,10 +77,11 @@ class MockServerClient {
             let (data, _) = try await URLSession.shared.data(for: request)
             
             if let decodedResponse = try? JSONDecoder().decode(Response.self, from: data) {
+                Loggers.shared.networkingLogger.info("Mocked response \(data) for query \(jsonDictionary)")
                 print(decodedResponse)
             }
         } catch {
-            print("Failed to call the mock server")
+            Loggers.shared.networkingLogger.error("Failed to call the mock server for query \(jsonDictionary)")
         }
     }
     
@@ -92,9 +95,9 @@ class MockServerClient {
         
         do {
             let (_, _) = try await URLSession.shared.data(for: request)
-            print("Cleared mock data")
+            Loggers.shared.networkingLogger.info("Cleared all mock data")
         } catch {
-            print("Failed to clear mock data")
+            Loggers.shared.networkingLogger.error("Failed to clear mock data")
         }
     }
 }
