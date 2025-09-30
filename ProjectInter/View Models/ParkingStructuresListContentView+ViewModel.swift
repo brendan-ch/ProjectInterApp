@@ -37,7 +37,7 @@ struct ParkingStructuresNetworkingArguments {
 
 extension ParkingStructuresListContentView {
     @Observable
-    class ViewModel: NetworkDataModel<ParkingStructuresNetworkingArguments, GetParkingStructuresListDataQuery>, PlaceholderBuildable {
+    class ViewModel: NetworkDataModel<ParkingStructuresNetworkingArguments, GetParkingStructuresListDataQuery>, PlaceholderBuildable, Clearable {
         var structures: [ParkingStructuresListParkingStructure] = []
         var structuresSupportedBySystem = false
         
@@ -63,6 +63,12 @@ extension ParkingStructuresListContentView {
                     self.structures = []
                 }
             }
+        }
+        
+        func clearData() {
+            resetDataInitState()
+            structures = []
+            structuresSupportedBySystem = false
         }
         
         static func buildPlaceholder() -> Self {

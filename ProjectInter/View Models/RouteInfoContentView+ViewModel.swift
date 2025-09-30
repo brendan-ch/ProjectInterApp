@@ -51,7 +51,7 @@ struct RouteInfoNetworkArguments {
 extension RouteInfoContentView {
     /// Backing view model for ``RouteInfoContentView``.
     @Observable
-    class ViewModel: NetworkDataModel<RouteInfoNetworkArguments, GetRouteInfoDataQuery>, PlaceholderBuildable {
+    class ViewModel: NetworkDataModel<RouteInfoNetworkArguments, GetRouteInfoDataQuery>, PlaceholderBuildable, Clearable {
         /// The name of the currently viewed route.
         var routeName: String = ""
         
@@ -98,6 +98,13 @@ extension RouteInfoContentView {
                     return false
                 }
             }
+        }
+        
+        func clearData() {
+            resetDataInitState()
+            routeName = ""
+            shuttles = []
+            routeNextStopName = nil
         }
         
         static func buildPlaceholder() -> Self {
