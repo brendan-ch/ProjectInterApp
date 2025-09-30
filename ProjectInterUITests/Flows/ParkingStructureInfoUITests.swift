@@ -169,7 +169,13 @@ final class ParkingStructureInfoUITests: BaseUITests {
         
         let spotlightApp = XCUIApplication(bundleIdentifier: "com.apple.Spotlight")
         spotlightApp.activate()
-        spotlightApp.textFields["Search"].firstMatch.tap()
+        let searchField: XCUIElement = spotlightApp.textFields["Search"]
+        guard searchField.waitForExistence(timeout: 10) else {
+            XCTFail("Search field in Spotlight failed to appear")
+            activateSpringboard()
+            return
+        }
+        searchField.firstMatch.tap()
         spotlightApp.textFields["Search"].firstMatch.tap()
         spotlightApp/*@START_MENU_TOKEN@*/.staticTexts["Paste"]/*[[".menuItems[\"Paste\"].staticTexts",".otherElements.staticTexts[\"Paste\"]",".staticTexts[\"Paste\"]"],[[[-1,2],[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.firstMatch.tap()
 
@@ -228,7 +234,9 @@ final class ParkingStructureInfoUITests: BaseUITests {
         
         let mobilesafariApp = XCUIApplication(bundleIdentifier: "com.apple.mobilesafari")
         let expectedAddressText = mobilesafariApp.staticTexts["300 E Walnut Ave"]
-        XCTAssert(expectedAddressText.waitForExistence(timeout: 10))
+        
+        // Google Maps can take a while, especially on low-memory CI instance
+        XCTAssert(expectedAddressText.waitForExistence(timeout: 20))
         
         activateSpringboard()
     }
