@@ -4,22 +4,32 @@
 This file gives agents clear, repo‑specific guidance for developing and testing this macOS app. Follow these instructions when reading, modifying, or adding code anywhere in the repository.
 
 ## Test & Validate (Fastlane)
-- Run `fastlane test` after changing non‑UI code (models, view models, services, utilities, business logic).
-- Run `fastlane test_ui` only when you change UI flows or code that affects UI behavior. Note:
+- Prefer running via Bundler: `bundle exec fastlane ios <lane>`.
+- Run `fastlane ios test` after changing non‑UI code (models, view models, services, utilities, business logic).
+- Run `fastlane ios test_ui` only when you change UI flows or code that affects UI behavior. Note:
   - UI tests may take 8+ minutes to complete.
   - Intermittent flakiness is known; failures are not always related to your change.
 - If unit or UI tests fail or are unstable in a way you cannot explain, stop and ask the user to intervene before proceeding.
 
+- Output locations: unit tests write to `test-output/`; UI tests write to `test-ui-output/`. Inspect these artifacts when diagnosing failures.
+
+## UI Test Server (local)
+- UI tests in CI start a mock backend (`project-inter-mock-server`). To reproduce locally:
+  - Clone the server repo: `git clone https://github.com/brendan-ch/project-inter-mock-server`
+  - `cd project-inter-mock-server && npm install && npm run dev`
+  - In another terminal, run the UI tests with `bundle exec fastlane ios test_ui`.
+
 ## UI & Platform Guidelines
-- This is a macOS app built primarily with SwiftUI.
-- Design UI to be idiomatic for macOS and follow Apple Human Interface Guidelines (HIG).
-- Prefer SwiftUI for all new UI. Use AppKit only when functionality is unavailable in SwiftUI.
-- When AppKit is required, bridge using `NSViewRepresentable` (or `NSViewControllerRepresentable` as appropriate) with minimal surface area.
+- The app is built primarily with SwiftUI.
+- Prefer SwiftUI for all new UI. Use platform frameworks only when functionality is unavailable in SwiftUI.
+- If building for macOS, bridge using `NSViewRepresentable` / `NSViewControllerRepresentable` as appropriate.
+- If building for iOS, bridge using `UIViewRepresentable` / `UIViewControllerRepresentable` as appropriate.
+- Design UI to be idiomatic for the platform and follow Apple Human Interface Guidelines (HIG).
 - Use SF Symbols for iconography.
 
 ## Frameworks & APIs
-- Target the latest macOS version; there are no backward‑compatibility constraints.
-- Prefer the most modern macOS and Swift APIs available.
+- Target the latest OS versions; there are no backward‑compatibility constraints.
+- Prefer the most modern Swift and platform APIs available (Swift Concurrency over legacy patterns where possible).
 - Avoid introducing legacy or deprecated APIs unless absolutely necessary and explicitly justified.
 
 ## Development Practices for Agents
@@ -34,3 +44,46 @@ This file gives agents clear, repo‑specific guidance for developing and testin
 - Decisions requiring non‑SwiftUI AppKit workarounds or platform trade‑offs.
 - Significant design choices that impact macOS UX patterns or HIG compliance.
 
+## Repository Layout
+- `ProjectInter/` — App target (SwiftUI views, view models, models, singletons).
+- `ProjectInterOperations/` — Apollo GraphQL generated Swift package (schema + operations + test mocks).
+- `ProjectInterLogging/` — Swift package wrapping `os.Logger` categories.
+- `ProjectInterTests/` — Unit tests; see `ProjectInterTests.xctestplan`.
+- `ProjectInterUITests/` — UI tests; see `ProjectInterUITests.xctestplan`.
+- `fastlane/` — Lanes for tests and distribution.
+
+## GraphQL / Apollo Codegen
+- The repo includes the Apollo iOS CLI (`./apollo-ios-cli`) and `apollo-codegen-config.json`.
+- After editing any `.graphql`/`.graphqls` files or changing GraphQL operations, regenerate types:
+  - `./apollo-ios-cli generate`
+  - Commit resulting changes under `ProjectInterOperations/` (including test mocks).
+- Use generated types and operations from `ProjectInterOperations` in app code; avoid handwritten query strings.
+
+## Logging
+- Use structured logging via `ProjectInterLogging`:
+  - `Loggers.shared.networkingLogger` for network events
+  - `Loggers.shared.systemEventsLogger` for app/system lifecycle
+  - `Loggers.shared.globalStateEventsLogger` for selection/state changes
+- Avoid `print` in production code. Choose appropriate levels: `debug`, `info`, `notice`, `warning`, `error`.
+- Optional: set `LogSubsystem` in Info.plist to override the default subsystem used by `os.Logger`.
+
+## State & Concurrency
+- Prefer Swift Concurrency (`async/await`, `@MainActor`) for async work.
+- Use SwiftUI environment injection (e.g., `.environment(...)`) for app‑wide models; keep view models lightweight.
+- Only use singletons already established in the codebase (e.g., `ApolloNetworkModelSingleton`, `ApolloClientHolderSingleton`) for shared infra; otherwise favor DI to keep code testable.
+
+## Testing Conventions
+- Mirror app structure in `ProjectInterTests/` for unit tests and in `ProjectInterUITests/` for UI flows.
+- Use existing test plans; avoid renaming them unless coordinated (`ProjectInterTests.xctestplan`, `ProjectInterUITests.xctestplan`).
+- Add unit tests for view models, models, and pure logic. Add UI tests only for critical flows.
+- For flaky UI tests, capture artifacts from `test-ui-output/` and ask for guidance before disabling tests.
+
+## Git & Commit Conventions
+- Use Conventional Commits for messages:
+  - `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`
+- Branch naming: `feat/<short-name>`, `fix/<short-name>`, `chore/<short-name>`, `docs/<short-name>`.
+
+## Code Signing & CI
+- Fastlane lanes use `match` for code signing. Do not change signing settings without confirmation.
+- Local runs may require credentials; in CI, secrets provide `MATCH_*` values. If signing fails, stop and ask the user.
+- CI relies on paths `test-output/` and `test-ui-output/` and `fastlane` lanes; avoid moving these without updating workflows.
