@@ -6,6 +6,7 @@
 //
 
 import ApolloAPI
+import ProjectInterLogging
 
 enum InitializationState {
     case notInitialized

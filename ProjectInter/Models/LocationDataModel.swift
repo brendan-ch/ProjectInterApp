@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreLocation
+import ProjectInterLogging
 
 /// Global data model which manages location permission and stores the last location.
 @Observable

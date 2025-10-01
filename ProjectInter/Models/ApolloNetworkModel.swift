@@ -8,6 +8,7 @@
 import Foundation
 import Apollo
 import ApolloAPI
+import ProjectInterLogging
 
 class ApolloNetworkModel {
     private let client: ApolloClientProtocol
@@ -80,7 +81,7 @@ class ApolloNetworkModel {
                 if !continuationIsActive {
                     return
                 }
-                
+               
                 continuation.resume(with: result)
             }
         }

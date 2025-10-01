@@ -8,6 +8,7 @@
 import SwiftUI
 import Apollo
 import ProjectInterOperations
+import ProjectInterLogging
 import MapKit
 
 // MARK: - Models
