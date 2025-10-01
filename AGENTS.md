@@ -1,7 +1,7 @@
 # AGENTS.md
 
 ## Purpose
-This file gives agents clear, repo‑specific guidance for developing and testing this macOS app. Follow these instructions when reading, modifying, or adding code anywhere in the repository.
+This file gives agents clear, repo‑specific guidance for developing and testing this iOS app. Follow these instructions when reading, modifying, or adding code anywhere in the repository.
 
 ## Test & Validate (Fastlane)
 - Prefer running via Bundler: `bundle exec fastlane ios <lane>`.
@@ -42,7 +42,7 @@ This file gives agents clear, repo‑specific guidance for developing and testin
 ## When to Ask the User
 - Any failing or flaky unit/UI tests you cannot attribute to your changes.
 - Decisions requiring non‑SwiftUI AppKit workarounds or platform trade‑offs.
-- Significant design choices that impact macOS UX patterns or HIG compliance.
+- Significant design choices that impact iOS UX patterns or HIG compliance.
 
 ## Repository Layout
 - `ProjectInter/` — App target (SwiftUI views, view models, models, singletons).
