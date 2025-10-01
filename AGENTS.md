@@ -87,3 +87,21 @@ This file gives agents clear, repo‑specific guidance for developing and testin
 - Fastlane lanes use `match` for code signing. Do not change signing settings without confirmation.
 - Local runs may require credentials; in CI, secrets provide `MATCH_*` values. If signing fails, stop and ask the user.
 - CI relies on paths `test-output/` and `test-ui-output/` and `fastlane` lanes; avoid moving these without updating workflows.
+
+## Pull Request Style
+- Title: short, Conventional Commit type + concise scope (e.g., `chore/create-logging-module`).
+- Labels: apply a primary type label (`chore`, `feat`, `fix`, etc.). Do not apply `bypass ci/cd` unless explicitly requested.
+- Body:
+  - 1–3 sentence summary of what and why.
+  - Link issues with closing keywords (e.g., `Closes #123`).
+  - Call out notable architectural changes or new dependencies.
+- Scope: keep PRs focused and reviewable; avoid unrelated refactors.
+- Tests: note which lanes you ran locally (`fastlane ios test`, and when relevant `fastlane ios test_ui`) and any flakiness observed.
+- Artifacts: if UI-related, include screenshots or a short screen recording.
+
+### PR Checklist
+- [ ] Runs `bundle exec fastlane ios test` clean locally.
+- [ ] UI changes validated; ran `bundle exec fastlane ios test_ui` if flows impacted (optional due to runtime).
+- [ ] Updated GraphQL types via `./apollo-ios-cli generate` if schema/operations changed and committed outputs.
+- [ ] Logging uses `ProjectInterLogging` (no stray `print`).
+- [ ] No unintended signing/CI config changes.
