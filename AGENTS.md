@@ -28,7 +28,7 @@ This file gives agents clear, repo‑specific guidance for developing and testin
 - Use SF Symbols for iconography.
 
 ## Frameworks & APIs
-- Target the latest OS versions; there are no backward‑compatibility constraints.
+- Target the latest OS version, with backwards compatibility going back to iOS 18.
 - Prefer the most modern Swift and platform APIs available (Swift Concurrency over legacy patterns where possible).
 - Avoid introducing legacy or deprecated APIs unless absolutely necessary and explicitly justified.
 
@@ -87,6 +87,10 @@ This file gives agents clear, repo‑specific guidance for developing and testin
 - Fastlane lanes use `match` for code signing. Do not change signing settings without confirmation.
 - Local runs may require credentials; in CI, secrets provide `MATCH_*` values. If signing fails, stop and ask the user.
 - CI relies on paths `test-output/` and `test-ui-output/` and `fastlane` lanes; avoid moving these without updating workflows.
+
+## Commit Style
+
+For each commit message, use a short message describing the change. Call out specific file names. Capitalize the commit message and use the description when the name becomes too long.
 
 ## Pull Request Style
 - Title: short, Conventional Commit type + concise scope (e.g., `chore/create-logging-module`).
