@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 import WebKit
 import Combine
+import ProjectInterLogging
 
 @main
 struct ProjectInterApp: App {
@@ -120,6 +121,12 @@ struct ContentViewWrapper: View {
                     await setSelectionStateBasedOnLastTappedNotificationDetails()
                 }
             }
+            .onOpenURL { url in
+                Loggers.shared.systemEventsLogger.info("App received URL: \(url.absoluteString)")
+                Task {
+                    await setSelectionStateBasedOnUrl(url)
+                }
+            }
     }
     
     func setSelectionStateBasedOnLastTappedNotificationDetails() async {
@@ -133,6 +140,10 @@ struct ContentViewWrapper: View {
         ))
         
         notificationCenterDelegate.lastTappedNotificationDetails = nil
+    }
+    
+    func setSelectionStateBasedOnUrl(_ url: URL) async {
+        
     }
     
     func automaticallySelectStop() {
