@@ -9,16 +9,12 @@ import Foundation
 import UserNotifications
 import UIKit
 
-struct LastTappedNotificationDetails: Codable, Equatable {
-    let shuttleId: String
-    let systemId: String
-    let stopId: String
-}
+
 
 class CustomNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate, ObservableObject {
     private var notificationCenter: UNUserNotificationCenterProtocol
     
-    @Published var lastTappedNotificationDetails: LastTappedNotificationDetails?
+    @Published var lastTappedNotificationDetails: OpenShuttleArguments?
     
     override init() {
         notificationCenter = UNUserNotificationCenter.current()
@@ -59,7 +55,7 @@ class CustomNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelega
         
         let jsonSerialization = try? JSONSerialization.data(withJSONObject: shuttleNotificationInfo, options: [])
         guard let jsonSerialization else { return }
-        let decoded = try? JSONDecoder().decode(LastTappedNotificationDetails.self, from: jsonSerialization)
+        let decoded = try? JSONDecoder().decode(OpenShuttleArguments.self, from: jsonSerialization)
         guard let decoded else { return }
         
         lastTappedNotificationDetails = decoded
