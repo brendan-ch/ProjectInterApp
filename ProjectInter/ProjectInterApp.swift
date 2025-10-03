@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 import WebKit
 import Combine
+import ProjectInterLogging
 
 @main
 struct ProjectInterApp: App {
@@ -120,19 +121,55 @@ struct ContentViewWrapper: View {
                     await setSelectionStateBasedOnLastTappedNotificationDetails()
                 }
             }
+            .onOpenURL { url in
+                Loggers.shared.systemEventsLogger.info("App received URL: \(url.absoluteString)")
+                Task {
+                    await setSelectionStateBasedOnUrl(url)
+                }
+            }
     }
     
     func setSelectionStateBasedOnLastTappedNotificationDetails() async {
+        // In the future, if notifications support different types of arguments,
+        // change this handling to be closer to that for URLs
         guard let details = notificationCenterDelegate.lastTappedNotificationDetails else { return }
-        
-        globalStopsStateObject.selectStopId(details.stopId)
-        globalSystemsStateObject.selectSystemId(details.systemId)
-        await globalIdSelectionStateObject.autoSelectRouteIdFromShuttleId(.init(
-            systemId: details.systemId,
-            shuttleId: details.shuttleId
-        ))
+        await handleOpenShuttleArguments(details)
         
         notificationCenterDelegate.lastTappedNotificationDetails = nil
+    }
+    
+    private func setSelectionStateBasedOnUrl(_ url: URL) async {
+        // See which object can handle the URL scheme correctly
+        if let shuttleArguments = try? OpenShuttleArguments(url: url) {
+            await handleOpenShuttleArguments(shuttleArguments)
+        } else if let routeArguments = try? OpenRouteArguments(url: url) {
+            handleOpenRouteArguments(routeArguments)
+        } else if let parkingStructureArguments = try? OpenParkingStructureArguments(url: url) {
+            handleOpenParkingStructureArguments(parkingStructureArguments)
+        } else {
+            Loggers.shared.systemEventsLogger.info("Failed to open received URL: \(url.absoluteString)")
+        }
+    }
+    
+    private func handleOpenRouteArguments(_ arguments: OpenRouteArguments) {
+        globalStopsStateObject.selectStopId(arguments.stopId)
+        globalSystemsStateObject.selectSystemId(arguments.systemId)
+        globalIdSelectionStateObject.selectRouteId(arguments.routeId)
+    }
+    
+    
+    private func handleOpenParkingStructureArguments(_ arguments: OpenParkingStructureArguments) {
+        globalSystemsStateObject.selectSystemId(arguments.systemId)
+        globalIdSelectionStateObject.selectParkingStructureId(arguments.parkingStructureId)
+    }
+    
+    private func handleOpenShuttleArguments(_ arguments: OpenShuttleArguments) async {
+        globalStopsStateObject.selectStopId(arguments.stopId)
+        globalSystemsStateObject.selectSystemId(arguments.systemId)
+        await globalIdSelectionStateObject.autoSelectRouteIdFromShuttleId(.init(
+            systemId: arguments.systemId,
+            shuttleId: arguments.shuttleId
+        ))
     }
     
     func automaticallySelectStop() {

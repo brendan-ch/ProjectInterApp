@@ -8,17 +8,13 @@
 import Foundation
 import UserNotifications
 import UIKit
+import ProjectInterLogging
 
-struct LastTappedNotificationDetails: Codable, Equatable {
-    let shuttleId: String
-    let systemId: String
-    let stopId: String
-}
 
 class CustomNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate, ObservableObject {
     private var notificationCenter: UNUserNotificationCenterProtocol
     
-    @Published var lastTappedNotificationDetails: LastTappedNotificationDetails?
+    @Published var lastTappedNotificationDetails: OpenShuttleArguments?
     
     override init() {
         notificationCenter = UNUserNotificationCenter.current()
@@ -53,14 +49,10 @@ class CustomNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelega
     
     // TODO: Validate this behavior via a UI test
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        let userInfo = response.notification.request.content.userInfo
-        let shuttleNotificationInfo = userInfo.first { $0.key as? String == UNNotificationResponse.shuttleNotificationInfoKey }?.value
-        guard let shuttleNotificationInfo else { return }
-        
-        let jsonSerialization = try? JSONSerialization.data(withJSONObject: shuttleNotificationInfo, options: [])
-        guard let jsonSerialization else { return }
-        let decoded = try? JSONDecoder().decode(LastTappedNotificationDetails.self, from: jsonSerialization)
-        guard let decoded else { return }
+        guard let decoded = try? OpenShuttleArguments(notification: response) else {
+            Loggers.shared.systemEventsLogger.error("Failed to parse notification: \(response)")
+            return
+        }
         
         lastTappedNotificationDetails = decoded
     }
