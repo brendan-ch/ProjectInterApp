@@ -17,7 +17,6 @@ struct OpenShuttleArguments: Codable, Equatable {
     
     enum ParseError: Swift.Error {
         case missingNotificationsUserInfo
-        case missingArguments
         case invalidArguments
     }
     
@@ -36,7 +35,7 @@ struct OpenShuttleArguments: Codable, Equatable {
     
     static func constructArgumentsFromNotificationsUserInfo(userInfo: [String: Any]) throws -> OpenShuttleArguments {
         guard let shuttleNotificationInfo = userInfo.first(where: { $0.key == UNNotificationResponse.shuttleNotificationInfoKey })?.value else {
-            throw ParseError.missingArguments
+            throw ParseError.invalidArguments
         }
         
         guard let jsonSerialization = try? JSONSerialization.data(withJSONObject: shuttleNotificationInfo, options: []),
