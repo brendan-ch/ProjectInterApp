@@ -9,15 +9,19 @@ import Foundation
 import Apollo
 import ApolloAPI
 
+public enum GraphQLConstructableError: Swift.Error {
+    case dataNotAvailable
+}
+
 /// Entity that can be fully constructed from a GraphQL resolver operation.
-protocol GraphQLConstructable {
+public protocol GraphQLConstructable {
     associatedtype Query where Query : GraphQLQuery
     
     static func create(_ query: Query) async -> Self
     static func getGraphQLResult(_ query: Query) async throws -> GraphQLResult<Query.Data>
 }
 
-extension GraphQLConstructable {
+public extension GraphQLConstructable {
     static func getGraphQLResult(_ query: Query) async throws -> GraphQLResult<Query.Data> {
         // TODO: Resolve duplicate of same code within `ApolloNetworkModel`
         return try await withCheckedThrowingContinuation { continuation in
