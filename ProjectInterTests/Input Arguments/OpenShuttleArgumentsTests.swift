@@ -31,7 +31,7 @@ class OpenShuttleArgumentsTests {
             // doesn't have the relevant key
         ]
         
-        #expect(throws: OpenShuttleArguments.ParseError.invalidDictionaryRepresentation) {
+        #expect(throws: UNNotificationConstructableError.invalidDictionaryRepresentation) {
             _ = try OpenShuttleArguments.constructFromNotificationsUserInfo(userInfo: badUserInfo)
         }
     }
