@@ -55,4 +55,18 @@ class OpenShuttleArgumentsTests {
         let arguments = try OpenShuttleArguments(url: url)
         #expect(expected == arguments)
     }
+    
+    @Test func testConstructArgumentWithInvalidPathThrows() async throws {
+        let url = URL(string: "interchange://x-callback-url/invalidPath?stopId=1&shuttleId=1&systemId=1")!
+        #expect(throws: URLConstructableError.incorrectUrlHandler) {
+            _ = try OpenShuttleArguments(url: url)
+        }
+    }
+    
+    @Test func testConstructArgumentWithInvalidParamsThrows() async throws {
+        let url = URL(string: "interchange://x-callback-url/openShuttle?shuttleId=1&systemId=1")!
+        #expect(throws: DictionaryConstructableError.invalidArguments) {
+            _ = try OpenShuttleArguments(url: url)
+        }
+    }
 }
