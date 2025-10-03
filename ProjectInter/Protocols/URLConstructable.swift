@@ -15,6 +15,7 @@ enum URLConstructableError: Swift.Error {
 
 protocol URLConstructable: DictionaryConstructable {
     init(url: URL) throws
+    static var expectedUrlPath: String { get }
 }
 
 extension URLConstructable {
@@ -23,7 +24,7 @@ extension URLConstructable {
             throw URLConstructableError.missingUrlComponents
         }
         
-        guard components.path == OpenShuttleArguments.expectedUrlPath else {
+        guard components.path == Self.expectedUrlPath else {
             throw URLConstructableError.incorrectUrlHandler
         }
         
