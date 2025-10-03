@@ -10,7 +10,7 @@ import UserNotifications
 
 /// Arguments needed for the app to open a shuttle, say,
 /// from a URL or notification.
-struct OpenShuttleArguments: Codable, Equatable {
+struct OpenShuttleArguments: DictionaryConstructable, Equatable {
     let shuttleId: String
     let systemId: String
     let stopId: String
@@ -19,7 +19,7 @@ struct OpenShuttleArguments: Codable, Equatable {
         case missingNotificationsUserInfo
         case missingUrlComponents
         case incorrectUrlHandler
-        case invalidArguments
+        case invalidDictionaryRepresentation
     }
     
     init(shuttleId: String, systemId: String, stopId: String) {
@@ -37,19 +37,10 @@ struct OpenShuttleArguments: Codable, Equatable {
     
     static func constructFromNotificationsUserInfo(userInfo: [String: Any]) throws -> OpenShuttleArguments {
         guard let queryParams = userInfo.first(where: { $0.key == UNNotificationResponse.shuttleNotificationInfoKey })?.value else {
-            throw ParseError.invalidArguments
+            throw ParseError.invalidDictionaryRepresentation
         }
         
         return try constructFromDict(params: queryParams)
-    }
-    
-    static func constructFromDict(params: Any) throws -> OpenShuttleArguments {
-        guard let jsonSerialization = try? JSONSerialization.data(withJSONObject: params, options: []),
-              let decoded = try? JSONDecoder().decode(OpenShuttleArguments.self, from: jsonSerialization) else {
-            throw ParseError.invalidArguments
-        }
-        
-        return decoded
     }
     
     init(url: URL) throws {
@@ -62,7 +53,7 @@ struct OpenShuttleArguments: Codable, Equatable {
         }
         
         guard let queryItemsDict = components.queryItems?.asDictionary() else {
-            throw ParseError.invalidArguments
+            throw ParseError.invalidDictionaryRepresentation
         }
         
         self = try OpenShuttleArguments.constructFromDict(params: queryItemsDict)
