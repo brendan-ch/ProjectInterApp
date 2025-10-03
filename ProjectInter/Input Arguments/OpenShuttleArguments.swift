@@ -10,7 +10,7 @@ import UserNotifications
 
 /// Arguments needed for the app to open a shuttle, say,
 /// from a URL or notification.
-struct OpenShuttleArguments: DictionaryConstructable, Equatable {
+struct OpenShuttleArguments: URLConstructable, Equatable {
     let shuttleId: String
     let systemId: String
     let stopId: String
@@ -41,22 +41,6 @@ struct OpenShuttleArguments: DictionaryConstructable, Equatable {
         }
         
         return try constructFromDict(params: queryParams)
-    }
-    
-    init(url: URL) throws {
-        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
-            throw ParseError.missingUrlComponents
-        }
-        
-        guard components.path == OpenShuttleArguments.expectedUrlPath else {
-            throw ParseError.incorrectUrlHandler
-        }
-        
-        guard let queryItemsDict = components.queryItems?.asDictionary() else {
-            throw ParseError.invalidDictionaryRepresentation
-        }
-        
-        self = try OpenShuttleArguments.constructFromDict(params: queryItemsDict)
     }
 }
 
