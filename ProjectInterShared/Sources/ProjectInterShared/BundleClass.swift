@@ -1,6 +1,6 @@
 //
 //  BundleClass.swift
-//  ProjectInter
+//  ProjectInterShared
 //
 //  Created by Brendan Chen on 2025.10.03.
 //

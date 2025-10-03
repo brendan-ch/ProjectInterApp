@@ -25,6 +25,8 @@
 		20C4943D2E9068C8009B7031 /* Apollo in Frameworks */ = {isa = PBXBuildFile; productRef = 20C4943C2E9068C8009B7031 /* Apollo */; };
 		20C494412E9068D8009B7031 /* ProjectInterOperations in Frameworks */ = {isa = PBXBuildFile; productRef = 20C494402E9068D8009B7031 /* ProjectInterOperations */; };
 		20C496E52E906B69009B7031 /* ApolloAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 20C496E42E906B69009B7031 /* ApolloAPI */; };
+		20C9FEC32E908DBB001FCF55 /* ProjectInterShared in Frameworks */ = {isa = PBXBuildFile; productRef = 20C9FEC22E908DBB001FCF55 /* ProjectInterShared */; };
+		20C9FEC52E908DC4001FCF55 /* ProjectInterShared in Frameworks */ = {isa = PBXBuildFile; productRef = 20C9FEC42E908DC4001FCF55 /* ProjectInterShared */; };
 		20F5D3372E8C9476002B25DE /* ProjectInterLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 20F5D3362E8C9476002B25DE /* ProjectInterLogging */; };
 /* End PBXBuildFile section */
 
@@ -179,6 +181,7 @@
 				20C4943D2E9068C8009B7031 /* Apollo in Frameworks */,
 				20C494252E90682A009B7031 /* WidgetKit.framework in Frameworks */,
 				20C494412E9068D8009B7031 /* ProjectInterOperations in Frameworks */,
+				20C9FEC52E908DC4001FCF55 /* ProjectInterShared in Frameworks */,
 				20C496E52E906B69009B7031 /* ApolloAPI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -187,6 +190,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				20C9FEC32E908DBB001FCF55 /* ProjectInterShared in Frameworks */,
 				205077162D1B79FC004CAA04 /* ProjectInterTestMocks in Frameworks */,
 				2050766A2D1B46B5004CAA04 /* Apollo in Frameworks */,
 				205077142D1B79FC004CAA04 /* ProjectInterOperations in Frameworks */,
@@ -276,6 +280,7 @@
 				20C4943C2E9068C8009B7031 /* Apollo */,
 				20C494402E9068D8009B7031 /* ProjectInterOperations */,
 				20C496E42E906B69009B7031 /* ApolloAPI */,
+				20C9FEC42E908DC4001FCF55 /* ProjectInterShared */,
 			);
 			productName = ProjectInterWidgetsExtension;
 			productReference = 20C494232E906829009B7031 /* ProjectInterWidgetsExtension.appex */;
@@ -304,6 +309,7 @@
 				205077132D1B79FC004CAA04 /* ProjectInterOperations */,
 				205077152D1B79FC004CAA04 /* ProjectInterTestMocks */,
 				20F5D3362E8C9476002B25DE /* ProjectInterLogging */,
+				20C9FEC22E908DBB001FCF55 /* ProjectInterShared */,
 			);
 			productName = InterMVP1;
 			productReference = 20FA7B742D10E11E00D4EAD1 /* ProjectInter.app */;
@@ -401,6 +407,7 @@
 				205076682D1B46B5004CAA04 /* XCRemoteSwiftPackageReference "apollo-ios" */,
 				205077122D1B79FC004CAA04 /* XCLocalSwiftPackageReference "ProjectInterOperations" */,
 				20F5D3352E8C9476002B25DE /* XCLocalSwiftPackageReference "ProjectInterLogging" */,
+				20C9FEC12E908DBB001FCF55 /* XCLocalSwiftPackageReference "ProjectInterShared" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 20FA7B752D10E11E00D4EAD1 /* Products */;
@@ -905,6 +912,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ProjectInterOperations;
 		};
+		20C9FEC12E908DBB001FCF55 /* XCLocalSwiftPackageReference "ProjectInterShared" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ProjectInterShared;
+		};
 		20F5D3352E8C9476002B25DE /* XCLocalSwiftPackageReference "ProjectInterLogging" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ProjectInterLogging;
@@ -980,6 +991,15 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 205076682D1B46B5004CAA04 /* XCRemoteSwiftPackageReference "apollo-ios" */;
 			productName = ApolloAPI;
+		};
+		20C9FEC22E908DBB001FCF55 /* ProjectInterShared */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ProjectInterShared;
+		};
+		20C9FEC42E908DC4001FCF55 /* ProjectInterShared */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 20C9FEC12E908DBB001FCF55 /* XCLocalSwiftPackageReference "ProjectInterShared" */;
+			productName = ProjectInterShared;
 		};
 		20F5D3362E8C9476002B25DE /* ProjectInterLogging */ = {
 			isa = XCSwiftPackageProductDependency;
