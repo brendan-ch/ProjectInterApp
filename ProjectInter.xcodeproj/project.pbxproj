@@ -24,6 +24,7 @@
 		20C494362E90682B009B7031 /* ProjectInterWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 20C494232E906829009B7031 /* ProjectInterWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		20C4943D2E9068C8009B7031 /* Apollo in Frameworks */ = {isa = PBXBuildFile; productRef = 20C4943C2E9068C8009B7031 /* Apollo */; };
 		20C494412E9068D8009B7031 /* ProjectInterOperations in Frameworks */ = {isa = PBXBuildFile; productRef = 20C494402E9068D8009B7031 /* ProjectInterOperations */; };
+		20C496E52E906B69009B7031 /* ApolloAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 20C496E42E906B69009B7031 /* ApolloAPI */; };
 		20F5D3372E8C9476002B25DE /* ProjectInterLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 20F5D3362E8C9476002B25DE /* ProjectInterLogging */; };
 /* End PBXBuildFile section */
 
@@ -178,6 +179,7 @@
 				20C4943D2E9068C8009B7031 /* Apollo in Frameworks */,
 				20C494252E90682A009B7031 /* WidgetKit.framework in Frameworks */,
 				20C494412E9068D8009B7031 /* ProjectInterOperations in Frameworks */,
+				20C496E52E906B69009B7031 /* ApolloAPI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -273,6 +275,7 @@
 			packageProductDependencies = (
 				20C4943C2E9068C8009B7031 /* Apollo */,
 				20C494402E9068D8009B7031 /* ProjectInterOperations */,
+				20C496E42E906B69009B7031 /* ApolloAPI */,
 			);
 			productName = ProjectInterWidgetsExtension;
 			productReference = 20C494232E906829009B7031 /* ProjectInterWidgetsExtension.appex */;
@@ -972,6 +975,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 205077122D1B79FC004CAA04 /* XCLocalSwiftPackageReference "ProjectInterOperations" */;
 			productName = ProjectInterOperations;
+		};
+		20C496E42E906B69009B7031 /* ApolloAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 205076682D1B46B5004CAA04 /* XCRemoteSwiftPackageReference "apollo-ios" */;
+			productName = ApolloAPI;
 		};
 		20F5D3362E8C9476002B25DE /* ProjectInterLogging */ = {
 			isa = XCSwiftPackageProductDependency;
