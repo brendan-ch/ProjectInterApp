@@ -14,9 +14,11 @@ struct OpenShuttleArguments: Codable, Equatable {
     let shuttleId: String
     let systemId: String
     let stopId: String
-    
+
     enum ParseError: Swift.Error {
         case missingNotificationsUserInfo
+        case missingUrlComponents
+        case incorrectUrlHandler
         case invalidArguments
     }
     
@@ -30,20 +32,43 @@ struct OpenShuttleArguments: Codable, Equatable {
         guard let userInfo = response.notification.request.content.userInfo as? [String: Any] else {
             throw ParseError.missingNotificationsUserInfo
         }
-        self = try OpenShuttleArguments.constructArgumentsFromNotificationsUserInfo(userInfo: userInfo)
+        self = try OpenShuttleArguments.constructFromNotificationsUserInfo(userInfo: userInfo)
     }
     
-    static func constructArgumentsFromNotificationsUserInfo(userInfo: [String: Any]) throws -> OpenShuttleArguments {
-        guard let shuttleNotificationInfo = userInfo.first(where: { $0.key == UNNotificationResponse.shuttleNotificationInfoKey })?.value else {
+    static func constructFromNotificationsUserInfo(userInfo: [String: Any]) throws -> OpenShuttleArguments {
+        guard let queryParams = userInfo.first(where: { $0.key == UNNotificationResponse.shuttleNotificationInfoKey })?.value else {
             throw ParseError.invalidArguments
         }
         
-        guard let jsonSerialization = try? JSONSerialization.data(withJSONObject: shuttleNotificationInfo, options: []),
+        return try constructFromDict(params: queryParams)
+    }
+    
+    static func constructFromDict(params: Any) throws -> OpenShuttleArguments {
+        guard let jsonSerialization = try? JSONSerialization.data(withJSONObject: params, options: []),
               let decoded = try? JSONDecoder().decode(OpenShuttleArguments.self, from: jsonSerialization) else {
             throw ParseError.invalidArguments
         }
         
         return decoded
     }
+    
+    init(url: URL) throws {
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+            throw ParseError.missingUrlComponents
+        }
+        
+        guard components.path == OpenShuttleArguments.expectedUrlPath else {
+            throw ParseError.incorrectUrlHandler
+        }
+        
+        guard let queryItemsDict = components.queryItems?.asDictionary() else {
+            throw ParseError.invalidArguments
+        }
+        
+        self = try OpenShuttleArguments.constructFromDict(params: queryItemsDict)
+    }
 }
 
+extension OpenShuttleArguments {
+    static var expectedUrlPath: String { "/openShuttle" }
+}

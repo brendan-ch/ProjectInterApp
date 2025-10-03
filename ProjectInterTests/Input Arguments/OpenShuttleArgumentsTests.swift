@@ -15,12 +15,12 @@ class OpenShuttleArgumentsTests {
         let userInfo: [String: Any] = [
             UNNotificationResponse.shuttleNotificationInfoKey: [
                 "shuttleId": expected.shuttleId,
+                "stopId": expected.stopId,
                 "systemId": expected.systemId,
-                "stopId": expected.stopId
             ]
         ]
         
-        let arguments = try OpenShuttleArguments.constructArgumentsFromNotificationsUserInfo(userInfo: userInfo)
+        let arguments = try OpenShuttleArguments.constructFromNotificationsUserInfo(userInfo: userInfo)
         
         #expect(arguments == expected)
     }
@@ -32,7 +32,7 @@ class OpenShuttleArgumentsTests {
         ]
         
         #expect(throws: OpenShuttleArguments.ParseError.invalidArguments) {
-            _ = try OpenShuttleArguments.constructArgumentsFromNotificationsUserInfo(userInfo: badUserInfo)
+            _ = try OpenShuttleArguments.constructFromNotificationsUserInfo(userInfo: badUserInfo)
         }
     }
     
@@ -45,7 +45,14 @@ class OpenShuttleArgumentsTests {
         ]
         
         #expect(throws: OpenShuttleArguments.ParseError.invalidArguments) {
-            _ = try OpenShuttleArguments.constructArgumentsFromNotificationsUserInfo(userInfo: badUserInfo)
+            _ = try OpenShuttleArguments.constructFromNotificationsUserInfo(userInfo: badUserInfo)
         }
+    }
+    
+    @Test func testConstructArgumentWithValidUrlConstructsArguments() async throws {
+        let expected = OpenShuttleArguments(shuttleId: "1", systemId: "1", stopId: "1")
+        let url = URL(string: "interchange://x-callback-url/openShuttle?stopId=1&shuttleId=1&systemId=1")!
+        let arguments = try OpenShuttleArguments(url: url)
+        #expect(expected == arguments)
     }
 }
