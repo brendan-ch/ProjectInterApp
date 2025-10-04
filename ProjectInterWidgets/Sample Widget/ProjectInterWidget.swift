@@ -27,8 +27,16 @@ struct Provider: TimelineProvider {
         let fifteenMinutesLater = Calendar.current.date(byAdding: .minute, value: 1, to: date)!
         
         Task.detached {
-            let entry = await SchemaVersionEntry.create(GetSchemaVersionQuery())
-            entries.append(entry)
+            if let entry = try? await SchemaVersionEntry.create(GetSchemaVersionQuery()) {
+                entries.append(entry)
+            } else {
+                entries.append(.init(
+                    date: .now,
+                    status: .failed(error: "Unable to create entry"),
+                    minVersion: nil,
+                    currentVersion: nil
+                ))
+            }
             
             let timeline = Timeline(entries: entries, policy: .after(fifteenMinutesLater))
             completion(timeline)
@@ -57,15 +65,10 @@ enum TimelineEntryStatus: Equatable {
 }
 
 struct SchemaVersionEntry: TimelineEntry, GraphQLConstructable {
-    static func create(_ query: ProjectInterOperations.GetSchemaVersionQuery) async -> SchemaVersionEntry {
-        let result = try? await getGraphQLResult(query)
-        guard let data = result?.data else {
-            return .init(
-                date: .now,
-                status: .failed(error: "No data available."),
-                minVersion: nil,
-                currentVersion: nil
-            )
+    static func create(_ query: ProjectInterOperations.GetSchemaVersionQuery) async throws -> SchemaVersionEntry {
+        let result = try await getGraphQLResult(query)
+        guard let data = result.data else {
+            throw GraphQLConstructableError.dataNotAvailable
         }
         
         return .init(
