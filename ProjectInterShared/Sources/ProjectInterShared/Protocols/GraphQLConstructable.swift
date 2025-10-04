@@ -18,16 +18,16 @@ public protocol GraphQLConstructable {
     associatedtype Query where Query : GraphQLQuery
     
     static func create(_ query: Query) async -> Self
-    static func getGraphQLResult(_ query: Query) async throws -> GraphQLResult<Query.Data>
+    static func getGraphQLResult(_ query: Query, client: ApolloClientProtocol) async throws -> GraphQLResult<Query.Data>
 }
 
 public extension GraphQLConstructable {
-    static func getGraphQLResult(_ query: Query) async throws -> GraphQLResult<Query.Data> {
+    static func getGraphQLResult(_ query: Query, client: ApolloClientProtocol = ApolloClient.shared) async throws -> GraphQLResult<Query.Data> {
         // TODO: Resolve duplicate of same code within `ApolloNetworkModel`
         return try await withCheckedThrowingContinuation { continuation in
             var continuationIsActive = true
             
-            ApolloClient.shared.fetch(query: query) { result in
+            client.fetch(query: query) { result in
                 defer {
                     continuationIsActive = false
                 }

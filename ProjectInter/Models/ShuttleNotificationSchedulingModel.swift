@@ -9,6 +9,7 @@ import Foundation
 import Apollo
 import ProjectInterOperations
 import ProjectInterLogging
+import ProjectInterShared
 
 struct NotificationNetworkArguments: Hashable {
     let deviceId: String

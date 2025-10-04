@@ -13,8 +13,6 @@ import ProjectInterLogging
 class ApolloNetworkModel {
     private let client: ApolloClientProtocol
     
-    static let shared = ApolloNetworkModel(client: ApolloClientHolderSingleton.shared.apolloClient)
-    
     init(client: ApolloClientProtocol) {
         self.client = client
     }
@@ -86,4 +84,8 @@ class ApolloNetworkModel {
             }
         }
     }
+}
+
+extension ApolloNetworkModel {
+    static let shared = ApolloNetworkModel(client: ApolloClient.shared)
 }

@@ -8,7 +8,7 @@
 import Apollo
 import ApolloAPI
 
-extension ApolloClientProtocol {
+public extension ApolloClientProtocol {
     @discardableResult
     func fetch<Query>(query: Query, resultHandler: GraphQLResultHandler<Query.Data>?) -> (any Cancellable) where Query : GraphQLQuery {
         return fetch(
