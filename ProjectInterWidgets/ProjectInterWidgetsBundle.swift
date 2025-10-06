@@ -12,5 +12,6 @@ import SwiftUI
 struct ProjectInterWidgetsBundle: WidgetBundle {
     var body: some Widget {
         ProjectInterWidget()
+        ParkingStructuresWidget()
     }
 }

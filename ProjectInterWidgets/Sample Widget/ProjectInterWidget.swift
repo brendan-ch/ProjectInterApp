@@ -48,21 +48,7 @@ struct Provider: TimelineProvider {
     //    }
 }
 
-enum TimelineEntryStatus: Equatable {
-    static func == (lhs: TimelineEntryStatus, rhs: TimelineEntryStatus) -> Bool {
-        switch (lhs, rhs) {
-        case (.succeeded, .succeeded):
-            return true
-        case (.failed, failed):
-            return true
-        default:
-            return false
-        }
-    }
-    
-    case succeeded
-    case failed(error: String)
-}
+
 
 struct SchemaVersionEntry: TimelineEntry, GraphQLConstructable {
     static func create(_ query: ProjectInterOperations.GetSchemaVersionQuery) async throws -> SchemaVersionEntry {

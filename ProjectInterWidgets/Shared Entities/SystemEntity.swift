@@ -21,17 +21,22 @@ struct SystemEntity: AppEntity, Identifiable {
     let name: String?
     
     var displayRepresentation: DisplayRepresentation {
-        DisplayRepresentation(title: "\(name ?? "Select a system")")
+        DisplayRepresentation(title: "\(name ?? "Mirror app")")
     }
     
 }
 
-struct SystemEntityQuery: EntityQuery {
+struct SystemEntityQuery: EntityStringQuery {
+    func entities(matching query: String) async throws -> [SystemEntity] {
+        let all = await allOptions()
+        return all.filter { $0.name?.localizedCaseInsensitiveContains(query) == true }
+    }
+    
     func entities(for identifiers: [SystemEntity.ID]) async throws -> [SystemEntity] {
         await allOptions().filter { identifiers.contains($0.id) }
     }
     
-    func suggestedEntities() async throws -> some ResultsCollection {
+    func suggestedEntities() async throws -> [SystemEntity] {
         await allOptions()
     }
     
