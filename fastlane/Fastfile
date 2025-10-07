@@ -34,7 +34,8 @@ platform :ios do
     lane :test do
         setup_ci if ENV['CI']
         match(
-            type: "development"
+            type: "development",
+            app_identifier: ["dev.bchen.Inter", "dev.bchen.Inter.widgets"]
         )
         run_tests(
             testplan: "ProjectInterTests",
@@ -47,7 +48,8 @@ platform :ios do
     lane :test_ui do
         setup_ci if ENV['CI']
         match(
-            type: "development"
+            type: "development",
+            app_identifier: ["dev.bchen.Inter", "dev.bchen.Inter.widgets"]
         )
         run_tests(
             testplan: "ProjectInterUITests",
@@ -61,7 +63,8 @@ platform :ios do
         setup_ci if ENV['CI']
 
         match(
-            type: "appstore"
+            type: "appstore",
+            app_identifier: ["dev.bchen.Inter", "dev.bchen.Inter.widgets"]
         )
 
         increment_build_number(

@@ -19,10 +19,25 @@
 		205077162D1B79FC004CAA04 /* ProjectInterTestMocks in Frameworks */ = {isa = PBXBuildFile; productRef = 205077152D1B79FC004CAA04 /* ProjectInterTestMocks */; };
 		207534352E8CA07200E164A5 /* ProjectInterLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 207534342E8CA07200E164A5 /* ProjectInterLogging */; };
 		208238562D2E730D00DA9820 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 208238552D2E730D00DA9820 /* README.md */; };
+		20C494252E90682A009B7031 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20C494242E906829009B7031 /* WidgetKit.framework */; };
+		20C494272E90682A009B7031 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20C494262E90682A009B7031 /* SwiftUI.framework */; };
+		20C494362E90682B009B7031 /* ProjectInterWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 20C494232E906829009B7031 /* ProjectInterWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		20C4943D2E9068C8009B7031 /* Apollo in Frameworks */ = {isa = PBXBuildFile; productRef = 20C4943C2E9068C8009B7031 /* Apollo */; };
+		20C494412E9068D8009B7031 /* ProjectInterOperations in Frameworks */ = {isa = PBXBuildFile; productRef = 20C494402E9068D8009B7031 /* ProjectInterOperations */; };
+		20C496E52E906B69009B7031 /* ApolloAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 20C496E42E906B69009B7031 /* ApolloAPI */; };
+		20C9FEC32E908DBB001FCF55 /* ProjectInterShared in Frameworks */ = {isa = PBXBuildFile; productRef = 20C9FEC22E908DBB001FCF55 /* ProjectInterShared */; };
+		20C9FEC52E908DC4001FCF55 /* ProjectInterShared in Frameworks */ = {isa = PBXBuildFile; productRef = 20C9FEC42E908DC4001FCF55 /* ProjectInterShared */; };
 		20F5D3372E8C9476002B25DE /* ProjectInterLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 20F5D3362E8C9476002B25DE /* ProjectInterLogging */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		20C494342E90682B009B7031 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 20FA7B6C2D10E11E00D4EAD1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 20C494222E906829009B7031;
+			remoteInfo = ProjectInterWidgetsExtension;
+		};
 		20FA7B852D10E11F00D4EAD1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 20FA7B6C2D10E11E00D4EAD1 /* Project object */;
@@ -50,6 +65,17 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		20C4943B2E90682B009B7031 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				20C494362E90682B009B7031 /* ProjectInterWidgetsExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -57,6 +83,9 @@
 		205077102D1B78EF004CAA04 /* apollo-codegen-config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "apollo-codegen-config.json"; sourceTree = "<group>"; };
 		208238552D2E730D00DA9820 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		2093DAAD2D67EB7200FC4512 /* ProjectInterTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = ProjectInterTests.xctestplan; sourceTree = "<group>"; };
+		20C494232E906829009B7031 /* ProjectInterWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ProjectInterWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		20C494242E906829009B7031 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		20C494262E90682A009B7031 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		20FA7B742D10E11E00D4EAD1 /* ProjectInter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProjectInter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		20FA7B842D10E11F00D4EAD1 /* ProjectInterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProjectInterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		20FA7B8E2D10E11F00D4EAD1 /* ProjectInterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProjectInterUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -88,6 +117,13 @@
 			);
 			target = 20FA7B732D10E11E00D4EAD1 /* ProjectInter */;
 		};
+		20C4943A2E90682B009B7031 /* Exceptions for "ProjectInterWidgets" folder in "ProjectInterWidgetsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 20C494222E906829009B7031 /* ProjectInterWidgetsExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
@@ -103,6 +139,14 @@
 /* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		20C494282E90682A009B7031 /* ProjectInterWidgets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				20C4943A2E90682B009B7031 /* Exceptions for "ProjectInterWidgets" folder in "ProjectInterWidgetsExtension" target */,
+			);
+			path = ProjectInterWidgets;
+			sourceTree = "<group>";
+		};
 		20FA7B762D10E11E00D4EAD1 /* ProjectInter */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -129,10 +173,24 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		20C494202E906829009B7031 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				20C494272E90682A009B7031 /* SwiftUI.framework in Frameworks */,
+				20C4943D2E9068C8009B7031 /* Apollo in Frameworks */,
+				20C494252E90682A009B7031 /* WidgetKit.framework in Frameworks */,
+				20C494412E9068D8009B7031 /* ProjectInterOperations in Frameworks */,
+				20C9FEC52E908DC4001FCF55 /* ProjectInterShared in Frameworks */,
+				20C496E52E906B69009B7031 /* ApolloAPI in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		20FA7B712D10E11E00D4EAD1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				20C9FEC32E908DBB001FCF55 /* ProjectInterShared in Frameworks */,
 				205077162D1B79FC004CAA04 /* ProjectInterTestMocks in Frameworks */,
 				2050766A2D1B46B5004CAA04 /* Apollo in Frameworks */,
 				205077142D1B79FC004CAA04 /* ProjectInterOperations in Frameworks */,
@@ -166,6 +224,8 @@
 		200765422E19E0F500117172 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				20C494242E906829009B7031 /* WidgetKit.framework */,
+				20C494262E90682A009B7031 /* SwiftUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -180,6 +240,7 @@
 				20FA7B762D10E11E00D4EAD1 /* ProjectInter */,
 				20FA7B872D10E11F00D4EAD1 /* ProjectInterTests */,
 				20FA7B912D10E11F00D4EAD1 /* ProjectInterUITests */,
+				20C494282E90682A009B7031 /* ProjectInterWidgets */,
 				200765422E19E0F500117172 /* Frameworks */,
 				20FA7B752D10E11E00D4EAD1 /* Products */,
 			);
@@ -191,6 +252,7 @@
 				20FA7B742D10E11E00D4EAD1 /* ProjectInter.app */,
 				20FA7B842D10E11F00D4EAD1 /* ProjectInterTests.xctest */,
 				20FA7B8E2D10E11F00D4EAD1 /* ProjectInterUITests.xctest */,
+				20C494232E906829009B7031 /* ProjectInterWidgetsExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -198,6 +260,32 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		20C494222E906829009B7031 /* ProjectInterWidgetsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 20C494372E90682B009B7031 /* Build configuration list for PBXNativeTarget "ProjectInterWidgetsExtension" */;
+			buildPhases = (
+				20C4941F2E906829009B7031 /* Sources */,
+				20C494202E906829009B7031 /* Frameworks */,
+				20C494212E906829009B7031 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				20C494282E90682A009B7031 /* ProjectInterWidgets */,
+			);
+			name = ProjectInterWidgetsExtension;
+			packageProductDependencies = (
+				20C4943C2E9068C8009B7031 /* Apollo */,
+				20C494402E9068D8009B7031 /* ProjectInterOperations */,
+				20C496E42E906B69009B7031 /* ApolloAPI */,
+				20C9FEC42E908DC4001FCF55 /* ProjectInterShared */,
+			);
+			productName = ProjectInterWidgetsExtension;
+			productReference = 20C494232E906829009B7031 /* ProjectInterWidgetsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		20FA7B732D10E11E00D4EAD1 /* ProjectInter */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 20FA7B982D10E11F00D4EAD1 /* Build configuration list for PBXNativeTarget "ProjectInter" */;
@@ -205,10 +293,12 @@
 				20FA7B702D10E11E00D4EAD1 /* Sources */,
 				20FA7B712D10E11E00D4EAD1 /* Frameworks */,
 				20FA7B722D10E11E00D4EAD1 /* Resources */,
+				20C4943B2E90682B009B7031 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				20C494352E90682B009B7031 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				20FA7B762D10E11E00D4EAD1 /* ProjectInter */,
@@ -219,6 +309,7 @@
 				205077132D1B79FC004CAA04 /* ProjectInterOperations */,
 				205077152D1B79FC004CAA04 /* ProjectInterTestMocks */,
 				20F5D3362E8C9476002B25DE /* ProjectInterLogging */,
+				20C9FEC22E908DBB001FCF55 /* ProjectInterShared */,
 			);
 			productName = InterMVP1;
 			productReference = 20FA7B742D10E11E00D4EAD1 /* ProjectInter.app */;
@@ -284,9 +375,12 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1600;
+				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
+					20C494222E906829009B7031 = {
+						CreatedOnToolsVersion = 26.0.1;
+					};
 					20FA7B732D10E11E00D4EAD1 = {
 						CreatedOnToolsVersion = 16.0;
 					};
@@ -313,6 +407,7 @@
 				205076682D1B46B5004CAA04 /* XCRemoteSwiftPackageReference "apollo-ios" */,
 				205077122D1B79FC004CAA04 /* XCLocalSwiftPackageReference "ProjectInterOperations" */,
 				20F5D3352E8C9476002B25DE /* XCLocalSwiftPackageReference "ProjectInterLogging" */,
+				20C9FEC12E908DBB001FCF55 /* XCLocalSwiftPackageReference "ProjectInterShared" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 20FA7B752D10E11E00D4EAD1 /* Products */;
@@ -322,11 +417,19 @@
 				20FA7B732D10E11E00D4EAD1 /* ProjectInter */,
 				20FA7B832D10E11F00D4EAD1 /* ProjectInterTests */,
 				20FA7B8D2D10E11F00D4EAD1 /* ProjectInterUITests */,
+				20C494222E906829009B7031 /* ProjectInterWidgetsExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		20C494212E906829009B7031 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		20FA7B722D10E11E00D4EAD1 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -354,6 +457,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		20C4941F2E906829009B7031 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		20FA7B702D10E11E00D4EAD1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -378,6 +488,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		20C494352E90682B009B7031 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 20C494222E906829009B7031 /* ProjectInterWidgetsExtension */;
+			targetProxy = 20C494342E90682B009B7031 /* PBXContainerItemProxy */;
+		};
 		20FA7B862D10E11F00D4EAD1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 20FA7B732D10E11E00D4EAD1 /* ProjectInter */;
@@ -391,6 +506,76 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		20C494382E90682B009B7031 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 4A9XHUS87Q;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ProjectInterWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ProjectInterWidgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.bchen.Inter.widgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development dev.bchen.Inter.widgets";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		20C494392E90682B009B7031 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 4A9XHUS87Q;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ProjectInterWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ProjectInterWidgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.bchen.Inter.widgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore dev.bchen.Inter.widgets";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		20FA7B962D10E11F00D4EAD1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -683,6 +868,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		20C494372E90682B009B7031 /* Build configuration list for PBXNativeTarget "ProjectInterWidgetsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				20C494382E90682B009B7031 /* Debug */,
+				20C494392E90682B009B7031 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		20FA7B6F2D10E11E00D4EAD1 /* Build configuration list for PBXProject "ProjectInter" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -725,6 +919,10 @@
 		205077122D1B79FC004CAA04 /* XCLocalSwiftPackageReference "ProjectInterOperations" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ProjectInterOperations;
+		};
+		20C9FEC12E908DBB001FCF55 /* XCLocalSwiftPackageReference "ProjectInterShared" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ProjectInterShared;
 		};
 		20F5D3352E8C9476002B25DE /* XCLocalSwiftPackageReference "ProjectInterLogging" */ = {
 			isa = XCLocalSwiftPackageReference;
@@ -786,6 +984,30 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 20F5D3352E8C9476002B25DE /* XCLocalSwiftPackageReference "ProjectInterLogging" */;
 			productName = ProjectInterLogging;
+		};
+		20C4943C2E9068C8009B7031 /* Apollo */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 205076682D1B46B5004CAA04 /* XCRemoteSwiftPackageReference "apollo-ios" */;
+			productName = Apollo;
+		};
+		20C494402E9068D8009B7031 /* ProjectInterOperations */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 205077122D1B79FC004CAA04 /* XCLocalSwiftPackageReference "ProjectInterOperations" */;
+			productName = ProjectInterOperations;
+		};
+		20C496E42E906B69009B7031 /* ApolloAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 205076682D1B46B5004CAA04 /* XCRemoteSwiftPackageReference "apollo-ios" */;
+			productName = ApolloAPI;
+		};
+		20C9FEC22E908DBB001FCF55 /* ProjectInterShared */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ProjectInterShared;
+		};
+		20C9FEC42E908DC4001FCF55 /* ProjectInterShared */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 20C9FEC12E908DBB001FCF55 /* XCLocalSwiftPackageReference "ProjectInterShared" */;
+			productName = ProjectInterShared;
 		};
 		20F5D3362E8C9476002B25DE /* ProjectInterLogging */ = {
 			isa = XCSwiftPackageProductDependency;

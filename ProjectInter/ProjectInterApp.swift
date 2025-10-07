@@ -6,27 +6,29 @@
 //
 
 import SwiftUI
+import Apollo
 import SwiftData
 import WebKit
 import Combine
+import ProjectInterShared
 import ProjectInterLogging
 
 @main
 struct ProjectInterApp: App {
     @State var locationManagerStateObject = LocationDataModel()
     
-    @State var globalIdSelectionStateObject = GlobalIdSelectionModel(routeIdSyncModel: RouteIdSelectionSyncModel(apolloNetworkModel: ApolloNetworkModelSingleton.shared.apolloNetworkModel))
+    @State var globalIdSelectionStateObject = GlobalIdSelectionModel(routeIdSyncModel: RouteIdSelectionSyncModel(apolloNetworkModel: ApolloNetworkModel.shared))
     
-    @State var globalSystemsStateObject = GlobalSystemsModel(apolloNetworkModel: ApolloNetworkModelSingleton.shared.apolloNetworkModel)
+    @State var globalSystemsStateObject = GlobalSystemsModel(apolloNetworkModel: ApolloNetworkModel.shared)
     
-    @State var globalStopsStateObject = GlobalStopsModel(apolloNetworkModel: ApolloNetworkModelSingleton.shared.apolloNetworkModel)
+    @State var globalStopsStateObject = GlobalStopsModel(apolloNetworkModel: ApolloNetworkModel.shared)
     
-    @State var globalNotificationsStateObject = ShuttleNotificationSchedulingModel(apolloClient: ApolloClientHolderSingleton.shared.apolloClient)
+    @State var globalNotificationsStateObject = ShuttleNotificationSchedulingModel(apolloClient: ApolloClient.shared)
     
     @State var setupStateModel = SetupStateModel()
     
     @State var schemaVersionModel = SchemaVersionModel(
-        apolloNetworkModel: ApolloNetworkModelSingleton.shared.apolloNetworkModel,
+        apolloNetworkModel: ApolloNetworkModel.shared,
         appSchemaVersion: Bundle.main.infoDictionary?["APP_SCHEMA_VERSION"] as? Int
     )
     
