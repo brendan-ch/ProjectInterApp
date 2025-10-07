@@ -15,7 +15,7 @@ public extension UserDefaults {
     static var selectedSystemIdKey: String { "selectedSystemId" }
     
     /// Value that is written to `selectedSystemIdKey` on app startup.
-    static var initialSystemIdKey: String { "lastSelectedSystemByApp" }
+    static var initialSystemIdKey: String { "initialSystemId" }
     
     static let group: UserDefaults? = .init(suiteName: "group.dev.bchen.Inter")
 }

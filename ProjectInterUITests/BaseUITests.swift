@@ -73,7 +73,7 @@ class BaseUITests: XCTestCase {
     }
     
     func selectDefaultSystem() {
-        app.launchArguments += ["-selectedSystemId", defaultSystemId]
+        app.launchArguments += ["-\(UserDefaults.initialSystemIdKey)", defaultSystemId]
     }
     
     func useMockNotificationsToken() {
