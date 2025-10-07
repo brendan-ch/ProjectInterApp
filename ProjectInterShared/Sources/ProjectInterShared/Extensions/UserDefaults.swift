@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension UserDefaults {
+public extension UserDefaults {
     static var setupCompletedKey: String { "setupCompleted" }
     static var lastViewedChangelogVersionKey: String { "lastViewedChangelogVersion" }
     static var uiTestsKey: String { "uiTests" }

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import ProjectInterShared
 
 /// Tracks whether to display the setup flow for the app.
 @Observable

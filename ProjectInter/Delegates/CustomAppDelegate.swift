@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import ProjectInterShared
 import ProjectInterLogging
 
 // See https://medium.com/@jpmtech/your-complete-guide-to-push-notifications-in-swiftui-8a13f5588662
