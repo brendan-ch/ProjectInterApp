@@ -14,7 +14,7 @@ class AppVersionModelTests {
         let mockBundle = MockBundle()
         mockBundle.mockedVersionNumber = mockActualVersion
         let mockUserDefaults = MockUserDefaults()
-        mockUserDefaults.mockStringResponse = mockStoredVersion
+        mockUserDefaults.setValue(mockStoredVersion, forKey: UserDefaults.lastViewedChangelogVersionKey)
         
         let changelogVersionModel = AppVersionModel(
             bundle: mockBundle,

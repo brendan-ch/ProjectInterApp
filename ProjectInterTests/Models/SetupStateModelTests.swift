@@ -12,7 +12,7 @@ import Foundation
 class SetupStateModelTests {
     @Test func initialStateIsCorrectIfSetupNotComplete() {
         let userDefaults = MockUserDefaults()
-        userDefaults.mockBoolResponse = true
+        userDefaults.setValue(true, forKey: UserDefaults.setupCompletedKey)
         
         let model = SetupStateModel(userDefaults: userDefaults)
         
@@ -21,8 +21,8 @@ class SetupStateModelTests {
     
     @Test func initialStateIsCorrectIfSetupComplete() {
         let userDefaults = MockUserDefaults()
-        userDefaults.mockBoolResponse = false
-        
+        userDefaults.setValue(false, forKey: UserDefaults.setupCompletedKey)
+
         let model = SetupStateModel(userDefaults: userDefaults)
         
         #expect(model.setupCompleted == false)
@@ -30,8 +30,8 @@ class SetupStateModelTests {
 
     @Test func completeSetupSetsUserDefaultsAndUpdatesState() {
         let userDefaults = MockUserDefaults()
-        userDefaults.mockBoolResponse = false
-        
+        userDefaults.setValue(false, forKey: UserDefaults.setupCompletedKey)
+
         let model = SetupStateModel(userDefaults: userDefaults)
         model.completeSetup()
         
