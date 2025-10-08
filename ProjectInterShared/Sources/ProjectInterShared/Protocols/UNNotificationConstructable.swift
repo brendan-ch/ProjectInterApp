@@ -13,12 +13,12 @@ enum UNNotificationConstructableError: Swift.Error {
     case invalidDictionaryRepresentation
 }
 
-protocol UNNotificationConstructable: DictionaryConstructable {
+public protocol UNNotificationConstructable: DictionaryConstructable {
     init(notification response: UNNotificationResponse) throws
     static func constructFromNotificationsUserInfo(userInfo: [String: Any]) throws -> Self
 }
 
-extension UNNotificationConstructable {
+public extension UNNotificationConstructable {
     init(notification response: UNNotificationResponse) throws {
         guard let userInfo = response.notification.request.content.userInfo as? [String: Any] else {
             throw UNNotificationConstructableError.missingNotificationsUserInfo

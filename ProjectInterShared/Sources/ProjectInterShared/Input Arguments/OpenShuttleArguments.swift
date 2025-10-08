@@ -10,12 +10,12 @@ import UserNotifications
 
 /// Arguments needed for the app to open a shuttle, say,
 /// from a URL or notification.
-struct OpenShuttleArguments: URLConstructable, UNNotificationConstructable, Equatable {
-    let shuttleId: String
-    let systemId: String
-    let stopId: String
+public struct OpenShuttleArguments: URLConstructable, UNNotificationConstructable, Equatable {
+    public let shuttleId: String
+    public let systemId: String
+    public let stopId: String
 }
 
-extension OpenShuttleArguments {
+public extension OpenShuttleArguments {
     static var expectedUrlPath: String { "/openShuttle" }
 }

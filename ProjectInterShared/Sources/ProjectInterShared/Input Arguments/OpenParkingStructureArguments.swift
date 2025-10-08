@@ -7,11 +7,11 @@
 
 /// Arguments needed for the app to open a parking structure, say,
 /// from a URL or notification.
-struct OpenParkingStructureArguments: URLConstructable, Equatable {
-    let parkingStructureId: String
-    let systemId: String
+public struct OpenParkingStructureArguments: URLConstructable, Equatable {
+    public let parkingStructureId: String
+    public let systemId: String
 }
 
-extension OpenParkingStructureArguments {
+public extension OpenParkingStructureArguments {
     static var expectedUrlPath: String { "/openParkingStructure" }
 }

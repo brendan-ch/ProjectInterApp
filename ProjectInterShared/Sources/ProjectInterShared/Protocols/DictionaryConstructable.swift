@@ -11,12 +11,12 @@ enum DictionaryConstructableError: Swift.Error {
     case invalidArguments
 }
 
-protocol DictionaryConstructable: Codable {
+public protocol DictionaryConstructable: Codable {
     static func constructFromDict(params: Any) throws -> Self
     
 }
 
-extension DictionaryConstructable {
+public extension DictionaryConstructable {
     static func constructFromDict(params: Any) throws -> Self {
         guard let jsonSerialization = try? JSONSerialization.data(withJSONObject: params, options: []),
               let decoded = try? JSONDecoder().decode(Self.self, from: jsonSerialization) else {
