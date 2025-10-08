@@ -8,22 +8,19 @@
 import Foundation
 import Apollo
 import ProjectInterOperations
+import ProjectInterShared
 
 // MARK: - Models
+// This view model uses the shared ``ParkingStructure`` model.
 
-struct ParkingStructuresListParkingStructure: Identifiable {
-    var spotsAvailable: Int
-    var capacity: Int
-    var name: String
-    var id: String
-}
-
-extension ParkingStructuresListParkingStructure {
+extension ParkingStructure {
     init(_ parkingStructure: GetParkingStructuresListDataQuery.Data.System.ParkingSystem.ParkingStructure) {
-        id = parkingStructure.id
-        name = parkingStructure.name
-        capacity = parkingStructure.capacity
-        spotsAvailable = parkingStructure.spotsAvailable
+        self = .init(
+            id: parkingStructure.id,
+            name: parkingStructure.name,
+            capacity: parkingStructure.capacity,
+            spotsAvailable: parkingStructure.spotsAvailable
+        )
     }
 }
 
@@ -38,7 +35,7 @@ struct ParkingStructuresNetworkingArguments {
 extension ParkingStructuresListContentView {
     @Observable
     class ViewModel: NetworkDataModel<ParkingStructuresNetworkingArguments, GetParkingStructuresListDataQuery>, PlaceholderBuildable, Clearable {
-        var structures: [ParkingStructuresListParkingStructure] = []
+        var structures: [ParkingStructure] = []
         var structuresSupportedBySystem = false
         
         override func convertNetworkArgumentsIntoQuery(_ arguments: ParkingStructuresNetworkingArguments) -> GetParkingStructuresListDataQuery {
@@ -58,7 +55,7 @@ extension ParkingStructuresListContentView {
                 
                 self.structuresSupportedBySystem = true
                 if let structures = parkingSystem.parkingStructures {
-                    self.structures = structures.map(ParkingStructuresListParkingStructure.init)
+                    self.structures = structures.map(ParkingStructure.init)
                 } else {
                     self.structures = []
                 }
@@ -75,16 +72,16 @@ extension ParkingStructuresListContentView {
             let viewModel = Self(dataInitState: .succeeded)
             viewModel.structures = [
                 .init(
-                    spotsAvailable: 680,
-                    capacity: 871,
+                    id: "1",
                     name: "Anderson Structure",
-                    id: "1"
+                    capacity: 871,
+                    spotsAvailable: 680,
                 ),
                 .init(
-                    spotsAvailable: 425,
-                    capacity: 692,
+                    id: "2",
                     name: "Barrera",
-                    id: "2"
+                    capacity: 692,
+                    spotsAvailable: 425,
                 )
             ]
             

@@ -7,6 +7,7 @@
 
 import WidgetKit
 import SwiftUI
+import ProjectInterShared
 
 struct ParkingStructuresWidgetEntryView: View {
     let entry: ParkingStructuresWidgetEntry
@@ -26,7 +27,7 @@ struct ParkingStructuresWidgetEntryView: View {
 }
 
 struct ParkingStructuresWidgetListItem: View {
-    let structure: ParkingStructuresWidgetEntry.ParkingStructure
+    let structure: ParkingStructure
     
     var link: URL? {
         // TODO: Construct an actual URL

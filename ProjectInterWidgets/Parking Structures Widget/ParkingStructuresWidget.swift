@@ -63,16 +63,6 @@ struct ParkingStructuresWidgetTimelineProvider: AppIntentTimelineProvider {
 struct ParkingStructuresWidgetEntry: TimelineEntry, GraphQLConstructable {
     typealias Query = GetParkingStructuresListDataQuery
     
-    struct ParkingStructure: Identifiable {
-        let id: String
-        let name: String
-        let capacity: Int
-        let spotsAvailable: Int
-        
-        var currentCount: Int {
-            capacity - spotsAvailable
-        }
-    }
     
     let date: Date
     let parkingStructures: [ParkingStructure]?
@@ -85,7 +75,6 @@ struct ParkingStructuresWidgetEntry: TimelineEntry, GraphQLConstructable {
         }
         return .init(
             date: .now,
-            // TODO: Bridge with parking structures in ParkingStructuresListContentView+ViewModel
             parkingStructures: structures.map { structure in
                 .init(
                     id: structure.id,
@@ -97,15 +86,6 @@ struct ParkingStructuresWidgetEntry: TimelineEntry, GraphQLConstructable {
             status: .succeeded
         )
     }
-}
-
-extension ParkingStructuresWidgetEntry.ParkingStructure {
-    static let mock: ParkingStructuresWidgetEntry.ParkingStructure = .init(
-        id: "1",
-        name: "Parking Structure A",
-        capacity: 100,
-        spotsAvailable: 40
-    )
 }
 
 

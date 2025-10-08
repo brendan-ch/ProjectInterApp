@@ -8,6 +8,7 @@
 import Testing
 @testable import ProjectInter
 import ProjectInterOperations
+import ProjectInterShared
 import ApolloTestSupport
 import ProjectInterTestMocks
 import Foundation
@@ -64,12 +65,13 @@ class ParkingStructuresListContentViewModelTestsMockData {
     )
 }
 
+// Test the extension that is declared in the view model file
 class ParkingStructuresListParkingStructureTests {
     @Test func apolloDataInitializerInitializesData() {
         let data = GetParkingStructuresListDataQuery.Data.from(ParkingStructuresListContentViewModelTestsMockData.defaultMock)
         let parkingStructures = data.system!.parkingSystem!.parkingStructures!
         
-        let constructedStructures = parkingStructures.map(ParkingStructuresListParkingStructure.init)
+        let constructedStructures = parkingStructures.map(ParkingStructure.init)
         
         for i in 0..<constructedStructures.count {
             #expect(constructedStructures[i].id == parkingStructures[i].id)
