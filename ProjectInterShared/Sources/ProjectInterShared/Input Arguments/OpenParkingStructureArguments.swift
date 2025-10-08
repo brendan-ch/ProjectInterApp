@@ -7,7 +7,7 @@
 
 /// Arguments needed for the app to open a parking structure, say,
 /// from a URL or notification.
-public struct OpenParkingStructureArguments: URLConstructable, Equatable {
+public struct OpenParkingStructureArguments: URLConstructable, URLRepresentable, Equatable {
     public let parkingStructureId: String
     public let systemId: String
 }

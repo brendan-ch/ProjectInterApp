@@ -7,7 +7,7 @@
 
 import Foundation
 import Testing
-@testable import ProjectInter
+@testable import ProjectInterShared
 
 class OpenRouteArgumentsTests {
     @Test func testConstructArgumentWithValidUrlConstructsArguments() async throws {
