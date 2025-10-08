@@ -18,18 +18,22 @@ struct SystemEntity: AppEntity, Identifiable {
     static var defaultQuery = SystemEntityQuery()
     
     let id: String
-    let name: String?
+    let name: String
     
     var displayRepresentation: DisplayRepresentation {
-        DisplayRepresentation(title: "\(name ?? "Mirror app")")
+        DisplayRepresentation(title: "\(name)")
     }
     
 }
 
 struct SystemEntityQuery: EntityStringQuery {
+    func defaultResult() async -> SystemEntity? {
+        return SystemEntity(id: "-1", name: "Select a system")
+    }
+    
     func entities(matching query: String) async throws -> [SystemEntity] {
         let all = await allOptions()
-        return all.filter { $0.name?.localizedCaseInsensitiveContains(query) == true }
+        return all.filter { $0.name.localizedCaseInsensitiveContains(query) == true }
     }
     
     func entities(for identifiers: [SystemEntity.ID]) async throws -> [SystemEntity] {

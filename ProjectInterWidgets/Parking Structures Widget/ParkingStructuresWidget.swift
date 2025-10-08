@@ -38,13 +38,14 @@ struct ParkingStructuresWidgetTimelineProvider: AppIntentTimelineProvider {
     func timeline(for configuration: ParkingStructuresWidgetConfigurationAppIntent, in context: Context) async -> Timeline<ParkingStructuresWidgetEntry> {
         var entries: [ParkingStructuresWidgetEntry] = []
         
-        var systemId = configuration.system.id
+        var systemId = configuration.system?.id
         if configuration.mirrorSystemInApp,
            let systemIdFromUserDefaults = UserDefaults.group?.string(forKey: UserDefaults.selectedSystemIdKey) {
             systemId = systemIdFromUserDefaults
         }
         
-        if let entry = try? await ParkingStructuresWidgetEntry.create(GetParkingStructuresListDataQuery(systemId: systemId)) {
+        if let systemId = systemId,
+           let entry = try? await ParkingStructuresWidgetEntry.create(GetParkingStructuresListDataQuery(systemId: systemId)) {
             entries.append(entry)
         } else {
             entries.append(.init(

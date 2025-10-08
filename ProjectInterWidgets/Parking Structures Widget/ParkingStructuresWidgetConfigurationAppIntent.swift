@@ -15,11 +15,14 @@ struct ParkingStructuresWidgetConfigurationAppIntent: WidgetConfigurationIntent 
     @Parameter(title: "Mirror system in app", default: true)
     var mirrorSystemInApp: Bool
     
+    // Note that the `default` parameter here only applies to UI;
+    // we need an optional here for WidgetKit to recognize nil as a
+    // valid value
     @Parameter(title: "System", default: .init(
         id: "-1",
-        name: nil
+        name: "Select a system"
     ))
-    var system: SystemEntity
+    var system: SystemEntity?
     
     static var parameterSummary: some ParameterSummary {
         When(\.$mirrorSystemInApp, .equalTo, true) {
