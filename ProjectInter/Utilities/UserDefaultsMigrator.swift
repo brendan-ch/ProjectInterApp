@@ -21,22 +21,16 @@ struct UserDefaultsMigrator {
     }
 
     func run() {
-        migrateSelectedSystemIdFromInitialIdFlag()
-        migrateSelectedSystemId()
+        migrateToSharedUserDefaults(forKey: UserDefaults.selectedSystemIdKey)
+        migrateToSharedUserDefaults(forKey: UserDefaults.initialSystemIdKey, to: UserDefaults.selectedSystemIdKey)
+        migrateToSharedUserDefaults(forKey: UserDefaults.setupCompletedKey)
     }
     
     // MARK: - Migrations
-    private func migrateSelectedSystemId() {
-        if let systemId = standardUserDefaults.string(forKey: UserDefaults.selectedSystemIdKey) {
-            sharedUserDefaults?.setValue(systemId, forKey: UserDefaults.selectedSystemIdKey)
+    private func migrateToSharedUserDefaults(forKey key: String, to destinationKey: String? = nil) {
+        if let value = standardUserDefaults.value(forKey: key) {
+            sharedUserDefaults?.setValue(value, forKey: destinationKey ?? key)
         }
-        standardUserDefaults.removeObject(forKey: UserDefaults.selectedSystemIdKey)
-    }
-    
-    private func migrateSelectedSystemIdFromInitialIdFlag() {
-        if let systemId = standardUserDefaults.string(forKey: UserDefaults.initialSystemIdKey) {
-            sharedUserDefaults?.setValue(systemId, forKey: UserDefaults.selectedSystemIdKey)
-        }
-        standardUserDefaults.removeObject(forKey: UserDefaults.initialSystemIdKey)
+        standardUserDefaults.removeObject(forKey: key)
     }
 }

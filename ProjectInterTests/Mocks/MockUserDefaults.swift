@@ -21,6 +21,10 @@ class MockUserDefaults: UserDefaults {
         return values[defaultName] as? String
     }
     
+    override func value(forKey defaultName: String) -> Any? {
+        return values[defaultName] as Any?
+    }
+    
     override func setValue(_ value: Any?, forKey key: String) {
         lastKeySetTo = key
         lastValueSetTo = value

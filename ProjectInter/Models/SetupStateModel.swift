@@ -7,25 +7,36 @@
 
 import SwiftUI
 import ProjectInterShared
+import ProjectInterLogging
 
 /// Tracks whether to display the setup flow for the app.
 @Observable
 class SetupStateModel {
-    private(set) var setupCompleted: Bool
-    
-    let userDefaults: UserDefaults
-    
-    convenience init() {
-        self.init(userDefaults: UserDefaults.standard)
+    private(set) var setupCompleted: Bool {
+        get {
+            access(keyPath: \.setupCompleted)
+            return userDefaults?.bool(forKey: UserDefaults.setupCompletedKey) ?? false
+        }
+        set {
+            withMutation(keyPath: \.setupCompleted) {
+                userDefaults?.setValue(newValue, forKey: UserDefaults.setupCompletedKey)
+            }
+            Loggers.shared.globalStateEventsLogger.notice("Setup completion value set to: \(self.setupCompleted)")
+        }
+
     }
     
-    init(userDefaults: UserDefaults) {
+    let userDefaults: UserDefaults?
+    
+    convenience init() {
+        self.init(userDefaults: UserDefaults.group)
+    }
+    
+    init(userDefaults: UserDefaults?) {
         self.userDefaults = userDefaults
-        setupCompleted = self.userDefaults.bool(forKey: UserDefaults.setupCompletedKey)
     }
     
     func completeSetup() {
-        userDefaults.setValue(true, forKey: UserDefaults.setupCompletedKey)
         setupCompleted = true
     }
 }

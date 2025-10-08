@@ -27,7 +27,14 @@ class UserDefaultsMigratorTests {
         #expect(standard.string(forKey: UserDefaults.selectedSystemIdKey) == nil)
     }
     
-    @Test func testMigrateSelectedSystemIdWhenNil() async throws {
+    @Test func testMigrateSelectedSystemIdNilResultsInNilMigration() async throws {
+        let (standard, shared) = generateUserDefaults()
+
+        UserDefaultsMigrator(
+            standardUserDefaults: standard,
+            sharedUserDefaults: shared
+        ).run()
         
+        #expect(shared.string(forKey: UserDefaults.selectedSystemIdKey) == nil)
     }
 }
