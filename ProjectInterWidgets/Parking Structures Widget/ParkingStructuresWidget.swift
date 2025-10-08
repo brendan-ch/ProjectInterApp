@@ -110,6 +110,7 @@ struct ParkingStructuresWidget: Widget {
         }
         .configurationDisplayName("Parking Structures")
         .description("View parking structures for the selected system.")
+        .supportedFamilies([.systemMedium, .systemLarge])
     }
 }
 
