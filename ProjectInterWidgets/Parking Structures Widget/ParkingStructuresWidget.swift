@@ -38,32 +38,41 @@ struct ParkingStructuresWidgetTimelineProvider: AppIntentTimelineProvider {
     }
     
     func timeline(for configuration: ParkingStructuresWidgetConfigurationAppIntent, in context: Context) async -> Timeline<ParkingStructuresWidgetEntry> {
-        var entries: [ParkingStructuresWidgetEntry] = []
-        
         var systemId = configuration.system?.id
         if configuration.mirrorSystemInApp,
            let systemIdFromUserDefaults = UserDefaults.group?.string(forKey: UserDefaults.selectedSystemIdKey) {
             systemId = systemIdFromUserDefaults
         }
         
-        if let systemId = systemId,
-           let entry = try? await ParkingStructuresWidgetEntry.create(GetParkingStructuresListDataQuery(systemId: systemId)) {
-            entries.append(entry)
-        } else {
-            entries.append(.init(
+        guard let setupCompleted = UserDefaults.group?.bool(forKey: UserDefaults.setupCompletedKey),
+              setupCompleted else {
+            return constructTimelineFromEntries(entries: [.init(
                 systemId: nil,
                 date: .now,
                 parkingStructures: nil,
-                status: .failed(error: "Unable to get parking structures")
-            ))
+                status: .failed(error: "To see parking structures, complete app setup.")
+            )])
         }
         
-        let timeline = Timeline(entries: entries, policy: .atEnd)
-        return timeline
+        guard let systemId = systemId,
+              let entry = try? await ParkingStructuresWidgetEntry.create(GetParkingStructuresListDataQuery(systemId: systemId)) else {
+            return constructTimelineFromEntries(entries: [.init(
+                systemId: nil,
+                date: .now,
+                parkingStructures: nil,
+                status: .failed(error: "Unable to get parking structures; please try again later.")
+            )])
+        }
+        
+        return constructTimelineFromEntries(entries: [entry])
+    }
+    
+    func constructTimelineFromEntries(entries: [ParkingStructuresWidgetEntry]) -> Timeline<ParkingStructuresWidgetEntry> {
+        return Timeline(entries: entries, policy: .atEnd)
     }
 }
 
-struct ParkingStructuresWidgetEntry: TimelineEntry, GraphQLConstructable {
+struct ParkingStructuresWidgetEntry: ExtendedTimelineEntry, GraphQLConstructable {
     typealias Query = GetParkingStructuresListDataQuery
     
     let systemId: String?
