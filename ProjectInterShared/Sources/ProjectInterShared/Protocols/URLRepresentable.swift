@@ -8,7 +8,7 @@
 import Foundation
 
 /// Defines a struct that can be fully represented by a URL.
-protocol URLRepresentable: DictionaryConstructable {
+public protocol URLRepresentable: DictionaryConstructable {
     static var expectedUrlPath: String { get }
     func toUrl() -> URL?
 }
@@ -23,7 +23,7 @@ fileprivate struct AnyEncodable<T: Encodable>: Encodable {
     }
 }
 
-extension URLRepresentable {
+public extension URLRepresentable {
     func toUrl() -> URL? {
         let base = "interchange://x-callback-url\(Self.expectedUrlPath)"
 

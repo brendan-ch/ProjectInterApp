@@ -10,6 +10,11 @@
 public struct OpenParkingStructureArguments: URLConstructable, URLRepresentable, Equatable {
     public let parkingStructureId: String
     public let systemId: String
+    
+    public init(parkingStructureId: String, systemId: String) {
+        self.parkingStructureId = parkingStructureId
+        self.systemId = systemId
+    }
 }
 
 public extension OpenParkingStructureArguments {

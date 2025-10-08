@@ -14,9 +14,15 @@ struct ParkingStructuresWidgetEntryView: View {
     
     var body: some View {
         VStack(spacing: 16) {
-            if let structures = entry.parkingStructures {
+            if let structures = entry.parkingStructures,
+               let systemId = entry.systemId {
                 ForEach(structures) { structure in
-                    ParkingStructuresWidgetListItem(structure: structure)
+                    let arguments = OpenParkingStructureArguments(parkingStructureId: structure.id, systemId: systemId)
+                    if let link = arguments.toUrl() {
+                        Link(destination: link) {
+                            ParkingStructuresWidgetListItem(structure: structure)
+                        }
+                    }
                 }
             }
             if case let .failed(message) = entry.status {
@@ -29,30 +35,20 @@ struct ParkingStructuresWidgetEntryView: View {
 struct ParkingStructuresWidgetListItem: View {
     let structure: ParkingStructure
     
-    var link: URL? {
-        // TODO: Construct an actual URL
-        return URL(string: "interchange://x-callback-url/openParkingStructure?parkingStructureId=1&systemId=1")
-    }
-    
     var body: some View {
-        if let link = link {
-            Link(destination: link) {
-                VStack(spacing: 8) {
-                    VStack {
-                        HStack {
-                            Text(structure.name)
-                                .font(.headline)
-                            Spacer()
-                            Text("\(structure.currentCount)/\(structure.capacity)")
-                        }
-                    }
-                    ProgressView(value: Double(structure.currentCount) / Double(structure.capacity))
-                        .progressViewStyle(LinearProgressViewStyle())
+        VStack(spacing: 8) {
+            VStack {
+                HStack {
+                    Text(structure.name)
+                        .font(.headline)
+                    Spacer()
+                    Text("\(structure.currentCount)/\(structure.capacity)")
                 }
-                .contentShape(Rectangle())
-
             }
+            ProgressView(value: Double(structure.currentCount) / Double(structure.capacity))
+                .progressViewStyle(LinearProgressViewStyle())
         }
+        .contentShape(Rectangle())
     }
 }
 
@@ -60,6 +56,7 @@ struct ParkingStructuresWidgetListItem: View {
     ParkingStructuresWidget()
 } timeline: {
     ParkingStructuresWidgetEntry(
+        systemId: "1",
         date: .now,
         parkingStructures: [
             .mock,

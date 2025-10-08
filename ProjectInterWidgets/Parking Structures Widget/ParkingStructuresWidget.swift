@@ -17,6 +17,7 @@ struct ParkingStructuresWidgetTimelineProvider: AppIntentTimelineProvider {
     
     func placeholder(in context: Context) -> ParkingStructuresWidgetEntry {
         return .init(
+            systemId: nil,
             date: .now,
             parkingStructures: [
                 .mock
@@ -27,6 +28,7 @@ struct ParkingStructuresWidgetTimelineProvider: AppIntentTimelineProvider {
     
     func snapshot(for configuration: ParkingStructuresWidgetConfigurationAppIntent, in context: Context) async -> ParkingStructuresWidgetEntry {
         return .init(
+            systemId: nil,
             date: .now,
             parkingStructures: [
                 .mock
@@ -49,6 +51,7 @@ struct ParkingStructuresWidgetTimelineProvider: AppIntentTimelineProvider {
             entries.append(entry)
         } else {
             entries.append(.init(
+                systemId: nil,
                 date: .now,
                 parkingStructures: nil,
                 status: .failed(error: "Unable to get parking structures")
@@ -63,17 +66,19 @@ struct ParkingStructuresWidgetTimelineProvider: AppIntentTimelineProvider {
 struct ParkingStructuresWidgetEntry: TimelineEntry, GraphQLConstructable {
     typealias Query = GetParkingStructuresListDataQuery
     
-    
+    let systemId: String?
     let date: Date
     let parkingStructures: [ParkingStructure]?
     let status: TimelineEntryStatus
     
     static func create(_ query: ProjectInterOperations.GetParkingStructuresListDataQuery) async throws -> ParkingStructuresWidgetEntry {
+        let systemId = query.systemId
         let result = try await getGraphQLResult(query)
         guard let structures = result.data?.system?.parkingSystem?.parkingStructures else {
             throw GraphQLConstructableError.dataNotAvailable
         }
         return .init(
+            systemId: systemId,
             date: .now,
             parkingStructures: structures.map { structure in
                 .init(
