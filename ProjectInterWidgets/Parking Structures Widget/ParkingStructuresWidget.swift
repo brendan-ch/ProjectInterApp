@@ -68,6 +68,10 @@ struct ParkingStructuresWidgetEntry: TimelineEntry, GraphQLConstructable {
         let name: String
         let capacity: Int
         let spotsAvailable: Int
+        
+        var currentCount: Int {
+            capacity - spotsAvailable
+        }
     }
     
     let date: Date
@@ -104,22 +108,6 @@ extension ParkingStructuresWidgetEntry.ParkingStructure {
     )
 }
 
-struct ParkingStructuresWidgetEntryView: View {
-    let entry: ParkingStructuresWidgetEntry
-    
-    var body: some View {
-        VStack {
-            if let structures = entry.parkingStructures {
-                ForEach(structures) { structure in
-                    Text(structure.name)
-                }
-            }
-            if case let .failed(message) = entry.status {
-                Text("\(message)")
-            }
-        }
-    }
-}
 
 struct ParkingStructuresWidget: Widget {
     let kind: String = "ParkingStructuresWidget"
@@ -138,17 +126,5 @@ struct ParkingStructuresWidget: Widget {
         .configurationDisplayName("Parking Structures")
         .description("View parking structures for the selected system.")
     }
-}
-
-#Preview(as: .systemMedium) {
-    ParkingStructuresWidget()
-} timeline: {
-    ParkingStructuresWidgetEntry(
-        date: .now,
-        parkingStructures: [
-            .mock
-        ],
-        status: .succeeded
-    )
 }
 
