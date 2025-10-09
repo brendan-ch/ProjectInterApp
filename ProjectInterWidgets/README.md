@@ -14,3 +14,8 @@ a selected ID from the main app.
 
 ![Sketch of how data sharing works.](Documentation/sketch.png)
 
+## Tests
+
+Tests need more research, namely because some required parameters of `TimelineProvider`
+have no usable initializers.
+
