@@ -69,7 +69,9 @@ platform :ios do
 
         increment_build_number(
             build_number: latest_testflight_build_number(
-                version: get_version_number
+                version: get_version_number(
+                    target: "ProjectInterApp"
+                )
             ) + 1,
         )
 
