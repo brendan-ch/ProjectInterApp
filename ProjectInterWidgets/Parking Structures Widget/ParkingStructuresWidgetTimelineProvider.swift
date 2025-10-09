@@ -50,28 +50,31 @@ struct ParkingStructuresWidgetTimelineProvider: AppIntentTimelineProvider {
         
         guard let setupCompleted = userDefaults?.bool(forKey: UserDefaults.setupCompletedKey),
               setupCompleted else {
-            return constructTimelineFromEntries(entries: [.init(
-                systemId: nil,
-                date: .now,
-                parkingStructures: nil,
-                status: .failed(error: "To see parking structures, complete app setup.")
-            )])
+            return timelineForFailingEntryWithError(error: "To see parking structures, complete app setup.")
         }
         
         guard let systemId = systemId,
               let entry = try? await ParkingStructuresWidgetEntry.create(GetParkingStructuresListDataQuery(systemId: systemId)) else {
-            return constructTimelineFromEntries(entries: [.init(
-                systemId: nil,
-                date: .now,
-                parkingStructures: nil,
-                status: .failed(error: "Unable to get parking structures; please try again later.")
-            )])
+            return timelineForFailingEntryWithError(error: "Unable to get parking structures; please try again later.")
         }
         
-        return constructTimelineFromEntries(entries: [entry])
+        return timelineForEntry(entry)
     }
     
-    func constructTimelineFromEntries(entries: [ParkingStructuresWidgetEntry]) -> Timeline<ParkingStructuresWidgetEntry> {
+    func timelineForFailingEntryWithError(error: String) -> Timeline<ParkingStructuresWidgetEntry> {
+        return timelineForEntry(.init(
+            systemId: nil,
+            date: .now,
+            parkingStructures: nil,
+            status: .failed(error: error)
+        ))
+    }
+    
+    func timelineForEntry(_ entry: ParkingStructuresWidgetEntry) -> Timeline<ParkingStructuresWidgetEntry> {
+        return timelineForEntries([entry])
+    }
+    
+    func timelineForEntries(_ entries: [ParkingStructuresWidgetEntry]) -> Timeline<ParkingStructuresWidgetEntry> {
         return Timeline(entries: entries, policy: .atEnd)
     }
 }
