@@ -19,9 +19,9 @@ struct ParkingStructuresWidgetEntry: ExtendedTimelineEntry, GraphQLConstructable
     let parkingStructures: [ParkingStructure]?
     let status: TimelineEntryStatus
     
-    static func create(_ query: ProjectInterOperations.GetParkingStructuresListDataQuery) async throws -> ParkingStructuresWidgetEntry {
+    static func create(_ query: ProjectInterOperations.GetParkingStructuresListDataQuery, client: ApolloClientProtocol = ApolloClient.shared) async throws -> ParkingStructuresWidgetEntry {
         let systemId = query.systemId
-        let result = try await getGraphQLResult(query)
+        let result = try await getGraphQLResult(query, client: client)
         guard let structures = result.data?.system?.parkingSystem?.parkingStructures else {
             throw GraphQLConstructableError.dataNotAvailable
         }

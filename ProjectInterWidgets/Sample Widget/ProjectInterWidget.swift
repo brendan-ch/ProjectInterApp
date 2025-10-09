@@ -51,8 +51,8 @@ struct Provider: TimelineProvider {
 
 
 struct SchemaVersionEntry: TimelineEntry, GraphQLConstructable {
-    static func create(_ query: ProjectInterOperations.GetSchemaVersionQuery) async throws -> SchemaVersionEntry {
-        let result = try await getGraphQLResult(query)
+    static func create(_ query: ProjectInterOperations.GetSchemaVersionQuery, client: ApolloClientProtocol = ApolloClient.shared) async throws -> SchemaVersionEntry {
+        let result = try await getGraphQLResult(query, client: client)
         guard let data = result.data else {
             throw GraphQLConstructableError.dataNotAvailable
         }

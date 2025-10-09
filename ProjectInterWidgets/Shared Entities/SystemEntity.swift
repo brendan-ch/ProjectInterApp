@@ -55,8 +55,8 @@ struct SystemEntityQuery: EntityStringQuery {
 struct SystemsProvider: GraphQLConstructable {
     let systems: [SystemEntity]
     
-    static func create(_ query: ProjectInterOperations.GetAllSystemsQuery) async throws -> SystemsProvider {
-        let result = try await getGraphQLResult(query)
+    static func create(_ query: ProjectInterOperations.GetAllSystemsQuery, client: ApolloClientProtocol = ApolloClient.shared) async throws -> SystemsProvider {
+        let result = try await getGraphQLResult(query, client: client)
         guard let data = result.data else {
             throw GraphQLConstructableError.dataNotAvailable
         }
