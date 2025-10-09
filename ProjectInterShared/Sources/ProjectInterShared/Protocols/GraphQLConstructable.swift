@@ -17,7 +17,7 @@ public enum GraphQLConstructableError: Swift.Error {
 public protocol GraphQLConstructable {
     associatedtype Query where Query : GraphQLQuery
     
-    static func create(_ query: Query) async -> Self
+    static func create(_ query: Query, client: ApolloClientProtocol) async throws -> Self
     static func getGraphQLResult(_ query: Query, client: ApolloClientProtocol) async throws -> GraphQLResult<Query.Data>
 }
 

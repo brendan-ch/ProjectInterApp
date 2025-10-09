@@ -17,6 +17,7 @@
 		205077112D1B78EF004CAA04 /* apollo-codegen-config.json in Resources */ = {isa = PBXBuildFile; fileRef = 205077102D1B78EF004CAA04 /* apollo-codegen-config.json */; };
 		205077142D1B79FC004CAA04 /* ProjectInterOperations in Frameworks */ = {isa = PBXBuildFile; productRef = 205077132D1B79FC004CAA04 /* ProjectInterOperations */; };
 		205077162D1B79FC004CAA04 /* ProjectInterTestMocks in Frameworks */ = {isa = PBXBuildFile; productRef = 205077152D1B79FC004CAA04 /* ProjectInterTestMocks */; };
+		206A72562E94BB10000AD74D /* ProjectInterShared in Frameworks */ = {isa = PBXBuildFile; productRef = 206A72552E94BB10000AD74D /* ProjectInterShared */; };
 		207534352E8CA07200E164A5 /* ProjectInterLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 207534342E8CA07200E164A5 /* ProjectInterLogging */; };
 		208238562D2E730D00DA9820 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 208238552D2E730D00DA9820 /* README.md */; };
 		20C494252E90682A009B7031 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20C494242E906829009B7031 /* WidgetKit.framework */; };
@@ -80,6 +81,7 @@
 
 /* Begin PBXFileReference section */
 		20045CAC2D6ABDBA00A7B6FA /* ProjectInterUITests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = ProjectInterUITests.xctestplan; sourceTree = "<group>"; };
+		20283E5F2E94961400A6C44E /* ProjectInterWidgetsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ProjectInterWidgetsExtension.entitlements; sourceTree = "<group>"; };
 		205077102D1B78EF004CAA04 /* apollo-codegen-config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "apollo-codegen-config.json"; sourceTree = "<group>"; };
 		208238552D2E730D00DA9820 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		2093DAAD2D67EB7200FC4512 /* ProjectInterTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = ProjectInterTests.xctestplan; sourceTree = "<group>"; };
@@ -209,6 +211,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				206A72562E94BB10000AD74D /* ProjectInterShared in Frameworks */,
 				200765492E19E10700117172 /* ApolloAPI in Frameworks */,
 				2007654D2E19E10700117172 /* ApolloTestSupport in Frameworks */,
 				200765532E19E10700117172 /* ProjectInterTestMocks in Frameworks */,
@@ -233,6 +236,7 @@
 		20FA7B6B2D10E11E00D4EAD1 = {
 			isa = PBXGroup;
 			children = (
+				20283E5F2E94961400A6C44E /* ProjectInterWidgetsExtension.entitlements */,
 				20045CAC2D6ABDBA00A7B6FA /* ProjectInterUITests.xctestplan */,
 				2093DAAD2D67EB7200FC4512 /* ProjectInterTests.xctestplan */,
 				208238552D2E730D00DA9820 /* README.md */,
@@ -363,6 +367,7 @@
 				200765502E19E10700117172 /* ProjectInterOperations */,
 				200765522E19E10700117172 /* ProjectInterTestMocks */,
 				207534342E8CA07200E164A5 /* ProjectInterLogging */,
+				206A72552E94BB10000AD74D /* ProjectInterShared */,
 			);
 			productName = InterMVP1UITests;
 			productReference = 20FA7B8E2D10E11F00D4EAD1 /* ProjectInterUITests.xctest */;
@@ -511,6 +516,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = ProjectInterWidgetsExtension.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
@@ -520,13 +526,12 @@
 				INFOPLIST_FILE = ProjectInterWidgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ProjectInterWidgets;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.bchen.Inter.widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -546,6 +551,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = ProjectInterWidgetsExtension.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
@@ -555,13 +561,12 @@
 				INFOPLIST_FILE = ProjectInterWidgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ProjectInterWidgets;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.bchen.Inter.widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -979,6 +984,11 @@
 		205077152D1B79FC004CAA04 /* ProjectInterTestMocks */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ProjectInterTestMocks;
+		};
+		206A72552E94BB10000AD74D /* ProjectInterShared */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 20C9FEC12E908DBB001FCF55 /* XCLocalSwiftPackageReference "ProjectInterShared" */;
+			productName = ProjectInterShared;
 		};
 		207534342E8CA07200E164A5 /* ProjectInterLogging */ = {
 			isa = XCSwiftPackageProductDependency;

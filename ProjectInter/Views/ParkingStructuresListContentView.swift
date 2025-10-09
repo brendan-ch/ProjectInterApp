@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import ProjectInterShared
 
 struct ParkingStructuresListContentView: NetworkView {
     typealias NetworkArguments = ParkingStructuresNetworkingArguments
@@ -58,8 +59,8 @@ struct ParkingStructuresListContentView: NetworkView {
 }
 
 struct ParkingStructureItem: View {
-    let structure: ParkingStructuresListParkingStructure
-    let action: (_ selectedParkingStructure: ParkingStructuresListParkingStructure) -> Void
+    let structure: ParkingStructure
+    let action: (_ selectedParkingStructure: ParkingStructure) -> Void
 
     var currentCount: Int {
         structure.capacity - structure.spotsAvailable
@@ -94,8 +95,18 @@ struct ParkingStructureItem: View {
     let viewModel = ParkingStructuresListContentView.ViewModel.buildPlaceholder()
     viewModel.structuresSupportedBySystem = true
     viewModel.structures = [
-        .init(spotsAvailable: 50, capacity: 100, name: "Anderson", id: "1"),
-        .init(spotsAvailable: 50, capacity: 200, name: "Barrera", id: "2")
+        .init(
+            id: "1",
+            name: "Anderson",
+            capacity: 100,
+            spotsAvailable: 50,
+        ),
+        .init(
+            id: "2",
+            name: "Barrera",
+            capacity: 200,
+            spotsAvailable: 50,
+        )
     ]
     
     return ParkingStructuresListContentView(viewModel: viewModel)

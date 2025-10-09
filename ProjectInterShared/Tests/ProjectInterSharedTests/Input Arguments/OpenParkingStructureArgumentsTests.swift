@@ -7,12 +7,12 @@
 
 import Testing
 import Foundation
-@testable import ProjectInter
+@testable import ProjectInterShared
 
 class OpenParkingStructureArgumentsTests {
     @Test func testConstructArgumentWithValidUrlConstructsArguments() async throws {
         let expected = OpenParkingStructureArguments(parkingStructureId: "1", systemId: "1")
-        let url = URL(string: "interchange://x-callback-url/openParkingStructure?parkingStructureId=1&systemId=1")!
+        let url = URL(string: "interchange://x-callback-url\(OpenParkingStructureArguments.expectedUrlPath)?parkingStructureId=1&systemId=1")!
         let arguments = try OpenParkingStructureArguments(url: url)
         #expect(expected == arguments)
     }
@@ -25,9 +25,18 @@ class OpenParkingStructureArgumentsTests {
     }
     
     @Test func testConstructArgumentWithInvalidParamsThrows() async throws {
-        let url = URL(string: "interchange://x-callback-url/openParkingStructure?systemId=1")!
+        let url = URL(string: "interchange://x-callback-url\(OpenParkingStructureArguments.expectedUrlPath)?systemId=1")!
         #expect(throws: DictionaryConstructableError.invalidArguments) {
             _ = try OpenParkingStructureArguments(url: url)
         }
+    }
+    
+    @Test func testConvertToUrlConvertsUrl() async throws {
+        let base = OpenParkingStructureArguments(parkingStructureId: "1", systemId: "1")
+        let url = base.toUrl()
+        #expect(
+            url?.absoluteString == "interchange://x-callback-url\(OpenParkingStructureArguments.expectedUrlPath)?parkingStructureId=1&systemId=1" ||
+            url?.absoluteString == "interchange://x-callback-url\(OpenParkingStructureArguments.expectedUrlPath)?systemId=1&parkingStructureId=1"
+        )
     }
 }

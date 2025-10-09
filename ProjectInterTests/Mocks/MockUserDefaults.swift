@@ -8,22 +8,31 @@
 import Foundation
 
 class MockUserDefaults: UserDefaults {
-    var mockBoolResponse = false
-    var mockStringResponse = ""
-    
     var lastKeySetTo: String?
     var lastValueSetTo: Any?
     
+    var values: [String: Any] = [:]
+    
     override func bool(forKey defaultName: String) -> Bool {
-        return mockBoolResponse
+        return values[defaultName] as? Bool ?? false
     }
     
     override func string(forKey defaultName: String) -> String? {
-        return mockStringResponse
+        return values[defaultName] as? String
+    }
+    
+    override func value(forKey defaultName: String) -> Any? {
+        return values[defaultName] as Any?
     }
     
     override func setValue(_ value: Any?, forKey key: String) {
         lastKeySetTo = key
         lastValueSetTo = value
+        
+        values[key] = value
+    }
+    
+    override func removeObject(forKey key: String) {
+        values[key] = nil
     }
 }

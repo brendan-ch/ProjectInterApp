@@ -29,11 +29,18 @@ struct GlobalDataModelNetworkArguments {
 class GlobalSystemsModel: NetworkDataModel<GlobalDataModelNetworkArguments, GetAllSystemsQuery>, PlaceholderBuildable {
     typealias NetworkArguments = GlobalDataModelNetworkArguments
     
-    private(set) var userDefaults: UserDefaults = .standard
+    private(set) var userDefaults: UserDefaults? = .group
     
     var systems: [System] = []
-    private var selectedSystemId: String? = nil {
-        didSet {
+    private var selectedSystemId: String? {
+        get {
+            access(keyPath: \.selectedSystemId)
+            return userDefaults?.string(forKey: UserDefaults.selectedSystemIdKey) ?? ""
+        }
+        set {
+            withMutation(keyPath: \.selectedSystemId) {
+                userDefaults?.setValue(newValue, forKey: UserDefaults.selectedSystemIdKey)
+            }
             Loggers.shared.globalStateEventsLogger.notice("Selected system ID changed to: \(self.selectedSystemId ?? "nil")")
         }
     }
@@ -43,18 +50,15 @@ class GlobalSystemsModel: NetworkDataModel<GlobalDataModelNetworkArguments, GetA
     
     required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
         super.init(apolloNetworkModel: apolloNetworkModel)
-        self.userDefaults = UserDefaults.standard
-        
-        selectedSystemId = self.userDefaults.string(forKey: UserDefaults.selectedSystemIdKey)
+        self.userDefaults = UserDefaults.group
     }
 
     init(
         apolloNetworkModel: ApolloNetworkModel? = nil,
-        userDefaults: UserDefaults = UserDefaults.standard
+        userDefaults: UserDefaults? = UserDefaults.group
     ) {
         super.init(apolloNetworkModel: apolloNetworkModel)
         self.userDefaults = userDefaults
-        selectedSystemId = self.userDefaults.string(forKey: UserDefaults.selectedSystemIdKey)
     }
     
     required init(dataInitState: InitializationState) {
@@ -78,7 +82,6 @@ class GlobalSystemsModel: NetworkDataModel<GlobalDataModelNetworkArguments, GetA
 
     func selectSystemId(_ id: String) {
         selectedSystemId = id
-        userDefaults.setValue(id, forKey: UserDefaults.selectedSystemIdKey)
     }
     
     static func buildPlaceholder() -> Self {

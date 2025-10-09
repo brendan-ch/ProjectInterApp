@@ -7,10 +7,15 @@
 
 import Foundation
 
-extension UserDefaults {
+public extension UserDefaults {
     static var setupCompletedKey: String { "setupCompleted" }
     static var lastViewedChangelogVersionKey: String { "lastViewedChangelogVersion" }
     static var uiTestsKey: String { "uiTests" }
     static var mockNotificationsTokenKey: String { "mockNotificationsToken" }
     static var selectedSystemIdKey: String { "selectedSystemId" }
+    
+    /// Value that is written to `selectedSystemIdKey` on app startup.
+    static var initialSystemIdKey: String { "initialSystemId" }
+    
+    static let group: UserDefaults? = .init(suiteName: "group.dev.bchen.Inter")
 }

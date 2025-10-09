@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import ProjectInterShared
 import ProjectInterLogging
 
 // See https://medium.com/@jpmtech/your-complete-guide-to-push-notifications-in-swiftui-8a13f5588662
@@ -23,6 +24,11 @@ class CustomAppDelegate: NSObject, ObservableObject, UIApplicationDelegate {
             notificationTokenString = "mock-device"
             Loggers.shared.systemEventsLogger.debug("Using mock notification token")
         }
+    }
+    
+    func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        UserDefaultsMigrator().run()
+        return true
     }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {

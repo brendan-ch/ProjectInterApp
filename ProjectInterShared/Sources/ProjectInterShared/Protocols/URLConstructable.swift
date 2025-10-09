@@ -13,12 +13,12 @@ enum URLConstructableError: Swift.Error {
     case invalidDictionaryRepresentation
 }
 
-protocol URLConstructable: DictionaryConstructable {
+public protocol URLConstructable: DictionaryConstructable {
     init(url: URL) throws
     static var expectedUrlPath: String { get }
 }
 
-extension URLConstructable {
+public extension URLConstructable {
     init(url: URL) throws {
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
             throw URLConstructableError.missingUrlComponents

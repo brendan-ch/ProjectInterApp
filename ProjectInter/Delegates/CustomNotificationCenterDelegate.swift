@@ -9,6 +9,7 @@ import Foundation
 import UserNotifications
 import UIKit
 import ProjectInterLogging
+import ProjectInterShared
 
 
 class CustomNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate, ObservableObject {

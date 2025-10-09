@@ -7,7 +7,7 @@
 
 import Testing
 import UserNotifications
-@testable import ProjectInter
+@testable import ProjectInterShared
 
 class OpenShuttleArgumentsTests {
     @Test func testConstructArgumentsWithValidNotificationConstructsArguments() async throws {
