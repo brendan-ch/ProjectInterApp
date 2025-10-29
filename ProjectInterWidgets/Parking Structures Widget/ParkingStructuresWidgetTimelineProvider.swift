@@ -42,11 +42,7 @@ struct ParkingStructuresWidgetTimelineProvider: AppIntentTimelineProvider {
     }
     
     func timeline(for configuration: ParkingStructuresWidgetConfigurationAppIntent, in context: Context) async -> Timeline<ParkingStructuresWidgetEntry> {
-        var systemId = configuration.system?.id
-        if configuration.mirrorSystemInApp,
-           let systemIdFromUserDefaults = userDefaults?.string(forKey: UserDefaults.selectedSystemIdKey) {
-            systemId = systemIdFromUserDefaults
-        }
+        let systemId = configuration.getSystemId(userDefaults: userDefaults)
         
         guard let setupCompleted = userDefaults?.bool(forKey: UserDefaults.setupCompletedKey),
               setupCompleted else {
