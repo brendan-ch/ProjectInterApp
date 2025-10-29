@@ -10,7 +10,7 @@ import ProjectInterShared
 import ProjectInterOperations
 import Apollo
 
-struct ParkingStructuresWidgetEntry: ExtendedTimelineEntry, GraphQLConstructable {
+struct ParkingStructuresWidgetEntry: ProjectInterTimelineEntry, GraphQLConstructable {
     typealias Query = GetParkingStructuresListDataQuery
     
     let systemId: String?
