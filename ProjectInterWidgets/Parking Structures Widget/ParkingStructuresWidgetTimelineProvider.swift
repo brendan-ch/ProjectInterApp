@@ -32,9 +32,11 @@ struct ParkingStructuresWidgetTimelineProvider: AppIntentTimelineProvider {
     
     func snapshot(for configuration: ParkingStructuresWidgetConfigurationAppIntent, in context: Context) async -> ParkingStructuresWidgetEntry {
         return .init(
-            systemId: nil,
+            systemId: "1",
             date: .now,
             parkingStructures: [
+                .mock,
+                .mock,
                 .mock
             ],
             status: .succeeded,
