@@ -7,7 +7,6 @@
 
 import WidgetKit
 import AppIntents
-import ProjectInterShared
 
 struct ParkingStructureWidgetConfigurationAppIntent: SystemWidgetConfigurationIntent {
     static var title: LocalizedStringResource {

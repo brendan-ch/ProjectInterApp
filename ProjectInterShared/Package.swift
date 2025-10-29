@@ -6,8 +6,8 @@ import PackageDescription
 let package = Package(
     name: "ProjectInterShared",
     platforms: [
-        .iOS(.v16),
-        .macOS(.v13),
+        .iOS(.v14),
+        .macOS(.v11),
         .tvOS(.v14),
         .watchOS(.v7),
         .visionOS(.v1)
@@ -23,8 +23,7 @@ let package = Package(
         .package(
             url: "https://github.com/apollographql/apollo-ios",
             from: "1.15.3"
-        ),
-        .package(path: "../ProjectInterOperations")
+        )
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -33,8 +32,7 @@ let package = Package(
             name: "ProjectInterShared",
             dependencies: [
                 .product(name: "Apollo", package: "apollo-ios"),
-                .product(name: "ApolloAPI", package: "apollo-ios"),
-                .product(name: "ProjectInterOperations", package: "ProjectInterOperations")
+                .product(name: "ApolloAPI", package: "apollo-ios")
             ]
         ),
         .testTarget(
