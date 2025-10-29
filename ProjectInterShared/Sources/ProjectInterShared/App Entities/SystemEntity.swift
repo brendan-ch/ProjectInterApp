@@ -5,42 +5,49 @@
 //  Created by Brendan Chen on 2025.10.03.
 //
 
-import WidgetKit
 import Apollo
 import AppIntents
-import ProjectInterShared
 import ProjectInterOperations
 
-struct SystemEntity: AppEntity, Identifiable {
+/// Representation of a system that is exposed to Apple platform experiences like
+/// widgets and Shortcuts.
+public struct SystemEntity: AppEntity, Identifiable {
+    public init(id: String, name: String) {
+        self.id = id
+        self.name = name
+    }
+    
     typealias Query = GetAllSystemsQuery
     
-    static var typeDisplayRepresentation: TypeDisplayRepresentation = "Option"
-    static var defaultQuery = SystemEntityQuery()
+    public static var typeDisplayRepresentation: TypeDisplayRepresentation = "Option"
+    public static var defaultQuery = SystemEntityQuery()
     
-    let id: String
-    let name: String
+    public let id: String
+    public let name: String
     
-    var displayRepresentation: DisplayRepresentation {
+    public var displayRepresentation: DisplayRepresentation {
         DisplayRepresentation(title: "\(name)")
     }
     
 }
 
-struct SystemEntityQuery: EntityStringQuery {
-    func defaultResult() async -> SystemEntity? {
+public struct SystemEntityQuery: EntityStringQuery {
+    public init() {}
+    
+    public func defaultResult() async -> SystemEntity? {
         return SystemEntity(id: "-1", name: "Select a system")
     }
     
-    func entities(matching query: String) async throws -> [SystemEntity] {
+    public func entities(matching query: String) async throws -> [SystemEntity] {
         let all = await allOptions()
         return all.filter { $0.name.localizedCaseInsensitiveContains(query) == true }
     }
     
-    func entities(for identifiers: [SystemEntity.ID]) async throws -> [SystemEntity] {
+    public func entities(for identifiers: [SystemEntity.ID]) async throws -> [SystemEntity] {
         await allOptions().filter { identifiers.contains($0.id) }
     }
     
-    func suggestedEntities() async throws -> [SystemEntity] {
+    public func suggestedEntities() async throws -> [SystemEntity] {
         await allOptions()
     }
     
@@ -52,10 +59,10 @@ struct SystemEntityQuery: EntityStringQuery {
     }
 }
 
-struct SystemsProvider: GraphQLConstructable {
+public struct SystemsProvider: GraphQLConstructable {
     let systems: [SystemEntity]
     
-    static func create(_ query: ProjectInterOperations.GetAllSystemsQuery, client: ApolloClientProtocol = ApolloClient.shared) async throws -> SystemsProvider {
+    public static func create(_ query: ProjectInterOperations.GetAllSystemsQuery, client: ApolloClientProtocol = ApolloClient.shared) async throws -> SystemsProvider {
         let result = try await getGraphQLResult(query, client: client)
         guard let data = result.data else {
             throw GraphQLConstructableError.dataNotAvailable
