@@ -9,11 +9,11 @@ import ProjectInterShared
 import WidgetKit
 import ProjectInterOperations
 
-struct ParkingStructureWidgetTimelineProvider: AppIntentTimelineProvider {
+struct ParkingStructureWidgetTimelineProvider: UserDefaultsAppIntentTimelineProvider {
     typealias Entry = ParkingStructureWidgetEntry
     typealias Intent = ParkingStructureWidgetConfigurationAppIntent
     
-    private let userDefaults: UserDefaults?
+    internal let userDefaults: UserDefaults?
     
     init(userDefaults: UserDefaults? = .group) {
         self.userDefaults = userDefaults
@@ -40,8 +40,7 @@ struct ParkingStructureWidgetTimelineProvider: AppIntentTimelineProvider {
     func timeline(for configuration: ParkingStructureWidgetConfigurationAppIntent, in context: Context) async -> Timeline<ParkingStructureWidgetEntry> {
         let systemId = configuration.getSystemId(userDefaults: userDefaults)
         
-        guard let setupCompleted = userDefaults?.bool(forKey: UserDefaults.setupCompletedKey),
-              setupCompleted else {
+        if !setupCompleted {
             return timelineForFailingEntryWithError(error: "To use this widget, complete app setup.")
         }
         
