@@ -12,6 +12,17 @@ import ProjectInterShared
 struct ParkingStructureWidgetEntryView: View {
     let entry: ParkingStructureWidgetEntry
     
+    var arguments: OpenParkingStructureArguments? {
+        if let systemId = entry.systemId,
+           let parkingStructureId = entry.parkingStructure?.id {
+            return .init(
+                parkingStructureId: parkingStructureId,
+                systemId: systemId,
+            )
+        }
+        return nil
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             if let structure = entry.parkingStructure {
@@ -27,6 +38,7 @@ struct ParkingStructureWidgetEntryView: View {
                 Text("\(message)")
             }
         }
+        .widgetURL(arguments?.toUrl())
     }
 }
 
