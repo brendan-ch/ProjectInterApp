@@ -1,7 +1,7 @@
 query GetParkingStructureInfoData(
   $systemId: ID!,
   $parkingStructureId: ID!,
-  $historicalAveragesInput: HistoricalParkingAverageQueryInput!
+  $historicalAveragesInput: HistoricalParkingAverageQueryInput
 ) {
   system(id: $systemId) {
     parkingSystem {
