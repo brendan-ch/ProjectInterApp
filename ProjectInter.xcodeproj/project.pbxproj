@@ -156,6 +156,26 @@
 			);
 			target = 20FA7B732D10E11E00D4EAD1 /* ProjectInter */;
 		};
+		207D5F772EB2E15E007E7773 /* Exceptions for "ProjectInterWidgetsCore" folder in "ProjectInterWidgetsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Parking Structures Widget/ParkingStructuresWidgetEntry.swift",
+				"Parking Structures Widget/ParkingStructureWidgetEntry.swift",
+				Protocols/ProjectInterTimelineEntry.swift,
+				TimelineEntryStatus.swift,
+			);
+			target = 20C494222E906829009B7031 /* ProjectInterWidgetsExtension */;
+		};
+		207D5F782EB2E15E007E7773 /* Exceptions for "ProjectInterWidgetsCore" folder in "ProjectInterWidgetsCore" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Parking Structures Widget/ParkingStructuresWidgetEntry.swift",
+				"Parking Structures Widget/ParkingStructureWidgetEntry.swift",
+				Protocols/ProjectInterTimelineEntry.swift,
+				TimelineEntryStatus.swift,
+			);
+			target = 207D5F562EB2DE7A007E7773 /* ProjectInterWidgetsCore */;
+		};
 		20C4943A2E90682B009B7031 /* Exceptions for "ProjectInterWidgets" folder in "ProjectInterWidgetsExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -180,6 +200,10 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		207D5F582EB2DE7A007E7773 /* ProjectInterWidgetsCore */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				207D5F772EB2E15E007E7773 /* Exceptions for "ProjectInterWidgetsCore" folder in "ProjectInterWidgetsExtension" target */,
+				207D5F782EB2E15E007E7773 /* Exceptions for "ProjectInterWidgetsCore" folder in "ProjectInterWidgetsCore" target */,
+			);
 			path = ProjectInterWidgetsCore;
 			sourceTree = "<group>";
 		};
