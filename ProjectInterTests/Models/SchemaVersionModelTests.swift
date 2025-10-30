@@ -9,6 +9,7 @@
 import Testing
 import ProjectInterOperations
 import ApolloTestSupport
+import ProjectInterShared
 import ProjectInterTestMocks
 
 class SchemaVersionModelTests: NetworkDataModelTestsProtocol {

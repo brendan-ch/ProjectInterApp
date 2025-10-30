@@ -8,6 +8,7 @@
 import Testing
 @testable import ProjectInter
 import ProjectInterOperations
+import ProjectInterShared
 
 class ApolloNetworkModelTests {
     @Test func getStreamYieldsExpectedValuesFromApolloClient() async throws {

@@ -13,6 +13,7 @@
 		2007654D2E19E10700117172 /* ApolloTestSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 2007654C2E19E10700117172 /* ApolloTestSupport */; };
 		200765512E19E10700117172 /* ProjectInterOperations in Frameworks */ = {isa = PBXBuildFile; productRef = 200765502E19E10700117172 /* ProjectInterOperations */; };
 		200765532E19E10700117172 /* ProjectInterTestMocks in Frameworks */ = {isa = PBXBuildFile; productRef = 200765522E19E10700117172 /* ProjectInterTestMocks */; };
+		20157B892EB2E5E8007C9B96 /* ProjectInterShared in Frameworks */ = {isa = PBXBuildFile; productRef = 20157B882EB2E5E8007C9B96 /* ProjectInterShared */; };
 		2050766A2D1B46B5004CAA04 /* Apollo in Frameworks */ = {isa = PBXBuildFile; productRef = 205076692D1B46B5004CAA04 /* Apollo */; };
 		205077112D1B78EF004CAA04 /* apollo-codegen-config.json in Resources */ = {isa = PBXBuildFile; fileRef = 205077102D1B78EF004CAA04 /* apollo-codegen-config.json */; };
 		205077142D1B79FC004CAA04 /* ProjectInterOperations in Frameworks */ = {isa = PBXBuildFile; productRef = 205077132D1B79FC004CAA04 /* ProjectInterOperations */; };
@@ -257,6 +258,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				20157B892EB2E5E8007C9B96 /* ProjectInterShared in Frameworks */,
 				207D5F622EB2DE7A007E7773 /* ProjectInterWidgetsCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -407,6 +409,7 @@
 			);
 			name = ProjectInterWidgetsCoreTests;
 			packageProductDependencies = (
+				20157B882EB2E5E8007C9B96 /* ProjectInterShared */,
 			);
 			productName = ProjectInterWidgetsCoreTests;
 			productReference = 207D5F612EB2DE7A007E7773 /* ProjectInterWidgetsCoreTests.xctest */;
@@ -727,7 +730,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -765,7 +768,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -796,7 +799,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4A9XHUS87Q;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.bchen.ProjectInterWidgetsCoreTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -817,7 +820,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4A9XHUS87Q;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.bchen.ProjectInterWidgetsCoreTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1309,6 +1312,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 205077122D1B79FC004CAA04 /* XCLocalSwiftPackageReference "ProjectInterOperations" */;
 			productName = ProjectInterTestMocks;
+		};
+		20157B882EB2E5E8007C9B96 /* ProjectInterShared */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 20C9FEC12E908DBB001FCF55 /* XCLocalSwiftPackageReference "ProjectInterShared" */;
+			productName = ProjectInterShared;
 		};
 		205076692D1B46B5004CAA04 /* Apollo */ = {
 			isa = XCSwiftPackageProductDependency;

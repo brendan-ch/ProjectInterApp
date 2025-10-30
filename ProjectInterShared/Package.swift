@@ -20,10 +20,11 @@ let package = Package(
         ),
     ],
     dependencies: [
+        .package(path: "../ProjectInterOperations"),
         .package(
             url: "https://github.com/apollographql/apollo-ios",
             from: "1.15.3"
-        )
+        ),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -32,7 +33,9 @@ let package = Package(
             name: "ProjectInterShared",
             dependencies: [
                 .product(name: "Apollo", package: "apollo-ios"),
-                .product(name: "ApolloAPI", package: "apollo-ios")
+                .product(name: "ApolloAPI", package: "apollo-ios"),
+                .product(name: "ProjectInterOperations", package: "ProjectInterOperations"),
+                .product(name: "ProjectInterTestMocks", package: "ProjectInterOperations")
             ]
         ),
         .testTarget(
