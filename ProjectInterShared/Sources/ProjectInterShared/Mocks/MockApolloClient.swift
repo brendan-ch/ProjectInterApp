@@ -6,8 +6,8 @@
 //
 
 import Foundation
-@testable import Apollo
-@testable import ApolloAPI
+import Apollo
+import ApolloAPI
 import ProjectInterOperations
 import ApolloTestSupport
 import ProjectInterTestMocks
