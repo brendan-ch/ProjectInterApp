@@ -159,9 +159,9 @@
 		207D5F772EB2E15E007E7773 /* Exceptions for "ProjectInterWidgetsCore" folder in "ProjectInterWidgetsExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"Parking Structures Widget/ParkingStructuresWidgetEntry.swift",
-				"Parking Structures Widget/ParkingStructureWidgetEntry.swift",
 				Protocols/ProjectInterTimelineEntry.swift,
+				"Timeline Entries/ParkingStructuresWidgetEntry.swift",
+				"Timeline Entries/ParkingStructureWidgetEntry.swift",
 				TimelineEntryStatus.swift,
 			);
 			target = 20C494222E906829009B7031 /* ProjectInterWidgetsExtension */;
@@ -169,9 +169,9 @@
 		207D5F782EB2E15E007E7773 /* Exceptions for "ProjectInterWidgetsCore" folder in "ProjectInterWidgetsCore" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"Parking Structures Widget/ParkingStructuresWidgetEntry.swift",
-				"Parking Structures Widget/ParkingStructureWidgetEntry.swift",
 				Protocols/ProjectInterTimelineEntry.swift,
+				"Timeline Entries/ParkingStructuresWidgetEntry.swift",
+				"Timeline Entries/ParkingStructureWidgetEntry.swift",
 				TimelineEntryStatus.swift,
 			);
 			target = 207D5F562EB2DE7A007E7773 /* ProjectInterWidgetsCore */;
