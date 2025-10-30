@@ -18,26 +18,36 @@ class ParkingStructuresWidgetEntryTests {
         mockClient.queryMock = .init(
             system: .init(
                 parkingSystem: .init(
-                    parkingStructure: .init(
-                        address: "123 Test Address",
-                        capacity: 100,
-                        historicalAverages: nil,
-                        id: "1",
-                        name: "Test Structure",
-                        spotsAvailable: 150,
-                    )
+                    parkingStructures: [
+                        .init(
+                            address: "123 Test Address",
+                            capacity: 100,
+                            historicalAverages: nil,
+                            id: "1",
+                            name: "Test Structure",
+                            spotsAvailable: 150,
+                        ),
+                        .init(
+                            address: "456 Test Address",
+                            capacity: 125,
+                            historicalAverages: nil,
+                            id: "2",
+                            name: "Test Structure 2",
+                            spotsAvailable: 150,
+                        )
+                    ]
                 )
             )
         )
         
-        let query = GetParkingStructureInfoDataQuery(systemId: "1", parkingStructureId: "1", historicalAveragesInput: nil)
+        let query = GetParkingStructuresListDataQuery(systemId: "1")
         
-        let entry = try await ParkingStructureWidgetEntry.create(
+        let entry = try await ParkingStructuresWidgetEntry.create(
             query,
             client: mockClient,
         )
-        #expect(entry.parkingStructure?.name == "Test Structure")
-        #expect(entry.parkingStructure?.capacity == 100)
-        #expect(entry.parkingStructure?.id == "1")
+        #expect(entry.parkingStructures?.count == 2)
+        #expect(entry.parkingStructures?[0].capacity == 100)
+        #expect(entry.parkingStructures?[1].capacity == 125)
     }
 }
