@@ -8,6 +8,7 @@
 import WidgetKit
 import SwiftUI
 import ProjectInterShared
+import ProjectInterWidgetsCore
 import Apollo
 import ProjectInterOperations
 

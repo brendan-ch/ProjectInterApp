@@ -8,6 +8,6 @@
 import WidgetKit
 
 /// Base timeline entry with shared properties.
-protocol ProjectInterTimelineEntry: TimelineEntry {
+public protocol ProjectInterTimelineEntry: TimelineEntry {
     var status: TimelineEntryStatus { get }
 }

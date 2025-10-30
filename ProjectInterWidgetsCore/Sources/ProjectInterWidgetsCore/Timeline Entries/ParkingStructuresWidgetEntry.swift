@@ -10,15 +10,22 @@ import ProjectInterShared
 import ProjectInterOperations
 import Apollo
 
-struct ParkingStructuresWidgetEntry: ProjectInterTimelineEntry, GraphQLConstructable {
-    typealias Query = GetParkingStructuresListDataQuery
+public struct ParkingStructuresWidgetEntry: ProjectInterTimelineEntry, GraphQLConstructable {
+    public typealias Query = GetParkingStructuresListDataQuery
     
-    let systemId: String?
-    let date: Date
-    let parkingStructures: [ParkingStructure]?
-    let status: TimelineEntryStatus
+    public init(systemId: String?, date: Date, parkingStructures: [ParkingStructure]?, status: TimelineEntryStatus) {
+        self.systemId = systemId
+        self.date = date
+        self.parkingStructures = parkingStructures
+        self.status = status
+    }
     
-    static func create(_ query: ProjectInterOperations.GetParkingStructuresListDataQuery, client: ApolloClientProtocol = ApolloClient.shared) async throws -> ParkingStructuresWidgetEntry {
+    public let systemId: String?
+    public let date: Date
+    public let parkingStructures: [ParkingStructure]?
+    public let status: TimelineEntryStatus
+    
+    public static func create(_ query: ProjectInterOperations.GetParkingStructuresListDataQuery, client: ApolloClientProtocol = ApolloClient.shared) async throws -> ParkingStructuresWidgetEntry {
         let systemId = query.systemId
         let result = try await getGraphQLResult(query, client: client)
         guard let structures = result.data?.system?.parkingSystem?.parkingStructures else {

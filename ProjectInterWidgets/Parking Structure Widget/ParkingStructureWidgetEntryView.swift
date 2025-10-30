@@ -8,6 +8,7 @@
 import WidgetKit
 import SwiftUI
 import ProjectInterShared
+import ProjectInterWidgetsCore
 
 struct ParkingStructureWidgetEntryView: View {
     let entry: ParkingStructureWidgetEntry

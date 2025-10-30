@@ -6,6 +6,7 @@
 //
 
 import ProjectInterShared
+import ProjectInterWidgetsCore
 import WidgetKit
 import ProjectInterOperations
 

@@ -7,8 +7,8 @@
 
 import Foundation
 
-enum TimelineEntryStatus: Equatable {
-    static func == (lhs: TimelineEntryStatus, rhs: TimelineEntryStatus) -> Bool {
+public enum TimelineEntryStatus: Equatable {
+    public static func == (lhs: TimelineEntryStatus, rhs: TimelineEntryStatus) -> Bool {
         switch (lhs, rhs) {
         case (.succeeded, .succeeded):
             return true

@@ -8,6 +8,7 @@
 import ProjectInterShared
 import WidgetKit
 import ProjectInterOperations
+import ProjectInterWidgetsCore
 
 struct ParkingStructureWidgetTimelineProvider: UserDefaultsAppIntentTimelineProvider {
     typealias Entry = ParkingStructureWidgetEntry
