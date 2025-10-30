@@ -75,7 +75,11 @@ platform :ios do
             ) + 1,
         )
 
-        build_app(scheme: "ProjectInter")
+        build_app(
+            scheme: "ProjectInter",
+            disable_package_automatic_updates: true,
+            clean: true
+        )
         upload_to_testflight(skip_waiting_for_build_processing: true)
     end
 
