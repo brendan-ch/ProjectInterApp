@@ -20,6 +20,7 @@
 		206A72562E94BB10000AD74D /* ProjectInterShared in Frameworks */ = {isa = PBXBuildFile; productRef = 206A72552E94BB10000AD74D /* ProjectInterShared */; };
 		207534352E8CA07200E164A5 /* ProjectInterLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 207534342E8CA07200E164A5 /* ProjectInterLogging */; };
 		208238562D2E730D00DA9820 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 208238552D2E730D00DA9820 /* README.md */; };
+		20A216BC2EB2F0E300068381 /* ProjectInterWidgetsCore in Frameworks */ = {isa = PBXBuildFile; productRef = 20A216BB2EB2F0E300068381 /* ProjectInterWidgetsCore */; };
 		20C494252E90682A009B7031 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20C494242E906829009B7031 /* WidgetKit.framework */; };
 		20C494272E90682A009B7031 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20C494262E90682A009B7031 /* SwiftUI.framework */; };
 		20C494362E90682B009B7031 /* ProjectInterWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 20C494232E906829009B7031 /* ProjectInterWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -57,6 +58,16 @@
 
 /* Begin PBXCopyFilesBuildPhase section */
 		200765542E19E10700117172 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		207D5F6E2EB2DE7A007E7773 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
@@ -184,6 +195,7 @@
 				20C494252E90682A009B7031 /* WidgetKit.framework in Frameworks */,
 				20C494412E9068D8009B7031 /* ProjectInterOperations in Frameworks */,
 				20C9FEC52E908DC4001FCF55 /* ProjectInterShared in Frameworks */,
+				20A216BC2EB2F0E300068381 /* ProjectInterWidgetsCore in Frameworks */,
 				20C496E52E906B69009B7031 /* ApolloAPI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -285,6 +297,7 @@
 				20C494402E9068D8009B7031 /* ProjectInterOperations */,
 				20C496E42E906B69009B7031 /* ApolloAPI */,
 				20C9FEC42E908DC4001FCF55 /* ProjectInterShared */,
+				20A216BB2EB2F0E300068381 /* ProjectInterWidgetsCore */,
 			);
 			productName = ProjectInterWidgetsExtension;
 			productReference = 20C494232E906829009B7031 /* ProjectInterWidgetsExtension.appex */;
@@ -298,6 +311,7 @@
 				20FA7B712D10E11E00D4EAD1 /* Frameworks */,
 				20FA7B722D10E11E00D4EAD1 /* Resources */,
 				20C4943B2E90682B009B7031 /* Embed Foundation Extensions */,
+				207D5F6E2EB2DE7A007E7773 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -413,6 +427,7 @@
 				205077122D1B79FC004CAA04 /* XCLocalSwiftPackageReference "ProjectInterOperations" */,
 				20F5D3352E8C9476002B25DE /* XCLocalSwiftPackageReference "ProjectInterLogging" */,
 				20C9FEC12E908DBB001FCF55 /* XCLocalSwiftPackageReference "ProjectInterShared" */,
+				2018F14A2EB2EF5A00108B91 /* XCLocalSwiftPackageReference "ProjectInterWidgetsCore" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 20FA7B752D10E11E00D4EAD1 /* Products */;
@@ -921,6 +936,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
+		2018F14A2EB2EF5A00108B91 /* XCLocalSwiftPackageReference "ProjectInterWidgetsCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ProjectInterWidgetsCore;
+		};
 		205077122D1B79FC004CAA04 /* XCLocalSwiftPackageReference "ProjectInterOperations" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ProjectInterOperations;
@@ -994,6 +1013,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 20F5D3352E8C9476002B25DE /* XCLocalSwiftPackageReference "ProjectInterLogging" */;
 			productName = ProjectInterLogging;
+		};
+		20A216BB2EB2F0E300068381 /* ProjectInterWidgetsCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2018F14A2EB2EF5A00108B91 /* XCLocalSwiftPackageReference "ProjectInterWidgetsCore" */;
+			productName = ProjectInterWidgetsCore;
 		};
 		20C4943C2E9068C8009B7031 /* Apollo */ = {
 			isa = XCSwiftPackageProductDependency;

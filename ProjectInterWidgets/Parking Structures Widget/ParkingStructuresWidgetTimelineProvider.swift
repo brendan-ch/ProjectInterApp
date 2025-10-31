@@ -6,14 +6,15 @@
 //
 
 import ProjectInterShared
+import ProjectInterWidgetsCore
 import WidgetKit
 import ProjectInterOperations
 
-struct ParkingStructuresWidgetTimelineProvider: AppIntentTimelineProvider {
+struct ParkingStructuresWidgetTimelineProvider: UserDefaultsAppIntentTimelineProvider {
     typealias Entry = ParkingStructuresWidgetEntry
     typealias Intent = ParkingStructuresWidgetConfigurationAppIntent
     
-    private let userDefaults: UserDefaults?
+    internal let userDefaults: UserDefaults?
     
     init(userDefaults: UserDefaults? = .group) {
         self.userDefaults = userDefaults
@@ -32,9 +33,11 @@ struct ParkingStructuresWidgetTimelineProvider: AppIntentTimelineProvider {
     
     func snapshot(for configuration: ParkingStructuresWidgetConfigurationAppIntent, in context: Context) async -> ParkingStructuresWidgetEntry {
         return .init(
-            systemId: nil,
+            systemId: "1",
             date: .now,
             parkingStructures: [
+                .mock,
+                .mock,
                 .mock
             ],
             status: .succeeded,
@@ -42,14 +45,9 @@ struct ParkingStructuresWidgetTimelineProvider: AppIntentTimelineProvider {
     }
     
     func timeline(for configuration: ParkingStructuresWidgetConfigurationAppIntent, in context: Context) async -> Timeline<ParkingStructuresWidgetEntry> {
-        var systemId = configuration.system?.id
-        if configuration.mirrorSystemInApp,
-           let systemIdFromUserDefaults = userDefaults?.string(forKey: UserDefaults.selectedSystemIdKey) {
-            systemId = systemIdFromUserDefaults
-        }
+        let systemId = configuration.getSystemId(userDefaults: userDefaults)
         
-        guard let setupCompleted = userDefaults?.bool(forKey: UserDefaults.setupCompletedKey),
-              setupCompleted else {
+        if !setupCompleted {
             return timelineForFailingEntryWithError(error: "To see parking structures, complete app setup.")
         }
         

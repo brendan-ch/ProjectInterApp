@@ -9,6 +9,7 @@ import Testing
 @testable import ProjectInter
 import ApolloTestSupport
 import ProjectInterTestMocks
+import ProjectInterShared
 
 class GlobalNotificationSchedulingModelTests {
     let successfulNotificationResponse = Mock<NotificationResponse>(

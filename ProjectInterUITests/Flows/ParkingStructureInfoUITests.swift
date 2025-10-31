@@ -23,11 +23,11 @@ final class ParkingStructureInfoUITests: BaseUITests {
         let query = GetParkingStructureInfoDataQuery(
             systemId: defaultSystemId,
             parkingStructureId: "1",
-            historicalAveragesInput: .init(
+            historicalAveragesInput: .init(.init(
                 from: calendar.date(bySettingHour: 8, minute: 0, second: 0, of: now)!,
                 to: calendar.date(bySettingHour: 20, minute: 0, second: 0, of: now)!,
                 intervalMs: 1000 * 60 * 60 * 2
-            )
+            ))
         )
         
         let response = Mock<Query>(

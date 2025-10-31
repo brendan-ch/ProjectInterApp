@@ -10,6 +10,7 @@ import Testing
 @testable import ProjectInter
 import ApolloTestSupport
 import ProjectInterTestMocks
+import ProjectInterShared
 
 class GlobalSystemsModelTests {
     @Test func testRefreshSystemData() async throws {

@@ -16,6 +16,6 @@ a selected ID from the main app.
 
 ## Tests
 
-Tests need more research, namely because some required parameters of `TimelineProvider`
-have no usable initializers.
-
+It is currently not possible to add test targets against a widget extension in Xcode.
+To work around this, testable code should go in the `ProjectInterWidgetsCore` framework,
+while WidgetKit-specific code should go in this module.

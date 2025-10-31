@@ -8,7 +8,7 @@
 import WidgetKit
 import AppIntents
 
-struct ParkingStructuresWidgetConfigurationAppIntent: WidgetConfigurationIntent {
+struct ParkingStructuresWidgetConfigurationAppIntent: SystemWidgetConfigurationIntent {
     static var title: LocalizedStringResource { "Parking Structures" }
     static var description: IntentDescription { "View a list of parking structures for a system." }
     

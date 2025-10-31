@@ -20,6 +20,14 @@
       "parallelizable" : false,
       "target" : {
         "containerPath" : "container:ProjectInter.xcodeproj",
+        "identifier" : "207D5F602EB2DE7A007E7773",
+        "name" : "ProjectInterWidgetsCoreTests"
+      }
+    },
+    {
+      "parallelizable" : false,
+      "target" : {
+        "containerPath" : "container:ProjectInter.xcodeproj",
         "identifier" : "20FA7B832D10E11F00D4EAD1",
         "name" : "ProjectInterTests"
       }

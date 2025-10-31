@@ -10,6 +10,7 @@ import Testing
 import ApolloTestSupport
 import ProjectInterTestMocks
 import ProjectInterOperations
+import ProjectInterShared
 import CoreLocation
 
 class GlobalStopsModelTestsMockData {

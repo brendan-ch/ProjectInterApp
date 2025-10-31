@@ -8,6 +8,7 @@
 import Testing
 @testable import ProjectInter
 import Foundation
+import ProjectInterShared
 
 class SetupStateModelTests {
     @Test func initialStateIsCorrectIfSetupNotComplete() {

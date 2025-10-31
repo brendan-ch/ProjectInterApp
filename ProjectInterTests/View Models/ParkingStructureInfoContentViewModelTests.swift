@@ -8,6 +8,7 @@
 import Foundation
 import Testing
 @testable import ProjectInter
+import ProjectInterShared
 import ProjectInterOperations
 import ApolloTestSupport
 import ProjectInterTestMocks

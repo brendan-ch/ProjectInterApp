@@ -165,7 +165,8 @@ extension ParkingStructureInfoContentView {
             return GetParkingStructureInfoDataQuery(
                 systemId: arguments.systemId,
                 parkingStructureId: arguments.parkingStructureId,
-                historicalAveragesInput: historicalAverageInput!)
+                historicalAveragesInput: .init(historicalAverageInput!)
+            )
         }
         
         override func processRefreshDataResult(_ result: Result<GetParkingStructureInfoDataQuery.Data, any Error>) {
@@ -200,7 +201,8 @@ extension ParkingStructureInfoContentView {
             let query = GetParkingStructureInfoDataQuery(
                 systemId: arguments.systemId,
                 parkingStructureId: arguments.parkingStructureId,
-                historicalAveragesInput: historicalAverageInput!)
+                historicalAveragesInput: .init(historicalAverageInput!)
+            )
             
             guard let result = try? await apolloNetworkModel?.fetchOnce(query),
                   let averagesFromNetwork = result.data?.system?.parkingSystem?.parkingStructure?.historicalAverages else {

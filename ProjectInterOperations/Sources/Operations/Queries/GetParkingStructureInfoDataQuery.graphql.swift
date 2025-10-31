@@ -7,17 +7,17 @@ public class GetParkingStructureInfoDataQuery: GraphQLQuery {
   public static let operationName: String = "GetParkingStructureInfoData"
   public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
-      #"query GetParkingStructureInfoData($systemId: ID!, $parkingStructureId: ID!, $historicalAveragesInput: HistoricalParkingAverageQueryInput!) { system(id: $systemId) { __typename parkingSystem { __typename parkingStructure(id: $parkingStructureId) { __typename capacity name spotsAvailable id address historicalAverages(input: $historicalAveragesInput) { __typename from to averageSpotsAvailable } } } } }"#
+      #"query GetParkingStructureInfoData($systemId: ID!, $parkingStructureId: ID!, $historicalAveragesInput: HistoricalParkingAverageQueryInput) { system(id: $systemId) { __typename parkingSystem { __typename parkingStructure(id: $parkingStructureId) { __typename capacity name spotsAvailable id address historicalAverages(input: $historicalAveragesInput) { __typename from to averageSpotsAvailable } } } } }"#
     ))
 
   public var systemId: ID
   public var parkingStructureId: ID
-  public var historicalAveragesInput: HistoricalParkingAverageQueryInput
+  public var historicalAveragesInput: GraphQLNullable<HistoricalParkingAverageQueryInput>
 
   public init(
     systemId: ID,
     parkingStructureId: ID,
-    historicalAveragesInput: HistoricalParkingAverageQueryInput
+    historicalAveragesInput: GraphQLNullable<HistoricalParkingAverageQueryInput>
   ) {
     self.systemId = systemId
     self.parkingStructureId = parkingStructureId

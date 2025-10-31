@@ -9,6 +9,7 @@ import Testing
 @testable import ProjectInter
 import ApolloTestSupport
 import ProjectInterTestMocks
+import ProjectInterShared
 
 protocol NetworkDataModelTestsProtocol {
     associatedtype DefaultMock

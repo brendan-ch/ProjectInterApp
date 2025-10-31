@@ -90,6 +90,21 @@ struct ContentView: View {
         .onChange(of: globalSystemsModel.selectedSystem) {
             tabSelection = .shuttles
         }
+        .onChange(of: globalIdSelectionModel.selectedShuttleId) {
+            if globalIdSelectionModel.selectedShuttleId != nil {
+                tabSelection = .shuttles
+            }
+        }
+        .onChange(of: globalIdSelectionModel.selectedRouteId) {
+            if globalIdSelectionModel.selectedRouteId != nil {
+                tabSelection = .shuttles
+            }
+        }
+        .onChange(of: globalIdSelectionModel.selectedParkingStructureId) {
+            if globalIdSelectionModel.selectedParkingStructureId != nil {
+                tabSelection = .parking
+            }
+        }
     }
     
     func buildSheetContent() -> some View {
