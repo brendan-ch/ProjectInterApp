@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import Apollo
+import ProjectInterOperations
 
 public struct ParkingStructure: Identifiable {
     public let id: String
@@ -34,3 +36,25 @@ public extension ParkingStructure {
     )
 }
 
+extension ParkingStructure: GraphQLConstructable {
+    public typealias Query = GetParkingStructureInfoDataQuery
+    
+    public static func create(
+        _ query: ProjectInterOperations.GetParkingStructureInfoDataQuery,
+        client: any Apollo.ApolloClientProtocol
+    ) async throws -> ParkingStructure {
+        let result = try await getGraphQLResult(query, client: client)
+        guard let structure = result.data?.system?.parkingSystem?.parkingStructure else {
+            throw GraphQLConstructableError.dataNotAvailable
+        }
+        return .init(
+            id: structure.id,
+            name: structure.name,
+            capacity: structure.capacity,
+            spotsAvailable: structure.spotsAvailable,
+        )
+    }
+}
+
+extension ParkingStructure: Equatable {
+}
