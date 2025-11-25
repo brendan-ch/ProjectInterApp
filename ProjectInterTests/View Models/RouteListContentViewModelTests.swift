@@ -87,9 +87,6 @@ class RouteListContentViewModelMockData {
                             name: "Red Route",
                             shuttles: [
                                 Mock<ProjectInterTestMocks.Shuttle>(
-                                    eta: Mock<ProjectInterTestMocks.ETA>(
-                                        secondsRemaining: 125
-                                    )
                                 )
                             ]
                         )
@@ -104,10 +101,43 @@ class RouteListContentViewModelMockData {
                             name: "Black Route",
                             shuttles: [
                                 Mock<ProjectInterTestMocks.Shuttle>(
-                                    eta: Mock<ProjectInterTestMocks.ETA>(
-                                        secondsRemaining: 250
-                                    )
                                 )
+                            ]
+                        )
+                    )
+                ]
+            )
+        )
+    )
+    
+    static let fourthMock = Mock<ProjectInterTestMocks.Query>(
+        system: Mock<ProjectInterTestMocks.System>(
+            stop: Mock<ProjectInterTestMocks.Stop>(
+                name: "Chapman Court",
+                orderedStops: [
+                    Mock<ProjectInterTestMocks.OrderedStop>(
+                        nextStop: Mock<ProjectInterTestMocks.OrderedStop>(
+                            stop: Mock<ProjectInterTestMocks.Stop>(
+                                name: "Panther Village"
+                            )
+                        ), route: Mock<ProjectInterTestMocks.Route>(
+                            color: "#FF0000", id: "1",
+                            name: "Red Route",
+                            shuttles: [
+                                Mock<ProjectInterTestMocks.Shuttle>(
+                                )
+                            ]
+                        )
+                    ),
+                    Mock<ProjectInterTestMocks.OrderedStop>(
+                        nextStop: Mock<ProjectInterTestMocks.OrderedStop>(
+                            stop: Mock<ProjectInterTestMocks.Stop>(
+                                name: "Chapman Grand"
+                            )
+                        ), route: Mock<ProjectInterTestMocks.Route>(
+                            color: "#000000", id: "2",
+                            name: "Black Route",
+                            shuttles: [
                             ]
                         )
                     )
@@ -125,7 +155,7 @@ class RouteListContentViewRouteTests {
             name: "Chapman Court",
             colorHex: "#000000",
             nextStopName: "Panther Village",
-            etasInSeconds: []
+            etasInSeconds: [],
         )
     }
     
@@ -186,29 +216,30 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
     let defaultMock = RouteListContentViewModelMockData.defaultMock
     let secondaryMock = RouteListContentViewModelMockData.secondaryMock
     let tertiaryMock = RouteListContentViewModelMockData.tertiaryMock
+    let fourthMock = RouteListContentViewModelMockData.fourthMock
     
     func assertViewModelDataForDefaultMock(viewModel: RouteListContentView.ViewModel) {
-        #expect(viewModel.routes.count == 1)
-        #expect(viewModel.routes[0].etasInSeconds.count == 2)
+        #expect(viewModel.activeRoutes.count == 1)
+        #expect(viewModel.activeRoutes[0].etasInSeconds.count == 2)
     }
-
+    
     func assertViewModelDataForSecondaryMock(viewModel: ProjectInter.RouteListContentView.ViewModel) {
-        #expect(viewModel.routes[0].etasInSeconds.count == 1)
+        #expect(viewModel.activeRoutes[0].etasInSeconds.count == 1)
     }
     
     func assertViewModelDataForEmptyMock(viewModel: RouteListContentView.ViewModel) {
-        #expect(viewModel.routes.isEmpty)
+        #expect(viewModel.activeRoutes.isEmpty)
     }
     
     @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
         await autoTest_startRefreshingDataRefreshesDataOnFirstCall()
     }
     
-
+    
     @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
         await autoTest_startRefreshingDataRefreshesDataMultipleTimes()
     }
-
+    
     @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
         await autoTest_stopRefreshingDataStopsDataUpdatesAfterCompletion()
     }
@@ -235,7 +266,20 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
         
         await viewModel.refreshDataOnce(arguments: networkArguments)
         
-        #expect(viewModel.routes[0].name == "Black Route")
-        #expect(viewModel.routes[1].name == "Red Route")
+        #expect(viewModel.activeRoutes[0].name == "Black Route")
+        #expect(viewModel.activeRoutes[1].name == "Red Route")
+    }
+    
+    @Test func routesWithoutShuttlesAreAddedToInactiveRoutes() async {
+        let mockClient = MockApolloClient()
+        mockClient.queryMock = fourthMock
+        
+        let mockNetworkModel = ApolloNetworkModel(client: mockClient)
+        
+        let viewModel = RouteListContentView.ViewModel(apolloNetworkModel: mockNetworkModel)
+        await viewModel.refreshDataOnce(arguments: networkArguments)
+        
+        #expect(viewModel.inactiveRoutes[0].name == "Black Route")
+        #expect(viewModel.activeRoutes[0].name == "Red Route")
     }
 }

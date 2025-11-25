@@ -92,8 +92,11 @@ extension RouteListContentView {
     /// Backing view model for ``RouteListContentView``.
     @Observable
     class ViewModel: NetworkDataModel<RouteListNetworkArguments, GetRouteListDataQuery>, PlaceholderBuildable, Clearable {
-        /// All routes to render on ``RouteListContentView``.
-        private(set) var routes: [RouteListContentViewRoute] = []
+        /// Routes with active shuttles to render on ``RouteListContentView``.
+        private(set) var activeRoutes: [RouteListContentViewRoute] = []
+        
+        /// Routes without active shuttles to render on ``RouteListContentView``
+        private(set) var inactiveRoutes: [RouteListContentViewRoute] = []
         
         override func convertNetworkArgumentsIntoQuery(_ arguments: RouteListNetworkArguments) -> GetRouteListDataQuery {
             return GetRouteListDataQuery(systemId: arguments.systemId, stopId: arguments.stopId)
@@ -110,7 +113,8 @@ extension RouteListContentView {
         
         private func updateDataFromResponse(data: GetRouteListDataQuery.Data) {
             if let orderedStops = data.system?.stop?.orderedStops {
-                var unsortedRoutes: [RouteListContentViewRoute] = []
+                var unsortedActiveRoutes: [RouteListContentViewRoute] = []
+                var unsortedInactiveRoutes: [RouteListContentViewRoute] = []
                 
                 orderedStops.forEach { orderedStop in
                     if let route = orderedStop.route {
@@ -119,22 +123,27 @@ extension RouteListContentView {
                             constructedRoute.nextStopName = nextStop.name
                         }
                         
-                        unsortedRoutes.append(constructedRoute)
+                        if let shuttles = route.shuttles, !shuttles.isEmpty {
+                            unsortedActiveRoutes.append(constructedRoute)
+                        } else {
+                            unsortedInactiveRoutes.append(constructedRoute)
+                        }
                     }
                 }
                 
-                self.routes = unsortedRoutes.sorted()
+                self.activeRoutes = unsortedActiveRoutes.sorted()
+                self.inactiveRoutes = unsortedInactiveRoutes.sorted()
             }
         }
         
         func clearData() {
             resetDataInitState()
-            routes = []
+            activeRoutes = []
         }
 
         static func buildPlaceholder() -> Self {
             let newModel = Self(dataInitState: .succeeded)
-            newModel.routes = [
+            newModel.activeRoutes = [
                 RouteListContentViewRoute(
                     id: "1",
                     name: "Red Route",

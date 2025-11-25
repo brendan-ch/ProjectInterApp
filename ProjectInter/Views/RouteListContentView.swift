@@ -67,8 +67,8 @@ struct RouteListContentView: NetworkView {
             WithInitializationView(dataInitState: viewModel.dataInitState) {
                 Divider()
                 
-                DataWrapperView(shouldDisplayNoDataMessage: viewModel.routes.isEmpty, noDataMessage: "No routes available.") {
-                    ForEach(viewModel.routes) { route in
+                DataWrapperView(shouldDisplayNoDataMessage: viewModel.activeRoutes.isEmpty, noDataMessage: "No routes available.") {
+                    ForEach(viewModel.activeRoutes) { route in
                         RouteListItem(route: route) { selectedRoute in
                             globalIdSelectionModel.selectRouteId(route.id)
                         }
