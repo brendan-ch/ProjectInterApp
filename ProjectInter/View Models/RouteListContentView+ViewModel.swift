@@ -69,6 +69,15 @@ extension RouteListContentViewRoute {
     }
 }
 
+// Sort routes by name
+// Since we're querying by ordered stops, those aren't ordered
+// by route name, so we need to perform sorting here
+extension RouteListContentViewRoute: Comparable {
+    static func < (lhs: RouteListContentViewRoute, rhs: RouteListContentViewRoute) -> Bool {
+        lhs.name < rhs.name
+    }
+}
+
 // MARK: - Network arguments
 
 /// Information to pass into the route list network request.
@@ -84,7 +93,7 @@ extension RouteListContentView {
     @Observable
     class ViewModel: NetworkDataModel<RouteListNetworkArguments, GetRouteListDataQuery>, PlaceholderBuildable, Clearable {
         /// All routes to render on ``RouteListContentView``.
-        var routes: [RouteListContentViewRoute] = []
+        private(set) var routes: [RouteListContentViewRoute] = []
         
         override func convertNetworkArgumentsIntoQuery(_ arguments: RouteListNetworkArguments) -> GetRouteListDataQuery {
             return GetRouteListDataQuery(systemId: arguments.systemId, stopId: arguments.stopId)
@@ -101,7 +110,8 @@ extension RouteListContentView {
         
         private func updateDataFromResponse(data: GetRouteListDataQuery.Data) {
             if let orderedStops = data.system?.stop?.orderedStops {
-                self.routes = []
+                var unsortedRoutes: [RouteListContentViewRoute] = []
+                
                 orderedStops.forEach { orderedStop in
                     if let route = orderedStop.route {
                         var constructedRoute = RouteListContentViewRoute(route)
@@ -109,9 +119,11 @@ extension RouteListContentView {
                             constructedRoute.nextStopName = nextStop.name
                         }
                         
-                        self.routes.append(constructedRoute)
+                        unsortedRoutes.append(constructedRoute)
                     }
                 }
+                
+                self.routes = unsortedRoutes.sorted()
             }
         }
         
