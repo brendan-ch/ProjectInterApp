@@ -59,9 +59,9 @@ extension ShuttleInfoContentView {
         var etaDisplay: String {
             if let nameOfStop = nameOfStop,
                let etaSecondsRemaining = etaSecondsRemaining {
-                return "\(ETAFormatter.formatSecondsRemaining(etaSecondsRemaining)) to \(nameOfStop)"
+                return "\(ETASeconds(etaSecondsRemaining).asLongString()) to \(nameOfStop)"
             }
-            
+
             return dataInitState == .initializing ? "" : "ETA currently not available"
         }
         
