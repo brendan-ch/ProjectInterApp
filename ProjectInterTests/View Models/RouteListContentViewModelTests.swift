@@ -10,6 +10,7 @@ import Testing
 import ProjectInterTestMocks
 import ProjectInterOperations
 import ApolloTestSupport
+import ProjectInterShared
 
 class RouteListContentViewModelMockData {
     static let defaultMock = Mock<ProjectInterTestMocks.Query>(
@@ -45,31 +46,76 @@ class RouteListContentViewModelMockData {
     )
     
     static let secondaryMock = Mock<ProjectInterTestMocks.Query>(
-            system: Mock<ProjectInterTestMocks.System>(
-                stop: Mock<ProjectInterTestMocks.Stop>(
-                    name: "Chapman Court",
-                    orderedStops: [
-                        Mock<ProjectInterTestMocks.OrderedStop>(
-                            nextStop: Mock<ProjectInterTestMocks.OrderedStop>(
-                                stop: Mock<ProjectInterTestMocks.Stop>(
-                                    name: "Panther Village"
-                                )
-                            ), route: Mock<ProjectInterTestMocks.Route>(
-                                color: "#000000", id: "1",
-                                name: "Black Route",
-                                shuttles: [
-                                    Mock<ProjectInterTestMocks.Shuttle>(
-                                        eta: Mock<ProjectInterTestMocks.ETA>(
-                                            secondsRemaining: 125
-                                        )
-                                    )
-                                ]
+        system: Mock<ProjectInterTestMocks.System>(
+            stop: Mock<ProjectInterTestMocks.Stop>(
+                name: "Chapman Court",
+                orderedStops: [
+                    Mock<ProjectInterTestMocks.OrderedStop>(
+                        nextStop: Mock<ProjectInterTestMocks.OrderedStop>(
+                            stop: Mock<ProjectInterTestMocks.Stop>(
+                                name: "Panther Village"
                             )
+                        ), route: Mock<ProjectInterTestMocks.Route>(
+                            color: "#000000", id: "1",
+                            name: "Black Route",
+                            shuttles: [
+                                Mock<ProjectInterTestMocks.Shuttle>(
+                                    eta: Mock<ProjectInterTestMocks.ETA>(
+                                        secondsRemaining: 125
+                                    )
+                                )
+                            ]
                         )
-                    ]
-                )
+                    )
+                ]
             )
         )
+    )
+    
+    static let tertiaryMock = Mock<ProjectInterTestMocks.Query>(
+        system: Mock<ProjectInterTestMocks.System>(
+            stop: Mock<ProjectInterTestMocks.Stop>(
+                name: "Chapman Court",
+                orderedStops: [
+                    Mock<ProjectInterTestMocks.OrderedStop>(
+                        nextStop: Mock<ProjectInterTestMocks.OrderedStop>(
+                            stop: Mock<ProjectInterTestMocks.Stop>(
+                                name: "Panther Village"
+                            )
+                        ), route: Mock<ProjectInterTestMocks.Route>(
+                            color: "#FF0000", id: "1",
+                            name: "Red Route",
+                            shuttles: [
+                                Mock<ProjectInterTestMocks.Shuttle>(
+                                    eta: Mock<ProjectInterTestMocks.ETA>(
+                                        secondsRemaining: 125
+                                    )
+                                )
+                            ]
+                        )
+                    ),
+                    Mock<ProjectInterTestMocks.OrderedStop>(
+                        nextStop: Mock<ProjectInterTestMocks.OrderedStop>(
+                            stop: Mock<ProjectInterTestMocks.Stop>(
+                                name: "Chapman Grand"
+                            )
+                        ), route: Mock<ProjectInterTestMocks.Route>(
+                            color: "#000000", id: "2",
+                            name: "Black Route",
+                            shuttles: [
+                                Mock<ProjectInterTestMocks.Shuttle>(
+                                    eta: Mock<ProjectInterTestMocks.ETA>(
+                                        secondsRemaining: 250
+                                    )
+                                )
+                            ]
+                        )
+                    )
+                ]
+            )
+        )
+
+    )
 }
 
 class RouteListContentViewRouteTests {
@@ -139,6 +185,7 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
     let networkArguments = RouteListNetworkArguments(systemId: "1", stopId: "1")
     let defaultMock = RouteListContentViewModelMockData.defaultMock
     let secondaryMock = RouteListContentViewModelMockData.secondaryMock
+    let tertiaryMock = RouteListContentViewModelMockData.tertiaryMock
     
     func assertViewModelDataForDefaultMock(viewModel: RouteListContentView.ViewModel) {
         #expect(viewModel.routes.count == 1)
@@ -176,5 +223,19 @@ class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
     
     @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
         await autoTest_refreshDataOnceDoesNothingIfNoApolloClient()
+    }
+    
+    @Test func loadedRoutesAreSorted() async {
+        let mockClient = MockApolloClient()
+        mockClient.queryMock = tertiaryMock
+        
+        let mockNetworkModel = ApolloNetworkModel(client: mockClient)
+        
+        let viewModel = RouteListContentView.ViewModel(apolloNetworkModel: mockNetworkModel)
+        
+        await viewModel.refreshDataOnce(arguments: networkArguments)
+        
+        #expect(viewModel.routes[0].name == "Black Route")
+        #expect(viewModel.routes[1].name == "Red Route")
     }
 }
