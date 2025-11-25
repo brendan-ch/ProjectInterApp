@@ -203,7 +203,7 @@ class RouteListContentViewRouteTests {
             
             if let shuttles = routes[i].shuttles {
                 for j in 0..<shuttles.count {
-                    #expect(shuttles[j].eta?.secondsRemaining == constructedRoutes[i].etasInSeconds[j])
+                    #expect(ETASeconds(shuttles[j].eta!.secondsRemaining) == constructedRoutes[i].etasInSeconds[j])
                 }
             }
             

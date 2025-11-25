@@ -96,7 +96,7 @@ class RouteInfoContentViewShuttleTests {
         let constructedShuttles = shuttles.map(RouteInfoContentViewShuttle.init)
         
         for i in 0..<constructedShuttles.count {
-            #expect(shuttles[i].eta?.secondsRemaining == constructedShuttles[i].secondsRemaining)
+            #expect(ETASeconds(shuttles[i].eta!.secondsRemaining) == constructedShuttles[i].secondsRemaining)
             #expect(shuttles[i].name == constructedShuttles[i].name)
             #expect(shuttles[i].id == constructedShuttles[i].id)
         }

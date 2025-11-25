@@ -26,10 +26,10 @@ struct RouteListContentViewRoute: Identifiable {
     var nextStopName: String?
     
     /// ETAs of upcoming shuttles in seconds relative to a given stop ID.
-    private(set) var etasInSeconds: [Double] = []
+    private(set) var etasInSeconds: [ETASeconds] = []
     
     mutating func addEta(_ newValue: Double) {
-        etasInSeconds.append(newValue)
+        etasInSeconds.append(.init(newValue))
         etasInSeconds.sort()
     }
     
@@ -39,16 +39,7 @@ struct RouteListContentViewRoute: Identifiable {
     
     /// ETAs of shuttles on routes, relative to a given stop ID.
     var etaDisplayString: String {
-        if etasInSeconds.isEmpty {
-            return ""
-        }
-        
-        let etasInMinutesAsStrings: [String] = etasInSeconds.map { $0.convertToMinutesAsString() }
-        
-        var constructedString = etasInMinutesAsStrings.joined(separator: ", ")
-        constructedString.append(" min")
-        
-        return constructedString
+        ETASeconds.convertMultipleIntoShortString(etasInSeconds)
     }
 }
 
