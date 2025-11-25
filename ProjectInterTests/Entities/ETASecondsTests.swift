@@ -30,6 +30,12 @@ class ETASecondsTests {
     }
 
     // MARK: - convertToMinutesAsString() tests (for BinaryFloatingPoint logic)
+    
+    @Test func testConvertToMinutesAsStringForNegativeSeconds() {
+        let eta = ETASeconds(-30)
+        let formatted = eta.convertToMinutesAsString()
+        #expect(formatted == "<1 (late)")
+    }
 
     @Test func testConvertToMinutesAsStringForUnderOneMinute() {
         let eta = ETASeconds(30)

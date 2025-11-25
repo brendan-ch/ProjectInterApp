@@ -46,11 +46,13 @@ struct ETASeconds: ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral, Compa
     
     func convertToMinutesAsString() -> String {
         let etaInSeconds = value
-        let etaInMinutes = Int(etaInSeconds / 60)
-        if etaInMinutes < 1 {
+        let etaInMinutes = etaInSeconds / 60
+        if etaInMinutes <= 0 {
+            return "<1 (late)"
+        } else if etaInMinutes < 1 {
             return "<1"
         } else {
-            return String(etaInMinutes)
+            return String(Int(etaInMinutes))
         }
     }
     
