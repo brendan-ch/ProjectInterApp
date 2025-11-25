@@ -142,7 +142,7 @@ class RouteListContentViewRouteTests {
     @Test func etaDisplaysCorrectlyWithNoEtas() async throws {
         let route = generateRouteObject()
         
-        let expectedString = "N/A"
+        let expectedString = ""
         #expect(route.etaDisplayString == expectedString)
     }
     
