@@ -159,7 +159,7 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         
         await viewModel.refreshDataOnce(arguments: arguments)
         
-        #expect(viewModel.etaDisplay == "Less than 1 minute to Stop 1")
+        #expect(viewModel.etaDisplay == "Under 1 minute to Stop 1")
     }
     
     @Test func refreshDataOnceDoesNothingIfNoData() async {
