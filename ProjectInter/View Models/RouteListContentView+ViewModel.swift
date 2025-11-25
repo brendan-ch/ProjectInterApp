@@ -14,13 +14,13 @@ import ProjectInterOperations
 /// Represents a single route to display in the list of routes.
 struct RouteListContentViewRoute: Identifiable {
     /// Server-side ID of the route.
-    var id: String
+    let id: String
     
     /// The name of the route, e.g. "Red Route."
-    var name: String
+    let name: String
     
     /// Color to show for the route.
-    var colorHex: String
+    let colorHex: String
     
     /// Name of the next stop on the route relative to a given stop ID.
     var nextStopName: String?
