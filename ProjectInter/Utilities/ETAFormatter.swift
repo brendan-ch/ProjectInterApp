@@ -9,8 +9,10 @@ struct ETAFormatter {
     /// Given the number of seconds remaining, turn it into a string for displaying ETA.
     static func formatSecondsRemaining(_ secondsRemaining: Double?) -> String {
         if let secondsRemaining = secondsRemaining {
-            if secondsRemaining < 60 {
-                return "Less than 1 minute"
+            if secondsRemaining < 0 {
+                return "Running late"
+            } else if secondsRemaining < 60 {
+                return "Under 1 minute"
             } else {
                 let minutesRemaining = Int(secondsRemaining / 60)
                 return "\(minutesRemaining) min"

@@ -9,6 +9,11 @@ import Testing
 @testable import ProjectInter
 
 class ETAFormatterTests {
+    @Test func testFormatSecondsRemainingForLateShuttle() {
+        let formatted = ETAFormatter.formatSecondsRemaining(-120)
+        #expect(formatted == "Running late")
+    }
+    
     @Test func testFormatSecondsRemainingForNoData() {
         let formatted = ETAFormatter.formatSecondsRemaining(nil)
         #expect(formatted == "N/A")
@@ -16,7 +21,7 @@ class ETAFormatterTests {
     
     @Test func testFormatSecondsRemainingForUnderOneMinute() {
         let formatted = ETAFormatter.formatSecondsRemaining(20)
-        #expect(formatted == "Less than 1 minute")
+        #expect(formatted == "Under 1 minute")
     }
     
     @Test func testFormatsecondsRemainingForAboveOneMinute() {
