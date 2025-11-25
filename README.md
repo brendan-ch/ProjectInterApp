@@ -4,7 +4,7 @@ This is the iOS app codebase for Interchange, an app for college transit.
 
 ## Setup
 
-You'll need Xcode 16.x to run the project.
+You'll need Xcode 26.x to run the project.
 
 Clone the [server repo](https://github.com/brendan-ch/project-inter-server) to
 load the data necessary for this app. Follow the instructions there to set up the server.
