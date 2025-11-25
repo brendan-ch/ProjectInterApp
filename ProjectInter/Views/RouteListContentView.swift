@@ -67,9 +67,19 @@ struct RouteListContentView: NetworkView {
             WithInitializationView(dataInitState: viewModel.dataInitState) {
                 Divider()
                 
-                DataWrapperView(shouldDisplayNoDataMessage: viewModel.routes.isEmpty, noDataMessage: "No routes available.") {
-                    ForEach(viewModel.routes) { route in
-                        RouteListItem(route: route) { selectedRoute in
+                DataWrapperView(shouldDisplayNoDataMessage: viewModel.activeRoutes.isEmpty, noDataMessage: "No routes available.") {
+                    ForEach(viewModel.activeRoutes) { route in
+                        RouteListItem(route: route, isInactive: false) { selectedRoute in
+                            globalIdSelectionModel.selectRouteId(route.id)
+                        }
+                        .padding(.horizontal)
+                        .buttonStyle(.plain)
+                        
+                        Divider()
+                    }
+                    
+                    ForEach(viewModel.inactiveRoutes) { route in
+                        RouteListItem(route: route, isInactive: true) { selectedRoute in
                             globalIdSelectionModel.selectRouteId(route.id)
                         }
                         .padding(.horizontal)
@@ -98,7 +108,8 @@ struct RouteListContentView: NetworkView {
 /// View which displays a single route with all data
 /// in the passed ``RouteListContentViewRoute`` object.
 struct RouteListItem: View {
-    var route: RouteListContentViewRoute
+    let route: RouteListContentViewRoute
+    let isInactive: Bool
     var action: (_ selectedShuttle: RouteListContentViewRoute) -> Void
     
     var body: some View {
@@ -118,11 +129,12 @@ struct RouteListItem: View {
                         .foregroundStyle(.secondary)
                 }
                 Spacer()
-                Text(route.etaDisplayString)
+                Text(isInactive ? "N/A" : route.etaDisplayString)
             }
             .listRowBackground(Color.clear)
             .contentShape(Rectangle())
         }
+        .opacity(isInactive ? 0.5 : 1.0)
     }
 }
 

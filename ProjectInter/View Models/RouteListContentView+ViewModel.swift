@@ -14,13 +14,13 @@ import ProjectInterOperations
 /// Represents a single route to display in the list of routes.
 struct RouteListContentViewRoute: Identifiable {
     /// Server-side ID of the route.
-    var id: String
+    let id: String
     
     /// The name of the route, e.g. "Red Route."
-    var name: String
+    let name: String
     
     /// Color to show for the route.
-    var colorHex: String
+    let colorHex: String
     
     /// Name of the next stop on the route relative to a given stop ID.
     var nextStopName: String?
@@ -40,7 +40,7 @@ struct RouteListContentViewRoute: Identifiable {
     /// ETAs of shuttles on routes, relative to a given stop ID.
     var etaDisplayString: String {
         if etasInSeconds.isEmpty {
-            return "N/A"
+            return ""
         }
         
         let etasInMinutesAsStrings: [String] = etasInSeconds.map { $0.convertToMinutesAsString() }
@@ -69,6 +69,15 @@ extension RouteListContentViewRoute {
     }
 }
 
+// Sort routes by name
+// Since we're querying by ordered stops, those aren't ordered
+// by route name, so we need to perform sorting here
+extension RouteListContentViewRoute: Comparable {
+    static func < (lhs: RouteListContentViewRoute, rhs: RouteListContentViewRoute) -> Bool {
+        lhs.name < rhs.name
+    }
+}
+
 // MARK: - Network arguments
 
 /// Information to pass into the route list network request.
@@ -83,8 +92,11 @@ extension RouteListContentView {
     /// Backing view model for ``RouteListContentView``.
     @Observable
     class ViewModel: NetworkDataModel<RouteListNetworkArguments, GetRouteListDataQuery>, PlaceholderBuildable, Clearable {
-        /// All routes to render on ``RouteListContentView``.
-        var routes: [RouteListContentViewRoute] = []
+        /// Routes with active shuttles to render on ``RouteListContentView``.
+        private(set) var activeRoutes: [RouteListContentViewRoute] = []
+        
+        /// Routes without active shuttles to render on ``RouteListContentView``
+        private(set) var inactiveRoutes: [RouteListContentViewRoute] = []
         
         override func convertNetworkArgumentsIntoQuery(_ arguments: RouteListNetworkArguments) -> GetRouteListDataQuery {
             return GetRouteListDataQuery(systemId: arguments.systemId, stopId: arguments.stopId)
@@ -101,7 +113,9 @@ extension RouteListContentView {
         
         private func updateDataFromResponse(data: GetRouteListDataQuery.Data) {
             if let orderedStops = data.system?.stop?.orderedStops {
-                self.routes = []
+                var unsortedActiveRoutes: [RouteListContentViewRoute] = []
+                var unsortedInactiveRoutes: [RouteListContentViewRoute] = []
+                
                 orderedStops.forEach { orderedStop in
                     if let route = orderedStop.route {
                         var constructedRoute = RouteListContentViewRoute(route)
@@ -109,20 +123,27 @@ extension RouteListContentView {
                             constructedRoute.nextStopName = nextStop.name
                         }
                         
-                        self.routes.append(constructedRoute)
+                        if let shuttles = route.shuttles, !shuttles.isEmpty {
+                            unsortedActiveRoutes.append(constructedRoute)
+                        } else {
+                            unsortedInactiveRoutes.append(constructedRoute)
+                        }
                     }
                 }
+                
+                self.activeRoutes = unsortedActiveRoutes.sorted()
+                self.inactiveRoutes = unsortedInactiveRoutes.sorted()
             }
         }
         
         func clearData() {
             resetDataInitState()
-            routes = []
+            activeRoutes = []
         }
 
         static func buildPlaceholder() -> Self {
             let newModel = Self(dataInitState: .succeeded)
-            newModel.routes = [
+            newModel.activeRoutes = [
                 RouteListContentViewRoute(
                     id: "1",
                     name: "Red Route",
