@@ -19,7 +19,6 @@
 		205077162D1B79FC004CAA04 /* ProjectInterTestMocks in Frameworks */ = {isa = PBXBuildFile; productRef = 205077152D1B79FC004CAA04 /* ProjectInterTestMocks */; };
 		206A72562E94BB10000AD74D /* ProjectInterShared in Frameworks */ = {isa = PBXBuildFile; productRef = 206A72552E94BB10000AD74D /* ProjectInterShared */; };
 		207534352E8CA07200E164A5 /* ProjectInterLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 207534342E8CA07200E164A5 /* ProjectInterLogging */; };
-		208238562D2E730D00DA9820 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 208238552D2E730D00DA9820 /* README.md */; };
 		20A216BC2EB2F0E300068381 /* ProjectInterWidgetsCore in Frameworks */ = {isa = PBXBuildFile; productRef = 20A216BB2EB2F0E300068381 /* ProjectInterWidgetsCore */; };
 		20C494252E90682A009B7031 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20C494242E906829009B7031 /* WidgetKit.framework */; };
 		20C494272E90682A009B7031 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20C494262E90682A009B7031 /* SwiftUI.framework */; };
@@ -124,6 +123,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
+				Models/README.md,
 				Operations/GetAllSystems.graphql,
 				Operations/GetParkingStructuresListData.graphql,
 				Operations/GetSchemaVersion.graphql,
@@ -456,7 +456,6 @@
 			files = (
 				20045CAD2D6ABDBA00A7B6FA /* ProjectInterUITests.xctestplan in Resources */,
 				205077112D1B78EF004CAA04 /* apollo-codegen-config.json in Resources */,
-				208238562D2E730D00DA9820 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
