@@ -55,7 +55,7 @@ struct ContentView: View {
     // For dependency injection in previews
     var mapViewModel: MapView.ViewModel?
     var routeListContentViewModel: RouteListContentView.ViewModel?
-    var routeInfoContentViewModel: RouteInfoContentView.ViewModel?
+    var routeInfoContentViewModel: RouteInfoContentView<ShuttleInfoContentView>.ViewModel?
     var shuttleInfoContentViewModel: ShuttleInfoContentView.ViewModel?
     var parkingStructuresListContentViewModel: ParkingStructuresListContentView.ViewModel?
     
@@ -175,9 +175,20 @@ struct ContentView: View {
     
     func buildRouteInfoView() -> some View {
         if let routeInfoContentViewModel = routeInfoContentViewModel {
-            return RouteInfoContentView(viewModel: routeInfoContentViewModel)
+            return RouteInfoContentView(viewModel: routeInfoContentViewModel) {
+                buildShuttleInfoView()
+            }
         }
-        return RouteInfoContentView()
+        return RouteInfoContentView() {
+            buildShuttleInfoView()
+        }
+    }
+    
+    func buildShuttleInfoView() -> ShuttleInfoContentView {
+        if let shuttleInfoContentViewModel = shuttleInfoContentViewModel {
+            return ShuttleInfoContentView(viewModel: shuttleInfoContentViewModel)
+        }
+        return ShuttleInfoContentView()
     }
 }
 
@@ -192,7 +203,7 @@ struct ContentView: View {
     
     let routeListContentViewModel = RouteListContentView.ViewModel.buildPlaceholder()
     
-    let routeInfoContentViewModel = RouteInfoContentView.ViewModel.buildPlaceholder()
+    let routeInfoContentViewModel = RouteInfoContentView<ShuttleInfoContentView>.ViewModel.buildPlaceholder()
     
     let shuttleInfoContentViewModel = ShuttleInfoContentView.ViewModel.buildPlaceholder()
     

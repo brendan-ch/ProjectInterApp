@@ -9,7 +9,7 @@ import SwiftUI
 
 /// View which displays information for the currently selected
 /// route in ``GlobalDataState`` and a list of upcoming shuttles.
-struct RouteInfoContentView: NetworkView {
+struct RouteInfoContentView<Content: View>: NetworkView {
     /// ``GlobalDataState`` instance containing the currently selected route
     /// and `ApolloClient` instance.
     @Environment(GlobalIdSelectionModel.self) var globalIdSelectionModel: GlobalIdSelectionModel
@@ -17,10 +17,10 @@ struct RouteInfoContentView: NetworkView {
     
     @Environment(GlobalStopsModel.self) var globalStopsState: GlobalStopsModel
     
-    @Environment(ShuttleInfoContentView.ViewModel.self) var shuttleViewModel: ShuttleInfoContentView.ViewModel?
-    
     /// Backing ``RouteInfoContentView`` instance.
     @State var viewModel: ViewModel = ViewModel()
+    
+    @ViewBuilder let shuttleInfo: Content
     
     var networkArguments: RouteInfoNetworkArguments? {
         guard let systemId = globalSystemsModel.selectedSystem?.id,
@@ -89,11 +89,7 @@ struct RouteInfoContentView: NetworkView {
                         
                         Divider()
                         
-                        if let shuttleViewModel = shuttleViewModel {
-                            ShuttleInfoContentView(viewModel: shuttleViewModel)
-                        } else {
-                            ShuttleInfoContentView()
-                        }
+                        shuttleInfo
                     }
                 }
             }
@@ -142,14 +138,15 @@ struct RouteInfoShuttleViewItem: View {
 }
 
 #Preview {
-    let model = RouteInfoContentView.ViewModel.buildPlaceholder()
+    let model = RouteInfoContentView<ShuttleInfoContentView>.ViewModel.buildPlaceholder()
     let shuttleViewModel = ShuttleInfoContentView.ViewModel.buildPlaceholder()
     
-    return RouteInfoContentView(viewModel: model)
+    RouteInfoContentView(viewModel: model) {
+        ShuttleInfoContentView(viewModel: shuttleViewModel)
+    }
         .environment(GlobalIdSelectionModel())
         .environment(GlobalStopsModel())
         .environment(GlobalSystemsModel.buildPlaceholder())
         .environment(ShuttleNotificationSchedulingModel())
-        .environment(shuttleViewModel)
         .environmentObject(CustomAppDelegate())
 }
