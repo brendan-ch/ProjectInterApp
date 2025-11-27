@@ -17,13 +17,14 @@ struct ShuttleInfoContentView: NetworkView {
     /// Backing view model.
     @State var viewModel = ViewModel()
     
+    /// Backing view model for scheduling/cancelling notifications.
+    @State var notificationSchedulingState: ShuttleNotificationSchedulingModel = ShuttleNotificationSchedulingModel()
+    
     /// Source of truth for the currently selected shuttle ID.
     @Environment(GlobalIdSelectionModel.self) var globalIdSelectionModel: GlobalIdSelectionModel
     @Environment(GlobalSystemsModel.self) var globalSystemsModel: GlobalSystemsModel
     
     @Environment(GlobalStopsModel.self) var globalStopsModel: GlobalStopsModel
-    
-    @Environment(ShuttleNotificationSchedulingModel.self) var notificationSchedulingState: ShuttleNotificationSchedulingModel
     
     @EnvironmentObject var customAppDelegate: CustomAppDelegate
     
@@ -235,6 +236,5 @@ struct ShuttleInfoContentView: NetworkView {
         .environment(GlobalSystemsModel())
         .environment(GlobalIdSelectionModel())
         .environment(GlobalStopsModel())
-        .environment(ShuttleNotificationSchedulingModel())
         .environmentObject(CustomAppDelegate())
 }

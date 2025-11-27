@@ -147,6 +147,5 @@ struct RouteInfoShuttleViewItem: View {
         .environment(GlobalIdSelectionModel())
         .environment(GlobalStopsModel())
         .environment(GlobalSystemsModel.buildPlaceholder())
-        .environment(ShuttleNotificationSchedulingModel())
         .environmentObject(CustomAppDelegate())
 }

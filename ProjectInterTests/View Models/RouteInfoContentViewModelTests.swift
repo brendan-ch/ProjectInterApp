@@ -108,19 +108,19 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
     let defaultMock = RouteInfoContentViewModelTestsMockData.defaultMock
     let secondaryMock = RouteInfoContentViewModelTestsMockData.secondaryMock
     
-    func assertViewModelDataForDefaultMock(viewModel: RouteInfoContentView.ViewModel) {
+    func assertViewModelDataForDefaultMock(viewModel: RouteInfoContentView<ShuttleInfoContentView>.ViewModel) {
         #expect(viewModel.routeName == "Red Route")
         #expect(viewModel.routeNextStopName == "Panther Village")
         #expect(viewModel.shuttles.count == 2)
     }
     
-    func assertViewModelDataForSecondaryMock(viewModel: RouteInfoContentView.ViewModel) {
+    func assertViewModelDataForSecondaryMock(viewModel: RouteInfoContentView<ShuttleInfoContentView>.ViewModel) {
         #expect(viewModel.routeName == "Grey Route")
         #expect(viewModel.routeNextStopName == "Chapman Grand")
         #expect(viewModel.shuttles.count == 1)
     }
     
-    func assertViewModelDataForEmptyMock(viewModel: RouteInfoContentView.ViewModel) {
+    func assertViewModelDataForEmptyMock(viewModel: RouteInfoContentView<ShuttleInfoContentView>.ViewModel) {
         #expect(viewModel.routeName == "")
         #expect(viewModel.routeNextStopName == nil)
         #expect(viewModel.shuttles.count == 0)
@@ -171,7 +171,7 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         mockClient.queryMock = mock
         
         let networkModel = ApolloNetworkModel(client: mockClient)
-        let viewModel = RouteInfoContentView.ViewModel(apolloNetworkModel: networkModel)
+        let viewModel = RouteInfoContentView<ShuttleInfoContentView>.ViewModel(apolloNetworkModel: networkModel)
         let arguments = networkArguments
         
         await viewModel.refreshDataOnce(arguments: arguments)
@@ -221,7 +221,7 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         mockClient.queryMock = mock
         
         let networkModel = ApolloNetworkModel(client: mockClient)
-        let viewModel = RouteInfoContentView.ViewModel(apolloNetworkModel: networkModel)
+        let viewModel = RouteInfoContentView<ShuttleInfoContentView>.ViewModel(apolloNetworkModel: networkModel)
         let arguments = networkArguments
         
         await viewModel.refreshDataOnce(arguments: arguments)

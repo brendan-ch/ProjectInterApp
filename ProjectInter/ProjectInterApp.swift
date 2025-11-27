@@ -23,8 +23,6 @@ struct ProjectInterApp: App {
     
     @State var globalStopsStateObject = GlobalStopsModel(apolloNetworkModel: ApolloNetworkModel.shared)
     
-    @State var globalNotificationsStateObject = ShuttleNotificationSchedulingModel(apolloClient: ApolloClient.shared)
-    
     @State var setupStateModel = SetupStateModel()
     
     @State var schemaVersionModel = SchemaVersionModel(
@@ -65,7 +63,6 @@ struct ProjectInterApp: App {
         .environment(globalSystemsStateObject)
         .environment(globalStopsStateObject)
         .environment(locationManagerStateObject)
-        .environment(globalNotificationsStateObject)
         .environmentObject(customAppDelegate.notificationCenterDelegate)
     }
     
