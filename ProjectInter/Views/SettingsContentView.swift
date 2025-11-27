@@ -91,6 +91,12 @@ struct SettingsContentView: View {
                     Text("View acknowledgments")
                         .font(.footnote)
                 }
+                
+                Text("Data provided by Interchange is for informational purposes only.")
+                    .multilineTextAlignment(.center)
+                    .font(.footnote)
+                    .padding()
+                    .foregroundStyle(.secondary)
             }
         }
         .sheet(isPresented: $showChangelogView) {

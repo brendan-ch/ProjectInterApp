@@ -65,11 +65,7 @@ struct RouteInfoContentView<Content: View>: NetworkView {
                                         VStack {
                                             Text(shuttle.name)
                                                 .bold()
-                                            if let secondsRemaining = shuttle.secondsRemaining {
-                                                Text(secondsRemaining.convertToMinutesAsString() + " min")
-                                            } else {
-                                                Text("N/A")
-                                            }
+                                            Text(shuttle.estimatedTimeAwayDisplay)
                                         }
                                         .frame(minWidth: 80)
                                     }
