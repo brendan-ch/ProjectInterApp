@@ -25,12 +25,11 @@ extension NetworkView {
     func restartDataUpdates() {
         if let apolloNetworkModel = globalSystemsModel.apolloNetworkModel {
             viewModel.apolloNetworkModel = apolloNetworkModel
-        }
-        
-        viewModel.clearData()
-        if let networkArguments = networkArguments {
-            viewModel.stopRefreshingData()
-            viewModel.startRefreshingData(arguments: networkArguments, sleepDuration: .seconds(5))
+            viewModel.clearData()
+            if let networkArguments = networkArguments {
+                viewModel.stopRefreshingData()
+                viewModel.startRefreshingData(arguments: networkArguments, sleepDuration: .seconds(5))
+            }
         }
     }
     
