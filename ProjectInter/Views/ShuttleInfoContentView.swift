@@ -18,7 +18,7 @@ struct ShuttleInfoContentView: NetworkView {
     @State var viewModel = ViewModel()
     
     /// Backing view model for scheduling/cancelling notifications, also exclusive to the view.
-    @State var notificationSchedulingState: ShuttleNotificationSchedulingModel = ShuttleNotificationSchedulingModel()
+    @State var notificationSchedulingState: NotificationSchedulingModel = NotificationSchedulingModel()
     
     /// Source of truth for the currently selected shuttle ID.
     @Environment(GlobalIdSelectionModel.self) var globalIdSelectionModel: GlobalIdSelectionModel
