@@ -71,7 +71,8 @@ class ShuttleInfoEtaListItemTests {
         
         let constructedEtas = etas.map(ShuttleInfoEtaListItem.init)
         for i in 0..<constructedEtas.count {
-            #expect(etas[i].secondsRemaining == constructedEtas[i].secondsRemaining)
+            let secondsRemaining: ETASeconds = ETASeconds(etas[i].secondsRemaining)
+            #expect(secondsRemaining == constructedEtas[i].secondsRemaining)
             #expect(etas[i].stop?.name == constructedEtas[i].stopName)
             #expect(etas[i].stop?.id == constructedEtas[i].stopId)
         }
@@ -158,7 +159,7 @@ class ShuttleInfoContentViewModelTests: NetworkDataModelTestsProtocol {
         
         await viewModel.refreshDataOnce(arguments: arguments)
         
-        #expect(viewModel.etaDisplay == "Less than 1 minute to Stop 1")
+        #expect(viewModel.etaDisplay == "Under 1 minute to Stop 1")
     }
     
     @Test func refreshDataOnceDoesNothingIfNoData() async {

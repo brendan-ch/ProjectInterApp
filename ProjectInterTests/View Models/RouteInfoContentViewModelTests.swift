@@ -81,7 +81,7 @@ class RouteInfoContentViewShuttleTests {
     
     @Test func testEstimatedTimeAwayDisplayForUnderOneMinute() {
         let shuttle = RouteInfoContentViewShuttle(name: "Shuttle 1", secondsRemaining: 20, id: "1")
-        #expect(shuttle.estimatedTimeAwayDisplay == "Less than 1 minute")
+        #expect(shuttle.estimatedTimeAwayDisplay == "<1 min")
     }
     
     @Test func testEstimatedTimeAwayDisplayForAboveOneMinute() {
@@ -96,7 +96,7 @@ class RouteInfoContentViewShuttleTests {
         let constructedShuttles = shuttles.map(RouteInfoContentViewShuttle.init)
         
         for i in 0..<constructedShuttles.count {
-            #expect(shuttles[i].eta?.secondsRemaining == constructedShuttles[i].secondsRemaining)
+            #expect(ETASeconds(shuttles[i].eta!.secondsRemaining) == constructedShuttles[i].secondsRemaining)
             #expect(shuttles[i].name == constructedShuttles[i].name)
             #expect(shuttles[i].id == constructedShuttles[i].id)
         }

@@ -17,12 +17,15 @@ struct RouteInfoContentViewShuttle: Identifiable, Equatable {
     var name: String
     
     /// The number of seconds remaining (for sorting).
-    var secondsRemaining: Double?
+    var secondsRemaining: ETASeconds?
     
     /// String representing how far away the shuttle is from a given stop,
     /// rendered from server-side data.
     var estimatedTimeAwayDisplay: String {
-        ETAFormatter.formatSecondsRemaining(secondsRemaining)
+        if let secondsRemaining = secondsRemaining {
+            return secondsRemaining.asShortString()
+        }
+        return "N/A"
     }
     
     /// The server-side ID of the shuttle.
@@ -33,7 +36,9 @@ extension RouteInfoContentViewShuttle {
     init(_ shuttle: GetRouteInfoDataQuery.Data.System.Route.Shuttle) {
         self.name = shuttle.name
         self.id = shuttle.id
-        self.secondsRemaining = shuttle.eta?.secondsRemaining
+        if let secondsRemaining = shuttle.eta?.secondsRemaining {
+            self.secondsRemaining = ETASeconds(secondsRemaining)
+        }
     }
 }
 
@@ -114,7 +119,7 @@ extension RouteInfoContentView {
             
             newModel.shuttles = [
                 RouteInfoContentViewShuttle(name: "Red Shuttle 17", secondsRemaining: 20, id: "1"),
-                RouteInfoContentViewShuttle(name: "Red Shuttle 5", secondsRemaining: 120, id: "2"),
+                RouteInfoContentViewShuttle(name: "Red Shuttle 5", secondsRemaining: .init(120), id: "2"),
             ]
             
             return newModel
