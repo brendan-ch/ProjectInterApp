@@ -25,6 +25,9 @@ enum NotificationSchedulingFailedError: Error {
     case operationFailed
 }
 
+/// Model for handling shuttle notifications.
+/// Only contains logic pertaining to shuttle notifications, and should only
+/// be consumed by views related to shuttle notification scheduling.
 @Observable
 class ShuttleNotificationSchedulingModel {
     var apolloClient: ApolloClientProtocol?

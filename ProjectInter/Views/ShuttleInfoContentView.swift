@@ -14,10 +14,10 @@ struct ShuttleInfoContentView: NetworkView {
     /// in its own sheet.
     var withHeading = false
     
-    /// Backing view model.
+    /// Backing view model exclusive to the view.
     @State var viewModel = ViewModel()
     
-    /// Backing view model for scheduling/cancelling notifications.
+    /// Backing view model for scheduling/cancelling notifications, also exclusive to the view.
     @State var notificationSchedulingState: ShuttleNotificationSchedulingModel = ShuttleNotificationSchedulingModel()
     
     /// Source of truth for the currently selected shuttle ID.
