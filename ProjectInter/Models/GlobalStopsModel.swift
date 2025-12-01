@@ -44,8 +44,6 @@ extension GlobalStopsModelStop {
 @Observable
 class GlobalStopsModel: NetworkDataModel<GlobalStopsNetworkArguments, GetAllStopsBySystemIdQuery>, PlaceholderBuildable {
     
-    var apolloClient: ApolloClientProtocol?
-    
     var dataRefreshLoopTask: Task<Void, any Error>?
     
     var stops: [GlobalStopsModelStop] = []
