@@ -155,9 +155,11 @@ struct ShuttleInfoContentView: NetworkView {
         }
         .onAppear {
             restartDataUpdates()
+            setApolloClientOnNotificationSchedulingModel()
         }
         .onChange(of: globalIdSelectionModel.selectedShuttleId) {
             restartDataUpdates()
+            setApolloClientOnNotificationSchedulingModel()
         }
         .onDisappear {
             stopDataUpdates()
@@ -189,6 +191,12 @@ struct ShuttleInfoContentView: NetworkView {
             }
         } else {
             content
+        }
+    }
+    
+    private func setApolloClientOnNotificationSchedulingModel() {
+        if let apolloClient = globalSystemsModel.apolloNetworkModel?.client {
+            notificationSchedulingState.apolloClient = apolloClient
         }
     }
     

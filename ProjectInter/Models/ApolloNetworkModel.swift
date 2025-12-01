@@ -11,7 +11,7 @@ import ApolloAPI
 import ProjectInterLogging
 
 class ApolloNetworkModel {
-    private let client: ApolloClientProtocol
+    private(set) var client: ApolloClientProtocol
     
     init(client: ApolloClientProtocol) {
         self.client = client
