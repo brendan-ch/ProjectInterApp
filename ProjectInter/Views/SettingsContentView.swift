@@ -20,6 +20,10 @@ struct SettingsContentView: View {
     
     @State private var showAcknowledgmentsView = false
     
+    @State private var showServerUrlSheet = false
+    
+    @Environment(ServerUrlConfigurationModel.self) var serverUrlConfigModel: ServerUrlConfigurationModel
+    
     var body: some View {
         HeadingWrapperView(title: "Settings") {
             VStack(spacing: 0) {
@@ -43,6 +47,32 @@ struct SettingsContentView: View {
                         }
                     }
                     .tint(Color.primary)
+                }
+                .padding()
+                
+                GroupBox(label: Text("Server")) {
+                    VStack(alignment: .leading) {
+                        if serverUrlConfigModel.isUsingCustomUrl {
+                            Text("Using custom server")
+                            Text(serverUrlConfigModel.currentServerUrl.absoluteString)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                        } else {
+                            Text("Using default server")
+                        }
+                        
+                        Button {
+                            showServerUrlSheet = true
+                        } label: {
+                            Text("Change server URL")
+                        }
+                    }
+                    .frame(
+                        minWidth: 0,
+                        maxWidth: .infinity,
+                        alignment: .topLeading
+                    )
                 }
                 .padding()
                 
@@ -108,10 +138,14 @@ struct SettingsContentView: View {
         .sheet(isPresented: $showAcknowledgmentsView) {
             AcknowledgementsWebView()
         }
+        .sheet(isPresented: $showServerUrlSheet) {
+            ServerUrlConfigurationView()
+        }
     }
 }
 
 #Preview {
     SettingsContentView()
         .environment(GlobalSystemsModel())
+        .environment(ServerUrlConfigurationModel())
 }
