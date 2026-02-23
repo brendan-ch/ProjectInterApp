@@ -50,32 +50,6 @@ struct SettingsContentView: View {
                 }
                 .padding()
                 
-                GroupBox(label: Text("Server")) {
-                    VStack(alignment: .leading) {
-                        if serverUrlConfigModel.isUsingCustomUrl {
-                            Text("Using custom server")
-                            Text(serverUrlConfigModel.currentServerUrl.absoluteString)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                                .lineLimit(1)
-                        } else {
-                            Text("Using default server")
-                        }
-                        
-                        Button {
-                            showServerUrlSheet = true
-                        } label: {
-                            Text("Change server URL")
-                        }
-                    }
-                    .frame(
-                        minWidth: 0,
-                        maxWidth: .infinity,
-                        alignment: .topLeading
-                    )
-                }
-                .padding()
-                
                 GroupBox(label: Text("Version")) {
                     VStack(alignment: .leading) {
                         if let marketingVersion = changelogVersionModel.getCurrentAppMarketingVersion() {
@@ -119,6 +93,13 @@ struct SettingsContentView: View {
                     showAcknowledgmentsView = true
                 } label: {
                     Text("View acknowledgments")
+                        .font(.footnote)
+                }
+                
+                Button {
+                    showServerUrlSheet = true
+                } label: {
+                    Text("Change server URL")
                         .font(.footnote)
                 }
                 

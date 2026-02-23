@@ -43,7 +43,6 @@ struct AppUpdateMessageView: View {
             } label: {
                 Text("Change server URL")
                     .font(.footnote)
-                    .foregroundStyle(.secondary)
             }
         }
         .padding()

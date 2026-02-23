@@ -43,7 +43,6 @@ struct WelcomeView: View {
             } label: {
                 Text("Options")
                     .font(.footnote)
-                    .foregroundStyle(.secondary)
             }
         }
         .padding()
