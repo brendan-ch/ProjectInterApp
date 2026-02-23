@@ -41,7 +41,7 @@ struct WelcomeView: View {
             Button {
                 showServerUrlSheet = true
             } label: {
-                Text("Options")
+                Text("Change server URL")
                     .font(.footnote)
             }
         }
