@@ -9,7 +9,9 @@ import SwiftUI
 
 struct WelcomeView: View {
     var onContinue: () -> Void
-    
+
+    @State private var showServerUrlSheet = false
+
     var body: some View {
         VStack(alignment: .center, spacing: 16) {
             Spacer()
@@ -35,8 +37,19 @@ struct WelcomeView: View {
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
+
+            Button {
+                showServerUrlSheet = true
+            } label: {
+                Text("Options")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
         }
         .padding()
+        .sheet(isPresented: $showServerUrlSheet) {
+            ServerUrlConfigurationView()
+        }
     }
 }
 
@@ -44,4 +57,5 @@ struct WelcomeView: View {
     WelcomeView {
         print("Continue button clicked")
     }
+    .environment(ServerUrlConfigurationModel())
 }
