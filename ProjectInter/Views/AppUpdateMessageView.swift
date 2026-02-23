@@ -9,7 +9,9 @@ import SwiftUI
 
 struct AppUpdateMessageView: View {
     let onRetry: () -> Void
-    
+
+    @State private var showServerUrlSheet = false
+
     var body: some View {
         VStack(alignment: .center, spacing: 16) {
             Spacer()
@@ -35,12 +37,24 @@ struct AppUpdateMessageView: View {
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
+
+            Button {
+                showServerUrlSheet = true
+            } label: {
+                Text("Change server URL")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
         }
         .padding()
+        .sheet(isPresented: $showServerUrlSheet) {
+            ServerUrlConfigurationView()
+        }
     }
 }
 
 #Preview {
     AppUpdateMessageView {}
+        .environment(ServerUrlConfigurationModel())
 }
 
