@@ -1,0 +1,48 @@
+//
+//  URLTests.swift
+//  ProjectInterShared
+//
+//  Created by Claude on 2026.02.23.
+//
+
+import Testing
+import Foundation
+@testable import ProjectInterShared
+
+struct URLTests {
+    let testDefaults = UserDefaults(suiteName: "dev.bchen.Inter.URLTests")!
+    let fallbackUrl = URL(string: "https://default.example.com")!
+
+    init() {
+        testDefaults.removeObject(forKey: UserDefaults.customServerUrlKey)
+    }
+
+    @Test func resolvedApiBaseUrl_returnsCustomUrl_whenSet() {
+        testDefaults.set("https://custom.example.com/graphql", forKey: UserDefaults.customServerUrlKey)
+        let result = URL.resolvedApiBaseUrl(from: testDefaults, fallback: fallbackUrl)
+        #expect(result == URL(string: "https://custom.example.com/graphql")!)
+    }
+
+    @Test func resolvedApiBaseUrl_returnsFallback_whenNoCustomUrl() {
+        let result = URL.resolvedApiBaseUrl(from: testDefaults, fallback: fallbackUrl)
+        #expect(result == fallbackUrl)
+    }
+
+    @Test func resolvedApiBaseUrl_returnsFallback_whenCustomUrlIsEmpty() {
+        testDefaults.set("", forKey: UserDefaults.customServerUrlKey)
+        let result = URL.resolvedApiBaseUrl(from: testDefaults, fallback: fallbackUrl)
+        #expect(result == fallbackUrl)
+    }
+
+    @Test func resolvedApiBaseUrl_returnsFallback_whenCustomUrlIsInvalid() {
+        // A string with spaces is not a valid URL
+        testDefaults.set("not a valid url", forKey: UserDefaults.customServerUrlKey)
+        let result = URL.resolvedApiBaseUrl(from: testDefaults, fallback: fallbackUrl)
+        #expect(result == fallbackUrl)
+    }
+
+    @Test func resolvedApiBaseUrl_returnsFallback_whenUserDefaultsIsNil() {
+        let result = URL.resolvedApiBaseUrl(from: nil, fallback: fallbackUrl)
+        #expect(result == fallbackUrl)
+    }
+}
