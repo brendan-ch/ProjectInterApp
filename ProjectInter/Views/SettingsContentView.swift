@@ -95,6 +95,7 @@ struct SettingsContentView: View {
                     Text("View acknowledgments")
                         .font(.footnote)
                 }
+                .padding(.top, 4)
                 
                 Button {
                     showServerUrlSheet = true
@@ -102,7 +103,8 @@ struct SettingsContentView: View {
                     Text("Change server URL")
                         .font(.footnote)
                 }
-                
+                .padding(.top, 4)
+
                 Text("Data provided by Interchange is for informational purposes only.")
                     .multilineTextAlignment(.center)
                     .font(.footnote)
