@@ -28,10 +28,9 @@ struct ServerUrlConfigurationView: View {
                     Text("Leave empty to use the default server.")
                 }
 
-                if serverUrlConfigModel.isUsingCustomUrl {
+                if !urlText.isEmpty {
                     Section {
                         Button("Reset to default", role: .destructive) {
-                            serverUrlConfigModel.resetToDefault()
                             urlText = ""
                         }
                     }
