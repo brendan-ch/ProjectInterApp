@@ -94,6 +94,33 @@ class BaseUITests: XCTestCase {
     }
     
     // MARK: - UI testing reusable flows
+
+    /// Resets the server URL to default if a custom one is configured.
+    /// Does nothing if the "Change server URL" button is not present.
+    func resetServerUrlIfNeeded() {
+        let changeServerUrlButton = app.buttons["Change server URL"]
+        guard changeServerUrlButton.waitForExistence(timeout: 5) else {
+            return
+        }
+        changeServerUrlButton.tap()
+
+        let resetButton = app.buttons["Reset to default"]
+        guard resetButton.waitForExistence(timeout: 5) else {
+            // No custom URL configured — dismiss the sheet
+            let cancelButton = app.buttons["Cancel"]
+            if cancelButton.waitForExistence(timeout: 5) {
+                cancelButton.tap()
+            }
+            return
+        }
+        resetButton.tap()
+
+        let saveButton = app.buttons["Save"]
+        if saveButton.waitForExistence(timeout: 5) {
+            saveButton.tap()
+        }
+    }
+
     func selectStopFromRouteList(name: String) {
         let _ = app.buttons["Change stop"].waitForExistence(timeout: 20)
         app.buttons["Change stop"].tap()
