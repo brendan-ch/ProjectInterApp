@@ -61,7 +61,7 @@ struct ServerUrlConfigurationView: View {
                 Text("Please enter a valid URL (starting with http:// or https://) or leave the field empty to use the default server.")
             }
             .onAppear {
-                urlText = serverUrlConfigModel.customServerUrlString
+                urlText = serverUrlConfigModel.customServerUrlString ?? ""
             }
         }
     }

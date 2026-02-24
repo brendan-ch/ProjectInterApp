@@ -20,18 +20,19 @@ class ServerUrlConfigurationModel {
     /// Incremented each time the server URL is changed, so views can react.
     private(set) var urlVersion: Int = 0
 
-    /// The user's custom server URL string, or empty if using default.
-    var customServerUrlString: String {
+    /// The user's custom server URL string, or nil if using default.
+    /// Pass nil to reset to the default server URL.
+    var customServerUrlString: String? {
         get {
             access(keyPath: \.customServerUrlString)
-            return userDefaults?.string(forKey: UserDefaults.customServerUrlKey) ?? ""
+            return userDefaults?.string(forKey: UserDefaults.customServerUrlKey)
         }
         set {
             withMutation(keyPath: \.customServerUrlString) {
-                if newValue.isEmpty {
-                    userDefaults?.removeObject(forKey: UserDefaults.customServerUrlKey)
-                } else {
+                if let newValue, !newValue.isEmpty {
                     userDefaults?.setValue(newValue, forKey: UserDefaults.customServerUrlKey)
+                } else {
+                    userDefaults?.removeObject(forKey: UserDefaults.customServerUrlKey)
                 }
             }
         }
@@ -39,8 +40,7 @@ class ServerUrlConfigurationModel {
 
     /// Whether the user has a custom server URL configured.
     var isUsingCustomUrl: Bool {
-        let stored = userDefaults?.string(forKey: UserDefaults.customServerUrlKey)
-        return stored != nil && !stored!.isEmpty
+        customServerUrlString != nil
     }
 
     /// The currently active server URL (custom or default).
@@ -61,7 +61,7 @@ class ServerUrlConfigurationModel {
     }
 
     /// Apply a new server URL. Returns true if the URL is valid and was applied.
-    /// Pass an empty string to reset to default.
+    /// Pass an empty string or nil to reset to default.
     @discardableResult
     func applyServerUrl(_ urlString: String) -> Bool {
         let trimmed = urlString.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -86,7 +86,7 @@ class ServerUrlConfigurationModel {
     /// Reset to the default server URL from Info.plist.
     @discardableResult
     func resetToDefault() -> Bool {
-        customServerUrlString = ""
+        customServerUrlString = nil
         apolloNetworkModel.reconfigure(with: ApolloClient(url: .apiBaseUrl))
         urlVersion += 1
         Loggers.shared.networkingLogger.notice("Server URL reset to default")

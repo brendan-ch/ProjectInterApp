@@ -42,6 +42,7 @@ class ServerUrlConfigurationModelTests {
 
         #expect(result == true)
         #expect(model.isUsingCustomUrl == false)
+        #expect(model.customServerUrlString == nil)
         #expect(model.urlVersion == 1)
     }
 
@@ -75,6 +76,7 @@ class ServerUrlConfigurationModelTests {
 
         #expect(result == true)
         #expect(model.isUsingCustomUrl == false)
+        #expect(model.customServerUrlString == nil)
         #expect(userDefaults.values[UserDefaults.customServerUrlKey] == nil)
         #expect(model.urlVersion == 1)
     }
@@ -110,7 +112,7 @@ class ServerUrlConfigurationModelTests {
         #expect(model.customServerUrlString == "https://stored.example.com")
     }
 
-    @Test("customServerUrlString returns empty when not set") func customServerUrlStringReturnsEmptyWhenNotSet() {
+    @Test("customServerUrlString returns nil when not set") func customServerUrlStringReturnsNilWhenNotSet() {
         let userDefaults = MockUserDefaults()
         let client = MockApolloClient()
         let apolloModel = ApolloNetworkModel(client: client)
@@ -119,7 +121,7 @@ class ServerUrlConfigurationModelTests {
             apolloNetworkModel: apolloModel
         )
 
-        #expect(model.customServerUrlString == "")
+        #expect(model.customServerUrlString == nil)
     }
 
     @Test("applyServerUrl trims whitespace") func applyServerUrlTrimsWhitespace() {
