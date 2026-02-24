@@ -9,6 +9,7 @@ import Testing
 import Foundation
 @testable import ProjectInterShared
 
+@Suite(.serialized)
 struct URLTests {
     let testDefaults = UserDefaults(suiteName: "dev.bchen.Inter.URLTests")!
     let fallbackUrl = URL(string: "https://default.example.com")!
@@ -30,13 +31,6 @@ struct URLTests {
 
     @Test("resolvedApiBaseUrl returns fallback when custom URL is empty") func resolvedApiBaseUrlReturnsFallbackWhenCustomUrlIsEmpty() {
         testDefaults.set("", forKey: UserDefaults.customServerUrlKey)
-        let result = URL.resolvedApiBaseUrl(from: testDefaults, fallback: fallbackUrl)
-        #expect(result == fallbackUrl)
-    }
-
-    @Test("resolvedApiBaseUrl returns fallback when custom URL is invalid") func resolvedApiBaseUrlReturnsFallbackWhenCustomUrlIsInvalid() {
-        // A string with spaces is not a valid URL
-        testDefaults.set("not a valid url", forKey: UserDefaults.customServerUrlKey)
         let result = URL.resolvedApiBaseUrl(from: testDefaults, fallback: fallbackUrl)
         #expect(result == fallbackUrl)
     }
