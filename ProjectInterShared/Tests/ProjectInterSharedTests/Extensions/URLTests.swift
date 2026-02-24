@@ -17,31 +17,31 @@ struct URLTests {
         testDefaults.removeObject(forKey: UserDefaults.customServerUrlKey)
     }
 
-    @Test func resolvedApiBaseUrl_returnsCustomUrl_whenSet() {
+    @Test("resolvedApiBaseUrl returns custom URL when set") func resolvedApiBaseUrlReturnsCustomUrlWhenSet() {
         testDefaults.set("https://custom.example.com/graphql", forKey: UserDefaults.customServerUrlKey)
         let result = URL.resolvedApiBaseUrl(from: testDefaults, fallback: fallbackUrl)
         #expect(result == URL(string: "https://custom.example.com/graphql")!)
     }
 
-    @Test func resolvedApiBaseUrl_returnsFallback_whenNoCustomUrl() {
+    @Test("resolvedApiBaseUrl returns fallback when no custom URL") func resolvedApiBaseUrlReturnsFallbackWhenNoCustomUrl() {
         let result = URL.resolvedApiBaseUrl(from: testDefaults, fallback: fallbackUrl)
         #expect(result == fallbackUrl)
     }
 
-    @Test func resolvedApiBaseUrl_returnsFallback_whenCustomUrlIsEmpty() {
+    @Test("resolvedApiBaseUrl returns fallback when custom URL is empty") func resolvedApiBaseUrlReturnsFallbackWhenCustomUrlIsEmpty() {
         testDefaults.set("", forKey: UserDefaults.customServerUrlKey)
         let result = URL.resolvedApiBaseUrl(from: testDefaults, fallback: fallbackUrl)
         #expect(result == fallbackUrl)
     }
 
-    @Test func resolvedApiBaseUrl_returnsFallback_whenCustomUrlIsInvalid() {
+    @Test("resolvedApiBaseUrl returns fallback when custom URL is invalid") func resolvedApiBaseUrlReturnsFallbackWhenCustomUrlIsInvalid() {
         // A string with spaces is not a valid URL
         testDefaults.set("not a valid url", forKey: UserDefaults.customServerUrlKey)
         let result = URL.resolvedApiBaseUrl(from: testDefaults, fallback: fallbackUrl)
         #expect(result == fallbackUrl)
     }
 
-    @Test func resolvedApiBaseUrl_returnsFallback_whenUserDefaultsIsNil() {
+    @Test("resolvedApiBaseUrl returns fallback when UserDefaults is nil") func resolvedApiBaseUrlReturnsFallbackWhenUserDefaultsIsNil() {
         let result = URL.resolvedApiBaseUrl(from: nil, fallback: fallbackUrl)
         #expect(result == fallbackUrl)
     }
