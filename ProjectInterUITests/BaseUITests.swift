@@ -103,7 +103,7 @@ class BaseUITests: XCTestCase {
     /// Does nothing if the "Change server URL" button is not present.
     func resetServerUrlIfNeeded() {
         let changeServerUrlButton = app.buttons["Change server URL"]
-        guard changeServerUrlButton.waitForExistence(timeout: 5) else {
+        guard changeServerUrlButton.waitForExistence(timeout: 2) else {
             return
         }
         changeServerUrlButton.tap()
