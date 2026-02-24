@@ -78,7 +78,6 @@ final class SettingsUITests: BaseUITests {
         await mockGetAllStopsQueryAndResponse()
         await mockGetRouteListQueryAndResponse()
         launchAppAndResetCustomServerUrl()
-        resetServerUrlIfNeeded()
 
         openSettingsTab()
         
@@ -106,6 +105,20 @@ final class SettingsUITests: BaseUITests {
     }
     
     func testChangeServerUrlShowsInvalidUrlMessage() {
+        launchAppAndResetCustomServerUrl()
+        openSettingsTab()
         
+        app.buttons["Change server URL"].tap()
+        
+        let serverUrlTextField = app.textFields["Server URL"]
+        if !serverUrlTextField.waitForExistence(timeout: 10) {
+            XCTFail("Server URL configuration view did not display")
+        }
+        
+        serverUrlTextField.tap()
+        serverUrlTextField.typeText("invalid url")
+        app.buttons["Save"].tap()
+        
+        XCTAssert(app.staticTexts["Invalid URL"].waitForExistence(timeout: 5))
     }
 }
