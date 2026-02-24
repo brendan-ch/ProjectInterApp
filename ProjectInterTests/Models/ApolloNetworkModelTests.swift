@@ -96,7 +96,8 @@ class ApolloNetworkModelTests {
         }
     }
 
-    @Test func reconfigureReplacesTheClient() {
+    @Test("reconfigure replaces the client")
+    func reconfigureReplacesTheClient() {
         let originalClient = MockApolloClient()
         let model = ApolloNetworkModel(client: originalClient)
 
