@@ -1,17 +1,29 @@
-# AGENTS.md
+# CLAUDE.md
 
 ## Purpose
 This file gives agents clear, repo‑specific guidance for developing and testing this iOS app. Follow these instructions when reading, modifying, or adding code anywhere in the repository.
 
-## Test & Validate (Fastlane)
-- Prefer running via Bundler: `bundle exec fastlane ios <lane>`.
+## Test & Validate
+
+### Xcode MCP (preferred)
+- If the Xcode MCP server is available and connected, use it to build and run tests.
+- Use `BuildProject` to build, `RunAllTests` to run the full unit test suite, and `RunSomeTests` for targeted tests.
+- Use `GetBuildLog` and `XcodeListNavigatorIssues` to inspect build errors and warnings.
+
+### Fastlane (fallback)
+- If Xcode MCP is not available, fall back to Fastlane via Bundler: `bundle exec fastlane ios <lane>`.
 - Run `fastlane ios test` after changing non‑UI code (models, view models, services, utilities, business logic).
 - Run `fastlane ios test_ui` only when you change UI flows or code that affects UI behavior. Note:
   - UI tests may take 8+ minutes to complete.
   - Intermittent flakiness is known; failures are not always related to your change.
-- If unit or UI tests fail or are unstable in a way you cannot explain, stop and ask the user to intervene before proceeding.
-
 - Output locations: unit tests write to `test-output/`; UI tests write to `test-ui-output/`. Inspect these artifacts when diagnosing failures.
+
+### Local Swift packages
+- The app depends on several Swift packages that are embedded locally (e.g. `ProjectInterShared`). Their tests are **not** included in the Xcode test plan or Fastlane lanes.
+- When making changes to a local Swift package, run its tests directly: `cd <package-directory> && swift test`.
+
+### General
+- If unit or UI tests fail or are unstable in a way you cannot explain, stop and ask the user to intervene before proceeding.
 
 ## UI Test Server (local)
 - UI tests in CI start a mock backend (`project-inter-mock-server`). To reproduce locally:
@@ -35,8 +47,8 @@ This file gives agents clear, repo‑specific guidance for developing and testin
 ## Development Practices for Agents
 - Keep changes focused and minimal; avoid unrelated refactors.
 - Prefer small, composable SwiftUI views with clear data flow.
-- Ensure model and business logic are well‑covered by unit tests (`fastlane test`).
-- Be cautious with UI test runs (`fastlane test_ui`) due to runtime and flakiness; run them only when relevant.
+- Ensure model and business logic are well‑covered by unit tests.
+- Be cautious with UI test runs due to runtime and flakiness; run them only when relevant.
 - If you encounter unclear requirements, flaky tests, or API limitations, pause and ask the user for guidance.
 
 ## When to Ask the User
