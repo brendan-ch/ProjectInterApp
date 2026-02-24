@@ -23,21 +23,21 @@ struct ServerUrlConfigurationView: View {
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
                 } header: {
-                    Text("Custom Server URL")
+                    Text("Custom server URL")
                 } footer: {
                     Text("Leave empty to use the default server.")
                 }
 
                 if serverUrlConfigModel.isUsingCustomUrl {
                     Section {
-                        Button("Reset to Default", role: .destructive) {
+                        Button("Reset to default", role: .destructive) {
                             serverUrlConfigModel.resetToDefault()
                             urlText = ""
                         }
                     }
                 }
             }
-            .navigationTitle("Server Configuration")
+            .navigationTitle("Server configuration")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
