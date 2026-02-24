@@ -9,14 +9,6 @@ import Foundation
 import ProjectInterShared
 
 extension URL {
-    static var apiBaseUrl: URL {
-        if let customUrlString = UserDefaults.group?.string(forKey: UserDefaults.customServerUrlKey),
-           !customUrlString.isEmpty,
-           let customUrl = URL(string: customUrlString) {
-            return customUrl
-        }
-        return URL(string: Bundle.main.infoDictionary!["API_BASE_URL"] as! String)!
-    }
     static var defaultApiBaseUrl: URL { URL(string: Bundle.main.infoDictionary!["API_BASE_URL"] as! String)! }
     static var feedbackUrl: URL { URL(string: Bundle.main.infoDictionary!["FEEDBACK_URL"] as! String)! }
     static var changelogUrl: URL { URL(string: Bundle.main.infoDictionary!["CHANGELOG_URL"] as! String)! }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension URL {
+public extension URL {
     /// Resolves the API base URL by checking UserDefaults for a custom value first,
     /// falling back to the provided default.
     static func resolvedApiBaseUrl(

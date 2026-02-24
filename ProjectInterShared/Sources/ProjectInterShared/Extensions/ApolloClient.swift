@@ -6,7 +6,8 @@
 //
 
 import Apollo
+import ApolloAPI
 
 extension ApolloClient: @unchecked Sendable {
-    public static let shared = ApolloClient(url: .apiBaseUrl)
+    public static var shared: ApolloClient { ApolloClient(url: .apiBaseUrl) }
 }

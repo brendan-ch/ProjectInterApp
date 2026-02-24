@@ -7,8 +7,10 @@
 
 import Foundation
 
-class BundleClass {
-    var bundle: Bundle {
+public class BundleClass {
+    public var bundle: Bundle {
         return Bundle(for: type(of: self))
     }
+    
+    public init() {}
 }
