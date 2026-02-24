@@ -125,7 +125,7 @@ final class ParkingStructureInfoUITests: BaseUITests {
     func testParkingStructureInfoDisplayWithHistorical() async {
         await mockGetParkingStructuresListData()
         await mockGetParkingStructureDataWithHistorical()
-        app.launch()
+        launchAppAndResetCustomServerUrl()
         
         switchToParkingTab()
         selectMockParkingStructure()
@@ -138,7 +138,7 @@ final class ParkingStructureInfoUITests: BaseUITests {
     func testParkingStructureInfoDisplayWithoutHistorical() async {
         await mockGetParkingStructuresListData()
         await mockGetParkingStructureDataWithoutHistorical()
-        app.launch()
+        launchAppAndResetCustomServerUrl()
         
         switchToParkingTab()
         selectMockParkingStructure()
@@ -150,7 +150,7 @@ final class ParkingStructureInfoUITests: BaseUITests {
     func testParkingStructureInfoCopyAddressCopiesTheAddress() async {
         await mockGetParkingStructuresListData()
         await mockGetParkingStructureDataWithoutHistorical()
-        app.launch()
+        launchAppAndResetCustomServerUrl()
 
         switchToParkingTab()
         selectMockParkingStructure()
@@ -192,7 +192,7 @@ final class ParkingStructureInfoUITests: BaseUITests {
         
         setupMapsApp()
         
-        app.launch()
+        launchAppAndResetCustomServerUrl()
         
         switchToParkingTab()
         selectMockParkingStructure()
@@ -219,7 +219,7 @@ final class ParkingStructureInfoUITests: BaseUITests {
         
         setupGoogleMapsWebsite()
         
-        app.launch()
+        launchAppAndResetCustomServerUrl()
         
         switchToParkingTab()
         selectMockParkingStructure()

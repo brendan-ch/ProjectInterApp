@@ -96,7 +96,7 @@ final class RouteInfoUITests: BaseUITests {
             secondsRemaining: 150
         ))
         
-        app.launch()
+        launchAppAndResetCustomServerUrl()
         openShuttleInfo()
         
         XCTAssert(app.staticTexts["Shuttle 1"].firstMatch.waitForExistence(timeout: 5))
@@ -114,7 +114,7 @@ final class RouteInfoUITests: BaseUITests {
             secondsRemaining: 750
         ))
         
-        app.launch()
+        launchAppAndResetCustomServerUrl()
         openShuttleInfo()
         
         let notifyMeWhenNearbyStaticText = app.staticTexts["Notify me when nearby"]
@@ -131,7 +131,7 @@ final class RouteInfoUITests: BaseUITests {
         await mockGetRouteListQueryAndResponse()
         await mockGetRouteInfoDataQueryAndResponse()
         
-        app.launch()
+        launchAppAndResetCustomServerUrl()
         
         selectStopFromRouteList(name: "Chapman Court")
         selectFirstMatchButton(textIdentifier: "Red Route")
@@ -148,7 +148,7 @@ final class RouteInfoUITests: BaseUITests {
         await mockGetRouteListQueryAndResponse()
         await mockGetRouteInfoDataQueryAndResponse()
 
-        app.launch()
+        launchAppAndResetCustomServerUrl()
         
         selectStopFromRouteList(name: "Chapman Court")
         selectFirstMatchButton(textIdentifier: "Red Route")

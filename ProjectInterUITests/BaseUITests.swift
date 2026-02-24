@@ -80,6 +80,10 @@ class BaseUITests: XCTestCase {
         app.launchArguments += ["-mockNotificationsToken", "1"]
     }
     
+    func launchAppAndResetCustomServerUrl() {
+        app.launch()
+        resetServerUrlIfNeeded()
+    }
 
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.

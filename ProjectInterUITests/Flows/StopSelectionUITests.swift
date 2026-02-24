@@ -18,7 +18,7 @@ final class StopSelectionUITests: BaseUITests {
     func testOpenAndClosingFlowWithoutAnyRoutes() async {
         await mockGetAllStopsQueryAndResponse()
         
-        app.launch()
+        launchAppAndResetCustomServerUrl()
         
         var _ = app.buttons["Change stop"].waitForExistence(timeout: 20)
         app.buttons["Change stop"].tap()

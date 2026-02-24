@@ -128,7 +128,7 @@ final class MapUITests: BaseUITests {
         await mockGetRouteInfoDataQueryAndResponse()
         await mockGetMapDataQueryAndResponse()
         
-        app.launch()
+        launchAppAndResetCustomServerUrl()
         
         selectStopFromRouteList(name: "Chapman Court")
         selectFirstMatchButton(textIdentifier: "Red Route")
@@ -142,7 +142,7 @@ final class MapUITests: BaseUITests {
         await mockGetRouteListQueryAndResponse()
         await mockGetMapDataQueryAndResponse()
         
-        app.launch()
+        launchAppAndResetCustomServerUrl()
         
         selectStopFromRouteList(name: "Chapman Court")
         takeScreenshot()
@@ -157,7 +157,7 @@ final class MapUITests: BaseUITests {
         await mockGetRouteListQueryAndResponse()
         await mockGetMapDataQueryAndResponse()
         
-        app.launch()
+        launchAppAndResetCustomServerUrl()
         selectStopFromRouteList(name: "Chapman Court")
 
         let shuttleExists = app.otherElements.buttons.matching(identifier: "Shuttle").firstMatch.waitForExistence(timeout: 20)
@@ -201,7 +201,7 @@ final class MapUITests: BaseUITests {
             id: "2"
         ))
 
-        app.launch()
+        launchAppAndResetCustomServerUrl()
         
         selectStopFromRouteList(name: "Chapman Court")
         
@@ -227,7 +227,7 @@ final class MapUITests: BaseUITests {
             id: "2"
         ))
 
-        app.launch()
+        launchAppAndResetCustomServerUrl()
         
         selectStopFromRouteList(name: "Chapman Court")
         
@@ -253,7 +253,7 @@ final class MapUITests: BaseUITests {
             id: "2"
         ))
 
-        app.launch()
+        launchAppAndResetCustomServerUrl()
         
         selectStopFromRouteList(name: "Chapman Court")
         
@@ -269,7 +269,7 @@ final class MapUITests: BaseUITests {
         await mockGetParkingStructureDataWithoutHistorical(parkingStructureId: "1")
         await mockGetParkingStructureDataWithoutHistorical(parkingStructureId: "2")
 
-        app.launch()
+        launchAppAndResetCustomServerUrl()
         
         selectStopFromRouteList(name: "Chapman Court")
         

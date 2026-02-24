@@ -31,7 +31,7 @@ final class SettingsUITests: BaseUITests {
     }
     
     func testOpenChangelogOpensTheWebView() {
-        app.launch()
+        launchAppAndResetCustomServerUrl()
         
         openSettingsTab()
         
@@ -44,7 +44,7 @@ final class SettingsUITests: BaseUITests {
     }
     
     func testOpenAcknowledgmentsOpensTheWebView() {
-        app.launch()
+        launchAppAndResetCustomServerUrl()
         
         openSettingsTab()
         
@@ -57,7 +57,7 @@ final class SettingsUITests: BaseUITests {
     }
     
     func testSystemSelectionOpenAndClosingFlow() {
-        app.launch()
+        launchAppAndResetCustomServerUrl()
         
         openSettingsTab()
         
@@ -77,7 +77,7 @@ final class SettingsUITests: BaseUITests {
     func testChangeServerUrlRefreshesTheApp() async {
         await mockGetAllStopsQueryAndResponse()
         await mockGetRouteListQueryAndResponse()
-        app.launch()
+        launchAppAndResetCustomServerUrl()
         resetServerUrlIfNeeded()
 
         openSettingsTab()
