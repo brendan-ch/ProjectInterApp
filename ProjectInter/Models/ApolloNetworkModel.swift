@@ -16,6 +16,11 @@ class ApolloNetworkModel {
     init(client: ApolloClientProtocol) {
         self.client = client
     }
+
+    /// Replace the underlying Apollo client, e.g. after the server URL changes.
+    func reconfigure(with newClient: ApolloClientProtocol) {
+        self.client = newClient
+    }
     
     func getStream<Query: GraphQLQuery>(
         // Will need to wait for Apollo 2.0.0 migration to resolve non-sendable type error

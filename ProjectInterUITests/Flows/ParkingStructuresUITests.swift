@@ -22,7 +22,7 @@ final class ParkingStructuresUITests: BaseUITests {
     func testParkingStructuresDisplay() async {
         await mockGetParkingStructuresListData()
         
-        app.launch()
+        launchAppAndResetCustomServerUrl()
         
         let structuresButton = app.tabBars.buttons["Parking"]
         let parkingTabExists = structuresButton.waitForExistence(timeout: 10)

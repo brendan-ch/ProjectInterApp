@@ -20,6 +20,10 @@ struct SettingsContentView: View {
     
     @State private var showAcknowledgmentsView = false
     
+    @State private var showServerUrlSheet = false
+    
+    @Environment(ServerUrlConfigurationModel.self) var serverUrlConfigModel: ServerUrlConfigurationModel
+    
     var body: some View {
         HeadingWrapperView(title: "Settings") {
             VStack(spacing: 0) {
@@ -91,7 +95,16 @@ struct SettingsContentView: View {
                     Text("View acknowledgments")
                         .font(.footnote)
                 }
+                .padding(.top, 4)
                 
+                Button {
+                    showServerUrlSheet = true
+                } label: {
+                    Text("Change server URL")
+                        .font(.footnote)
+                }
+                .padding(.top, 4)
+
                 Text("Data provided by Interchange is for informational purposes only.")
                     .multilineTextAlignment(.center)
                     .font(.footnote)
@@ -108,10 +121,14 @@ struct SettingsContentView: View {
         .sheet(isPresented: $showAcknowledgmentsView) {
             AcknowledgementsWebView()
         }
+        .sheet(isPresented: $showServerUrlSheet) {
+            ServerUrlConfigurationView()
+        }
     }
 }
 
 #Preview {
     SettingsContentView()
         .environment(GlobalSystemsModel())
+        .environment(ServerUrlConfigurationModel())
 }

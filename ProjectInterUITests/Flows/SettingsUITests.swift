@@ -31,7 +31,7 @@ final class SettingsUITests: BaseUITests {
     }
     
     func testOpenChangelogOpensTheWebView() {
-        app.launch()
+        launchAppAndResetCustomServerUrl()
         
         openSettingsTab()
         
@@ -44,7 +44,7 @@ final class SettingsUITests: BaseUITests {
     }
     
     func testOpenAcknowledgmentsOpensTheWebView() {
-        app.launch()
+        launchAppAndResetCustomServerUrl()
         
         openSettingsTab()
         
@@ -57,7 +57,7 @@ final class SettingsUITests: BaseUITests {
     }
     
     func testSystemSelectionOpenAndClosingFlow() {
-        app.launch()
+        launchAppAndResetCustomServerUrl()
         
         openSettingsTab()
         
@@ -71,5 +71,54 @@ final class SettingsUITests: BaseUITests {
         
         _ = app.buttons["Close"].waitForExistence(timeout: 20)
         app.buttons["Close"].tap()
+    }
+    
+    @MainActor
+    func testChangeServerUrlRefreshesTheApp() async {
+        await mockGetAllStopsQueryAndResponse()
+        await mockGetRouteListQueryAndResponse()
+        launchAppAndResetCustomServerUrl()
+
+        openSettingsTab()
+        
+        app.buttons["Change server URL"].tap()
+        
+        let serverUrlTextField = app.textFields["Server URL"]
+        if !serverUrlTextField.waitForExistence(timeout: 10) {
+            XCTFail("Server URL configuration view did not display")
+        }
+        
+        serverUrlTextField.tap()
+        serverUrlTextField.typeText("https://example.com")
+        app.buttons["Save"].tap()
+        
+        app.tabBars["Tab Bar"].buttons["Shuttles"].tap()
+        XCTAssert(app.staticTexts["Red Route"].waitForNonExistence(timeout: 5))
+        
+        openSettingsTab()
+        app.buttons["Change server URL"].tap()
+        app.buttons["Reset to default"].tap()
+        app.buttons["Save"].tap()
+        
+        app.tabBars["Tab Bar"].buttons["Shuttles"].tap()
+        XCTAssert(app.staticTexts["Red Route"].waitForExistence(timeout: 5))
+    }
+    
+    func testChangeServerUrlShowsInvalidUrlMessage() {
+        launchAppAndResetCustomServerUrl()
+        openSettingsTab()
+        
+        app.buttons["Change server URL"].tap()
+        
+        let serverUrlTextField = app.textFields["Server URL"]
+        if !serverUrlTextField.waitForExistence(timeout: 10) {
+            XCTFail("Server URL configuration view did not display")
+        }
+        
+        serverUrlTextField.tap()
+        serverUrlTextField.typeText("invalid url")
+        app.buttons["Save"].tap()
+        
+        XCTAssert(app.staticTexts["Invalid URL"].waitForExistence(timeout: 5))
     }
 }

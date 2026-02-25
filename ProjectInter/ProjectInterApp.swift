@@ -25,6 +25,8 @@ struct ProjectInterApp: App {
     
     @State var setupStateModel = SetupStateModel()
     
+    @State var serverUrlConfigModel = ServerUrlConfigurationModel()
+    
     @State var schemaVersionModel = SchemaVersionModel(
         apolloNetworkModel: ApolloNetworkModel.shared,
         appSchemaVersion: Bundle.main.infoDictionary?["APP_SCHEMA_VERSION"] as? Int
@@ -58,7 +60,16 @@ struct ProjectInterApp: App {
             .task {
                 restartSchemaVersionModelRefresh()
             }
+            .onChange(of: serverUrlConfigModel.urlVersion) {
+                restartSchemaVersionModelRefresh()
+                Task {
+                    await globalSystemsStateObject.refreshDataOnce(
+                        arguments: GlobalDataModelNetworkArguments()
+                    )
+                }
+            }
         }
+        .environment(serverUrlConfigModel)
         .environment(globalIdSelectionStateObject)
         .environment(globalSystemsStateObject)
         .environment(globalStopsStateObject)

@@ -95,4 +95,15 @@ class ApolloNetworkModelTests {
             try await actor.mutateOnce(mutation)
         }
     }
+
+    @Test func reconfigureReplacesTheClient() {
+        let originalClient = MockApolloClient()
+        let model = ApolloNetworkModel(client: originalClient)
+
+        let newClient = MockApolloClient()
+        model.reconfigure(with: newClient)
+
+        #expect(model.client === newClient)
+        #expect(model.client !== originalClient)
+    }
 }

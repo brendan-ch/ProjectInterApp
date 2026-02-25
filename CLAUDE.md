@@ -1,23 +1,57 @@
-# AGENTS.md
+# CLAUDE.md
 
 ## Purpose
 This file gives agents clear, repo‑specific guidance for developing and testing this iOS app. Follow these instructions when reading, modifying, or adding code anywhere in the repository.
 
-## Test & Validate (Fastlane)
-- Prefer running via Bundler: `bundle exec fastlane ios <lane>`.
+## Test & Validate
+
+### Xcode MCP (preferred)
+- If the Xcode MCP server is available and connected, use it to build and run unit tests.
+- Use `BuildProject` to build, `RunAllTests` to run the full unit test suite, and `RunSomeTests` for targeted tests.
+- Use `GetBuildLog` and `XcodeListNavigatorIssues` to inspect build errors and warnings.
+- **UI tests** cannot be run via Xcode MCP (the active test plan cannot be switched). Use `xcodebuild` instead:
+  ```
+  xcodebuild test \
+    -project ProjectInter.xcodeproj \
+    -scheme ProjectInter \
+    -testPlan ProjectInterUITests \
+    -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.5'
+  ```
+  - Adjust the `-destination` to match an available simulator (run `xcodebuild -showdestinations -scheme ProjectInter` to list them).
+  - The mock server must be running before starting UI tests (see **UI Test Server** below).
+
+### Fastlane (fallback)
+- If Xcode MCP is not available, fall back to Fastlane via Bundler: `bundle exec fastlane ios <lane>`.
 - Run `fastlane ios test` after changing non‑UI code (models, view models, services, utilities, business logic).
 - Run `fastlane ios test_ui` only when you change UI flows or code that affects UI behavior. Note:
   - UI tests may take 8+ minutes to complete.
   - Intermittent flakiness is known; failures are not always related to your change.
-- If unit or UI tests fail or are unstable in a way you cannot explain, stop and ask the user to intervene before proceeding.
-
 - Output locations: unit tests write to `test-output/`; UI tests write to `test-ui-output/`. Inspect these artifacts when diagnosing failures.
 
+### Local Swift packages
+- The app depends on several Swift packages that are embedded locally (e.g. `ProjectInterShared`). Their tests are **not** included in the Xcode test plan or Fastlane lanes.
+- When making changes to a local Swift package, run its tests directly: `cd <package-directory> && swift test`.
+
+### Validation order
+1. Build the project.
+2. Run unit tests (Xcode MCP `RunAllTests` or `bundle exec fastlane ios test`).
+3. Run local Swift package tests if packages were changed (`cd <package-directory> && swift test`).
+4. **Run UI tests last** — they take the longest. Use `xcodebuild` with `-testPlan ProjectInterUITests` or `bundle exec fastlane ios test_ui`.
+
+### General
+- If unit or UI tests fail or are unstable in a way you cannot explain, stop and ask the user to intervene before proceeding.
+
 ## UI Test Server (local)
-- UI tests in CI start a mock backend (`project-inter-mock-server`). To reproduce locally:
-  - Clone the server repo: `git clone https://github.com/brendan-ch/project-inter-mock-server`
-  - `cd project-inter-mock-server && npm install && npm run dev`
-  - In another terminal, run the UI tests with `bundle exec fastlane ios test_ui`.
+- UI tests require a mock backend running locally. To set it up:
+  1. If the server repo doesn't exist, clone it alongside this repo:
+     ```
+     cd .. && git clone https://github.com/brendan-ch/project-inter-monitoring-server.git
+     ```
+  2. Install dependencies and start the server **in the background**:
+     ```
+     cd ../project-inter-mock-server && npm install && npm run dev
+     ```
+  3. The server runs on port 4000. Ensure it is running before starting UI tests.
 
 ## UI & Platform Guidelines
 - The app is built primarily with SwiftUI.
@@ -35,8 +69,8 @@ This file gives agents clear, repo‑specific guidance for developing and testin
 ## Development Practices for Agents
 - Keep changes focused and minimal; avoid unrelated refactors.
 - Prefer small, composable SwiftUI views with clear data flow.
-- Ensure model and business logic are well‑covered by unit tests (`fastlane test`).
-- Be cautious with UI test runs (`fastlane test_ui`) due to runtime and flakiness; run them only when relevant.
+- Ensure model and business logic are well‑covered by unit tests.
+- Be cautious with UI test runs due to runtime and flakiness; run them only when relevant.
 - If you encounter unclear requirements, flaky tests, or API limitations, pause and ask the user for guidance.
 
 ## When to Ask the User
