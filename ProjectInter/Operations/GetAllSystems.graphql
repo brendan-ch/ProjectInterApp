@@ -1,6 +1,17 @@
 query GetAllSystems {
   systems {
     name
-    id,
-  },
+    id
+    initialRegion {
+      topLeft {
+        latitude
+        longitude
+      }
+      bottomRight {
+        latitude
+        longitude
+      }
+    }
+  }
 }
+

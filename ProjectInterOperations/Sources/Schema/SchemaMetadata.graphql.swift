@@ -30,6 +30,7 @@ public enum SchemaMetadata: ApolloAPI.SchemaMetadata {
     case "ParkingStructure": return ProjectInterOperations.Objects.ParkingStructure
     case "ParkingSystem": return ProjectInterOperations.Objects.ParkingSystem
     case "Query": return ProjectInterOperations.Objects.Query
+    case "Region": return ProjectInterOperations.Objects.Region
     case "Route": return ProjectInterOperations.Objects.Route
     case "Shuttle": return ProjectInterOperations.Objects.Shuttle
     case "Stop": return ProjectInterOperations.Objects.Stop
