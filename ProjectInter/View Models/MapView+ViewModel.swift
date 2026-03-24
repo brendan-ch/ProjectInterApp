@@ -7,7 +7,6 @@
 
 import SwiftUI
 import MapKit
-import Apollo
 import ProjectInterOperations
 import ProjectInterLogging
 
