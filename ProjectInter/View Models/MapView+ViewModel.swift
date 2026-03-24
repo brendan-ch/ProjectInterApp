@@ -131,7 +131,11 @@ extension MapView {
     class ViewModel: NetworkDataModel<MapViewNetworkArguments, GetMapDataQuery>, PlaceholderBuildable, Clearable {
         /// Position of the map camera on the associated Map view.
         var position: MapCameraPosition = .automatic
-        
+
+        /// True after the first successful data load since the last `clearData()`.
+        /// Prevents position from resetting to `.automatic` on every subsequent refresh.
+        private var hasReceivedInitialData = false
+
         var routes: [MapViewRoute] = []
         var shuttles: [MapViewShuttle] = []
         var stops: [MapViewStop] = []
@@ -151,6 +155,11 @@ extension MapView {
             self.routes = data.system?.routes?.map(MapViewRoute.init) ?? []
             self.stops = data.system?.stops?.map(MapViewStop.init) ?? []
             self.parkingStructures = data.system?.parkingSystem?.parkingStructures?.map(MapViewParkingStructure.init) ?? []
+
+            if !hasReceivedInitialData {
+                position = .automatic
+                hasReceivedInitialData = true
+            }
         }
         
         func clearData() {
@@ -159,6 +168,7 @@ extension MapView {
             shuttles = []
             stops = []
             parkingStructures = []
+            hasReceivedInitialData = false
         }
         
         static func buildPlaceholder() -> Self {
