@@ -15,7 +15,7 @@ struct SheetViewModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .background(.ultraThickMaterial)
+            .presentationBackground(.ultraThickMaterial)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .presentationDetents(standardPresentationDetents, selection: detentSelection)
             .presentationBackgroundInteraction(.enabled)
@@ -141,7 +141,7 @@ struct ContentView: View {
                     }
             }
         }
-        .background(.ultraThickMaterial)
+        .presentationBackground(.ultraThickMaterial)
     }
     
     func buildSettingsView() -> some View {
