@@ -122,6 +122,22 @@ final class MapUITests: BaseUITests {
     }
     
     @MainActor
+    func testInitialMapBoundariesAreSetOnLaunch() async {
+        await mockGetAllStopsQueryAndResponse()
+        // do NOT mock the map data, so that it only shows the initial region
+
+        launchAppAndResetCustomServerUrl()
+
+        // Wait for data to load past the initial loading screen
+        let stopButton = app.buttons["Change stop"]
+        XCTAssert(stopButton.waitForExistence(timeout: 20))
+
+        sleep(2)
+
+        takeScreenshot()
+    }
+
+    @MainActor
     func testRouteIsShownWhenRouteIsSelected() async {
         await mockGetAllStopsQueryAndResponse()
         await mockGetRouteListQueryAndResponse()

@@ -286,10 +286,20 @@ class BaseUITests: XCTestCase {
         let systems = mockSystems.map { key, value in
             return Mock<System>(
                 id: key,
+                initialRegion: Mock<Region>(
+                    bottomRight: Mock<Coordinates>(
+                        latitude: 33.785,
+                        longitude: -117.845
+                    ),
+                    topLeft: Mock<Coordinates>(
+                        latitude: 33.800,
+                        longitude: -117.895
+                    )
+                ),
                 name: value
             )
         }
-        
+
         let query = GetAllSystemsQuery()
         let response = Mock<Query>(
             systems: systems

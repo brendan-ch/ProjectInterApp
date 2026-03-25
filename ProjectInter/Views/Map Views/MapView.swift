@@ -112,9 +112,11 @@ struct MapView: NetworkView {
         .mapStyle(.standard(emphasis: .muted, pointsOfInterest: []))
         .onAppear {
             restartDataUpdates()
+            setInitialMapPosition()
         }
         .onChange(of: globalSystemsModel.selectedSystem) {
             restartDataUpdates()
+            setInitialMapPosition()
         }
         .onDisappear {
             stopDataUpdates()
@@ -166,12 +168,20 @@ struct MapView: NetworkView {
         }
     }
     
+    private func setInitialMapPosition() {
+        if let region = globalSystemsModel.selectedSystem?.initialRegion {
+            viewModel.position = .region(region.asMKCoordinateRegion)
+        } else {
+            viewModel.position = .automatic
+        }
+    }
+
     private func getFirstRouteOnMapMatchingId(_ selectedRouteId: String) -> MapViewRoute? {
         return viewModel.routes.first { route in
             route.id == selectedRouteId
         }
     }
-    
+
 }
 
 // MARK: - Parking rendering

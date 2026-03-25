@@ -5,6 +5,7 @@
 //  Created by Brendan Chen on 2025.01.13.
 //
 
+import MapKit
 import Testing
 @testable import ProjectInter
 import ProjectInterOperations
@@ -328,6 +329,32 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
         await autoTest_refreshDataOnceDoesNothingIfNoApolloClient()
     }
     
+    @Test func refreshDataOnceResetsPositionToAutomaticOnFirstLoad() async {
+        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
+        mockClient.queryMock = MapViewModelTestsMockData.defaultMock
+
+        viewModel.position = .region(MKCoordinateRegion.anaheim)
+        await viewModel.refreshDataOnce(arguments: arguments)
+
+        #expect(viewModel.position == .automatic)
+    }
+
+    @Test func refreshDataOnceDoesNotResetPositionOnSubsequentLoads() async {
+        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
+        mockClient.queryMock = MapViewModelTestsMockData.defaultMock
+
+        // First load — resets to .automatic
+        await viewModel.refreshDataOnce(arguments: arguments)
+
+        // Manually set a position (simulating what setInitialMapPosition or user interaction does)
+        viewModel.position = .region(MKCoordinateRegion.anaheim)
+
+        // Second load — must NOT reset the position
+        await viewModel.refreshDataOnce(arguments: arguments)
+
+        #expect(viewModel.position == .region(MKCoordinateRegion.anaheim))
+    }
+
     @Test func refreshDataOnceUpdatesOrderedStopDataForStopIfExists() async {
         let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
         

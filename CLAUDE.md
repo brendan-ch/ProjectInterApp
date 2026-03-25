@@ -7,8 +7,33 @@ This file gives agents clear, repo‑specific guidance for developing and testin
 
 ### Xcode MCP (preferred)
 - If the Xcode MCP server is available and connected, use it to build and run unit tests.
-- Use `BuildProject` to build, `RunAllTests` to run the full unit test suite, and `RunSomeTests` for targeted tests.
-- Use `GetBuildLog` and `XcodeListNavigatorIssues` to inspect build errors and warnings.
+- Always call `XcodeListWindows` first to get the `tabIdentifier` required by most tools.
+
+**Full tool reference:**
+
+| Tool | Purpose |
+|------|---------|
+| `XcodeListWindows` | List open Xcode windows and get `tabIdentifier` values (required by most tools) |
+| `BuildProject` | Build the project and wait for completion |
+| `GetBuildLog` | Retrieve the build log to diagnose compilation errors |
+| `XcodeListNavigatorIssues` | List errors and warnings shown in Xcode's Issue Navigator |
+| `XcodeRefreshCodeIssuesInFile` | Refresh code diagnostics (errors/warnings) for a specific file |
+| `RunAllTests` | Run all tests in the active test plan |
+| `RunSomeTests` | Run a specific subset of tests by identifier |
+| `GetTestList` | List all available tests in the active test plan |
+| `RenderPreview` | Render a SwiftUI `#Preview` macro and return a screenshot |
+| `ExecuteSnippet` | Execute a Swift code snippet in the context of the project |
+| `DocumentationSearch` | Search Apple developer documentation |
+| `XcodeRead` | Read a file through Xcode (use standard `Read` tool instead for most cases) |
+| `XcodeWrite` | Write/create a file through Xcode |
+| `XcodeUpdate` | Update (edit) file contents through Xcode |
+| `XcodeLS` | List directory contents through Xcode |
+| `XcodeGlob` | Glob-pattern file search through Xcode |
+| `XcodeGrep` | Regex content search through Xcode |
+| `XcodeMakeDir` | Create a directory through Xcode |
+| `XcodeMV` | Move or rename a file/directory through Xcode |
+| `XcodeRM` | Delete a file or directory through Xcode |
+
 - **UI tests** cannot be run via Xcode MCP (the active test plan cannot be switched). Use `xcodebuild` instead:
   ```
   xcodebuild test \

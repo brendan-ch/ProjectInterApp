@@ -6,6 +6,7 @@ scalar DateTime
 type System {
   id: ID!
   name: String!
+  initialRegion: Region
   routes: [Route!]
   route(id: ID): Route
   stops: [Stop!]
@@ -14,6 +15,11 @@ type System {
   shuttle(id: ID): Shuttle
 
   parkingSystem: ParkingSystem
+}
+
+type Region {
+  topLeft: Coordinates!
+  bottomRight: Coordinates!
 }
 
 type ParkingSystem {

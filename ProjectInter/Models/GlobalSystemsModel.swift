@@ -16,6 +16,7 @@ import ProjectInterLogging
 struct System: Equatable, Identifiable {
     var name: String
     var id: String
+    var initialRegion: InitialRegion?
 }
 
 
@@ -73,7 +74,19 @@ class GlobalSystemsModel: NetworkDataModel<GlobalDataModelNetworkArguments, GetA
         switch result {
         case .success(let data):
             self.systems = data.systems.map { system in
-                System(name: system.name, id: system.id)
+                let initialRegion: InitialRegion? = system.initialRegion.map { region in
+                    InitialRegion(
+                        topLeft: RawCoordinates(
+                            latitude: region.topLeft.latitude,
+                            longitude: region.topLeft.longitude
+                        ),
+                        bottomRight: RawCoordinates(
+                            latitude: region.bottomRight.latitude,
+                            longitude: region.bottomRight.longitude
+                        )
+                    )
+                }
+                return System(name: system.name, id: system.id, initialRegion: initialRegion)
             }
         case .failure(let error):
             Loggers.shared.networkingLogger.error("Error fetching data: \(error)")
@@ -87,10 +100,17 @@ class GlobalSystemsModel: NetworkDataModel<GlobalDataModelNetworkArguments, GetA
     static func buildPlaceholder() -> Self {
         let model = Self(dataInitState: .succeeded)
         model.systems = [
-            System(name: "Chapman University", id: "1"),
+            System(
+                name: "Chapman University",
+                id: "1",
+                initialRegion: InitialRegion(
+                    topLeft: RawCoordinates(latitude: 33.800, longitude: -117.900),
+                    bottomRight: RawCoordinates(latitude: 33.780, longitude: -117.845)
+                )
+            ),
             System(name: "City of Monterey Park", id: "2")
         ]
-        
+
         return model
     }
 }

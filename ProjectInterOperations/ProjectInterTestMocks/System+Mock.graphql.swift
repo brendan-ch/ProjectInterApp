@@ -11,6 +11,7 @@ public class System: MockObject {
 
   public struct MockFields {
     @Field<ProjectInterOperations.ID>("id") public var id
+    @Field<Region>("initialRegion") public var initialRegion
     @Field<String>("name") public var name
     @Field<ParkingSystem>("parkingSystem") public var parkingSystem
     @Field<Route>("route") public var route
@@ -25,6 +26,7 @@ public class System: MockObject {
 public extension Mock where O == System {
   convenience init(
     id: ProjectInterOperations.ID? = nil,
+    initialRegion: Mock<Region>? = nil,
     name: String? = nil,
     parkingSystem: Mock<ParkingSystem>? = nil,
     route: Mock<Route>? = nil,
@@ -36,6 +38,7 @@ public extension Mock where O == System {
   ) {
     self.init()
     _setScalar(id, for: \.id)
+    _setEntity(initialRegion, for: \.initialRegion)
     _setScalar(name, for: \.name)
     _setEntity(parkingSystem, for: \.parkingSystem)
     _setEntity(route, for: \.route)
