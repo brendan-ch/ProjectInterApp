@@ -18,6 +18,7 @@ public extension UserDefaults {
     static var initialSystemIdKey: String { "initialSystemId" }
 
     static var customServerUrlKey: String { "customServerUrl" }
+    static var hiddenStopIdsKey: String { "hiddenStopIds" }
     
     static let group: UserDefaults? = .init(suiteName: "group.dev.bchen.Inter")
 }

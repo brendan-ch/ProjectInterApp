@@ -147,15 +147,133 @@ class GlobalStopsModelTests {
     
     @Test func selectStopManuallySetsCorrectState() {
         let state = GlobalStopsModel()
-        
+
         let stop = GlobalStopsModelStop(name: "Chapman Court", id: "1", coordinates: RawCoordinates(latitude: 33.789730, longitude: -117.886539))
         state.stops = [
             stop
         ]
-        
+
         state.selectStopId(stop.id)
-        
+
         #expect(state.selectedStop == stop)
         #expect(state.stopSelectionManuallyOverridenByUser == true)
+    }
+}
+
+// MARK: - Hidden stops integration tests
+
+class GlobalStopsModelHiddenStopsTests {
+    private func makeTestDefaults() -> UserDefaults {
+        let suiteName = "dev.bchen.Inter.GlobalStopsModelHiddenStopsTests.\(UUID().uuidString)"
+        return UserDefaults(suiteName: suiteName)!
+    }
+
+    private func makeStopsModel(hiddenStopsModel: HiddenStopsModel) -> GlobalStopsModel {
+        let model = GlobalStopsModel(hiddenStopsModel: hiddenStopsModel)
+        // Sorted alphabetically, matching processRefreshDataResult behavior
+        model.stops = [
+            GlobalStopsModelStop(
+                name: "Chapman Court",
+                id: "3",
+                coordinates: RawCoordinates(latitude: 33.796796, longitude: -117.889293)
+            ),
+            GlobalStopsModelStop(
+                name: "Panther Village",
+                id: "1",
+                coordinates: RawCoordinates(latitude: 33.789730, longitude: -117.886539)
+            ),
+            GlobalStopsModelStop(
+                name: "Schmid Gate",
+                id: "2",
+                coordinates: RawCoordinates(latitude: 33.793316, longitude: -117.852825)
+            )
+        ]
+        return model
+    }
+
+    @Test func visibleStopsExcludesHidden() {
+        let hiddenModel = HiddenStopsModel(userDefaults: makeTestDefaults())
+        let stopsModel = makeStopsModel(hiddenStopsModel: hiddenModel)
+
+        // Set the current system so filtering is active
+        let arguments = GlobalStopsNetworkArguments(systemId: "sys1")
+        _ = stopsModel.convertNetworkArgumentsIntoQuery(arguments)
+
+        hiddenModel.setStopHidden("1", inSystem: "sys1", hidden: true)
+
+        #expect(stopsModel.visibleStops.count == 2)
+        #expect(stopsModel.visibleStops.allSatisfy { $0.id != "1" })
+    }
+
+    @Test func hiddenStopsReturnsOnlyHidden() {
+        let hiddenModel = HiddenStopsModel(userDefaults: makeTestDefaults())
+        let stopsModel = makeStopsModel(hiddenStopsModel: hiddenModel)
+
+        let arguments = GlobalStopsNetworkArguments(systemId: "sys1")
+        _ = stopsModel.convertNetworkArgumentsIntoQuery(arguments)
+
+        hiddenModel.setStopHidden("2", inSystem: "sys1", hidden: true)
+
+        #expect(stopsModel.hiddenStops.count == 1)
+        #expect(stopsModel.hiddenStops.first?.id == "2")
+    }
+
+    @Test func autoSelectSkipsHiddenStopsWithoutLocation() {
+        let hiddenModel = HiddenStopsModel(userDefaults: makeTestDefaults())
+        let stopsModel = makeStopsModel(hiddenStopsModel: hiddenModel)
+
+        let arguments = GlobalStopsNetworkArguments(systemId: "sys1")
+        _ = stopsModel.convertNetworkArgumentsIntoQuery(arguments)
+
+        // Hide Chapman Court (first alphabetically)
+        hiddenModel.setStopHidden("3", inSystem: "sys1", hidden: true)
+
+        stopsModel.automaticallySelectStop()
+
+        // Should select Panther Village (next visible stop alphabetically)
+        #expect(stopsModel.selectedStop?.id == "1")
+    }
+
+    @Test func autoSelectSkipsHiddenStopsWithLocation() {
+        let hiddenModel = HiddenStopsModel(userDefaults: makeTestDefaults())
+        let stopsModel = makeStopsModel(hiddenStopsModel: hiddenModel)
+
+        let arguments = GlobalStopsNetworkArguments(systemId: "sys1")
+        _ = stopsModel.convertNetworkArgumentsIntoQuery(arguments)
+
+        // Hide Panther Village which is closest to its own coordinates
+        hiddenModel.setStopHidden("1", inSystem: "sys1", hidden: true)
+
+        // Use Panther Village's coordinates — should select next closest visible stop
+        stopsModel.automaticallySelectStop(
+            for: CLLocationCoordinate2D(latitude: 33.789730, longitude: -117.886539)
+        )
+
+        #expect(stopsModel.selectedStop?.id != "1")
+        #expect(stopsModel.selectedStop != nil)
+    }
+
+    @Test func allStopsHiddenAutoSelectsNil() {
+        let hiddenModel = HiddenStopsModel(userDefaults: makeTestDefaults())
+        let stopsModel = makeStopsModel(hiddenStopsModel: hiddenModel)
+
+        let arguments = GlobalStopsNetworkArguments(systemId: "sys1")
+        _ = stopsModel.convertNetworkArgumentsIntoQuery(arguments)
+
+        hiddenModel.setStopHidden("1", inSystem: "sys1", hidden: true)
+        hiddenModel.setStopHidden("2", inSystem: "sys1", hidden: true)
+        hiddenModel.setStopHidden("3", inSystem: "sys1", hidden: true)
+
+        stopsModel.automaticallySelectStop()
+
+        #expect(stopsModel.selectedStop == nil)
+    }
+
+    @Test func visibleStopsReturnsAllWhenNoSystemId() {
+        let hiddenModel = HiddenStopsModel(userDefaults: makeTestDefaults())
+        let stopsModel = makeStopsModel(hiddenStopsModel: hiddenModel)
+
+        // Don't set currentSystemId — all stops should be visible
+        #expect(stopsModel.visibleStops.count == 3)
     }
 }

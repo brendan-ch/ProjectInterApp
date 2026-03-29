@@ -28,10 +28,10 @@ struct GlobalStopsModelStop: Identifiable, Equatable {
 extension GlobalStopsModelStop {
     init(_ stop: GetAllStopsBySystemIdQuery.Data.System.Stop) {
         self.coordinates = RawCoordinates(latitude: stop.coordinates.latitude, longitude: stop.coordinates.longitude)
-        
+
         self.name = stop.name
         self.id = stop.id
-        
+
         guard let orderedStops = stop.orderedStops else { return }
         for orderedStop in orderedStops {
             self.routeIds.insert(orderedStop.routeId)
@@ -43,11 +43,16 @@ extension GlobalStopsModelStop {
 
 @Observable
 class GlobalStopsModel: NetworkDataModel<GlobalStopsNetworkArguments, GetAllStopsBySystemIdQuery>, PlaceholderBuildable {
-    
+
     var dataRefreshLoopTask: Task<Void, any Error>?
-    
+
     var stops: [GlobalStopsModelStop] = []
-    
+
+    /// The system ID for the currently loaded stops, set when a query is executed.
+    private(set) var currentSystemId: String?
+
+    var hiddenStopsModel: HiddenStopsModel
+
     private var selectedStopId: String? = nil {
         didSet {
             Loggers.shared.globalStateEventsLogger.notice("Selected stop ID changed to: \(self.selectedStopId ?? "nil")")
@@ -56,18 +61,48 @@ class GlobalStopsModel: NetworkDataModel<GlobalStopsNetworkArguments, GetAllStop
     var selectedStop: GlobalStopsModelStop? {
         stops.first { $0.id == selectedStopId }
     }
-    
+
+    /// Stops that are not hidden by the user for the current system.
+    var visibleStops: [GlobalStopsModelStop] {
+        guard let systemId = currentSystemId else { return stops }
+        let hiddenIds = hiddenStopsModel.hiddenStopIds(forSystem: systemId)
+        return stops.filter { !hiddenIds.contains($0.id) }
+    }
+
+    /// Stops that the user has hidden for the current system.
+    var hiddenStops: [GlobalStopsModelStop] {
+        guard let systemId = currentSystemId else { return [] }
+        let hiddenIds = hiddenStopsModel.hiddenStopIds(forSystem: systemId)
+        return stops.filter { hiddenIds.contains($0.id) }
+    }
+
     var selectedStopIdOnMap: String? = nil
-    
+
     /// Indicates whether the stop has been manually selected by the user.
     /// Consumers of this class should take this into account when determining
     /// whether to automatically select a stop.
     private(set) var stopSelectionManuallyOverridenByUser: Bool = false
-    
+
+    required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
+        self.hiddenStopsModel = HiddenStopsModel()
+        super.init(apolloNetworkModel: apolloNetworkModel)
+    }
+
+    init(apolloNetworkModel: ApolloNetworkModel? = nil, hiddenStopsModel: HiddenStopsModel) {
+        self.hiddenStopsModel = hiddenStopsModel
+        super.init(apolloNetworkModel: apolloNetworkModel)
+    }
+
+    required init(dataInitState: InitializationState) {
+        self.hiddenStopsModel = HiddenStopsModel()
+        super.init(dataInitState: dataInitState)
+    }
+
     override func convertNetworkArgumentsIntoQuery(_ arguments: GlobalStopsNetworkArguments) -> GetAllStopsBySystemIdQuery? {
+        currentSystemId = arguments.systemId
         return GetAllStopsBySystemIdQuery(systemId: arguments.systemId)
     }
-    
+
     override func processRefreshDataResult(_ result: Result<GetAllStopsBySystemIdQuery.Data, any Error>) {
         guard let data = try? result.get() else {
             return
@@ -75,58 +110,60 @@ class GlobalStopsModel: NetworkDataModel<GlobalStopsNetworkArguments, GetAllStop
         guard let stops = data.system?.stops else {
             return
         }
-        
+
         self.stops = stops.map(GlobalStopsModelStop.init)
         self.stops.sort { $0.name < $1.name }
     }
-    
+
     func selectStopId(_ stopId: String) {
         selectedStopId = stopId
         stopSelectionManuallyOverridenByUser = true
     }
-    
+
     /// Automatically select a stop, either based on the passed location, or by selecting
-    /// the first available stop.
+    /// the first available stop. Hidden stops are excluded from automatic selection.
     func automaticallySelectStop(for location: CLLocationCoordinate2D? = nil) {
         if let location = location {
             selectClosestStopBasedOnLocation(location: location)
         } else {
-            selectedStopId = stops.first?.id
+            selectedStopId = visibleStops.first?.id
         }
         stopSelectionManuallyOverridenByUser = false
     }
-    
+
     /// From the currently saved stops, select the one that is closest to the provided location.
+    /// Hidden stops are excluded from consideration.
     private func selectClosestStopBasedOnLocation(location: CLLocationCoordinate2D) {
-        guard var closest = stops.first else {
-            Loggers.shared.globalStateEventsLogger.warning("Attempted to select stop based on location, but no stops available")
-            
+        let candidates = visibleStops
+        guard var closest = candidates.first else {
+            Loggers.shared.globalStateEventsLogger.warning("Attempted to select stop based on location, but no visible stops available")
+
             return
         }
         Loggers.shared.globalStateEventsLogger.notice("Selecting stop based on location")
-        
-        for savedStop in stops {
+
+        for savedStop in candidates {
             let stopLocation = savedStop.coordinates.asCLLocationCoordinate2D
             let locationOfCurrentClosestStop = closest.coordinates.asCLLocationCoordinate2D
-            
+
             let distanceForCurrentStopInIteration = calculateDistance(location, stopLocation)
             let distanceForCurrentClosestStop = calculateDistance(location, locationOfCurrentClosestStop)
-            
+
             if distanceForCurrentClosestStop > distanceForCurrentStopInIteration {
                 closest = savedStop
             }
         }
-        
+
         selectedStopId = closest.id
     }
-    
+
     private func calculateDistance(_ location1: CLLocationCoordinate2D, _ location2: CLLocationCoordinate2D) -> Double {
         let location1 = CLLocation(latitude: location1.latitude, longitude: location1.longitude)
         let location2 = CLLocation(latitude: location2.latitude, longitude: location2.longitude)
-        
+
         return location1.distance(from: location2)
     }
-    
+
     static func buildPlaceholder() -> Self {
         let newModel = Self(dataInitState: .succeeded)
         newModel.stops = [
@@ -134,8 +171,7 @@ class GlobalStopsModel: NetworkDataModel<GlobalStopsNetworkArguments, GetAllStop
             GlobalStopsModelStop(name: "Schmid Gate", id: "2", coordinates: RawCoordinates(latitude: 33.793292, longitude: -117.852904))
         ]
         newModel.selectStopId(newModel.stops.first!.id)
-        
+
         return newModel
     }
 }
-

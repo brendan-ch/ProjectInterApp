@@ -20,10 +20,21 @@ struct ProjectInterApp: App {
     @State var globalIdSelectionStateObject = GlobalIdSelectionModel(routeIdSyncModel: RouteIdSelectionSyncModel(apolloNetworkModel: ApolloNetworkModel.shared))
     
     @State var globalSystemsStateObject = GlobalSystemsModel(apolloNetworkModel: ApolloNetworkModel.shared)
-    
-    @State var globalStopsStateObject = GlobalStopsModel(apolloNetworkModel: ApolloNetworkModel.shared)
-    
+
+    @State var hiddenStopsModel: HiddenStopsModel
+
+    @State var globalStopsStateObject: GlobalStopsModel
+
     @State var setupStateModel = SetupStateModel()
+
+    init() {
+        let hiddenStops = HiddenStopsModel()
+        _hiddenStopsModel = State(initialValue: hiddenStops)
+        _globalStopsStateObject = State(initialValue: GlobalStopsModel(
+            apolloNetworkModel: ApolloNetworkModel.shared,
+            hiddenStopsModel: hiddenStops
+        ))
+    }
     
     @State var serverUrlConfigModel = ServerUrlConfigurationModel()
     
@@ -73,6 +84,7 @@ struct ProjectInterApp: App {
         .environment(globalIdSelectionStateObject)
         .environment(globalSystemsStateObject)
         .environment(globalStopsStateObject)
+        .environment(hiddenStopsModel)
         .environment(locationManagerStateObject)
         .environmentObject(customAppDelegate.notificationCenterDelegate)
     }
