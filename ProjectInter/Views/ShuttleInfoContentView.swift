@@ -36,7 +36,7 @@ struct ShuttleInfoContentView: NetworkView {
     }
     
     var networkArguments: ShuttleInfoNetworkArguments? {
-        guard let systemId = globalSystemsModel.selectedSystem?.id,
+        guard let systemId = globalSystemsModel.locallyPersistedSelectedSystemId,
               let shuttleId = globalIdSelectionModel.selectedShuttleId,
               let stopId = globalStopsModel.selectedStop?.id
             else { return nil }

@@ -19,7 +19,7 @@ struct ParkingStructureInfoContentView: NetworkView {
     @Environment(GlobalSystemsModel.self) var globalSystemsModel: GlobalSystemsModel
     
     var networkArguments: ParkingStructureNetworkingArguments? {
-        if let systemId = globalSystemsModel.selectedSystem?.id,
+        if let systemId = globalSystemsModel.locallyPersistedSelectedSystemId,
            let parkingStructureId = globalIdSelectionModel.selectedParkingStructureId {
             return .init(systemId: systemId, parkingStructureId: parkingStructureId)
         }

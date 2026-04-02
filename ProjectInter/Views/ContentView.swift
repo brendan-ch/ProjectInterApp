@@ -88,7 +88,10 @@ struct ContentView: View {
             buildSheetContent()
         }
         .onChange(of: globalSystemsModel.selectedSystem) {
-            tabSelection = .shuttles
+            // account for cases where the system is switched via settings
+            if tabSelection == .settings {
+                tabSelection = .shuttles
+            }
         }
         .onChange(of: globalIdSelectionModel.selectedShuttleId) {
             if globalIdSelectionModel.selectedShuttleId != nil {
