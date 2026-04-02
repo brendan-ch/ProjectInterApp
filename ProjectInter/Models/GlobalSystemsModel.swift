@@ -33,7 +33,10 @@ class GlobalSystemsModel: NetworkDataModel<GlobalDataModelNetworkArguments, GetA
     private(set) var userDefaults: UserDefaults? = .group
     
     var systems: [System] = []
-    private var selectedSystemId: String? {
+    
+    /// System ID which depends on UserDefaults. Is available significantly
+    /// earlier than `selectedSystem`, which requires a network round-trip.
+    private(set) var selectedSystemId: String? {
         get {
             access(keyPath: \.selectedSystemId)
             return userDefaults?.string(forKey: UserDefaults.selectedSystemIdKey) ?? ""
@@ -45,6 +48,9 @@ class GlobalSystemsModel: NetworkDataModel<GlobalDataModelNetworkArguments, GetA
             Loggers.shared.globalStateEventsLogger.notice("Selected system ID changed to: \(self.selectedSystemId ?? "nil")")
         }
     }
+    
+    /// The selected system based on the selected system ID.
+    /// Depends on the `systems` array to be populated.
     var selectedSystem: System? {
         systems.first { $0.id == selectedSystemId }
     }
