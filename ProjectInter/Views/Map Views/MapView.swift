@@ -39,7 +39,7 @@ struct MapView: NetworkView {
     var tabSelection: Tabs
     
     var networkArguments: MapViewNetworkArguments? {
-        guard let systemId = globalSystemsModel.selectedSystem?.id else { return nil }
+        guard let systemId = globalSystemsModel.selectedSystemId else { return nil }
         
         return MapViewNetworkArguments(systemId: systemId)
     }

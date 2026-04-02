@@ -27,7 +27,7 @@ struct RouteListContentView: NetworkView {
     
     var networkArguments: RouteListNetworkArguments? {
         guard let stopId = globalStopsState.selectedStop?.id,
-              let systemId = globalSystemsModel.selectedSystem?.id
+              let systemId = globalSystemsModel.selectedSystemId
         else {
             return nil
         }
