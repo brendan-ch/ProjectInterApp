@@ -23,7 +23,7 @@ struct RouteInfoContentView<Content: View>: NetworkView {
     @ViewBuilder let shuttleInfo: Content
     
     var networkArguments: RouteInfoNetworkArguments? {
-        guard let systemId = globalSystemsModel.selectedSystemId,
+        guard let systemId = globalSystemsModel.locallyPersistedSelectedSystemId,
               let stopId = globalStopsState.selectedStop?.id,
               let routeId = globalIdSelectionModel.selectedRouteId else { return nil }
         
