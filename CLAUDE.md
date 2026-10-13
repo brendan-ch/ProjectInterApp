@@ -45,23 +45,30 @@ This file gives agents clear, repo‑specific guidance for developing and testin
   - Adjust the `-destination` to match an available simulator (run `xcodebuild -showdestinations -scheme ProjectInter` to list them).
   - The mock server must be running before starting UI tests (see **UI Test Server** below).
 
-### Fastlane (fallback)
-- If Xcode MCP is not available, fall back to Fastlane via Bundler: `bundle exec fastlane ios <lane>`.
-- Run `fastlane ios test` after changing non‑UI code (models, view models, services, utilities, business logic).
-- Run `fastlane ios test_ui` only when you change UI flows or code that affects UI behavior. Note:
-  - UI tests may take 8+ minutes to complete.
-  - Intermittent flakiness is known; failures are not always related to your change.
-- Output locations: unit tests write to `test-output/`; UI tests write to `test-ui-output/`. Inspect these artifacts when diagnosing failures.
+### xcodebuild (fallback)
+- If Xcode MCP is not available, use `xcodebuild` for test plans and plain Xcode builds.
+- Run the unit test plan after changing non‑UI code (models, view models, services, utilities, business logic):
+  ```
+  xcodebuild test -project ProjectInter.xcodeproj -scheme ProjectInter -testPlan ProjectInterTests -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -xcconfig Config/CI.xcconfig
+  ```
+- Run the UI test plan only when you change UI flows or code that affects UI behavior:
+  ```
+  xcodebuild test -project ProjectInter.xcodeproj -scheme ProjectInter -testPlan ProjectInterUITests -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -xcconfig Config/CI.xcconfig
+  ```
+- Note: UI tests may take 8+ minutes to complete; intermittent flakiness is known; failures are not always related to your change.
+- `Config/CI.xcconfig` disables code signing, which is fine for simulator-only test runs.
+- Adjust the `-destination` to match an available simulator (run `xcodebuild -showdestinations -scheme ProjectInter` to list them).
+- Test results land in the `.xcresult` bundle passed via `-resultBundlePath`. Inspect this artifact when diagnosing failures.
 
 ### Local Swift packages
-- The app depends on several Swift packages that are embedded locally (e.g. `ProjectInterShared`). Their tests are **not** included in the Xcode test plan or Fastlane lanes.
+- The app depends on several Swift packages that are embedded locally (e.g. `ProjectInterShared`). Their tests are **not** included in the Xcode test plan.
 - When making changes to a local Swift package, run its tests directly: `cd <package-directory> && swift test`.
 
 ### Validation order
 1. Build the project.
-2. Run unit tests (Xcode MCP `RunAllTests` or `bundle exec fastlane ios test`).
+2. Run unit tests (Xcode MCP `RunAllTests` or the `xcodebuild` unit-test fallback above).
 3. Run local Swift package tests if packages were changed (`cd <package-directory> && swift test`).
-4. **Run UI tests last** — they take the longest. Use `xcodebuild` with `-testPlan ProjectInterUITests` or `bundle exec fastlane ios test_ui`.
+4. **Run UI tests last** — they take the longest, and require the mock server running first.
 
 ### General
 - If unit or UI tests fail or are unstable in a way you cannot explain, stop and ask the user to intervene before proceeding.
@@ -109,7 +116,7 @@ This file gives agents clear, repo‑specific guidance for developing and testin
 - `ProjectInterLogging/` — Swift package wrapping `os.Logger` categories.
 - `ProjectInterTests/` — Unit tests; see `ProjectInterTests.xctestplan`.
 - `ProjectInterUITests/` — UI tests; see `ProjectInterUITests.xctestplan`.
-- `fastlane/` — Lanes for tests and distribution.
+- `Config/` — Project-level xcconfigs (`Shared.xcconfig` base settings + out-of-repo team include, `CI.xcconfig` for signing-free simulator CI).
 
 ## GraphQL / Apollo Codegen
 - The repo includes the Apollo iOS CLI (`./apollo-ios-cli`) and `apollo-codegen-config.json`.
@@ -135,7 +142,7 @@ This file gives agents clear, repo‑specific guidance for developing and testin
 - Mirror app structure in `ProjectInterTests/` for unit tests and in `ProjectInterUITests/` for UI flows.
 - Use existing test plans; avoid renaming them unless coordinated (`ProjectInterTests.xctestplan`, `ProjectInterUITests.xctestplan`).
 - Add unit tests for view models, models, and pure logic. Add UI tests only for critical flows.
-- For flaky UI tests, capture artifacts from `test-ui-output/` and ask for guidance before disabling tests.
+- For flaky UI tests, capture the `.xcresult` artifact (`-resultBundlePath`) and ask for guidance before disabling tests.
 
 ## Git & Commit Conventions
 - Use Conventional Commits for messages:
@@ -143,9 +150,10 @@ This file gives agents clear, repo‑specific guidance for developing and testin
 - Branch naming: `feat/<short-name>`, `fix/<short-name>`, `chore/<short-name>`, `docs/<short-name>`.
 
 ## Code Signing & CI
-- Fastlane lanes use `match` for code signing. Do not change signing settings without confirmation.
-- Local runs may require credentials; in CI, secrets provide `MATCH_*` values. If signing fails, stop and ask the user.
-- CI relies on paths `test-output/` and `test-ui-output/` and `fastlane` lanes; avoid moving these without updating workflows.
+- Signing is automatic everywhere (Xcode cloud-signing). The development team comes from `../SharedXcodeSettings/DeveloperSettings.xcconfig` (outside the repo) via `Config/Shared.xcconfig`; see `Config/DeveloperSettings.sample.xcconfig` for setup.
+- CI simulator tests pass `-xcconfig Config/CI.xcconfig`, which disables signing entirely — no Apple credentials or certificates are needed in CI.
+- TestFlight delivery happens through Xcode Cloud (App Store Connect); GitHub Actions handles PR tests and version-bump PRs only.
+- CI relies on `.xcresult` artifacts under `output/` and the `Config/` xcconfigs; avoid moving these without updating workflows.
 
 ## Commit Style
 
@@ -159,12 +167,12 @@ For each commit message, use a short message describing the change. Call out spe
   - Link issues with closing keywords (e.g., `Closes #123`).
   - Call out notable architectural changes or new dependencies.
 - Scope: keep PRs focused and reviewable; avoid unrelated refactors.
-- Tests: note which lanes you ran locally (`fastlane ios test`, and when relevant `fastlane ios test_ui`) and any flakiness observed.
+- Tests: note which test plans you ran locally (`xcodebuild test -testPlan ProjectInterTests`, and when relevant `ProjectInterUITests`) and any flakiness observed.
 - Artifacts: if UI-related, include screenshots or a short screen recording.
 
 ### PR Checklist
-- [ ] Runs `bundle exec fastlane ios test` clean locally.
-- [ ] UI changes validated; ran `bundle exec fastlane ios test_ui` if flows impacted (optional due to runtime).
+- [ ] Runs the unit test plan clean locally (`xcodebuild test -testPlan ProjectInterTests ...`).
+- [ ] UI changes validated; ran the UI test plan if flows impacted (optional due to runtime).
 - [ ] Updated GraphQL types via `./apollo-ios-cli generate` if schema/operations changed and committed outputs.
 - [ ] Logging uses `ProjectInterLogging` (no stray `print`).
 - [ ] No unintended signing/CI config changes.
