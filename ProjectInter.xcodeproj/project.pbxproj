@@ -91,6 +91,9 @@
 
 /* Begin PBXFileReference section */
 		20045CAC2D6ABDBA00A7B6FA /* ProjectInterUITests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = ProjectInterUITests.xctestplan; sourceTree = "<group>"; };
+		2026101300000000000000A1 /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		2026101300000000000000A2 /* CI.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CI.xcconfig; sourceTree = "<group>"; };
+		2026101300000000000000A3 /* DeveloperSettings.sample.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DeveloperSettings.sample.xcconfig; sourceTree = "<group>"; };
 		20283E5F2E94961400A6C44E /* ProjectInterWidgetsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ProjectInterWidgetsExtension.entitlements; sourceTree = "<group>"; };
 		205077102D1B78EF004CAA04 /* apollo-codegen-config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "apollo-codegen-config.json"; sourceTree = "<group>"; };
 		208238552D2E730D00DA9820 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -245,6 +248,16 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		2026101300000000000000A4 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				2026101300000000000000A1 /* Shared.xcconfig */,
+				2026101300000000000000A2 /* CI.xcconfig */,
+				2026101300000000000000A3 /* DeveloperSettings.sample.xcconfig */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
 		20FA7B6B2D10E11E00D4EAD1 = {
 			isa = PBXGroup;
 			children = (
@@ -253,6 +266,7 @@
 				2093DAAD2D67EB7200FC4512 /* ProjectInterTests.xctestplan */,
 				208238552D2E730D00DA9820 /* README.md */,
 				205077102D1B78EF004CAA04 /* apollo-codegen-config.json */,
+				2026101300000000000000A4 /* Config */,
 				20FA7B762D10E11E00D4EAD1 /* ProjectInter */,
 				20FA7B872D10E11F00D4EAD1 /* ProjectInterTests */,
 				20FA7B912D10E11F00D4EAD1 /* ProjectInterUITests */,
@@ -531,11 +545,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = ProjectInterWidgetsExtension.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 4A9XHUS87Q;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ProjectInterWidgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ProjectInterWidgets;
@@ -548,8 +558,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.bchen.Inter.widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development dev.bchen.Inter.widgets";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -567,11 +575,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = ProjectInterWidgetsExtension.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 4A9XHUS87Q;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ProjectInterWidgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ProjectInterWidgets;
@@ -584,8 +588,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.bchen.Inter.widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore dev.bchen.Inter.widgets";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -598,6 +600,7 @@
 		};
 		20FA7B962D10E11F00D4EAD1 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2026101300000000000000A1 /* Shared.xcconfig */;
 			buildSettings = {
 				ACKNOWLEDGEMENTS_URL = "https://interchange.bchen.dev/acknowledgements";
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -654,6 +657,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.4.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -667,6 +671,7 @@
 		};
 		20FA7B972D10E11F00D4EAD1 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2026101300000000000000A1 /* Shared.xcconfig */;
 			buildSettings = {
 				ACKNOWLEDGEMENTS_URL = "https://interchange.bchen.dev/acknowledgements";
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -717,6 +722,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.4.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -733,12 +739,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ProjectInter/ProjectInter.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ProjectInter/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 4A9XHUS87Q;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = ProjectInter/Info.plist;
@@ -755,8 +757,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.bchen.Inter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development dev.bchen.Inter";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -773,12 +773,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ProjectInter/ProjectInter.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ProjectInter/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 4A9XHUS87Q;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = ProjectInter/Info.plist;
@@ -795,8 +791,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.bchen.Inter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore dev.bchen.Inter";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -812,7 +806,6 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4A9XHUS87Q;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0;
@@ -831,7 +824,6 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4A9XHUS87Q;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0;
@@ -849,7 +841,6 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4A9XHUS87Q;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ProjectInterUITests/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
@@ -870,7 +861,6 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4A9XHUS87Q;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ProjectInterUITests/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";

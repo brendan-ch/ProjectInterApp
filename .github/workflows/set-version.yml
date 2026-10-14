@@ -1,56 +1,71 @@
-name: Set Version and Build Number
+name: Bump Version
 permissions:
   contents: write
+  pull-requests: write
 
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version number (e.g., 1.2.3)'
-        required: true
-        type: string
-      build_number:
-        description: 'Build number (e.g., 42)'
+        description: 'New version string (e.g., 1.4.1)'
         required: true
         type: string
 
 jobs:
-  set-version:
-    name: Set version and build number
-    runs-on: macos-26
-    timeout-minutes: 30
+  bump-version:
+    name: Bump version
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Checkout current repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GH_PAT }}
+          ref: ${{ github.ref }}
 
-      - name: Set Xcode version
+      - name: Validate version input
         run: |
-          # See https://github.com/actions/runner-images/blob/main/images/macos/macos-26-arm64-Readme.md
-          sudo xcode-select -s /Applications/Xcode.app
+          if [ -z "${{ inputs.version }}" ]; then
+            echo "Error: version input is required"
+            exit 1
+          fi
+          echo "Bumping version to: ${{ inputs.version }}"
 
-      - name: Configure Git
+      - name: Update MARKETING_VERSION in project.pbxproj
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          PROJECT_FILE="ProjectInter.xcodeproj/project.pbxproj"
 
-      - name: Run fastlane set_version
+          # Replace all MARKETING_VERSION entries
+          # Pattern: MARKETING_VERSION = 1.4.0; -> MARKETING_VERSION = {new_version};
+          sed -i 's/\(MARKETING_VERSION = \)[0-9.]*;/\1${{ inputs.version };/' "$PROJECT_FILE"
+
+          # Verify changes were made
+          echo "Updated MARKETING_VERSION entries:"
+          grep "MARKETING_VERSION = " "$PROJECT_FILE"
+          if ! grep -q "MARKETING_VERSION = ${{ inputs.version }};" "$PROJECT_FILE"; then
+            echo "Error: MARKETING_VERSION was not updated"
+            exit 1
+          fi
+
+      - name: Create branch, commit, and push
         run: |
-          fastlane set_version version:${{ github.event.inputs.version }} build_number:${{ github.event.inputs.build_number }}
+          BRANCH_NAME="chore/bump-version-${{ inputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$BRANCH_NAME"
+          git add ProjectInter.xcodeproj/project.pbxproj
+          git commit -m "chore: bump version to ${{ inputs.version }}"
+          git push origin "$BRANCH_NAME" --force
 
-      - name: Create version branch and pull request
+      - name: Create pull request
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
-          BRANCH_NAME="version/${{ github.event.inputs.version }}-build-${{ github.event.inputs.build_number }}"
-          git checkout -b $BRANCH_NAME
-          git push origin $BRANCH_NAME
+          PR_BRANCH="chore/bump-version-${{ inputs.version }}"
           gh pr create \
-            --title "Set version ${{ github.event.inputs.version }} build ${{ github.event.inputs.build_number }}" \
-            --body "Manually set version to ${{ github.event.inputs.version }} and build number to ${{ github.event.inputs.build_number }}" \
+            --title "chore: bump version to ${{ inputs.version }}" \
+            --body "Bumps the app version to ${{ inputs.version }}." \
             --base main \
-            --head $BRANCH_NAME \
+            --head "$PR_BRANCH" \
+            --draft \
             --label "bypass ci/cd"
-

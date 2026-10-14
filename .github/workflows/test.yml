@@ -25,22 +25,77 @@ jobs:
           # See https://github.com/actions/runner-images/blob/main/images/macos/macos-26-arm64-Readme.md
           sudo xcode-select -s /Applications/Xcode.app
 
-      - name: Run Fastlane
+      # Some macos-26 runner-image builds intermittently ship without the named
+      # simulator, and the build step then dies with the cryptic "Unable to find
+      # a device matching the provided destination specifier". Wait for the
+      # device to show up, and if it still isn't there, create it ourselves —
+      # simctl accepts a device-type name and picks the newest compatible
+      # runtime. The bare substring match is anchored to "<name> (" so that
+      # "iPhone 16 Pro Max" cannot satisfy a check for "iPhone 16 Pro".
+      - name: Ensure simulator exists
         working-directory: app
-        run: fastlane test
         env:
-          CI: 1
-          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          DEVICE: iPhone 17 Pro
+        run: |
+          for attempt in 1 2 3; do
+            if xcrun simctl list devices available | grep -Fq "$DEVICE ("; then
+              echo "Found simulator '$DEVICE' on attempt $attempt."
+              exit 0
+            fi
+            echo "Simulator '$DEVICE' not found (attempt $attempt); waiting 15s..."
+            sleep 15
+          done
+          echo "Simulator '$DEVICE' still missing; attempting to create it."
+          if xcrun simctl create "$DEVICE" "$DEVICE"; then
+            echo "Created simulator '$DEVICE'."
+            exit 0
+          fi
+          echo "Failed to create simulator '$DEVICE'. Available devices and device types:"
+          xcrun simctl list devices available
+          xcrun simctl list devicetypes
+          exit 1
+
+      # Simulator builds need no code signing: Config/CI.xcconfig disables it,
+      # so CI needs no Apple Team ID, certificates, or App Store credentials.
+      - name: Build for testing
+        working-directory: app
+        run: |
+          xcodebuild build-for-testing \
+            -project ProjectInter.xcodeproj \
+            -scheme ProjectInter \
+            -testPlan ProjectInterTests \
+            -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+            -xcconfig Config/CI.xcconfig
+
+      - name: Run tests
+        id: tests
+        continue-on-error: true
+        working-directory: app
+        run: |
+          xcodebuild test-without-building \
+            -project ProjectInter.xcodeproj \
+            -scheme ProjectInter \
+            -testPlan ProjectInterTests \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
+            -enableCodeCoverage YES \
+            -resultBundlePath ./output/unit-test.xcresult \
+            -xcconfig Config/CI.xcconfig
+
+      - name: Compress test result
+        if: always()
+        run: |
+          ditto -c -k --keepParent "app/output/unit-test.xcresult" "output/unit-test.zip"
 
       - name: Upload test result
         id: unit-test-result
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: unit-test-result
-          path: app/test-output
+          path: output/unit-test.zip
 
       - name: Post comment linking to artifact
+        if: always() && github.event_name == 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -48,8 +103,38 @@ jobs:
             --repo ${{ github.repository }} \
             --body "Unit test coverage artifact: ${{ steps.unit-test-result.outputs.artifact-url }}"
 
- 
+      - name: Check for test failure
+        if: steps.tests.outcome == 'failure'
+        run: |
+          echo "Unit tests failed. Check the uploaded artifacts for details."
+          exit 1
 
+  test-packages:
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'bypass ci/cd') }}
+    name: Run ${{ matrix.package }} tests
+    runs-on: macos-26
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        package: [ ProjectInterShared, ProjectInterWidgetsCore ]
+
+    steps:
+      - name: Checkout current repository
+        uses: actions/checkout@v4
+        with:
+          path: app
+
+      - name: Set Xcode version
+        working-directory: app
+        run: |
+          # See https://github.com/actions/runner-images/blob/main/images/macos/macos-26-arm64-Readme.md
+          sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Run package tests
+        working-directory: app/${{ matrix.package }}
+        run: swift test
 
   test-ui:
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'bypass ci/cd') }}
@@ -95,26 +180,70 @@ jobs:
           # See https://github.com/actions/runner-images/blob/main/images/macos/macos-26-arm64-Readme.md
           sudo xcode-select -s /Applications/Xcode.app
 
-      - name: Run Fastlane
-        # In the event that UI tests fail, we want to be able to
-        # diagnose what went wrong; not as critical for unit tests
-        continue-on-error: true
-        id: fastlane-tests
+      - name: Ensure simulator exists
         working-directory: app
-        run: fastlane test_ui
         env:
-          CI: 1
-          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          DEVICE: iPhone 17 Pro
+        run: |
+          for attempt in 1 2 3; do
+            if xcrun simctl list devices available | grep -Fq "$DEVICE ("; then
+              echo "Found simulator '$DEVICE' on attempt $attempt."
+              exit 0
+            fi
+            echo "Simulator '$DEVICE' not found (attempt $attempt); waiting 15s..."
+            sleep 15
+          done
+          echo "Simulator '$DEVICE' still missing; attempting to create it."
+          if xcrun simctl create "$DEVICE" "$DEVICE"; then
+            echo "Created simulator '$DEVICE'."
+            exit 0
+          fi
+          echo "Failed to create simulator '$DEVICE'. Available devices and device types:"
+          xcrun simctl list devices available
+          xcrun simctl list devicetypes
+          exit 1
+
+      - name: Build for testing
+        working-directory: app
+        run: |
+          xcodebuild build-for-testing \
+            -project ProjectInter.xcodeproj \
+            -scheme ProjectInter \
+            -testPlan ProjectInterUITests \
+            -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+            -xcconfig Config/CI.xcconfig
+
+      # In the event that UI tests fail, we want to be able to
+      # diagnose what went wrong; not as critical for unit tests
+      - name: Run tests
+        id: tests
+        continue-on-error: true
+        working-directory: app
+        run: |
+          xcodebuild test-without-building \
+            -project ProjectInter.xcodeproj \
+            -scheme ProjectInter \
+            -testPlan ProjectInterUITests \
+            -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+            -enableCodeCoverage YES \
+            -resultBundlePath ./output/ui-test.xcresult \
+            -xcconfig Config/CI.xcconfig
+
+      - name: Compress test result
+        if: always()
+        run: |
+          ditto -c -k --keepParent "app/output/ui-test.xcresult" "output/ui-test.zip"
 
       - name: Upload test result
         id: ui-test-result
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ui-test-result
-          path: app/test-ui-output
+          path: output/ui-test.zip
 
       - name: Post comment linking to artifact
+        if: always() && github.event_name == 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -122,9 +251,8 @@ jobs:
             --repo ${{ github.repository }} \
             --body "UI test coverage artifact: ${{ steps.ui-test-result.outputs.artifact-url }}"
 
-      - name: Check for UI test failure
-        if: steps.fastlane-tests.outcome == 'failure'
+      - name: Check for test failure
+        if: steps.tests.outcome == 'failure'
         run: |
           echo "UI tests failed. Check the uploaded artifacts for details."
           exit 1
-

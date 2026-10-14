@@ -1,0 +1,20 @@
+// CI.xcconfig
+// Build settings for continuous integration: build and test in the simulator
+// with code signing disabled, so CI needs neither an Apple Team ID nor any
+// certificates.
+//
+// Use it by passing `-xcconfig Config/CI.xcconfig` to xcodebuild, e.g.
+//
+//   xcodebuild test \
+//     -project ProjectInter.xcodeproj \
+//     -scheme ProjectInter \
+//     -testPlan ProjectInterTests \
+//     -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+//     -xcconfig Config/CI.xcconfig
+
+#include "Shared.xcconfig"
+
+CODE_SIGNING_ALLOWED = NO
+CODE_SIGNING_REQUIRED = NO
+CODE_SIGN_IDENTITY =
+CODE_SIGN_STYLE = Manual
