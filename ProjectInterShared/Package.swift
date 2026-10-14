@@ -23,7 +23,7 @@ let package = Package(
         .package(path: "../ProjectInterOperations"),
         .package(
             url: "https://github.com/apollographql/apollo-ios",
-            from: "1.15.3"
+            from: "2.0.0"
         ),
     ],
     targets: [

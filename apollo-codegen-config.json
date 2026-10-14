@@ -17,7 +17,7 @@
     "schemaTypes" : {
       "path" : "./ProjectInterOperations",
       "moduleType" : {
-        "swiftPackageManager" : {
+        "swiftPackage" : {
         }
       }
     },
