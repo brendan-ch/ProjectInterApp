@@ -59,17 +59,6 @@
                ReferencedContainer = "container:ProjectInter.xcodeproj">
             </BuildableReference>
          </TestableReference>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "207D5F602EB2DE7A007E7773"
-               BuildableName = "ProjectInterWidgetsCoreTests.xctest"
-               BlueprintName = "ProjectInterWidgetsCoreTests"
-               ReferencedContainer = "container:ProjectInter.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

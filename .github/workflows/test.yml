@@ -109,6 +109,33 @@ jobs:
           echo "Unit tests failed. Check the uploaded artifacts for details."
           exit 1
 
+  test-packages:
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'bypass ci/cd') }}
+    name: Run ${{ matrix.package }} tests
+    runs-on: macos-26
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        package: [ ProjectInterShared, ProjectInterWidgetsCore ]
+
+    steps:
+      - name: Checkout current repository
+        uses: actions/checkout@v4
+        with:
+          path: app
+
+      - name: Set Xcode version
+        working-directory: app
+        run: |
+          # See https://github.com/actions/runner-images/blob/main/images/macos/macos-26-arm64-Readme.md
+          sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Run package tests
+        working-directory: app/${{ matrix.package }}
+        run: swift test
+
   test-ui:
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'bypass ci/cd') }}
     name: Run UI tests on iOS
