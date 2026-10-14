@@ -2,8 +2,9 @@
 // This file was automatically generated and should not be edited.
 
 @_exported import ApolloAPI
+@_spi(Execution) @_spi(Unsafe) import ApolloAPI
 
-public class GetAllSystemsQuery: GraphQLQuery {
+nonisolated public struct GetAllSystemsQuery: GraphQLQuery {
   public static let operationName: String = "GetAllSystems"
   public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
@@ -12,13 +13,16 @@ public class GetAllSystemsQuery: GraphQLQuery {
 
   public init() {}
 
-  public struct Data: ProjectInterOperations.SelectionSet {
-    public let __data: DataDict
-    public init(_dataDict: DataDict) { __data = _dataDict }
+  nonisolated public struct Data: ProjectInterOperations.SelectionSet {
+    @_spi(Unsafe) public let __data: DataDict
+    @_spi(Unsafe) public init(_dataDict: DataDict) { __data = _dataDict }
 
-    public static var __parentType: any ApolloAPI.ParentType { ProjectInterOperations.Objects.Query }
-    public static var __selections: [ApolloAPI.Selection] { [
+    @_spi(Execution) public static var __parentType: any ApolloAPI.ParentType { ProjectInterOperations.Objects.Query }
+    @_spi(Execution) public static var __selections: [ApolloAPI.Selection] { [
       .field("systems", [System].self),
+    ] }
+    @_spi(Execution) public static var __fulfilledFragments: [any ApolloAPI.SelectionSet.Type] { [
+      GetAllSystemsQuery.Data.self
     ] }
 
     public var systems: [System] { __data["systems"] }
@@ -26,16 +30,19 @@ public class GetAllSystemsQuery: GraphQLQuery {
     /// System
     ///
     /// Parent Type: `System`
-    public struct System: ProjectInterOperations.SelectionSet {
-      public let __data: DataDict
-      public init(_dataDict: DataDict) { __data = _dataDict }
+    nonisolated public struct System: ProjectInterOperations.SelectionSet {
+      @_spi(Unsafe) public let __data: DataDict
+      @_spi(Unsafe) public init(_dataDict: DataDict) { __data = _dataDict }
 
-      public static var __parentType: any ApolloAPI.ParentType { ProjectInterOperations.Objects.System }
-      public static var __selections: [ApolloAPI.Selection] { [
+      @_spi(Execution) public static var __parentType: any ApolloAPI.ParentType { ProjectInterOperations.Objects.System }
+      @_spi(Execution) public static var __selections: [ApolloAPI.Selection] { [
         .field("__typename", String.self),
         .field("name", String.self),
         .field("id", ProjectInterOperations.ID.self),
         .field("initialRegion", InitialRegion?.self),
+      ] }
+      @_spi(Execution) public static var __fulfilledFragments: [any ApolloAPI.SelectionSet.Type] { [
+        GetAllSystemsQuery.Data.System.self
       ] }
 
       public var name: String { __data["name"] }
@@ -45,15 +52,18 @@ public class GetAllSystemsQuery: GraphQLQuery {
       /// System.InitialRegion
       ///
       /// Parent Type: `Region`
-      public struct InitialRegion: ProjectInterOperations.SelectionSet {
-        public let __data: DataDict
-        public init(_dataDict: DataDict) { __data = _dataDict }
+      nonisolated public struct InitialRegion: ProjectInterOperations.SelectionSet {
+        @_spi(Unsafe) public let __data: DataDict
+        @_spi(Unsafe) public init(_dataDict: DataDict) { __data = _dataDict }
 
-        public static var __parentType: any ApolloAPI.ParentType { ProjectInterOperations.Objects.Region }
-        public static var __selections: [ApolloAPI.Selection] { [
+        @_spi(Execution) public static var __parentType: any ApolloAPI.ParentType { ProjectInterOperations.Objects.Region }
+        @_spi(Execution) public static var __selections: [ApolloAPI.Selection] { [
           .field("__typename", String.self),
           .field("topLeft", TopLeft.self),
           .field("bottomRight", BottomRight.self),
+        ] }
+        @_spi(Execution) public static var __fulfilledFragments: [any ApolloAPI.SelectionSet.Type] { [
+          GetAllSystemsQuery.Data.System.InitialRegion.self
         ] }
 
         public var topLeft: TopLeft { __data["topLeft"] }
@@ -62,15 +72,18 @@ public class GetAllSystemsQuery: GraphQLQuery {
         /// System.InitialRegion.TopLeft
         ///
         /// Parent Type: `Coordinates`
-        public struct TopLeft: ProjectInterOperations.SelectionSet {
-          public let __data: DataDict
-          public init(_dataDict: DataDict) { __data = _dataDict }
+        nonisolated public struct TopLeft: ProjectInterOperations.SelectionSet {
+          @_spi(Unsafe) public let __data: DataDict
+          @_spi(Unsafe) public init(_dataDict: DataDict) { __data = _dataDict }
 
-          public static var __parentType: any ApolloAPI.ParentType { ProjectInterOperations.Objects.Coordinates }
-          public static var __selections: [ApolloAPI.Selection] { [
+          @_spi(Execution) public static var __parentType: any ApolloAPI.ParentType { ProjectInterOperations.Objects.Coordinates }
+          @_spi(Execution) public static var __selections: [ApolloAPI.Selection] { [
             .field("__typename", String.self),
             .field("latitude", Double.self),
             .field("longitude", Double.self),
+          ] }
+          @_spi(Execution) public static var __fulfilledFragments: [any ApolloAPI.SelectionSet.Type] { [
+            GetAllSystemsQuery.Data.System.InitialRegion.TopLeft.self
           ] }
 
           public var latitude: Double { __data["latitude"] }
@@ -80,15 +93,18 @@ public class GetAllSystemsQuery: GraphQLQuery {
         /// System.InitialRegion.BottomRight
         ///
         /// Parent Type: `Coordinates`
-        public struct BottomRight: ProjectInterOperations.SelectionSet {
-          public let __data: DataDict
-          public init(_dataDict: DataDict) { __data = _dataDict }
+        nonisolated public struct BottomRight: ProjectInterOperations.SelectionSet {
+          @_spi(Unsafe) public let __data: DataDict
+          @_spi(Unsafe) public init(_dataDict: DataDict) { __data = _dataDict }
 
-          public static var __parentType: any ApolloAPI.ParentType { ProjectInterOperations.Objects.Coordinates }
-          public static var __selections: [ApolloAPI.Selection] { [
+          @_spi(Execution) public static var __parentType: any ApolloAPI.ParentType { ProjectInterOperations.Objects.Coordinates }
+          @_spi(Execution) public static var __selections: [ApolloAPI.Selection] { [
             .field("__typename", String.self),
             .field("latitude", Double.self),
             .field("longitude", Double.self),
+          ] }
+          @_spi(Execution) public static var __fulfilledFragments: [any ApolloAPI.SelectionSet.Type] { [
+            GetAllSystemsQuery.Data.System.InitialRegion.BottomRight.self
           ] }
 
           public var latitude: Double { __data["latitude"] }

@@ -2,14 +2,14 @@
 // This file was automatically generated and should not be edited.
 
 import ApolloTestSupport
-import ProjectInterOperations
+@testable import ProjectInterOperations
 
-public class Query: MockObject {
+nonisolated public final class Query: MockObject {
   public static let objectType: ApolloAPI.Object = ProjectInterOperations.Objects.Query
   public static let _mockFields = MockFields()
   public typealias MockValueCollectionType = Array<Mock<Query>>
 
-  public struct MockFields {
+  public struct MockFields: Sendable {
     @Field<Int>("schemaCurrentVersion") public var schemaCurrentVersion
     @Field<Int>("schemaMinVersion") public var schemaMinVersion
     @Field<Int>("secondsThresholdForNotification") public var secondsThresholdForNotification
@@ -20,11 +20,11 @@ public class Query: MockObject {
 
 public extension Mock where O == Query {
   convenience init(
-    schemaCurrentVersion: Int? = nil,
-    schemaMinVersion: Int? = nil,
+    schemaCurrentVersion: Int = 0,
+    schemaMinVersion: Int = 0,
     secondsThresholdForNotification: Int? = nil,
     system: Mock<System>? = nil,
-    systems: [Mock<System>]? = nil
+    systems: [Mock<System>] = []
   ) {
     self.init()
     _setScalar(schemaCurrentVersion, for: \.schemaCurrentVersion)

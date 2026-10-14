@@ -2,14 +2,14 @@
 // This file was automatically generated and should not be edited.
 
 import ApolloTestSupport
-import ProjectInterOperations
+@testable import ProjectInterOperations
 
-public class NotificationResponse: MockObject {
+nonisolated public final class NotificationResponse: MockObject {
   public static let objectType: ApolloAPI.Object = ProjectInterOperations.Objects.NotificationResponse
   public static let _mockFields = MockFields()
   public typealias MockValueCollectionType = Array<Mock<NotificationResponse>>
 
-  public struct MockFields {
+  public struct MockFields: Sendable {
     @Field<Notification>("data") public var data
     @Field<String>("message") public var message
     @Field<Bool>("success") public var success
@@ -19,8 +19,8 @@ public class NotificationResponse: MockObject {
 public extension Mock where O == NotificationResponse {
   convenience init(
     data: Mock<Notification>? = nil,
-    message: String? = nil,
-    success: Bool? = nil
+    message: String = "",
+    success: Bool = false
   ) {
     self.init()
     _setEntity(data, for: \.data)

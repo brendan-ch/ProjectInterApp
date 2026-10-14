@@ -2,14 +2,14 @@
 // This file was automatically generated and should not be edited.
 
 import ApolloTestSupport
-import ProjectInterOperations
+@testable import ProjectInterOperations
 
-public class Mutation: MockObject {
+nonisolated public final class Mutation: MockObject {
   public static let objectType: ApolloAPI.Object = ProjectInterOperations.Objects.Mutation
   public static let _mockFields = MockFields()
   public typealias MockValueCollectionType = Array<Mock<Mutation>>
 
-  public struct MockFields {
+  public struct MockFields: Sendable {
     @Field<NotificationResponse>("cancelNotification") public var cancelNotification
     @Field<NotificationResponse>("scheduleNotification") public var scheduleNotification
   }
@@ -17,8 +17,8 @@ public class Mutation: MockObject {
 
 public extension Mock where O == Mutation {
   convenience init(
-    cancelNotification: Mock<NotificationResponse>? = nil,
-    scheduleNotification: Mock<NotificationResponse>? = nil
+    cancelNotification: Mock<NotificationResponse> = Mock<NotificationResponse>(),
+    scheduleNotification: Mock<NotificationResponse> = Mock<NotificationResponse>()
   ) {
     self.init()
     _setEntity(cancelNotification, for: \.cancelNotification)

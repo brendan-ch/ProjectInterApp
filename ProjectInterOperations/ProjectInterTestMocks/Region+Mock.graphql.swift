@@ -2,14 +2,14 @@
 // This file was automatically generated and should not be edited.
 
 import ApolloTestSupport
-import ProjectInterOperations
+@testable import ProjectInterOperations
 
-public class Region: MockObject {
+nonisolated public final class Region: MockObject {
   public static let objectType: ApolloAPI.Object = ProjectInterOperations.Objects.Region
   public static let _mockFields = MockFields()
   public typealias MockValueCollectionType = Array<Mock<Region>>
 
-  public struct MockFields {
+  public struct MockFields: Sendable {
     @Field<Coordinates>("bottomRight") public var bottomRight
     @Field<Coordinates>("topLeft") public var topLeft
   }
@@ -17,8 +17,8 @@ public class Region: MockObject {
 
 public extension Mock where O == Region {
   convenience init(
-    bottomRight: Mock<Coordinates>? = nil,
-    topLeft: Mock<Coordinates>? = nil
+    bottomRight: Mock<Coordinates> = Mock<Coordinates>(),
+    topLeft: Mock<Coordinates> = Mock<Coordinates>()
   ) {
     self.init()
     _setEntity(bottomRight, for: \.bottomRight)

@@ -4,8 +4,9 @@
 import ApolloAPI
 
 public extension Objects {
-  static let ETA = ApolloAPI.Object(
+  nonisolated static let ETA = ApolloAPI.Object(
     typename: "ETA",
-    implementedInterfaces: []
+    implementedInterfaces: [],
+    keyFields: nil
   )
 }

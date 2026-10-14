@@ -4,8 +4,9 @@
 import ApolloAPI
 
 public extension Objects {
-  static let Region = ApolloAPI.Object(
+  nonisolated static let Region = ApolloAPI.Object(
     typename: "Region",
-    implementedInterfaces: []
+    implementedInterfaces: [],
+    keyFields: nil
   )
 }

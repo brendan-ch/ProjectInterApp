@@ -1,19 +1,19 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import ApolloAPI
+@_spi(Internal) @_spi(Unsafe) import ApolloAPI
 
-public struct HistoricalParkingAverageQueryInput: InputObject {
-  public private(set) var __data: InputDict
+nonisolated public struct HistoricalParkingAverageQueryInput: InputObject {
+  @_spi(Unsafe) public private(set) var __data: InputDict
 
-  public init(_ data: InputDict) {
+  @_spi(Unsafe) public init(_ data: InputDict) {
     __data = data
   }
 
   public init(
     from: DateTime,
     to: DateTime,
-    intervalMs: Int
+    intervalMs: Int32
   ) {
     __data = InputDict([
       "from": from,
@@ -32,7 +32,7 @@ public struct HistoricalParkingAverageQueryInput: InputObject {
     set { __data["to"] = newValue }
   }
 
-  public var intervalMs: Int {
+  public var intervalMs: Int32 {
     get { __data["intervalMs"] }
     set { __data["intervalMs"] = newValue }
   }

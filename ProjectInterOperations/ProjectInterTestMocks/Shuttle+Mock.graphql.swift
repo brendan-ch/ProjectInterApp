@@ -2,14 +2,14 @@
 // This file was automatically generated and should not be edited.
 
 import ApolloTestSupport
-import ProjectInterOperations
+@testable import ProjectInterOperations
 
-public class Shuttle: MockObject {
+nonisolated public final class Shuttle: MockObject {
   public static let objectType: ApolloAPI.Object = ProjectInterOperations.Objects.Shuttle
   public static let _mockFields = MockFields()
   public typealias MockValueCollectionType = Array<Mock<Shuttle>>
 
-  public struct MockFields {
+  public struct MockFields: Sendable {
     @Field<Coordinates>("coordinates") public var coordinates
     @Field<ETA>("eta") public var eta
     @Field<[ETA]>("etas") public var etas
@@ -22,12 +22,12 @@ public class Shuttle: MockObject {
 
 public extension Mock where O == Shuttle {
   convenience init(
-    coordinates: Mock<Coordinates>? = nil,
+    coordinates: Mock<Coordinates> = Mock<Coordinates>(),
     eta: Mock<ETA>? = nil,
     etas: [Mock<ETA>]? = nil,
-    id: ProjectInterOperations.ID? = nil,
-    name: String? = nil,
-    orientationInDegrees: Double? = nil,
+    id: ProjectInterOperations.ID = "",
+    name: String = "",
+    orientationInDegrees: Double = 0.0,
     route: Mock<Route>? = nil
   ) {
     self.init()

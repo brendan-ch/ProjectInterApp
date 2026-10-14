@@ -2,8 +2,9 @@
 // This file was automatically generated and should not be edited.
 
 @_exported import ApolloAPI
+@_spi(Execution) @_spi(Unsafe) import ApolloAPI
 
-public class GetShuttleInfoDataQuery: GraphQLQuery {
+nonisolated public struct GetShuttleInfoDataQuery: GraphQLQuery {
   public static let operationName: String = "GetShuttleInfoData"
   public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
@@ -24,20 +25,23 @@ public class GetShuttleInfoDataQuery: GraphQLQuery {
     self.notificationInput = notificationInput
   }
 
-  public var __variables: Variables? { [
+  @_spi(Unsafe) public var __variables: Variables? { [
     "systemId": systemId,
     "shuttleId": shuttleId,
     "notificationInput": notificationInput
   ] }
 
-  public struct Data: ProjectInterOperations.SelectionSet {
-    public let __data: DataDict
-    public init(_dataDict: DataDict) { __data = _dataDict }
+  nonisolated public struct Data: ProjectInterOperations.SelectionSet {
+    @_spi(Unsafe) public let __data: DataDict
+    @_spi(Unsafe) public init(_dataDict: DataDict) { __data = _dataDict }
 
-    public static var __parentType: any ApolloAPI.ParentType { ProjectInterOperations.Objects.Query }
-    public static var __selections: [ApolloAPI.Selection] { [
+    @_spi(Execution) public static var __parentType: any ApolloAPI.ParentType { ProjectInterOperations.Objects.Query }
+    @_spi(Execution) public static var __selections: [ApolloAPI.Selection] { [
       .field("system", System?.self, arguments: ["id": .variable("systemId")]),
       .field("secondsThresholdForNotification", Int?.self, arguments: ["input": .variable("notificationInput")]),
+    ] }
+    @_spi(Execution) public static var __fulfilledFragments: [any ApolloAPI.SelectionSet.Type] { [
+      GetShuttleInfoDataQuery.Data.self
     ] }
 
     public var system: System? { __data["system"] }
@@ -46,14 +50,17 @@ public class GetShuttleInfoDataQuery: GraphQLQuery {
     /// System
     ///
     /// Parent Type: `System`
-    public struct System: ProjectInterOperations.SelectionSet {
-      public let __data: DataDict
-      public init(_dataDict: DataDict) { __data = _dataDict }
+    nonisolated public struct System: ProjectInterOperations.SelectionSet {
+      @_spi(Unsafe) public let __data: DataDict
+      @_spi(Unsafe) public init(_dataDict: DataDict) { __data = _dataDict }
 
-      public static var __parentType: any ApolloAPI.ParentType { ProjectInterOperations.Objects.System }
-      public static var __selections: [ApolloAPI.Selection] { [
+      @_spi(Execution) public static var __parentType: any ApolloAPI.ParentType { ProjectInterOperations.Objects.System }
+      @_spi(Execution) public static var __selections: [ApolloAPI.Selection] { [
         .field("__typename", String.self),
         .field("shuttle", Shuttle?.self, arguments: ["id": .variable("shuttleId")]),
+      ] }
+      @_spi(Execution) public static var __fulfilledFragments: [any ApolloAPI.SelectionSet.Type] { [
+        GetShuttleInfoDataQuery.Data.System.self
       ] }
 
       public var shuttle: Shuttle? { __data["shuttle"] }
@@ -61,15 +68,18 @@ public class GetShuttleInfoDataQuery: GraphQLQuery {
       /// System.Shuttle
       ///
       /// Parent Type: `Shuttle`
-      public struct Shuttle: ProjectInterOperations.SelectionSet {
-        public let __data: DataDict
-        public init(_dataDict: DataDict) { __data = _dataDict }
+      nonisolated public struct Shuttle: ProjectInterOperations.SelectionSet {
+        @_spi(Unsafe) public let __data: DataDict
+        @_spi(Unsafe) public init(_dataDict: DataDict) { __data = _dataDict }
 
-        public static var __parentType: any ApolloAPI.ParentType { ProjectInterOperations.Objects.Shuttle }
-        public static var __selections: [ApolloAPI.Selection] { [
+        @_spi(Execution) public static var __parentType: any ApolloAPI.ParentType { ProjectInterOperations.Objects.Shuttle }
+        @_spi(Execution) public static var __selections: [ApolloAPI.Selection] { [
           .field("__typename", String.self),
           .field("name", String.self),
           .field("etas", [Eta]?.self),
+        ] }
+        @_spi(Execution) public static var __fulfilledFragments: [any ApolloAPI.SelectionSet.Type] { [
+          GetShuttleInfoDataQuery.Data.System.Shuttle.self
         ] }
 
         public var name: String { __data["name"] }
@@ -78,15 +88,18 @@ public class GetShuttleInfoDataQuery: GraphQLQuery {
         /// System.Shuttle.Eta
         ///
         /// Parent Type: `ETA`
-        public struct Eta: ProjectInterOperations.SelectionSet {
-          public let __data: DataDict
-          public init(_dataDict: DataDict) { __data = _dataDict }
+        nonisolated public struct Eta: ProjectInterOperations.SelectionSet {
+          @_spi(Unsafe) public let __data: DataDict
+          @_spi(Unsafe) public init(_dataDict: DataDict) { __data = _dataDict }
 
-          public static var __parentType: any ApolloAPI.ParentType { ProjectInterOperations.Objects.ETA }
-          public static var __selections: [ApolloAPI.Selection] { [
+          @_spi(Execution) public static var __parentType: any ApolloAPI.ParentType { ProjectInterOperations.Objects.ETA }
+          @_spi(Execution) public static var __selections: [ApolloAPI.Selection] { [
             .field("__typename", String.self),
             .field("stop", Stop?.self),
             .field("secondsRemaining", Double.self),
+          ] }
+          @_spi(Execution) public static var __fulfilledFragments: [any ApolloAPI.SelectionSet.Type] { [
+            GetShuttleInfoDataQuery.Data.System.Shuttle.Eta.self
           ] }
 
           public var stop: Stop? { __data["stop"] }
@@ -95,15 +108,18 @@ public class GetShuttleInfoDataQuery: GraphQLQuery {
           /// System.Shuttle.Eta.Stop
           ///
           /// Parent Type: `Stop`
-          public struct Stop: ProjectInterOperations.SelectionSet {
-            public let __data: DataDict
-            public init(_dataDict: DataDict) { __data = _dataDict }
+          nonisolated public struct Stop: ProjectInterOperations.SelectionSet {
+            @_spi(Unsafe) public let __data: DataDict
+            @_spi(Unsafe) public init(_dataDict: DataDict) { __data = _dataDict }
 
-            public static var __parentType: any ApolloAPI.ParentType { ProjectInterOperations.Objects.Stop }
-            public static var __selections: [ApolloAPI.Selection] { [
+            @_spi(Execution) public static var __parentType: any ApolloAPI.ParentType { ProjectInterOperations.Objects.Stop }
+            @_spi(Execution) public static var __selections: [ApolloAPI.Selection] { [
               .field("__typename", String.self),
               .field("name", String.self),
               .field("id", ProjectInterOperations.ID.self),
+            ] }
+            @_spi(Execution) public static var __fulfilledFragments: [any ApolloAPI.SelectionSet.Type] { [
+              GetShuttleInfoDataQuery.Data.System.Shuttle.Eta.Stop.self
             ] }
 
             public var name: String { __data["name"] }

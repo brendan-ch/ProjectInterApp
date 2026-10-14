@@ -4,8 +4,9 @@
 import ApolloAPI
 
 public extension Objects {
-  static let Stop = ApolloAPI.Object(
+  nonisolated static let Stop = ApolloAPI.Object(
     typename: "Stop",
-    implementedInterfaces: []
+    implementedInterfaces: [],
+    keyFields: nil
   )
 }

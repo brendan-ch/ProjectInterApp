@@ -4,8 +4,9 @@
 import ApolloAPI
 
 public extension Objects {
-  static let Notification = ApolloAPI.Object(
+  nonisolated static let Notification = ApolloAPI.Object(
     typename: "Notification",
-    implementedInterfaces: []
+    implementedInterfaces: [],
+    keyFields: nil
   )
 }

@@ -3,43 +3,44 @@
 
 import ApolloAPI
 
-public protocol SelectionSet: ApolloAPI.SelectionSet & ApolloAPI.RootSelectionSet
+nonisolated public protocol SelectionSet: ApolloAPI.SelectionSet & ApolloAPI.RootSelectionSet
 where Schema == ProjectInterOperations.SchemaMetadata {}
 
-public protocol InlineFragment: ApolloAPI.SelectionSet & ApolloAPI.InlineFragment
+nonisolated public protocol InlineFragment: ApolloAPI.SelectionSet & ApolloAPI.InlineFragment
 where Schema == ProjectInterOperations.SchemaMetadata {}
 
-public protocol MutableSelectionSet: ApolloAPI.MutableRootSelectionSet
+nonisolated public protocol MutableSelectionSet: ApolloAPI.MutableRootSelectionSet
 where Schema == ProjectInterOperations.SchemaMetadata {}
 
-public protocol MutableInlineFragment: ApolloAPI.MutableSelectionSet & ApolloAPI.InlineFragment
+nonisolated public protocol MutableInlineFragment: ApolloAPI.MutableSelectionSet & ApolloAPI.InlineFragment
 where Schema == ProjectInterOperations.SchemaMetadata {}
 
-public enum SchemaMetadata: ApolloAPI.SchemaMetadata {
+nonisolated public enum SchemaMetadata: ApolloAPI.SchemaMetadata {
   public static let configuration: any ApolloAPI.SchemaConfiguration.Type = SchemaConfiguration.self
 
-  public static func objectType(forTypename typename: String) -> ApolloAPI.Object? {
-    switch typename {
-    case "Coordinates": return ProjectInterOperations.Objects.Coordinates
-    case "ETA": return ProjectInterOperations.Objects.ETA
-    case "HistoricalParkingAverageQueryResult": return ProjectInterOperations.Objects.HistoricalParkingAverageQueryResult
-    case "Mutation": return ProjectInterOperations.Objects.Mutation
-    case "Notification": return ProjectInterOperations.Objects.Notification
-    case "NotificationResponse": return ProjectInterOperations.Objects.NotificationResponse
-    case "OrderedStop": return ProjectInterOperations.Objects.OrderedStop
-    case "ParkingStructure": return ProjectInterOperations.Objects.ParkingStructure
-    case "ParkingSystem": return ProjectInterOperations.Objects.ParkingSystem
-    case "Query": return ProjectInterOperations.Objects.Query
-    case "Region": return ProjectInterOperations.Objects.Region
-    case "Route": return ProjectInterOperations.Objects.Route
-    case "Shuttle": return ProjectInterOperations.Objects.Shuttle
-    case "Stop": return ProjectInterOperations.Objects.Stop
-    case "System": return ProjectInterOperations.Objects.System
-    default: return nil
-    }
+  private static let objectTypeMap: [String: ApolloAPI.Object] = [
+    "Coordinates": ProjectInterOperations.Objects.Coordinates,
+    "ETA": ProjectInterOperations.Objects.ETA,
+    "HistoricalParkingAverageQueryResult": ProjectInterOperations.Objects.HistoricalParkingAverageQueryResult,
+    "Mutation": ProjectInterOperations.Objects.Mutation,
+    "Notification": ProjectInterOperations.Objects.Notification,
+    "NotificationResponse": ProjectInterOperations.Objects.NotificationResponse,
+    "OrderedStop": ProjectInterOperations.Objects.OrderedStop,
+    "ParkingStructure": ProjectInterOperations.Objects.ParkingStructure,
+    "ParkingSystem": ProjectInterOperations.Objects.ParkingSystem,
+    "Query": ProjectInterOperations.Objects.Query,
+    "Region": ProjectInterOperations.Objects.Region,
+    "Route": ProjectInterOperations.Objects.Route,
+    "Shuttle": ProjectInterOperations.Objects.Shuttle,
+    "Stop": ProjectInterOperations.Objects.Stop,
+    "System": ProjectInterOperations.Objects.System
+  ]
+
+  @_spi(Execution) public static func objectType(forTypename typename: String) -> ApolloAPI.Object? {
+    objectTypeMap[typename]
   }
 }
 
-public enum Objects {}
-public enum Interfaces {}
-public enum Unions {}
+nonisolated public enum Objects {}
+nonisolated public enum Interfaces {}
+nonisolated public enum Unions {}

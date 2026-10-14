@@ -4,8 +4,9 @@
 import ApolloAPI
 
 public extension Objects {
-  static let HistoricalParkingAverageQueryResult = ApolloAPI.Object(
+  nonisolated static let HistoricalParkingAverageQueryResult = ApolloAPI.Object(
     typename: "HistoricalParkingAverageQueryResult",
-    implementedInterfaces: []
+    implementedInterfaces: [],
+    keyFields: nil
   )
 }
