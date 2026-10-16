@@ -12,7 +12,8 @@ extension ApolloClient {
     public static var shared: ApolloClient { ApolloClient(url: .apiBaseUrl) }
 
     /// Continuously polls the passed query, yielding results until the
-    /// consuming task is cancelled.
+    /// consuming task is cancelled. This is different from the built-in
+    /// Apollo subscription stream in that it polls a plain query.
     public func getStream<Query: GraphQLQuery>(
         _ query: Query,
         sleepDuration: Duration = .seconds(5)
