@@ -9,15 +9,19 @@ import Foundation
 
 extension String {
     func toAppleMapsUrl() -> URL? {
-        var percentageEncodedString = self.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-        guard let percentageEncodedString = percentageEncodedString else { return nil }
-        return URL(string: "https://maps.apple.com/?address=\(percentageEncodedString)")
+        var components = URLComponents(string: "https://maps.apple.com")
+        components?.path = "/place"
+        components?.queryItems = [URLQueryItem(name: "address", value: self)]
+        return components?.url
     }
     
     func toGoogleMapsUrl() -> URL? {
-        var percentageEncodedString = self.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-        guard let percentageEncodedString = percentageEncodedString else { return nil }
-        return URL(string: "https://www.google.com/maps?q=\(percentageEncodedString)")
-
+        var components = URLComponents(string: "https://www.google.com")
+        components?.path = "/maps/search/"
+        components?.queryItems = [
+            URLQueryItem(name: "api", value: "1"),
+            URLQueryItem(name: "query", value: self),
+        ]
+        return components?.url
     }
 }
