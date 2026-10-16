@@ -37,7 +37,7 @@ jobs:
 
           # Replace all MARKETING_VERSION entries
           # Pattern: MARKETING_VERSION = 1.4.0; -> MARKETING_VERSION = {new_version};
-          sed -i 's/\(MARKETING_VERSION = \)[0-9.]*;/\1${{ inputs.version };/' "$PROJECT_FILE"
+          sed -i 's/\(MARKETING_VERSION = \)[0-9.]*;/\1${{ inputs.version }};/' "$PROJECT_FILE"
 
           # Verify changes were made
           echo "Updated MARKETING_VERSION entries:"
