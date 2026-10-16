@@ -10,7 +10,7 @@ jobs:
   test:
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'bypass ci/cd') }}
     name: Run unit tests on iOS
-    runs-on: macos-26
+    runs-on: xcode-27
     timeout-minutes: 30
 
     steps:
@@ -76,7 +76,7 @@ jobs:
             -project ProjectInter.xcodeproj \
             -scheme ProjectInter \
             -testPlan ProjectInterTests \
-            -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
+            -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
             -enableCodeCoverage YES \
             -resultBundlePath ./output/unit-test.xcresult \
             -xcconfig Config/CI.xcconfig
@@ -112,7 +112,7 @@ jobs:
   test-packages:
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'bypass ci/cd') }}
     name: Run ${{ matrix.package }} tests
-    runs-on: macos-26
+    runs-on: xcode-27
     timeout-minutes: 30
 
     strategy:
@@ -139,7 +139,7 @@ jobs:
   test-ui:
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'bypass ci/cd') }}
     name: Run UI tests on iOS
-    runs-on: macos-26
+    runs-on: xcode-27
     timeout-minutes: 30
 
     strategy:
