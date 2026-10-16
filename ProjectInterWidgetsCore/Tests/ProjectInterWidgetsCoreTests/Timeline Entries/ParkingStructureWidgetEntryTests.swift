@@ -1,11 +1,12 @@
 //
-//  ParkingStructuresWidgetEntryTests.swift
+//  ParkingStructureWidgetEntryTests.swift
 //  ProjectInterWidgetsCore
 //
 //  Created by Brendan Chen on 2025.10.29.
 //
 
 import Testing
+import ApolloTestSupport
 import ProjectInterShared
 import ProjectInterOperations
 import ProjectInterTestMocks
@@ -14,8 +15,7 @@ import ProjectInterTestMocks
 class ParkingStructureWidgetEntryTests {
     @Test("ParkingStructureWidgetEntry creates correctly with correct data")
     func parkingStructureWidgetCreates() async throws {
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = .init(
+        let mock = Mock<ProjectInterTestMocks.Query>(
             system: .init(
                 parkingSystem: .init(
                     parkingStructure: .init(
@@ -29,13 +29,10 @@ class ParkingStructureWidgetEntryTests {
                 )
             )
         )
-        
-        let query = GetParkingStructureInfoDataQuery(systemId: "1", parkingStructureId: "1", historicalAveragesInput: nil)
-        
-        let entry = try await ParkingStructureWidgetEntry.create(
-            query,
-            client: mockClient,
-        )
+
+        let data = await GetParkingStructureInfoDataQuery.Data.from(mock)
+
+        let entry = try ParkingStructureWidgetEntry.create(systemId: "1", data: data)
         #expect(entry.parkingStructure?.name == "Test Structure")
         #expect(entry.parkingStructure?.capacity == 100)
         #expect(entry.parkingStructure?.id == "1")

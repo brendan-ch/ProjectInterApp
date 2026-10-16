@@ -39,7 +39,10 @@ let package = Package(
         ),
         .testTarget(
             name: "ProjectInterWidgetsCoreTests",
-            dependencies: ["ProjectInterWidgetsCore"]
+            dependencies: [
+                "ProjectInterWidgetsCore",
+                .product(name: "ApolloTestSupport", package: "apollo-ios"),
+            ],
         ),
     ]
 )

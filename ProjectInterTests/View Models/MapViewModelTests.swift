@@ -171,8 +171,8 @@ class MapViewModelTestsMockData {
 // MARK: - Data model tests
 
 class MapViewRouteTests {
-    @Test func mapViewRouteConstructsRouteFromApolloData() {
-        let data = GetMapDataQuery.Data.from(MapViewModelTestsMockData.defaultMock)
+    @Test func mapViewRouteConstructsRouteFromApolloData() async {
+        let data = await GetMapDataQuery.Data.from(MapViewModelTestsMockData.defaultMock)
         let routes = data.system!.routes!
         
         let constructedRoutes = routes.map(MapViewRoute.init)
@@ -189,8 +189,8 @@ class MapViewRouteTests {
 }
 
 class MapViewStopTests {
-    @Test func mapViewStopConstructsStopFromApolloData() {
-        let data = GetMapDataQuery.Data.from(MapViewModelTestsMockData.defaultMock)
+    @Test func mapViewStopConstructsStopFromApolloData() async {
+        let data = await GetMapDataQuery.Data.from(MapViewModelTestsMockData.defaultMock)
         let stops = data.system!.stops!
         
         let constructedStops = stops.map(MapViewStop.init)
@@ -210,8 +210,8 @@ class MapViewStopTests {
 }
 
 class MapViewShuttleTests {
-    @Test func mapViewShuttleConstructsShuttleFromApolloData() {
-        let data = GetMapDataQuery.Data.from(MapViewModelTestsMockData.defaultMock)
+    @Test func mapViewShuttleConstructsShuttleFromApolloData() async {
+        let data = await GetMapDataQuery.Data.from(MapViewModelTestsMockData.defaultMock)
         let shuttles = data.system!.shuttles!
         
         let constructedShuttles = shuttles.map(MapViewShuttle.init)
@@ -229,8 +229,8 @@ class MapViewShuttleTests {
 }
 
 class MapViewParkingStructureTests {
-    @Test func mapViewParkingStructureConstructsStructureFromApolloData() {
-        let data = GetMapDataQuery.Data.from(MapViewModelTestsMockData.defaultMock)
+    @Test func mapViewParkingStructureConstructsStructureFromApolloData() async {
+        let data = await GetMapDataQuery.Data.from(MapViewModelTestsMockData.defaultMock)
         let parkingStructures = data.system!.parkingSystem!.parkingStructures!
         
         let constructedStructures = parkingStructures.map(MapViewParkingStructure.init)
@@ -245,120 +245,49 @@ class MapViewParkingStructureTests {
 
 // MARK: - View model tests
 
-class MapViewModelTests: NetworkDataModelTestsProtocol {
-    let networkArguments = MapViewNetworkArguments(systemId: "1")
+class MapViewModelTests {
     let defaultMock = MapViewModelTestsMockData.defaultMock
-    let secondaryMock = MapViewModelTestsMockData.secondaryMock
-    
-    func assertViewModelDataForDefaultMock(viewModel: MapView.ViewModel) {
+
+    @Test("injectUpdate maps all map data collections") func injectUpdateMapsData() async {
+        let viewModel = MapView.ViewModel()
+        let data = await GetMapDataQuery.Data.from(defaultMock)
+
+        await viewModel.injectUpdate(.success(data))
+
         #expect(viewModel.routes.count == 1)
         #expect(viewModel.shuttles.count == 1)
         #expect(viewModel.stops.count == 2)
         #expect(viewModel.parkingStructures.count == 2)
     }
-    
-    func assertViewModelDataForSecondaryMock(viewModel: MapView.ViewModel) {
-        #expect(viewModel.routes.count == 2)
-        #expect(viewModel.shuttles.count == 2)
-        #expect(viewModel.stops.count == 1)
-        #expect(viewModel.parkingStructures.count == 0)
-    }
-    
-    func assertViewModelDataForEmptyMock(viewModel: MapView.ViewModel) {
-        #expect(viewModel.routes.isEmpty)
-        #expect(viewModel.shuttles.isEmpty)
-        #expect(viewModel.parkingStructures.isEmpty)
-        #expect(viewModel.stops.isEmpty)
-    }
-    
-    @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
-        await autoTest_startRefreshingDataRefreshesDataOnFirstCall()
-    }
-    
-    @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
-        await autoTest_startRefreshingDataRefreshesDataMultipleTimes()
-    }
-    
-    @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
-        await autoTest_stopRefreshingDataStopsDataUpdatesAfterCompletion()
-    }
-    
-    @Test func refreshDataOnceUpdatesData() async {
-        await autoTest_refreshDataOnceUpdatesData()
-    }
-    
-    @Test func refreshDataOnceDoesNothingIfNoData() async {
-        await autoTest_refreshDataOnceDoesNothingIfNoData()
-    }
-    
-    @Test func refreshDataOnceStillPopulatesRoutesIfNoShuttles() async {
-        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        let mock = Mock<ProjectInterTestMocks.Query>(
-            system: Mock<ProjectInterTestMocks.System>(
-                routes: [
-                    MapViewModelTestsMockData.defaultRoute
-                ]
-            )
-        )
-        mockClient.queryMock = mock
-        
-        await viewModel.refreshDataOnce(arguments: arguments)
-        
-        #expect(viewModel.routes.count == 1)
-        #expect(viewModel.shuttles.isEmpty)
-    }
-    
-    @Test func refreshDataOnceStillPopulatesShuttlesIfNoRoutes() async {
-        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        let mock = Mock<ProjectInterTestMocks.Query>(
-            system: Mock<ProjectInterTestMocks.System>(
-                shuttles: [
-                    MapViewModelTestsMockData.defaultShuttle
-                ]
-            )
-        )
-        mockClient.queryMock = mock
-        
-        await viewModel.refreshDataOnce(arguments: arguments)
-        
-        #expect(viewModel.shuttles.count == 1)
-        #expect(viewModel.routes.isEmpty)
-    }
-    
-    @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
-        await autoTest_refreshDataOnceDoesNothingIfNoApolloClient()
-    }
-    
-    @Test func refreshDataOnceResetsPositionToAutomaticOnFirstLoad() async {
-        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.queryMock = MapViewModelTestsMockData.defaultMock
+
+    @Test func injectUpdateResetsPositionToAutomaticOnFirstLoad() async {
+        let viewModel = MapView.ViewModel()
+        let data = await GetMapDataQuery.Data.from(defaultMock)
 
         viewModel.position = .region(MKCoordinateRegion.anaheim)
-        await viewModel.refreshDataOnce(arguments: arguments)
+        await viewModel.injectUpdate(.success(data))
 
         #expect(viewModel.position == .automatic)
     }
 
-    @Test func refreshDataOnceDoesNotResetPositionOnSubsequentLoads() async {
-        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        mockClient.queryMock = MapViewModelTestsMockData.defaultMock
+    @Test func injectUpdateDoesNotResetPositionOnSubsequentLoads() async {
+        let viewModel = MapView.ViewModel()
+        let data = await GetMapDataQuery.Data.from(defaultMock)
 
         // First load — resets to .automatic
-        await viewModel.refreshDataOnce(arguments: arguments)
+        await viewModel.injectUpdate(.success(data))
 
         // Manually set a position (simulating what setInitialMapPosition or user interaction does)
         viewModel.position = .region(MKCoordinateRegion.anaheim)
 
         // Second load — must NOT reset the position
-        await viewModel.refreshDataOnce(arguments: arguments)
+        await viewModel.injectUpdate(.success(data))
 
         #expect(viewModel.position == .region(MKCoordinateRegion.anaheim))
     }
 
-    @Test func refreshDataOnceUpdatesOrderedStopDataForStopIfExists() async {
-        let (mockClient, viewModel, arguments) = generateClientAndViewModelWithArguments()
-        
-        mockClient.queryMock = Mock<ProjectInterTestMocks.Query>(
+    @Test func injectUpdateUpdatesOrderedStopDataForStopIfExists() async {
+        let mock = Mock<ProjectInterTestMocks.Query>(
             system: .init(
                 stops: [
                     .init(
@@ -374,9 +303,11 @@ class MapViewModelTests: NetworkDataModelTestsProtocol {
                 ]
             )
         )
-        
-        await viewModel.refreshDataOnce(arguments: arguments)
-        
+
+        let viewModel = MapView.ViewModel()
+        let data = await GetMapDataQuery.Data.from(mock)
+        await viewModel.injectUpdate(.success(data))
+
         #expect(viewModel.stops.first!.routeIds.count == 1)
         #expect(viewModel.stops.first!.routeIds.contains("1"))
     }

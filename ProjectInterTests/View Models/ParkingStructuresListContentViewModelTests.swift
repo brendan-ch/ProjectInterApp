@@ -15,7 +15,7 @@ import Foundation
 
 class ParkingStructuresListContentViewModelTestsMockData {
     static let defaultArguments = ParkingStructuresNetworkingArguments(systemId: "1")
-    
+
     static let defaultMock = Mock<ProjectInterTestMocks.Query>(
         system: .init(
             parkingSystem: .init(
@@ -36,7 +36,7 @@ class ParkingStructuresListContentViewModelTestsMockData {
             )
         )
     )
-    
+
     static let secondaryMock = Mock<ProjectInterTestMocks.Query>(
         system: .init(
             parkingSystem: .init(
@@ -57,7 +57,7 @@ class ParkingStructuresListContentViewModelTestsMockData {
             )
         )
     )
-    
+
     static let tertiaryMock = Mock<ProjectInterTestMocks.Query>(
         system: .init(
             parkingSystem: nil
@@ -67,12 +67,12 @@ class ParkingStructuresListContentViewModelTestsMockData {
 
 // Test the extension that is declared in the view model file
 class ParkingStructuresListParkingStructureTests {
-    @Test func apolloDataInitializerInitializesData() {
-        let data = GetParkingStructuresListDataQuery.Data.from(ParkingStructuresListContentViewModelTestsMockData.defaultMock)
+    @Test func apolloDataInitializerInitializesData() async {
+        let data = await GetParkingStructuresListDataQuery.Data.from(ParkingStructuresListContentViewModelTestsMockData.defaultMock)
         let parkingStructures = data.system!.parkingSystem!.parkingStructures!
-        
+
         let constructedStructures = parkingStructures.map(ParkingStructure.init)
-        
+
         for i in 0..<constructedStructures.count {
             #expect(constructedStructures[i].id == parkingStructures[i].id)
             #expect(constructedStructures[i].name == parkingStructures[i].name)
@@ -82,90 +82,40 @@ class ParkingStructuresListParkingStructureTests {
     }
 }
 
-class ParkingStructuresListContentViewModelTests: NetworkDataModelTestsProtocol {
-    let networkArguments = ParkingStructuresListContentViewModelTestsMockData.defaultArguments
+class ParkingStructuresListContentViewModelTests {
     let defaultMock = ParkingStructuresListContentViewModelTestsMockData.defaultMock
-    let secondaryMock = ParkingStructuresListContentViewModelTestsMockData.secondaryMock
     let tertiaryMock = ParkingStructuresListContentViewModelTestsMockData.tertiaryMock
-    
-    func assertViewModelDataForDefaultMock(viewModel: ParkingStructuresListContentView.ViewModel) {
+
+    @Test("injectUpdate maps parking structures") func injectUpdateMapsStructures() async {
+        let viewModel = ParkingStructuresListContentView.ViewModel()
+        let data = await GetParkingStructuresListDataQuery.Data.from(defaultMock)
+
+        await viewModel.injectUpdate(.success(data))
+
         #expect(viewModel.structures.count == 2)
-        
+
         #expect(viewModel.structures[0].id == "1")
         #expect(viewModel.structures[1].id == "2")
-        
+
         #expect(viewModel.structures[0].capacity == 100)
         #expect(viewModel.structures[1].capacity == 200)
-        
+
         #expect(viewModel.structures[0].name == "Anderson Structure")
         #expect(viewModel.structures[1].name == "Barrera")
-        
+
         #expect(viewModel.structures[0].spotsAvailable == 50)
         #expect(viewModel.structures[1].spotsAvailable == 100)
-        
+
         #expect(viewModel.structuresSupportedBySystem)
     }
-    
-    func assertViewModelDataForSecondaryMock(viewModel: ParkingStructuresListContentView.ViewModel) {
-        #expect(viewModel.structures.count == 2)
-        
-        #expect(viewModel.structures[0].id == "3")
-        #expect(viewModel.structures[1].id == "4")
-        
-        #expect(viewModel.structures[0].capacity == 500)
-        #expect(viewModel.structures[1].capacity == 350)
-        
-        #expect(viewModel.structures[0].name == "Knott Studios Lot")
-        #expect(viewModel.structures[1].name == "Jim Miller Lot")
-        
-        #expect(viewModel.structures[0].spotsAvailable == 100)
-        #expect(viewModel.structures[1].spotsAvailable == 12)
-        
-        #expect(viewModel.structuresSupportedBySystem)
-    }
-    
-    func assertViewModelDataForEmptyMock(viewModel: ParkingStructuresListContentView.ViewModel) {
+
+    @Test func injectUpdateSetsUnsupportedStatusIfNoParkingSystem() async {
+        let viewModel = ParkingStructuresListContentView.ViewModel()
+        let data = await GetParkingStructuresListDataQuery.Data.from(tertiaryMock)
+
+        await viewModel.injectUpdate(.success(data))
+
         #expect(viewModel.structures.isEmpty)
-    }
-    
-    func assertViewModelDataForTertiaryMock(viewModel: ParkingStructuresListContentView.ViewModel) {
         #expect(viewModel.structuresSupportedBySystem == false)
-    }
-    
-    @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
-        await autoTest_startRefreshingDataRefreshesDataOnFirstCall()
-    }
-    
-    @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
-        await autoTest_startRefreshingDataRefreshesDataMultipleTimes()
-    }
-    
-    @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
-        await autoTest_stopRefreshingDataStopsDataUpdatesAfterCompletion()
-    }
-    
-    @Test func refreshDataOnceUpdatesData() async {
-        await autoTest_refreshDataOnceUpdatesData()
-    }
-    
-    @Test func refreshDataOnceDoesNothingIfNoData() async {
-        await autoTest_refreshDataOnceDoesNothingIfNoData()
-    }
-    
-    @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
-        await autoTest_refreshDataOnceDoesNothingIfNoApolloClient()
-    }
-    
-    @Test func refreshDataSetsUnsupportedStatusIfNoParkingSystem() async {
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = tertiaryMock
-        
-        let networkModel = ApolloNetworkModel(client: mockClient)
-        let viewModel = ParkingStructuresListContentView.ViewModel(apolloNetworkModel: networkModel)
-        
-        let networkArguments = networkArguments
-        await viewModel.refreshDataOnce(arguments: networkArguments)
-        
-        assertViewModelDataForTertiaryMock(viewModel: viewModel)
     }
 }

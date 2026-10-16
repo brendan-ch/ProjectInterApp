@@ -13,12 +13,7 @@ import ProjectInterShared
 class ServerUrlConfigurationModelTests {
     @Test("applyServerUrl with valid URL stores and reconfigures") func applyServerUrlWithValidUrlStoresAndReconfigures() {
         let userDefaults = MockUserDefaults()
-        let client = MockApolloClient()
-        let apolloModel = ApolloNetworkModel(client: client)
-        let model = ServerUrlConfigurationModel(
-            userDefaults: userDefaults,
-            apolloNetworkModel: apolloModel
-        )
+        let model = ServerUrlConfigurationModel(userDefaults: userDefaults)
 
         let result = model.applyServerUrl("https://custom.example.com/graphql")
 
@@ -31,12 +26,7 @@ class ServerUrlConfigurationModelTests {
     @Test("applyServerUrl with empty string resets to default") func applyServerUrlWithEmptyStringResetsToDefault() {
         let userDefaults = MockUserDefaults()
         userDefaults.setValue("https://custom.example.com", forKey: UserDefaults.customServerUrlKey)
-        let client = MockApolloClient()
-        let apolloModel = ApolloNetworkModel(client: client)
-        let model = ServerUrlConfigurationModel(
-            userDefaults: userDefaults,
-            apolloNetworkModel: apolloModel
-        )
+        let model = ServerUrlConfigurationModel(userDefaults: userDefaults)
 
         let result = model.applyServerUrl("")
 
@@ -48,12 +38,7 @@ class ServerUrlConfigurationModelTests {
 
     @Test("applyServerUrl with invalid URL returns false") func applyServerUrlWithInvalidUrlReturnsFalse() {
         let userDefaults = MockUserDefaults()
-        let client = MockApolloClient()
-        let apolloModel = ApolloNetworkModel(client: client)
-        let model = ServerUrlConfigurationModel(
-            userDefaults: userDefaults,
-            apolloNetworkModel: apolloModel
-        )
+        let model = ServerUrlConfigurationModel(userDefaults: userDefaults)
 
         let result = model.applyServerUrl("not a valid url")
 
@@ -65,12 +50,7 @@ class ServerUrlConfigurationModelTests {
     @Test("resetToDefault removes custom URL") func resetToDefaultRemovesCustomUrl() {
         let userDefaults = MockUserDefaults()
         userDefaults.setValue("https://custom.example.com", forKey: UserDefaults.customServerUrlKey)
-        let client = MockApolloClient()
-        let apolloModel = ApolloNetworkModel(client: client)
-        let model = ServerUrlConfigurationModel(
-            userDefaults: userDefaults,
-            apolloNetworkModel: apolloModel
-        )
+        let model = ServerUrlConfigurationModel(userDefaults: userDefaults)
 
         let result = model.resetToDefault()
 
@@ -83,12 +63,7 @@ class ServerUrlConfigurationModelTests {
 
     @Test("isUsingCustomUrl reflects state") func isUsingCustomUrlReflectsState() {
         let userDefaults = MockUserDefaults()
-        let client = MockApolloClient()
-        let apolloModel = ApolloNetworkModel(client: client)
-        let model = ServerUrlConfigurationModel(
-            userDefaults: userDefaults,
-            apolloNetworkModel: apolloModel
-        )
+        let model = ServerUrlConfigurationModel(userDefaults: userDefaults)
 
         #expect(model.isUsingCustomUrl == false)
 
@@ -102,36 +77,21 @@ class ServerUrlConfigurationModelTests {
     @Test("customServerUrlString reads from UserDefaults") func customServerUrlStringReadsFromUserDefaults() {
         let userDefaults = MockUserDefaults()
         userDefaults.setValue("https://stored.example.com", forKey: UserDefaults.customServerUrlKey)
-        let client = MockApolloClient()
-        let apolloModel = ApolloNetworkModel(client: client)
-        let model = ServerUrlConfigurationModel(
-            userDefaults: userDefaults,
-            apolloNetworkModel: apolloModel
-        )
+        let model = ServerUrlConfigurationModel(userDefaults: userDefaults)
 
         #expect(model.customServerUrlString == "https://stored.example.com")
     }
 
     @Test("customServerUrlString returns nil when not set") func customServerUrlStringReturnsNilWhenNotSet() {
         let userDefaults = MockUserDefaults()
-        let client = MockApolloClient()
-        let apolloModel = ApolloNetworkModel(client: client)
-        let model = ServerUrlConfigurationModel(
-            userDefaults: userDefaults,
-            apolloNetworkModel: apolloModel
-        )
+        let model = ServerUrlConfigurationModel(userDefaults: userDefaults)
 
         #expect(model.customServerUrlString == nil)
     }
 
     @Test("applyServerUrl trims whitespace") func applyServerUrlTrimsWhitespace() {
         let userDefaults = MockUserDefaults()
-        let client = MockApolloClient()
-        let apolloModel = ApolloNetworkModel(client: client)
-        let model = ServerUrlConfigurationModel(
-            userDefaults: userDefaults,
-            apolloNetworkModel: apolloModel
-        )
+        let model = ServerUrlConfigurationModel(userDefaults: userDefaults)
 
         let result = model.applyServerUrl("  https://custom.example.com  ")
 
