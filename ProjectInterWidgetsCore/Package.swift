@@ -6,8 +6,8 @@ import PackageDescription
 let package = Package(
     name: "ProjectInterWidgetsCore",
     platforms: [
-        .iOS(.v15),
-        .macOS(.v12),
+        .iOS(.v16),
+        .macOS(.v13),
         .tvOS(.v14),
         .watchOS(.v7),
         .visionOS(.v1)
