@@ -6,6 +6,9 @@
 //
 
 import SwiftUI
+import Apollo
+import ProjectInterOperations
+import ProjectInterLogging
 
 /// View which displays information about a single shuttle,
 /// including ETA from the currently selected stop ID.
@@ -16,10 +19,15 @@ struct ShuttleInfoContentView: NetworkView {
     
     /// Backing view model exclusive to the view.
     @State var viewModel = ViewModel()
-    
-    /// Backing view model for scheduling/cancelling notifications, also exclusive to the view.
-    @State var notificationSchedulingState: NotificationSchedulingModel = NotificationSchedulingModel()
-    
+
+    /// View-local loading state (see ``WithInitializationView``).
+    @State var dataInitState: InitializationState = .notInitialized
+
+    /// In-progress polling stream task.
+    @State var updateTask: Task<Void, Error>? = nil
+
+    /// No notification scheduling model; mutations are performed by this view.
+
     /// Source of truth for the currently selected shuttle ID.
     @Environment(GlobalIdSelectionModel.self) var globalIdSelectionModel: GlobalIdSelectionModel
     @Environment(GlobalSystemsModel.self) var globalSystemsModel: GlobalSystemsModel
@@ -54,7 +62,7 @@ struct ShuttleInfoContentView: NetworkView {
     }
     
     var content: some View {
-        WithInitializationView(dataInitState: viewModel.dataInitState) {
+        WithInitializationView(dataInitState: dataInitState) {
             DataWrapperView(shouldDisplayNoDataMessage: !viewModel.dataAvailable, noDataMessage: "This shuttle is currently unavailable.") {
                 let notificationSchedulingButton = Button(role: isNotificationScheduled ? .destructive : nil) {
                     if customAppDelegate.notificationTokenString == nil {
@@ -154,12 +162,12 @@ struct ShuttleInfoContentView: NetworkView {
             }
         }
         .onAppear {
+            prepareViewModelForRestart()
             restartDataUpdates()
-            setApolloClientOnNotificationSchedulingModel()
         }
         .onChange(of: globalIdSelectionModel.selectedShuttleId) {
+            prepareViewModelForRestart()
             restartDataUpdates()
-            setApolloClientOnNotificationSchedulingModel()
         }
         .onDisappear {
             stopDataUpdates()
@@ -194,12 +202,13 @@ struct ShuttleInfoContentView: NetworkView {
         }
     }
     
-    private func setApolloClientOnNotificationSchedulingModel() {
-        if let apolloClient = globalSystemsModel.apolloNetworkModel?.client {
-            notificationSchedulingState.apolloClient = apolloClient
-        }
+    /// Assigns request-scoped values to the view model before updates start;
+    /// query construction is static, so the view feeds the arguments through.
+    @MainActor
+    private func prepareViewModelForRestart() {
+        viewModel.stopId = networkArguments?.stopId
     }
-    
+
     private func generateNotificationNetworkArguments() -> NotificationNetworkArguments? {
         guard let stopId = globalStopsModel.selectedStop?.id,
               let shuttleId = globalIdSelectionModel.selectedShuttleId,
@@ -216,23 +225,36 @@ struct ShuttleInfoContentView: NetworkView {
     }
     
     private func scheduleNotification(secondsThreshold: Int) async {
-        guard var input = generateNotificationNetworkArguments() else { return }
-        input.secondsThreshold = secondsThreshold
+        guard var arguments = generateNotificationNetworkArguments() else { return }
+        arguments.secondsThreshold = secondsThreshold
+
         do {
-            try await notificationSchedulingState.scheduleNotification(input)
+            let response = try await ApolloClient.shared.perform(
+                mutation: ScheduleNotificationMutation(input: Self.generateNotificationInput(arguments))
+            )
+            guard response.data?.scheduleNotification.success == true else {
+                Loggers.shared.networkingLogger.error("Server returned error when scheduling notification for (shuttleId: \(arguments.shuttleId), stopId: \(arguments.stopId))")
+                return
+            }
             restartDataUpdates()
         } catch {
-            print(error)
+            Loggers.shared.networkingLogger.error("Failed to schedule notification for (shuttleId: \(arguments.shuttleId), stopId: \(arguments.stopId)): \(error)")
         }
     }
-    
+
     private func cancelNotification() async {
-        guard let input = generateNotificationNetworkArguments() else { return }
+        guard let arguments = generateNotificationNetworkArguments() else { return }
         do {
-            try await notificationSchedulingState.cancelNotification(input)
+            let response = try await ApolloClient.shared.perform(
+                mutation: CancelNotificationMutation(input: Self.generateNotificationInput(arguments))
+            )
+            guard response.data?.cancelNotification.success == true else {
+                Loggers.shared.networkingLogger.error("Server returned error when cancelling notification for (shuttleId: \(arguments.shuttleId), stopId: \(arguments.stopId))")
+                return
+            }
             restartDataUpdates()
         } catch {
-            print(error)
+            Loggers.shared.networkingLogger.error("Failed to cancel notification for (shuttleId: \(arguments.shuttleId), stopId: \(arguments.stopId)): \(error)")
         }
     }
 }

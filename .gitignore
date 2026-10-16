@@ -1,6 +1,7 @@
 # Apollo
 # codegen data
 apollo-ios-cli
+apollo-ios-cli.tar.gz
 
 # We want codegen data to be included as it includes custom scalar types
 # ProjectInterOperations/
@@ -73,3 +74,4 @@ fastlane/test_output
 test-output
 test-ui-output
 
+.playwright-mcp/

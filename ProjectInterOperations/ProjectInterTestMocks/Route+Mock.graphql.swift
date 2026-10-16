@@ -2,14 +2,14 @@
 // This file was automatically generated and should not be edited.
 
 import ApolloTestSupport
-import ProjectInterOperations
+@testable import ProjectInterOperations
 
-public class Route: MockObject {
+nonisolated public final class Route: MockObject {
   public static let objectType: ApolloAPI.Object = ProjectInterOperations.Objects.Route
   public static let _mockFields = MockFields()
   public typealias MockValueCollectionType = Array<Mock<Route>>
 
-  public struct MockFields {
+  public struct MockFields: Sendable {
     @Field<String>("color") public var color
     @Field<ProjectInterOperations.ID>("id") public var id
     @Field<String>("name") public var name
@@ -21,11 +21,11 @@ public class Route: MockObject {
 
 public extension Mock where O == Route {
   convenience init(
-    color: String? = nil,
-    id: ProjectInterOperations.ID? = nil,
-    name: String? = nil,
+    color: String = "",
+    id: ProjectInterOperations.ID = "",
+    name: String = "",
     orderedStop: Mock<OrderedStop>? = nil,
-    polylineCoordinates: [Mock<Coordinates>]? = nil,
+    polylineCoordinates: [Mock<Coordinates>] = [],
     shuttles: [Mock<Shuttle>]? = nil
   ) {
     self.init()

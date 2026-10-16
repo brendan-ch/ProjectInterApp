@@ -150,7 +150,7 @@ This file gives agents clear, repo‑specific guidance for developing and testin
 - Branch naming: `feat/<short-name>`, `fix/<short-name>`, `chore/<short-name>`, `docs/<short-name>`.
 
 ## Code Signing & CI
-- Signing is automatic everywhere (Xcode cloud-signing). The development team comes from `../SharedXcodeSettings/DeveloperSettings.xcconfig` (outside the repo) via `Config/Shared.xcconfig`; see `Config/DeveloperSettings.sample.xcconfig` for setup.
+- Signing is automatic everywhere (Xcode cloud-signing). The development team lives directly in `ProjectInter.xcodeproj` — set it via Signing & Capabilities; Xcode rewrites that field itself, so don't fight it.
 - CI simulator tests pass `-xcconfig Config/CI.xcconfig`, which disables signing entirely — no Apple credentials or certificates are needed in CI.
 - TestFlight delivery happens through Xcode Cloud (App Store Connect); GitHub Actions handles PR tests and version-bump PRs only.
 - CI relies on `.xcresult` artifacts under `output/` and the `Config/` xcconfigs; avoid moving these without updating workflows.

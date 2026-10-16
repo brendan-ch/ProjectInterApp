@@ -6,8 +6,8 @@ import PackageDescription
 let package = Package(
     name: "ProjectInterWidgetsCore",
     platforms: [
-        .iOS(.v15),
-        .macOS(.v12),
+        .iOS(.v16),
+        .macOS(.v13),
         .tvOS(.v14),
         .watchOS(.v7),
         .visionOS(.v1)
@@ -24,7 +24,7 @@ let package = Package(
         .package(path: "../ProjectInterShared"),
         .package(
             url: "https://github.com/apollographql/apollo-ios",
-            from: "1.15.3"
+            from: "2.0.0"
         ),
     ],
     targets: [
@@ -39,7 +39,10 @@ let package = Package(
         ),
         .testTarget(
             name: "ProjectInterWidgetsCoreTests",
-            dependencies: ["ProjectInterWidgetsCore"]
+            dependencies: [
+                "ProjectInterWidgetsCore",
+                .product(name: "ApolloTestSupport", package: "apollo-ios"),
+            ],
         ),
     ]
 )

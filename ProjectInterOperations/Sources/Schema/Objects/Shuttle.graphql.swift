@@ -4,8 +4,9 @@
 import ApolloAPI
 
 public extension Objects {
-  static let Shuttle = ApolloAPI.Object(
+  nonisolated static let Shuttle = ApolloAPI.Object(
     typename: "Shuttle",
-    implementedInterfaces: []
+    implementedInterfaces: [],
+    keyFields: nil
   )
 }

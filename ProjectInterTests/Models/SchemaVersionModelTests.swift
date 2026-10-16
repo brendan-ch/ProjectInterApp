@@ -12,84 +12,51 @@ import ApolloTestSupport
 import ProjectInterShared
 import ProjectInterTestMocks
 
-class SchemaVersionModelTests: NetworkDataModelTestsProtocol {
-    let defaultMock = Mock<Query>(
+class SchemaVersionModelTests {
+    let defaultMock = Mock<ProjectInterTestMocks.Query>(
         schemaCurrentVersion: 5,
         schemaMinVersion: 2
     )
-    
-    let secondaryMock = Mock<Query>(
-        schemaCurrentVersion: 10,
-        schemaMinVersion: 8
-    )
-    
-    let networkArguments = SchemaVersionModelNetworkArguments()
-    
-    func assertViewModelDataForDefaultMock(viewModel: SchemaVersionModel) {
+
+    @Test("injectUpdate populates schema versions") func injectUpdatePopulatesSchemaVersions() async {
+        let viewModel = SchemaVersionModel(appSchemaVersion: 3)
+        let data = await GetSchemaVersionQuery.Data.from(defaultMock)
+
+        await viewModel.injectUpdate(.success(data))
+
         #expect(viewModel.serverMinSchemaVersion == 2)
         #expect(viewModel.serverCurrentSchemaVersion == 5)
     }
-    
-    func assertViewModelDataForSecondaryMock(viewModel: SchemaVersionModel) {
-        #expect(viewModel.serverMinSchemaVersion == 8)
-        #expect(viewModel.serverCurrentSchemaVersion == 10)
-    }
-    
-    func assertViewModelDataForEmptyMock(viewModel: SchemaVersionModel) {
+
+    @Test("injectUpdate with failure leaves schema versions untouched") func injectUpdateFailureLeavesVersionsNil() async {
+        let viewModel = SchemaVersionModel(appSchemaVersion: 3)
+
+        await viewModel.injectUpdate(.failure(TestUpdateError()))
+
         #expect(viewModel.serverMinSchemaVersion == nil)
         #expect(viewModel.serverCurrentSchemaVersion == nil)
     }
-    
-    @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
-        await autoTest_startRefreshingDataRefreshesDataOnFirstCall()
-    }
-    
-    @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
-        await autoTest_startRefreshingDataRefreshesDataMultipleTimes()
-    }
-    
-    @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
-        await autoTest_stopRefreshingDataStopsDataUpdatesAfterCompletion()
-    }
-    
-    @Test func refreshDataOnceUpdatesData() async {
-        await autoTest_refreshDataOnceUpdatesData()
-    }
-    
-    @Test func refreshDataOnceDoesNothingIfNoData() async {
-        await autoTest_refreshDataOnceDoesNothingIfNoData()
-    }
-    
-    @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
-        await autoTest_refreshDataOnceDoesNothingIfNoApolloClient()
-    }
-    
+
     @Test func isCompatiblePropertyIsTrueIfAppSchemaWithinRange() async {
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = defaultMock
-        
-        let networkModel = ApolloNetworkModel(client: mockClient)
-        let viewModel = SchemaVersionModel(apolloNetworkModel: networkModel)
-        await viewModel.refreshDataOnce(arguments: networkArguments)
-        
+        let viewModel = SchemaVersionModel(appSchemaVersion: 3)
+        let data = await GetSchemaVersionQuery.Data.from(defaultMock)
+        await viewModel.injectUpdate(.success(data))
+
         for version in [2, 3, 4, 5] {
             viewModel.appSchemaVersion = version
-            
+
             #expect(viewModel.isCompatible)
         }
     }
-    
+
     @Test func isCompatiblePropertyIsFalseIfAppSchemaNotWithinRange() async {
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = defaultMock
-        
-        let networkModel = ApolloNetworkModel(client: mockClient)
-        let viewModel = SchemaVersionModel(apolloNetworkModel: networkModel)
-        await viewModel.refreshDataOnce(arguments: networkArguments)
+        let viewModel = SchemaVersionModel(appSchemaVersion: 3)
+        let data = await GetSchemaVersionQuery.Data.from(defaultMock)
+        await viewModel.injectUpdate(.success(data))
 
         for version in [1, 6, 7, 8] {
             viewModel.appSchemaVersion = version
-            
+
             #expect(!viewModel.isCompatible)
         }
     }

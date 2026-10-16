@@ -11,91 +11,58 @@ import Testing
 @testable import ProjectInter
 import ApolloTestSupport
 import ProjectInterTestMocks
+import ProjectInterOperations
 import ProjectInterShared
 
 class GlobalSystemsModelTests {
-    @Test func testRefreshSystemData() async throws {
-        let mockClient = MockApolloClient()
-        
-        let mock = Mock<ProjectInterTestMocks.Query>(
-            systems: [
-                Mock<ProjectInterTestMocks.System>(
-                    id: "1",
-                    name: "Chapman University"
-                ),
-                Mock<ProjectInterTestMocks.System>(
-                    id: "2",
-                    name: "City of Monterey Park"
-                ),
-            ]
-        )
-        mockClient.queryMock = mock
-        
-        let networkModel = ApolloNetworkModel(client: mockClient)
-
-        let globalDataState = GlobalSystemsModel(apolloNetworkModel: networkModel)
-        await globalDataState.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
-        
-        #expect(globalDataState.systems.count == 2)
-    }
-    
-    @Test func testRefreshSystemDataWithInvalidData() async throws {
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = nil
-        
-        let networkModel = ApolloNetworkModel(client: mockClient)
-        let globalDataState = GlobalSystemsModel(apolloNetworkModel: networkModel)
-        await globalDataState.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
-        
-        #expect(globalDataState.systems.count == 0)
-    }
-    
-    @Test func testUpdateSystemIdUpdatesSelectedSystemAndUserDefaults() async {
-        let mockUserDefaults = MockUserDefaults()
-        
-        let state = GlobalSystemsModel(apolloNetworkModel: nil, userDefaults: mockUserDefaults)
-        state.systems = [
-            .init(name: "Chapman University", id: "1"),
-            .init(name: "CSULB", id: "2")
+    let systemsMock = Mock<ProjectInterTestMocks.Query>(
+        systems: [
+            Mock<ProjectInterTestMocks.System>(
+                id: "1",
+                name: "Chapman University"
+            ),
+            Mock<ProjectInterTestMocks.System>(
+                id: "2",
+                name: "City of Monterey Park"
+            ),
         ]
-        
-        state.selectSystemId("2")
-        
-        #expect(state.selectedSystem?.name == "CSULB")
-        #expect(mockUserDefaults.lastKeySetTo == UserDefaults.selectedSystemIdKey)
-        #expect(mockUserDefaults.lastValueSetTo as? String == "2")
-    }
-    
-    // TODO: Add test for UserDefaults and state update
+    )
 
-    @Test func testRefreshSystemDataIncludesInitialRegion() async throws {
-        let mockClient = MockApolloClient()
-
-        let mock = Mock<ProjectInterTestMocks.Query>(
-            systems: [
-                Mock<ProjectInterTestMocks.System>(
-                    id: "1",
-                    initialRegion: Mock<ProjectInterTestMocks.Region>(
-                        bottomRight: Mock<ProjectInterTestMocks.Coordinates>(
-                            latitude: 33.785,
-                            longitude: -117.845
-                        ),
-                        topLeft: Mock<ProjectInterTestMocks.Coordinates>(
-                            latitude: 33.800,
-                            longitude: -117.900
-                        )
+    let initialRegionMock = Mock<ProjectInterTestMocks.Query>(
+        systems: [
+            Mock<ProjectInterTestMocks.System>(
+                id: "1",
+                initialRegion: Mock<ProjectInterTestMocks.Region>(
+                    bottomRight: Mock<ProjectInterTestMocks.Coordinates>(
+                        latitude: 33.785,
+                        longitude: -117.845
                     ),
-                    name: "Chapman University"
+                    topLeft: Mock<ProjectInterTestMocks.Coordinates>(
+                        latitude: 33.800,
+                        longitude: -117.900
+                    )
                 ),
-            ]
-        )
-        mockClient.queryMock = mock
+                name: "Chapman University"
+            ),
+        ]
+    )
 
-        let networkModel = ApolloNetworkModel(client: mockClient)
-        let globalDataState = GlobalSystemsModel(apolloNetworkModel: networkModel)
-        await globalDataState.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
+    @Test("injectUpdate maps the systems list") func injectUpdateMapsSystems() async {
+        let model = GlobalSystemsModel()
+        let data = await GetAllSystemsQuery.Data.from(systemsMock)
 
-        let region = globalDataState.systems.first?.initialRegion
+        await model.injectUpdate(.success(data))
+
+        #expect(model.systems.count == 2)
+    }
+
+    @Test("injectUpdate maps the initial region") func injectUpdateMapsInitialRegion() async {
+        let model = GlobalSystemsModel()
+        let data = await GetAllSystemsQuery.Data.from(initialRegionMock)
+
+        await model.injectUpdate(.success(data))
+
+        let region = model.systems.first?.initialRegion
         #expect(region != nil)
         #expect(region?.topLeft.latitude == 33.800)
         #expect(region?.topLeft.longitude == -117.900)
@@ -103,25 +70,30 @@ class GlobalSystemsModelTests {
         #expect(region?.bottomRight.longitude == -117.845)
     }
 
-    @Test func testRefreshSystemDataHandlesNilInitialRegion() async throws {
-        let mockClient = MockApolloClient()
+    @Test("injectUpdate handles a nil initial region") func injectUpdateHandlesNilInitialRegion() async {
+        let model = GlobalSystemsModel()
+        let data = await GetAllSystemsQuery.Data.from(systemsMock)
 
-        let mock = Mock<ProjectInterTestMocks.Query>(
-            systems: [
-                Mock<ProjectInterTestMocks.System>(
-                    id: "1",
-                    name: "Chapman University"
-                ),
-            ]
-        )
-        mockClient.queryMock = mock
+        await model.injectUpdate(.success(data))
 
-        let networkModel = ApolloNetworkModel(client: mockClient)
-        let globalDataState = GlobalSystemsModel(apolloNetworkModel: networkModel)
-        await globalDataState.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
+        #expect(model.systems.count == 2)
+        #expect(model.systems.allSatisfy({ $0.initialRegion == nil }))
+    }
 
-        #expect(globalDataState.systems.count == 1)
-        #expect(globalDataState.systems.first?.initialRegion == nil)
+    @Test func testUpdateSystemIdUpdatesSelectedSystemAndUserDefaults() async {
+        let mockUserDefaults = MockUserDefaults()
+
+        let state = GlobalSystemsModel(userDefaults: mockUserDefaults)
+        state.systems = [
+            .init(name: "Chapman University", id: "1"),
+            .init(name: "CSULB", id: "2")
+        ]
+
+        state.selectSystemId("2")
+
+        #expect(state.selectedSystem?.name == "CSULB")
+        #expect(mockUserDefaults.lastKeySetTo == UserDefaults.selectedSystemIdKey)
+        #expect(mockUserDefaults.lastValueSetTo as? String == "2")
     }
 
     @Test func testInitialRegionConvertsToMKCoordinateRegion() {

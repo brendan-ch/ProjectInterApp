@@ -89,8 +89,8 @@ class RouteInfoContentViewShuttleTests {
         #expect(shuttle.estimatedTimeAwayDisplay == "2 min")
     }
     
-    @Test func testApolloDataInitializerInitializesData() {
-        let data = GetRouteInfoDataQuery.Data.from(RouteInfoContentViewModelTestsMockData.defaultMock)
+    @Test func testApolloDataInitializerInitializesData() async {
+        let data = await GetRouteInfoDataQuery.Data.from(RouteInfoContentViewModelTestsMockData.defaultMock)
         let shuttles = data.system!.route!.shuttles!
         
         let constructedShuttles = shuttles.map(RouteInfoContentViewShuttle.init)
@@ -103,85 +103,22 @@ class RouteInfoContentViewShuttleTests {
     }
 }
 
-class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
+class RouteInfoContentViewModelTests {
     let networkArguments = RouteInfoContentViewModelTestsMockData.defaultArguments
     let defaultMock = RouteInfoContentViewModelTestsMockData.defaultMock
-    let secondaryMock = RouteInfoContentViewModelTestsMockData.secondaryMock
-    
-    func assertViewModelDataForDefaultMock(viewModel: RouteInfoContentView<ShuttleInfoContentView>.ViewModel) {
+
+    @Test("injectUpdate maps route name, next stop, and shuttles") func injectUpdateMapsRouteInfo() async {
+        let viewModel = RouteInfoContentView<ShuttleInfoContentView>.ViewModel()
+        let data = await GetRouteInfoDataQuery.Data.from(defaultMock)
+
+        await viewModel.injectUpdate(.success(data))
+
         #expect(viewModel.routeName == "Red Route")
         #expect(viewModel.routeNextStopName == "Panther Village")
         #expect(viewModel.shuttles.count == 2)
     }
-    
-    func assertViewModelDataForSecondaryMock(viewModel: RouteInfoContentView<ShuttleInfoContentView>.ViewModel) {
-        #expect(viewModel.routeName == "Grey Route")
-        #expect(viewModel.routeNextStopName == "Chapman Grand")
-        #expect(viewModel.shuttles.count == 1)
-    }
-    
-    func assertViewModelDataForEmptyMock(viewModel: RouteInfoContentView<ShuttleInfoContentView>.ViewModel) {
-        #expect(viewModel.routeName == "")
-        #expect(viewModel.routeNextStopName == nil)
-        #expect(viewModel.shuttles.count == 0)
-    }
-    
-    @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
-        await autoTest_startRefreshingDataRefreshesDataOnFirstCall()
-    }
-    
 
-    @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
-        await autoTest_startRefreshingDataRefreshesDataMultipleTimes()
-    }
-    
-    @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
-        await autoTest_stopRefreshingDataStopsDataUpdatesAfterCompletion()
-    }
-    
-    @Test func refreshDataOnceUpdatesData() async {
-        await autoTest_refreshDataOnceUpdatesData()
-    }
-    
-    @Test func refreshDataOnceDoesNothingIfNoData() async {
-        await autoTest_refreshDataOnceDoesNothingIfNoData()
-    }
-    
-    @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
-        await autoTest_refreshDataOnceUpdatesData()
-    }
-    
-    @Test func refreshDataStillRefreshesRouteIfNoShuttles() async {
-        let mock = Mock<ProjectInterTestMocks.Query>(
-            system: .init(
-                route: .init(
-                    name: "Red Route",
-                    orderedStop: .init(
-                        nextStop: .init(
-                            stop: .init(
-                                name: "Panther Village"
-                            )
-                        )
-                    )
-                )
-            )
-        )
-        
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = mock
-        
-        let networkModel = ApolloNetworkModel(client: mockClient)
-        let viewModel = RouteInfoContentView<ShuttleInfoContentView>.ViewModel(apolloNetworkModel: networkModel)
-        let arguments = networkArguments
-        
-        await viewModel.refreshDataOnce(arguments: arguments)
-        
-        #expect(viewModel.routeName == "Red Route")
-        #expect(viewModel.routeNextStopName == "Panther Village")
-        #expect(viewModel.shuttles.count == 0)
-    }
-    
-    @Test func refreshDataOnceSortsShuttlesBySecondsRemaining() async {
+    @Test func sortsShuttlesBySecondsRemaining() async {
         let mock = Mock<ProjectInterTestMocks.Query>(
             system: .init(
                 route: .init(
@@ -216,16 +153,11 @@ class RouteInfoContentViewModelTests: NetworkDataModelTestsProtocol {
                 )
             )
         )
-        
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = mock
-        
-        let networkModel = ApolloNetworkModel(client: mockClient)
-        let viewModel = RouteInfoContentView<ShuttleInfoContentView>.ViewModel(apolloNetworkModel: networkModel)
-        let arguments = networkArguments
-        
-        await viewModel.refreshDataOnce(arguments: arguments)
-        
+
+        let viewModel = RouteInfoContentView<ShuttleInfoContentView>.ViewModel()
+        let data = await GetRouteInfoDataQuery.Data.from(mock)
+        await viewModel.injectUpdate(.success(data))
+
         #expect(viewModel.shuttles.count == 3)
         #expect(viewModel.shuttles[0].secondsRemaining == 30)
         #expect(viewModel.shuttles[1].secondsRemaining == 125)

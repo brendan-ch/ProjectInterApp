@@ -8,6 +8,7 @@
 import SwiftUI
 import Apollo
 import ProjectInterOperations
+import ProjectInterLogging
 
 // MARK: - Models
 
@@ -82,23 +83,24 @@ struct RouteListNetworkArguments {
 extension RouteListContentView {
     /// Backing view model for ``RouteListContentView``.
     @Observable
-    class ViewModel: NetworkDataModel<RouteListNetworkArguments, GetRouteListDataQuery>, PlaceholderBuildable, Clearable {
+    class ViewModel: NetworkDataModel<GetRouteListDataQuery>, PlaceholderBuildable, Clearable, GraphQLQueryConstructable {
         /// Routes with active shuttles to render on ``RouteListContentView``.
         private(set) var activeRoutes: [RouteListContentViewRoute] = []
-        
+
         /// Routes without active shuttles to render on ``RouteListContentView``
         private(set) var inactiveRoutes: [RouteListContentViewRoute] = []
-        
-        override func convertNetworkArgumentsIntoQuery(_ arguments: RouteListNetworkArguments) -> GetRouteListDataQuery {
+
+        static func convertNetworkArgumentsIntoQuery(_ arguments: RouteListNetworkArguments) -> GetRouteListDataQuery {
             return GetRouteListDataQuery(systemId: arguments.systemId, stopId: arguments.stopId)
         }
-        
+
+        @MainActor
         override func processRefreshDataResult(_ result: Result<GetRouteListDataQuery.Data, any Error>) {
             switch result {
             case .success(let response):
                 self.updateDataFromResponse(data: response)
             case .failure(let error):
-                print("Error fetching data: \(error)")
+                Loggers.shared.networkingLogger.error("Error fetching data: \(error)")
             }
         }
         
@@ -128,12 +130,12 @@ extension RouteListContentView {
         }
         
         func clearData() {
-            resetDataInitState()
             activeRoutes = []
+            inactiveRoutes = []
         }
 
         static func buildPlaceholder() -> Self {
-            let newModel = Self(dataInitState: .succeeded)
+            let newModel = Self()
             newModel.activeRoutes = [
                 RouteListContentViewRoute(
                     id: "1",

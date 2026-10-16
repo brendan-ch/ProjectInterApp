@@ -2,8 +2,9 @@
 // This file was automatically generated and should not be edited.
 
 @_exported import ApolloAPI
+@_spi(Execution) @_spi(Unsafe) import ApolloAPI
 
-public class GetSchemaVersionQuery: GraphQLQuery {
+nonisolated public struct GetSchemaVersionQuery: GraphQLQuery {
   public static let operationName: String = "GetSchemaVersion"
   public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
@@ -12,14 +13,17 @@ public class GetSchemaVersionQuery: GraphQLQuery {
 
   public init() {}
 
-  public struct Data: ProjectInterOperations.SelectionSet {
-    public let __data: DataDict
-    public init(_dataDict: DataDict) { __data = _dataDict }
+  nonisolated public struct Data: ProjectInterOperations.SelectionSet {
+    @_spi(Unsafe) public let __data: DataDict
+    @_spi(Unsafe) public init(_dataDict: DataDict) { __data = _dataDict }
 
-    public static var __parentType: any ApolloAPI.ParentType { ProjectInterOperations.Objects.Query }
-    public static var __selections: [ApolloAPI.Selection] { [
+    @_spi(Execution) public static var __parentType: any ApolloAPI.ParentType { ProjectInterOperations.Objects.Query }
+    @_spi(Execution) public static var __selections: [ApolloAPI.Selection] { [
       .field("schemaMinVersion", Int.self),
       .field("schemaCurrentVersion", Int.self),
+    ] }
+    @_spi(Execution) public static var __fulfilledFragments: [any ApolloAPI.SelectionSet.Type] { [
+      GetSchemaVersionQuery.Data.self
     ] }
 
     public var schemaMinVersion: Int { __data["schemaMinVersion"] }

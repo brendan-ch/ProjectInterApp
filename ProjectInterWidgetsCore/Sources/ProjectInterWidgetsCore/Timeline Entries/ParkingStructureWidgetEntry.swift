@@ -27,17 +27,25 @@ public struct ParkingStructureWidgetEntry: ProjectInterTimelineEntry, GraphQLCon
     
     public static func create(
         _ query: GetParkingStructureInfoDataQuery,
-        client: ApolloClientProtocol = ApolloClient.shared
+        client: ApolloClient = ApolloClient.shared
     ) async throws -> ParkingStructureWidgetEntry {
         let systemId = query.systemId
         let result = try await getGraphQLResult(
             query,
             client: client
         )
-        guard let structure = result.data?.system?.parkingSystem?.parkingStructure else {
+        guard let data = result.data else {
             throw GraphQLConstructableError.dataNotAvailable
         }
-        
+        return try create(systemId: systemId, data: data)
+    }
+
+    /// Pure construction from fetched data; the network fetch above is a thin wrapper.
+    public static func create(systemId: String?, data: GetParkingStructureInfoDataQuery.Data) throws -> ParkingStructureWidgetEntry {
+        guard let structure = data.system?.parkingSystem?.parkingStructure else {
+            throw GraphQLConstructableError.dataNotAvailable
+        }
+
         return .init(
             systemId: systemId,
             date: .now,

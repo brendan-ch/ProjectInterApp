@@ -6,6 +6,9 @@
 //
 
 import SwiftUI
+import Apollo
+import ProjectInterOperations
+import ProjectInterLogging
 import UniformTypeIdentifiers
 import Charts
 
@@ -14,6 +17,8 @@ struct ParkingStructureInfoContentView: NetworkView {
     @State private var addressCopied = false
     @State private var showingNavigationAppDialog = false
     @State var viewModel = ViewModel()
+    @State var dataInitState: InitializationState = .notInitialized
+    @State var updateTask: Task<Void, Error>? = nil
 
     @Environment(GlobalIdSelectionModel.self) var globalIdSelectionModel: GlobalIdSelectionModel
     @Environment(GlobalSystemsModel.self) var globalSystemsModel: GlobalSystemsModel
@@ -44,7 +49,7 @@ struct ParkingStructureInfoContentView: NetworkView {
             .padding()
             .padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
         } content: {
-            WithInitializationView(dataInitState: viewModel.dataInitState) {
+            WithInitializationView(dataInitState: dataInitState) {
                 DataWrapperView(shouldDisplayNoDataMessage: !viewModel.dataAvailable, noDataMessage: "This parking structure is currently unavailable") {
                     if let capacity = viewModel.capacity,
                        let spotsAvailable = viewModel.spotsAvailable {
@@ -139,10 +144,10 @@ struct ParkingStructureInfoContentView: NetworkView {
         }
         .onAppear {
             restartDataUpdates()
-            
+
             if let networkArguments = networkArguments {
                 Task {
-                    await viewModel.loadCurrentDayHistorical(networkArguments)
+                    await loadCurrentDayHistorical(networkArguments)
                 }
             }
         }
@@ -151,7 +156,34 @@ struct ParkingStructureInfoContentView: NetworkView {
         }
         .onChange(of: globalIdSelectionModel.selectedParkingStructureId) {
             restartDataUpdates()
+            reloadCurrentDayHistorical()
         }
+    }
+
+    /// Fetches the current-day historical averages for the selected structure
+    /// and hands them to the view model for pure processing.
+    private func reloadCurrentDayHistorical() {
+        guard let networkArguments = networkArguments else { return }
+        Task {
+            await loadCurrentDayHistorical(networkArguments)
+        }
+    }
+
+    private func loadCurrentDayHistorical(_ arguments: ParkingStructureNetworkingArguments) async {
+        let historicalAverageInput = ViewModel.generateHistoricalAverageInput(for: Date())!
+        let query = GetParkingStructureInfoDataQuery(
+            systemId: arguments.systemId,
+            parkingStructureId: arguments.parkingStructureId,
+            historicalAveragesInput: .init(historicalAverageInput)
+        )
+
+        guard let response = try? await ApolloClient.shared.fetch(query: query, cachePolicy: .networkOnly),
+              let data = response.data else {
+            Loggers.shared.networkingLogger.warning("Failed to fetch current-day parking averages for structure \(arguments.parkingStructureId)")
+            return
+        }
+
+        await viewModel.processCurrentDayAverages(data)
     }
     
     func copyAddress() {

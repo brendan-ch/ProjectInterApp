@@ -191,8 +191,8 @@ class RouteListContentViewRouteTests {
         #expect(route.etasInSeconds.isEmpty)
     }
     
-    @Test func apolloInitializerInitializesData() {
-        let data = GetRouteListDataQuery.Data.from(RouteListContentViewModelMockData.defaultMock)
+    @Test func apolloInitializerInitializesData() async {
+        let data = await GetRouteListDataQuery.Data.from(RouteListContentViewModelMockData.defaultMock)
         let routes = data.system!.stop!.orderedStops!.map { $0.route! }
         
         let constructedRoutes = routes.map(RouteListContentViewRoute.init)
@@ -211,74 +211,38 @@ class RouteListContentViewRouteTests {
     }
 }
 
-class RouteListContentViewModelTests: NetworkDataModelTestsProtocol {
+class RouteListContentViewModelTests {
     let networkArguments = RouteListNetworkArguments(systemId: "1", stopId: "1")
     let defaultMock = RouteListContentViewModelMockData.defaultMock
-    let secondaryMock = RouteListContentViewModelMockData.secondaryMock
     let tertiaryMock = RouteListContentViewModelMockData.tertiaryMock
     let fourthMock = RouteListContentViewModelMockData.fourthMock
-    
-    func assertViewModelDataForDefaultMock(viewModel: RouteListContentView.ViewModel) {
+
+    @Test("injectUpdate routes data into active and inactive routes") func injectUpdateRoutesRoutes() async {
+        let viewModel = RouteListContentView.ViewModel()
+        let data = await GetRouteListDataQuery.Data.from(defaultMock)
+
+        await viewModel.injectUpdate(.success(data))
+
         #expect(viewModel.activeRoutes.count == 1)
         #expect(viewModel.activeRoutes[0].etasInSeconds.count == 2)
     }
-    
-    func assertViewModelDataForSecondaryMock(viewModel: ProjectInter.RouteListContentView.ViewModel) {
-        #expect(viewModel.activeRoutes[0].etasInSeconds.count == 1)
-    }
-    
-    func assertViewModelDataForEmptyMock(viewModel: RouteListContentView.ViewModel) {
-        #expect(viewModel.activeRoutes.isEmpty)
-    }
-    
-    @Test func startRefreshingDataRefreshesDataOnFirstCall() async {
-        await autoTest_startRefreshingDataRefreshesDataOnFirstCall()
-    }
-    
-    
-    @Test func startRefreshingDataRefreshesDataMultipleTimes() async {
-        await autoTest_startRefreshingDataRefreshesDataMultipleTimes()
-    }
-    
-    @Test func stopRefreshingDataStopsDataUpdatesAfterCompletion() async {
-        await autoTest_stopRefreshingDataStopsDataUpdatesAfterCompletion()
-    }
-    
-    @Test func refreshDataOnceUpdatesData() async {
-        await autoTest_refreshDataOnceUpdatesData()
-    }
-    
-    @Test func refreshDataOnceDoesNothingIfNoData() async {
-        await autoTest_refreshDataOnceDoesNothingIfNoData()
-    }
-    
-    @Test func refreshDataOnceDoesNothingIfNoApolloClient() async {
-        await autoTest_refreshDataOnceDoesNothingIfNoApolloClient()
-    }
-    
+
     @Test func loadedRoutesAreSorted() async {
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = tertiaryMock
-        
-        let mockNetworkModel = ApolloNetworkModel(client: mockClient)
-        
-        let viewModel = RouteListContentView.ViewModel(apolloNetworkModel: mockNetworkModel)
-        
-        await viewModel.refreshDataOnce(arguments: networkArguments)
-        
+        let viewModel = RouteListContentView.ViewModel()
+        let data = await GetRouteListDataQuery.Data.from(tertiaryMock)
+
+        await viewModel.injectUpdate(.success(data))
+
         #expect(viewModel.activeRoutes[0].name == "Black Route")
         #expect(viewModel.activeRoutes[1].name == "Red Route")
     }
-    
+
     @Test func routesWithoutShuttlesAreAddedToInactiveRoutes() async {
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = fourthMock
-        
-        let mockNetworkModel = ApolloNetworkModel(client: mockClient)
-        
-        let viewModel = RouteListContentView.ViewModel(apolloNetworkModel: mockNetworkModel)
-        await viewModel.refreshDataOnce(arguments: networkArguments)
-        
+        let viewModel = RouteListContentView.ViewModel()
+        let data = await GetRouteListDataQuery.Data.from(fourthMock)
+
+        await viewModel.injectUpdate(.success(data))
+
         #expect(viewModel.inactiveRoutes[0].name == "Black Route")
         #expect(viewModel.activeRoutes[0].name == "Red Route")
     }

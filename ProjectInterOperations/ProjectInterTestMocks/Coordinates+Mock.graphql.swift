@@ -2,14 +2,14 @@
 // This file was automatically generated and should not be edited.
 
 import ApolloTestSupport
-import ProjectInterOperations
+@testable import ProjectInterOperations
 
-public class Coordinates: MockObject {
+nonisolated public final class Coordinates: MockObject {
   public static let objectType: ApolloAPI.Object = ProjectInterOperations.Objects.Coordinates
   public static let _mockFields = MockFields()
   public typealias MockValueCollectionType = Array<Mock<Coordinates>>
 
-  public struct MockFields {
+  public struct MockFields: Sendable {
     @Field<Double>("latitude") public var latitude
     @Field<Double>("longitude") public var longitude
   }
@@ -17,8 +17,8 @@ public class Coordinates: MockObject {
 
 public extension Mock where O == Coordinates {
   convenience init(
-    latitude: Double? = nil,
-    longitude: Double? = nil
+    latitude: Double = 0.0,
+    longitude: Double = 0.0
   ) {
     self.init()
     _setScalar(latitude, for: \.latitude)

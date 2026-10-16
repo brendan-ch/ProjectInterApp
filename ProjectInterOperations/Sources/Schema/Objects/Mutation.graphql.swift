@@ -4,8 +4,9 @@
 import ApolloAPI
 
 public extension Objects {
-  static let Mutation = ApolloAPI.Object(
+  nonisolated static let Mutation = ApolloAPI.Object(
     typename: "Mutation",
-    implementedInterfaces: []
+    implementedInterfaces: [],
+    keyFields: nil
   )
 }

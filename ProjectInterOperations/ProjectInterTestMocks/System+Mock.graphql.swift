@@ -2,14 +2,14 @@
 // This file was automatically generated and should not be edited.
 
 import ApolloTestSupport
-import ProjectInterOperations
+@testable import ProjectInterOperations
 
-public class System: MockObject {
+nonisolated public final class System: MockObject {
   public static let objectType: ApolloAPI.Object = ProjectInterOperations.Objects.System
   public static let _mockFields = MockFields()
   public typealias MockValueCollectionType = Array<Mock<System>>
 
-  public struct MockFields {
+  public struct MockFields: Sendable {
     @Field<ProjectInterOperations.ID>("id") public var id
     @Field<Region>("initialRegion") public var initialRegion
     @Field<String>("name") public var name
@@ -25,9 +25,9 @@ public class System: MockObject {
 
 public extension Mock where O == System {
   convenience init(
-    id: ProjectInterOperations.ID? = nil,
+    id: ProjectInterOperations.ID = "",
     initialRegion: Mock<Region>? = nil,
-    name: String? = nil,
+    name: String = "",
     parkingSystem: Mock<ParkingSystem>? = nil,
     route: Mock<Route>? = nil,
     routes: [Mock<Route>]? = nil,

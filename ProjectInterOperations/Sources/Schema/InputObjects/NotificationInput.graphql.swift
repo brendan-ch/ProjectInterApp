@@ -1,12 +1,12 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import ApolloAPI
+@_spi(Internal) @_spi(Unsafe) import ApolloAPI
 
-public struct NotificationInput: InputObject {
-  public private(set) var __data: InputDict
+nonisolated public struct NotificationInput: InputObject {
+  @_spi(Unsafe) public private(set) var __data: InputDict
 
-  public init(_ data: InputDict) {
+  @_spi(Unsafe) public init(_ data: InputDict) {
     __data = data
   }
 
@@ -14,7 +14,7 @@ public struct NotificationInput: InputObject {
     deviceId: ID,
     shuttleId: ID,
     stopId: ID,
-    secondsThreshold: GraphQLNullable<Int> = nil
+    secondsThreshold: GraphQLNullable<Int32> = nil
   ) {
     __data = InputDict([
       "deviceId": deviceId,
@@ -39,7 +39,7 @@ public struct NotificationInput: InputObject {
     set { __data["stopId"] = newValue }
   }
 
-  public var secondsThreshold: GraphQLNullable<Int> {
+  public var secondsThreshold: GraphQLNullable<Int32> {
     get { __data["secondsThreshold"] }
     set { __data["secondsThreshold"] = newValue }
   }

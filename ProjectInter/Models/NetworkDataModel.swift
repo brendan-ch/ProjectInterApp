@@ -5,121 +5,22 @@
 //  Created by Brendan Chen on 2025.09.03.
 //
 
+import Apollo
 import ApolloAPI
-import ProjectInterLogging
-
-enum InitializationState {
-    case notInitialized
-    case initializing
-    case succeeded
-    case failed
-}
 
 /// Base class for networking models. Subclass this class for data models/view
 /// models which receive data from the server.
 ///
-/// - Warning: You must override ``convertNetworkArgumentsIntoQuery(_:)`` and
-/// ``processRefreshDataResult(_:)`` when subclassing. Otherwise, the class will cause
-/// a runtime error.
-class NetworkDataModel<NetworkArguments, GraphQLQueryType: GraphQLQuery>: GraphQLQueryable {
-    private(set) var dataInitState: InitializationState = .notInitialized
-    private var dataRefreshLoopTask: Task<Void, Error>?
-    var apolloNetworkModel: ApolloNetworkModel?
-    
-    required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
-        self.apolloNetworkModel = apolloNetworkModel
-    }
-    
-    /// Initialize the model with a custom loading state and no network model.
-    /// Useful for building placeholders or simulation during tests.
-    required init(dataInitState: InitializationState) {
-        self.dataInitState = dataInitState
-    }
-    
+/// The models are pure reducers: updates are applied through
+/// ``injectUpdate(_:)`` (see ``GraphQLProcessable``) from the networking code
+/// located in the views (see ``NetworkView``). Loading state lives entirely at
+/// the view layer and never passes through here.
+///
+/// - Warning: Override ``processRefreshDataResult(_:)`` when subclassing.
+/// Otherwise, updates will be silently dropped.
+class NetworkDataModel<GraphQLQueryType: GraphQLQuery>: GraphQLProcessable {
+    required init() {}
+
     @MainActor
-    private func setDataInitState(_ newState: InitializationState) {
-        if newState == .initializing && (dataInitState == .notInitialized || dataInitState == .failed) {
-            self.dataInitState = newState
-        } else if (newState == .succeeded || newState == .failed) && dataInitState == .initializing {
-            self.dataInitState = newState
-        }
-    }
-    
-    func resetDataInitState() {
-        self.dataInitState = .notInitialized
-    }
-
-    func startRefreshingData(arguments: NetworkArguments, sleepDuration: Duration = .seconds(5)) {
-        if dataRefreshLoopTask != nil {
-            Loggers.shared.networkingLogger.warning("Data refresh already active for \(type(of: self))")
-            return
-        }
-        
-        guard let query = convertNetworkArgumentsIntoQuery(arguments) else {
-            Loggers.shared.networkingLogger.error("No query generated for \(type(of: self))")
-            return
-        }
-
-        Loggers.shared.networkingLogger.notice("Starting data refresh for \(type(of: self))")
-        
-        guard let stream = apolloNetworkModel?.getStream(query, sleepDuration: sleepDuration) else {
-            return
-        }
-        dataRefreshLoopTask = Task {
-            await setDataInitState(.initializing)
-
-            for try await result in stream {
-                switch result {
-                case .failure:
-                    await setDataInitState(.failed)
-                case .success:
-                    await setDataInitState(.succeeded)
-                }
-                
-                await processRefreshDataResult(result)
-            }
-        }
-    }
-
-    func stopRefreshingData() {
-        Loggers.shared.networkingLogger.notice("Stopping data refresh for \(type(of: self))")
-        dataRefreshLoopTask?.cancel()
-        dataRefreshLoopTask = nil
-    }
-    
-    func refreshDataOnce(arguments: NetworkArguments) async {
-        await setDataInitState(.initializing)
-        
-        // Spawn a one-off task to refresh the data
-        guard let query = convertNetworkArgumentsIntoQuery(arguments) else {
-            Loggers.shared.networkingLogger.error("No query generated for \(type(of: self))")
-            return
-        }
-        
-        guard let apolloNetworkModel = apolloNetworkModel else {
-            await setDataInitState(.failed)
-            Loggers.shared.networkingLogger.warning("No network model provided for \(type(of: self)); skipping data refresh")
-            return
-        }
-        Loggers.shared.networkingLogger.notice("Refreshing data for \(type(of: self))")
-        do {
-            let result = try await apolloNetworkModel.fetchOnce(query)
-            if let data = result.data {
-                await setDataInitState(.succeeded)
-                await processRefreshDataResult(.success(data))
-            }
-        } catch {
-            await setDataInitState(.failed)
-            await processRefreshDataResult(.failure(error))
-        }
-    }
-    
-    func convertNetworkArgumentsIntoQuery(_ arguments: NetworkArguments) -> GraphQLQueryType? {
-        fatalError("convertNetworkArgumentsIntoQuery was not implemented for a subclass of NetworkDataModel")
-    }
-    
-    @MainActor
-    func processRefreshDataResult(_ result: Result<GraphQLQueryType.Data, any Error>) {
-        fatalError("processRefreshDataResult was not implemented for a subclass of NetworkDataModel")
-    }
+    func processRefreshDataResult(_ result: Result<GraphQLQueryType.Data, any Error>) {}
 }

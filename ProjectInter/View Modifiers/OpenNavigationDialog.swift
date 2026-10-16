@@ -18,15 +18,13 @@ struct OpenNavigationDialog: ViewModifier {
         content
             .confirmationDialog("Select an app", isPresented: isPresented, titleVisibility: .visible) {
                 Button {
-                    let url = getAppleMapsUrl()
-                    openUrl(url)
+                    openUrl(address?.toAppleMapsUrl())
                 } label: {
                     Text("Apple Maps")
                 }
                 
                 Button {
-                    let url = getGoogleMapsUrl()
-                    openUrl(url)
+                    openUrl(address?.toGoogleMapsUrl())
                 } label: {
                     Text("Google Maps")
                 }
@@ -37,17 +35,4 @@ struct OpenNavigationDialog: ViewModifier {
         guard let url = url else { return }
         UIApplication.shared.open(url)
     }
-    
-    /// Get the Apple Maps URL of the parking structure, if exists.
-    /// See [how to generate Maps links](https://developer.apple.com/library/archive/featuredarticles/iPhoneURLScheme_Reference/MapLinks/MapLinks.html).
-    func getAppleMapsUrl() -> URL? {
-        guard let percentageEncodedAddress = percentageEncodedAddress else { return nil }
-        return URL(string: "https://maps.apple.com/?address=\(percentageEncodedAddress)")
-    }
-    
-    func getGoogleMapsUrl() -> URL? {
-        guard let percentageEncodedAddress = percentageEncodedAddress else { return nil }
-        return URL(string: "https://www.google.com/maps?q=\(percentageEncodedAddress)")
-    }
-
 }

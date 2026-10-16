@@ -64,7 +64,7 @@ struct ParkingStructureEntityQuery: EntityStringQuery {
 struct ParkingStructuresProvider: GraphQLConstructable {
     let parkingStructures: [ParkingStructureEntity]
     
-    static func create(_ query: ProjectInterOperations.GetParkingStructuresListDataQuery, client: ApolloClientProtocol = ApolloClient.shared) async throws -> ParkingStructuresProvider {
+    static func create(_ query: ProjectInterOperations.GetParkingStructuresListDataQuery, client: ApolloClient = ApolloClient.shared) async throws -> ParkingStructuresProvider {
         let result = try await getGraphQLResult(query, client: client)
         guard let data = result.data else {
             throw GraphQLConstructableError.dataNotAvailable

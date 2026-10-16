@@ -38,7 +38,7 @@ struct ParkingStructureNetworkingArguments {
 
 extension ParkingStructureInfoContentView {
     @Observable
-    class ViewModel: NetworkDataModel<ParkingStructureNetworkingArguments, GetParkingStructureInfoDataQuery>, PlaceholderBuildable, Clearable {
+    class ViewModel: NetworkDataModel<GetParkingStructureInfoDataQuery>, PlaceholderBuildable, Clearable, GraphQLQueryConstructable {
         // MARK: Constants
         static let startingHour = 8
         static let endingHour = 20
@@ -108,20 +108,15 @@ extension ParkingStructureInfoContentView {
             return nil
         }
         
-        required init(apolloNetworkModel: ApolloNetworkModel? = nil) {
-            super.init(apolloNetworkModel: apolloNetworkModel)
+        required init() {
+            self.calendar = .current
         }
 
-        init(apolloNetworkModel: ApolloNetworkModel? = nil, referenceDate: Date) {
-            super.init(apolloNetworkModel: apolloNetworkModel)
+        init(referenceDate: Date) {
             self.calendar = .current
             self.fixedReferenceDate = referenceDate
         }
-        
-        required init(dataInitState: InitializationState) {
-            super.init(dataInitState: dataInitState)
-        }
-        
+
         private func setStartAndEndPeriodForCurrentCorrespondingAverage() {
             guard let oneWeekAgo = oneWeekAgo,
                   let average = findAverageCorrespondingToDate(oneWeekAgo) else {
@@ -147,28 +142,38 @@ extension ParkingStructureInfoContentView {
             return nil
         }
         
-        func generateHistoricalAverageInput(for date: Date) -> HistoricalParkingAverageQueryInput? {
+        static func generateHistoricalAverageInput(for date: Date) -> HistoricalParkingAverageQueryInput? {
+            let calendar = Calendar.current
             let from = calendar.date(bySettingHour: ViewModel.startingHour, minute: 0, second: 0, of: date)!
             let to = calendar.date(bySettingHour: ViewModel.endingHour, minute: 0, second: 0, of: date)!
-            
+
             let historicalAverageInput = HistoricalParkingAverageQueryInput(
                 from: from,
                 to: to,
                 // Every 2 hours
-                intervalMs: ViewModel.intervalMs
+                intervalMs: Int32(ViewModel.intervalMs)
             )
             return historicalAverageInput
         }
-        
-        override func convertNetworkArgumentsIntoQuery(_ arguments: NetworkArguments) -> GetParkingStructureInfoDataQuery {
-            let historicalAverageInput = generateHistoricalAverageInput(for: oneWeekAgo!)
+
+        static func convertNetworkArgumentsIntoQuery(_ arguments: ParkingStructureNetworkingArguments) -> GetParkingStructureInfoDataQuery {
+            convertNetworkArgumentsIntoQuery(arguments, referenceDate: Date())
+        }
+
+        static func convertNetworkArgumentsIntoQuery(
+            _ arguments: ParkingStructureNetworkingArguments,
+            referenceDate: Date
+        ) -> GetParkingStructureInfoDataQuery {
+            let oneWeekAgo = Calendar.current.date(byAdding: .day, value: -7, to: referenceDate)!
+            let historicalAverageInput = generateHistoricalAverageInput(for: oneWeekAgo)!
             return GetParkingStructureInfoDataQuery(
                 systemId: arguments.systemId,
                 parkingStructureId: arguments.parkingStructureId,
-                historicalAveragesInput: .init(historicalAverageInput!)
+                historicalAveragesInput: .init(historicalAverageInput)
             )
         }
-        
+
+        @MainActor
         override func processRefreshDataResult(_ result: Result<GetParkingStructureInfoDataQuery.Data, any Error>) {
             switch result {
             case .failure(let error):
@@ -194,46 +199,36 @@ extension ParkingStructureInfoContentView {
             }
         }
         
-        // Until we design a better way to handle multiple GraphQL queries,
-        // this solution keeps things testable
-        func loadCurrentDayHistorical(_ arguments: NetworkArguments) async {
-            let historicalAverageInput = generateHistoricalAverageInput(for: referenceDate)
-            let query = GetParkingStructureInfoDataQuery(
-                systemId: arguments.systemId,
-                parkingStructureId: arguments.parkingStructureId,
-                historicalAveragesInput: .init(historicalAverageInput!)
-            )
-            
-            guard let result = try? await apolloNetworkModel?.fetchOnce(query),
-                  let averagesFromNetwork = result.data?.system?.parkingSystem?.parkingStructure?.historicalAverages else {
+        /// Applies data fetched for the current day (view-side fetch) as the
+        /// "today" overlay, shifting each average back one week so it lines up
+        /// with the chart's day-of-week axis.
+        @MainActor
+        func processCurrentDayAverages(_ data: GetParkingStructureInfoDataQuery.Data) {
+            guard let averagesFromNetwork = data.system?.parkingSystem?.parkingStructure?.historicalAverages else {
                 return
             }
-            
-            await MainActor.run {
-                var averages: [ParkingAveragePerTimePeriod] = []
-                for averageFromNetwork in averagesFromNetwork {
-                    let from = calendar.date(byAdding: .day, value: -7, to: averageFromNetwork.from)!
-                    let to = calendar.date(byAdding: .day, value: -7, to: averageFromNetwork.to)!
-                    let average = ParkingAveragePerTimePeriod(
-                        from: from,
-                        to: to,
-                        averageSpotsAvailable: Float(averageFromNetwork.averageSpotsAvailable),
-                    )
-                    
-                    averages.append(average)
-                }
-                
-                currentDayAverages = averages
+
+            var averages: [ParkingAveragePerTimePeriod] = []
+            for averageFromNetwork in averagesFromNetwork {
+                let from = calendar.date(byAdding: .day, value: -7, to: averageFromNetwork.from)!
+                let to = calendar.date(byAdding: .day, value: -7, to: averageFromNetwork.to)!
+                let average = ParkingAveragePerTimePeriod(
+                    from: from,
+                    to: to,
+                    averageSpotsAvailable: Float(averageFromNetwork.averageSpotsAvailable),
+                )
+
+                averages.append(average)
             }
+
+            currentDayAverages = averages
         }
-        
+
         func clearData() {
-            resetDataInitState()
-            
             name = nil
             capacity = nil
             spotsAvailable = nil
-            
+
             clearHistoricalData()
         }
         
@@ -286,7 +281,7 @@ extension ParkingStructureInfoContentView {
                 )
             ]
             
-            let viewModel = Self(dataInitState: .succeeded)
+            let viewModel = Self()
             viewModel.address = "300 E Walnut Ave, Orange, CA 92867 United States"
             viewModel.name = "Anderson Structure"
             viewModel.capacity = 100

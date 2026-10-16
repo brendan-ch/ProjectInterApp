@@ -18,7 +18,7 @@ for code generation when you make any changes to the GraphQL schema.
 Follow these steps to install:
 
 ```bash
-$ curl -L https://github.com/apollographql/apollo-ios/releases/download/1.3.3/apollo-ios-cli.tar.gz -o apollo-ios-cli.tar.gz
+$ curl -L https://github.com/apollographql/apollo-ios/releases/download/2.4.0/apollo-ios-cli.tar.gz -o apollo-ios-cli.tar.gz
 $ tar -xzf apollo-ios-cli.tar.gz
 $ chmod +x apollo-ios-cli
 ```

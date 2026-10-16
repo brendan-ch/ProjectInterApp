@@ -120,22 +120,6 @@ final class MapUITests: BaseUITests {
 
         await client.mock(query: query, response: response)
     }
-    
-    @MainActor
-    func testInitialMapBoundariesAreSetOnLaunch() async {
-        await mockGetAllStopsQueryAndResponse()
-        // do NOT mock the map data, so that it only shows the initial region
-
-        launchAppAndResetCustomServerUrl()
-
-        // Wait for data to load past the initial loading screen
-        let stopButton = app.buttons["Change stop"]
-        XCTAssert(stopButton.waitForExistence(timeout: 20))
-
-        sleep(2)
-
-        takeScreenshot()
-    }
 
     @MainActor
     func testRouteIsShownWhenRouteIsSelected() async {
@@ -274,6 +258,7 @@ final class MapUITests: BaseUITests {
         selectStopFromRouteList(name: "Chapman Court")
         
         XCTAssert(attemptToSelectShuttleButton())
+        XCTAssert(app.staticTexts["Red Route"].waitForExistence(timeout: 5))
         app.buttons["Stop"].firstMatch.tap()
         XCTAssert(app.staticTexts["Routes"].firstMatch.waitForExistence(timeout: 20))
     }

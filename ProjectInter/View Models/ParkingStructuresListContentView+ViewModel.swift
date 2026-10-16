@@ -9,6 +9,7 @@ import Foundation
 import Apollo
 import ProjectInterOperations
 import ProjectInterShared
+import ProjectInterLogging
 
 // MARK: - Models
 // This view model uses the shared ``ParkingStructure`` model.
@@ -34,18 +35,19 @@ struct ParkingStructuresNetworkingArguments {
 
 extension ParkingStructuresListContentView {
     @Observable
-    class ViewModel: NetworkDataModel<ParkingStructuresNetworkingArguments, GetParkingStructuresListDataQuery>, PlaceholderBuildable, Clearable {
+    class ViewModel: NetworkDataModel<GetParkingStructuresListDataQuery>, PlaceholderBuildable, Clearable, GraphQLQueryConstructable {
         var structures: [ParkingStructure] = []
         var structuresSupportedBySystem = false
-        
-        override func convertNetworkArgumentsIntoQuery(_ arguments: ParkingStructuresNetworkingArguments) -> GetParkingStructuresListDataQuery {
+
+        static func convertNetworkArgumentsIntoQuery(_ arguments: ParkingStructuresNetworkingArguments) -> GetParkingStructuresListDataQuery {
             return GetParkingStructuresListDataQuery(systemId: arguments.systemId)
         }
-        
+
+        @MainActor
         override func processRefreshDataResult(_ result: Result<GetParkingStructuresListDataQuery.Data, any Error>) {
             switch result {
             case .failure(let error):
-                print("Error fetching parking structures list data: \(error)")
+                Loggers.shared.networkingLogger.error("Error fetching parking structures list data: \(error)")
             case .success(let result):
                 guard let parkingSystem = result.system?.parkingSystem else {
                     self.structuresSupportedBySystem = false
@@ -63,13 +65,12 @@ extension ParkingStructuresListContentView {
         }
         
         func clearData() {
-            resetDataInitState()
             structures = []
             structuresSupportedBySystem = false
         }
-        
+
         static func buildPlaceholder() -> Self {
-            let viewModel = Self(dataInitState: .succeeded)
+            let viewModel = Self()
             viewModel.structures = [
                 .init(
                     id: "1",

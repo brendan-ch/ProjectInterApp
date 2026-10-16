@@ -16,7 +16,9 @@ public extension URL {
     ) -> URL {
         if let customUrlString = userDefaults?.string(forKey: UserDefaults.customServerUrlKey),
            !customUrlString.isEmpty,
-           let customUrl = URL(string: customUrlString) {
+           let customUrl = URL(string: customUrlString),
+           let scheme = customUrl.scheme,
+           ["http", "https"].contains(scheme.lowercased()) {
             return customUrl
         }
         return fallback

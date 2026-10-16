@@ -8,6 +8,7 @@
 import SwiftUI
 import Apollo
 import ProjectInterOperations
+import ProjectInterLogging
 
 // MARK: - Models
 
@@ -56,30 +57,31 @@ struct RouteInfoNetworkArguments {
 extension RouteInfoContentView {
     /// Backing view model for ``RouteInfoContentView``.
     @Observable
-    class ViewModel: NetworkDataModel<RouteInfoNetworkArguments, GetRouteInfoDataQuery>, PlaceholderBuildable, Clearable {
+    class ViewModel: NetworkDataModel<GetRouteInfoDataQuery>, PlaceholderBuildable, Clearable, GraphQLQueryConstructable {
         /// The name of the currently viewed route.
         var routeName: String = ""
-        
+
         /// The name of the next stop relative to the user's currently selected stop.
         var routeNextStopName: String? = nil
-        
+
         /// Currently running shuttles to display for the route.
         var shuttles: [RouteInfoContentViewShuttle] = []
-        
-        override func convertNetworkArgumentsIntoQuery(_ arguments: RouteInfoNetworkArguments) -> GetRouteInfoDataQuery {
+
+        static func convertNetworkArgumentsIntoQuery(_ arguments: RouteInfoNetworkArguments) -> GetRouteInfoDataQuery {
             return GetRouteInfoDataQuery(
                 systemId: arguments.systemId,
                 stopId: arguments.stopId,
                 routeId: arguments.routeId
             )
         }
-        
+
+        @MainActor
         override func processRefreshDataResult(_ result: Result<GetRouteInfoDataQuery.Data, any Error>) {
             switch result {
             case .success(let response):
                 self.updateDataFromResponse(response)
             case .failure(let error):
-                print("Error fetching data: \(error)")
+                Loggers.shared.networkingLogger.error("Error fetching data: \(error)")
             }
         }
         
@@ -106,14 +108,13 @@ extension RouteInfoContentView {
         }
         
         func clearData() {
-            resetDataInitState()
             routeName = ""
             shuttles = []
             routeNextStopName = nil
         }
-        
+
         static func buildPlaceholder() -> Self {
-            let newModel = Self(dataInitState: .succeeded)
+            let newModel = Self()
             newModel.routeName = "Red Route"
             newModel.routeNextStopName = "Chapman Grand"
             

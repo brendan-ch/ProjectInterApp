@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Apollo
 import ProjectInterOperations
 import ProjectInterLogging
 
@@ -17,13 +18,16 @@ struct RouteIdSelectionSyncNetworkArguments {
 }
 
 @Observable
-class RouteIdSelectionSyncModel: NetworkDataModel<RouteIdSelectionSyncNetworkArguments, GetRouteIdForShuttleQuery> {
+class RouteIdSelectionSyncModel: NetworkDataModel<GetRouteIdForShuttleQuery>, GraphQLQueryConstructable {
     private(set) var routeId: String? = nil
-    
-    override func convertNetworkArgumentsIntoQuery(_ arguments: RouteIdSelectionSyncNetworkArguments) -> GetRouteIdForShuttleQuery? {
+
+    required init() {}
+
+    static func convertNetworkArgumentsIntoQuery(_ arguments: RouteIdSelectionSyncNetworkArguments) -> GetRouteIdForShuttleQuery {
         return GetRouteIdForShuttleQuery(systemId: arguments.systemId, shuttleId: arguments.shuttleId)
     }
-    
+
+    @MainActor
     override func processRefreshDataResult(_ result: Result<GetRouteIdForShuttleQuery.Data, any Error>) {
         switch result {
         case .success(let data):

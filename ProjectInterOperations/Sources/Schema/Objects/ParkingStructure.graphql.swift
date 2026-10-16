@@ -4,8 +4,9 @@
 import ApolloAPI
 
 public extension Objects {
-  static let ParkingStructure = ApolloAPI.Object(
+  nonisolated static let ParkingStructure = ApolloAPI.Object(
     typename: "ParkingStructure",
-    implementedInterfaces: []
+    implementedInterfaces: [],
+    keyFields: nil
   )
 }

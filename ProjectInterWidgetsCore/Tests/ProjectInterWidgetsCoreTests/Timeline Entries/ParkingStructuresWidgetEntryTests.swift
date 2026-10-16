@@ -6,6 +6,7 @@
 //
 
 import Testing
+import ApolloTestSupport
 import ProjectInterShared
 import ProjectInterOperations
 import ProjectInterTestMocks
@@ -14,8 +15,7 @@ import ProjectInterTestMocks
 class ParkingStructuresWidgetEntryTests {
     @Test("ParkingStructuresWidgetEntry creates correctly with correct data")
     func parkingStructuresWidgetCreates() async throws {
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = .init(
+        let mock = Mock<ProjectInterTestMocks.Query>(
             system: .init(
                 parkingSystem: .init(
                     parkingStructures: [
@@ -39,13 +39,10 @@ class ParkingStructuresWidgetEntryTests {
                 )
             )
         )
-        
-        let query = GetParkingStructuresListDataQuery(systemId: "1")
-        
-        let entry = try await ParkingStructuresWidgetEntry.create(
-            query,
-            client: mockClient,
-        )
+
+        let data = await GetParkingStructuresListDataQuery.Data.from(mock)
+
+        let entry = try ParkingStructuresWidgetEntry.create(systemId: "1", data: data)
         #expect(entry.parkingStructures?.count == 2)
         #expect(entry.parkingStructures?[0].capacity == 100)
         #expect(entry.parkingStructures?[1].capacity == 125)

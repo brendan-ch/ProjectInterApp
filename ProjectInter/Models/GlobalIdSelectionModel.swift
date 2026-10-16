@@ -61,7 +61,15 @@ class GlobalIdSelectionModel {
     func autoSelectRouteIdFromShuttleId(_ arguments: RouteIdSelectionSyncNetworkArguments) async {
         guard let routeIdSyncModel = routeIdSyncModel else { return }
         
-        await routeIdSyncModel.refreshDataOnce(arguments: arguments)
+        let query = RouteIdSelectionSyncModel.convertNetworkArgumentsIntoQuery(arguments)
+        do {
+            let response = try await ApolloClient.shared.fetch(query: query, cachePolicy: .networkOnly)
+            if let data = response.data {
+                await routeIdSyncModel.injectUpdate(.success(data))
+            }
+        } catch {
+            await routeIdSyncModel.injectUpdate(.failure(error))
+        }
         selectedRouteId = routeIdSyncModel.routeId
         selectedShuttleId = arguments.shuttleId
     }

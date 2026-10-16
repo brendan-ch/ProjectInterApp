@@ -6,8 +6,8 @@ import PackageDescription
 let package = Package(
     name: "ProjectInterShared",
     platforms: [
-        .iOS(.v14),
-        .macOS(.v11),
+        .iOS(.v16),
+        .macOS(.v13),
         .tvOS(.v14),
         .watchOS(.v7),
         .visionOS(.v1)
@@ -23,7 +23,7 @@ let package = Package(
         .package(path: "../ProjectInterOperations"),
         .package(
             url: "https://github.com/apollographql/apollo-ios",
-            from: "1.15.3"
+            from: "2.0.0"
         ),
     ],
     targets: [

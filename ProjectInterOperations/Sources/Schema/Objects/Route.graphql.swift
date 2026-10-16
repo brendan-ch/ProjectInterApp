@@ -4,8 +4,9 @@
 import ApolloAPI
 
 public extension Objects {
-  static let Route = ApolloAPI.Object(
+  nonisolated static let Route = ApolloAPI.Object(
     typename: "Route",
-    implementedInterfaces: []
+    implementedInterfaces: [],
+    keyFields: nil
   )
 }

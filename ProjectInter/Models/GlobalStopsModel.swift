@@ -42,10 +42,8 @@ extension GlobalStopsModelStop {
 // MARK: - Data model implementation
 
 @Observable
-class GlobalStopsModel: NetworkDataModel<GlobalStopsNetworkArguments, GetAllStopsBySystemIdQuery>, PlaceholderBuildable {
-    
-    var dataRefreshLoopTask: Task<Void, any Error>?
-    
+class GlobalStopsModel: NetworkDataModel<GetAllStopsBySystemIdQuery>, PlaceholderBuildable, GraphQLQueryConstructable {
+
     var stops: [GlobalStopsModelStop] = []
     
     private var selectedStopId: String? = nil {
@@ -64,10 +62,11 @@ class GlobalStopsModel: NetworkDataModel<GlobalStopsNetworkArguments, GetAllStop
     /// whether to automatically select a stop.
     private(set) var stopSelectionManuallyOverridenByUser: Bool = false
     
-    override func convertNetworkArgumentsIntoQuery(_ arguments: GlobalStopsNetworkArguments) -> GetAllStopsBySystemIdQuery? {
+    static func convertNetworkArgumentsIntoQuery(_ arguments: GlobalStopsNetworkArguments) -> GetAllStopsBySystemIdQuery {
         return GetAllStopsBySystemIdQuery(systemId: arguments.systemId)
     }
-    
+
+    @MainActor
     override func processRefreshDataResult(_ result: Result<GetAllStopsBySystemIdQuery.Data, any Error>) {
         guard let data = try? result.get() else {
             return
@@ -128,7 +127,7 @@ class GlobalStopsModel: NetworkDataModel<GlobalStopsNetworkArguments, GetAllStop
     }
     
     static func buildPlaceholder() -> Self {
-        let newModel = Self(dataInitState: .succeeded)
+        let newModel = Self()
         newModel.stops = [
             GlobalStopsModelStop(name: "Chapman Court", id: "1", coordinates: RawCoordinates(latitude: 33.796796, longitude: -117.889293)),
             GlobalStopsModelStop(name: "Schmid Gate", id: "2", coordinates: RawCoordinates(latitude: 33.793292, longitude: -117.852904))

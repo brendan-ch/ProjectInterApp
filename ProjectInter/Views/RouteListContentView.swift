@@ -14,7 +14,13 @@ import Apollo
 struct RouteListContentView: NetworkView {
     /// Backing view model.
     @State var viewModel: ViewModel = ViewModel()
-    
+
+    /// View-local loading state (see ``WithInitializationView``).
+    @State var dataInitState: InitializationState = .notInitialized
+
+    /// In-progress polling stream task.
+    @State var updateTask: Task<Void, Error>? = nil
+
     @Environment(GlobalIdSelectionModel.self) var globalIdSelectionModel: GlobalIdSelectionModel
     @Environment(GlobalSystemsModel.self) var globalSystemsModel: GlobalSystemsModel
     @Environment(GlobalStopsModel.self) var globalStopsState: GlobalStopsModel
@@ -64,7 +70,7 @@ struct RouteListContentView: NetworkView {
             .padding(.horizontal)
             .padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
             
-            WithInitializationView(dataInitState: viewModel.dataInitState) {
+            WithInitializationView(dataInitState: dataInitState) {
                 Divider()
                 
                 DataWrapperView(shouldDisplayNoDataMessage: viewModel.activeRoutes.isEmpty && viewModel.inactiveRoutes.isEmpty, noDataMessage: "No routes available.") {

@@ -59,17 +59,17 @@ class GlobalStopsModelTestsMockData {
 }
 
 class GlobalStopsModelStopTests {
-    @Test func apolloInitializerInitializesData() {
-        let data = GetAllStopsBySystemIdQuery.Data.from(GlobalStopsModelTestsMockData.defaultMock)
+    @Test func apolloInitializerInitializesData() async throws {
+        let data = await GetAllStopsBySystemIdQuery.Data.from(GlobalStopsModelTestsMockData.defaultMock)
         let stops = data.system!.stops!
-        
+
         let constructedStops = stops.map(GlobalStopsModelStop.init)
         for i in 0..<constructedStops.count {
             #expect(stops[i].name == constructedStops[i].name)
             #expect(stops[i].id == constructedStops[i].id)
             #expect(stops[i].coordinates.latitude == constructedStops[i].coordinates.latitude)
             #expect(stops[i].coordinates.longitude == constructedStops[i].coordinates.longitude)
-            
+
             guard let orderedStops = stops[i].orderedStops else { continue }
             for orderedStop in orderedStops {
                 #expect(constructedStops[i].routeIds.contains(orderedStop.routeId))
@@ -79,24 +79,17 @@ class GlobalStopsModelStopTests {
 }
 
 class GlobalStopsModelTests {
-    let mock = GlobalStopsModelTestsMockData.defaultMock
+    @Test("injectUpdate maps and sorts stops by name") func injectUpdateMapsAndSortsStops() async {
+        let model = GlobalStopsModel()
+        let data = await GetAllStopsBySystemIdQuery.Data.from(GlobalStopsModelTestsMockData.defaultMock)
 
-    @Test func testRefreshStopDataWithValidDataAndSorting() async throws {
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = mock
-        
-        let networkModel = ApolloNetworkModel(client: mockClient)
+        await model.injectUpdate(.success(data))
 
-        let globalStopsModel = GlobalStopsModel(apolloNetworkModel: networkModel)
-        let arguments = GlobalStopsNetworkArguments(systemId: "1")
-        
-        await globalStopsModel.refreshDataOnce(arguments: arguments)
-        
-        #expect(globalStopsModel.stops.count == 2)
-        #expect(globalStopsModel.stops[0].name == "Panther Village")
-        #expect(globalStopsModel.stops[1].name == "Schmid Gate")
+        #expect(model.stops.count == 2)
+        #expect(model.stops[0].name == "Panther Village")
+        #expect(model.stops[1].name == "Schmid Gate")
     }
-    
+
     @Test func automaticallySelectStopBasedOnClosestLocation() async throws {
         let stops: [ProjectInter.GlobalStopsModelStop] = [
             ProjectInter.GlobalStopsModelStop(
@@ -110,51 +103,48 @@ class GlobalStopsModelTests {
                 coordinates: RawCoordinates(latitude: 33.793316, longitude: -117.852825)
             )
         ]
-        
+
         let state = GlobalStopsModel()
         state.stops = stops
-        
+
         state.automaticallySelectStop(
             for: CLLocationCoordinate2D(latitude: stops[0].coordinates.latitude, longitude: stops[0].coordinates.longitude)
         )
-        
+
         #expect(state.selectedStop == stops[0])
     }
-    
+
     @Test func automaticallySelectStopBasedOnClosestLocationWithNoStopsAvailable() async throws {
         let state = GlobalStopsModel()
         state.automaticallySelectStop(
             for: CLLocationCoordinate2D(latitude: 33.789730, longitude: -117.886539)
         )
-        
+
         #expect(state.selectedStop == nil)
     }
-    
+
     @Test func automaticallySelectStopWithoutLocationSetsFirstStop() async throws {
-        let mockClient = MockApolloClient()
-        mockClient.queryMock = mock
-        
-        let networkModel = ApolloNetworkModel(client: mockClient)
-        
-        let globalStopsModel = GlobalStopsModel(apolloNetworkModel: networkModel)
-        let arguments = GlobalStopsNetworkArguments(systemId: "1")
-        
-        await globalStopsModel.refreshDataOnce(arguments: arguments)
-        globalStopsModel.automaticallySelectStop()
-        
-        #expect(globalStopsModel.selectedStop != nil)
+        let state = GlobalStopsModel()
+        state.stops = [
+            GlobalStopsModelStop(name: "Chapman Court", id: "1", coordinates: RawCoordinates(latitude: 33.796796, longitude: -117.889293)),
+            GlobalStopsModelStop(name: "Schmid Gate", id: "2", coordinates: RawCoordinates(latitude: 33.793292, longitude: -117.852904))
+        ]
+
+        state.automaticallySelectStop()
+
+        #expect(state.selectedStop?.name == "Chapman Court")
     }
-    
+
     @Test func selectStopManuallySetsCorrectState() {
         let state = GlobalStopsModel()
-        
+
         let stop = GlobalStopsModelStop(name: "Chapman Court", id: "1", coordinates: RawCoordinates(latitude: 33.789730, longitude: -117.886539))
         state.stops = [
             stop
         ]
-        
+
         state.selectStopId(stop.id)
-        
+
         #expect(state.selectedStop == stop)
         #expect(state.stopSelectionManuallyOverridenByUser == true)
     }

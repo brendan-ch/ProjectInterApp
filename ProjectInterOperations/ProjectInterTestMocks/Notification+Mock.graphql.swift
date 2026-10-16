@@ -2,14 +2,14 @@
 // This file was automatically generated and should not be edited.
 
 import ApolloTestSupport
-import ProjectInterOperations
+@testable import ProjectInterOperations
 
-public class Notification: MockObject {
+nonisolated public final class Notification: MockObject {
   public static let objectType: ApolloAPI.Object = ProjectInterOperations.Objects.Notification
   public static let _mockFields = MockFields()
   public typealias MockValueCollectionType = Array<Mock<Notification>>
 
-  public struct MockFields {
+  public struct MockFields: Sendable {
     @Field<ProjectInterOperations.ID>("deviceId") public var deviceId
     @Field<ProjectInterOperations.ID>("shuttleId") public var shuttleId
     @Field<ProjectInterOperations.ID>("stopId") public var stopId
@@ -18,9 +18,9 @@ public class Notification: MockObject {
 
 public extension Mock where O == Notification {
   convenience init(
-    deviceId: ProjectInterOperations.ID? = nil,
-    shuttleId: ProjectInterOperations.ID? = nil,
-    stopId: ProjectInterOperations.ID? = nil
+    deviceId: ProjectInterOperations.ID = "",
+    shuttleId: ProjectInterOperations.ID = "",
+    stopId: ProjectInterOperations.ID = ""
   ) {
     self.init()
     _setScalar(deviceId, for: \.deviceId)
