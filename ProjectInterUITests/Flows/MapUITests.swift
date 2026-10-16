@@ -274,6 +274,7 @@ final class MapUITests: BaseUITests {
         selectStopFromRouteList(name: "Chapman Court")
         
         XCTAssert(attemptToSelectShuttleButton())
+        XCTAssert(app.staticTexts["Red Route"].waitForExistence(timeout: 5))
         app.buttons["Stop"].firstMatch.tap()
         XCTAssert(app.staticTexts["Routes"].firstMatch.waitForExistence(timeout: 20))
     }
