@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Apollo
+import ProjectInterOperations
 import SwiftData
 import WebKit
 import Combine
@@ -16,21 +17,23 @@ import ProjectInterLogging
 @main
 struct ProjectInterApp: App {
     @State var locationManagerStateObject = LocationDataModel()
-    
-    @State var globalIdSelectionStateObject = GlobalIdSelectionModel(routeIdSyncModel: RouteIdSelectionSyncModel(apolloNetworkModel: ApolloNetworkModel.shared))
-    
-    @State var globalSystemsStateObject = GlobalSystemsModel(apolloNetworkModel: ApolloNetworkModel.shared)
-    
-    @State var globalStopsStateObject = GlobalStopsModel(apolloNetworkModel: ApolloNetworkModel.shared)
-    
+
+    @State var globalIdSelectionStateObject = GlobalIdSelectionModel(routeIdSyncModel: RouteIdSelectionSyncModel())
+
+    @State var globalSystemsStateObject = GlobalSystemsModel()
+
+    @State var globalStopsStateObject = GlobalStopsModel()
+
     @State var setupStateModel = SetupStateModel()
-    
+
     @State var serverUrlConfigModel = ServerUrlConfigurationModel()
-    
+
     @State var schemaVersionModel = SchemaVersionModel(
-        apolloNetworkModel: ApolloNetworkModel.shared,
         appSchemaVersion: Bundle.main.infoDictionary?["APP_SCHEMA_VERSION"] as? Int
     )
+
+    /// Task consuming the schema-version polling stream.
+    @State var schemaVersionUpdateTask: Task<Void, Error>? = nil
     
     @UIApplicationDelegateAdaptor(CustomAppDelegate.self) var customAppDelegate: CustomAppDelegate
     
@@ -53,7 +56,7 @@ struct ProjectInterApp: App {
                         .environmentObject(customAppDelegate)
                         .environment(globalSystemsStateObject)
                         .task {
-                            await globalSystemsStateObject.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
+                            await refreshGlobalSystemsOnce()
                         }
                 }
             }
@@ -63,9 +66,7 @@ struct ProjectInterApp: App {
             .onChange(of: serverUrlConfigModel.urlVersion) {
                 restartSchemaVersionModelRefresh()
                 Task {
-                    await globalSystemsStateObject.refreshDataOnce(
-                        arguments: GlobalDataModelNetworkArguments()
-                    )
+                    await refreshGlobalSystemsOnce()
                 }
             }
         }
@@ -78,10 +79,30 @@ struct ProjectInterApp: App {
     }
     
     func restartSchemaVersionModelRefresh() {
-        schemaVersionModel.stopRefreshingData()
-        schemaVersionModel.startRefreshingData(arguments: SchemaVersionModelNetworkArguments(), sleepDuration: .seconds(300))
+        schemaVersionUpdateTask?.cancel()
+        schemaVersionUpdateTask = Task {
+            let query = SchemaVersionModel.convertNetworkArgumentsIntoQuery(SchemaVersionModelNetworkArguments())
+            let stream = ApolloClient.shared.getStream(query, sleepDuration: .seconds(300))
+            for await result in stream {
+                await schemaVersionModel.injectUpdate(result)
+            }
+        }
     }
-    
+
+    /// One-off systems fetch, applied to the shared global systems model.
+    @MainActor
+    func refreshGlobalSystemsOnce() async {
+        let query = GlobalSystemsModel.convertNetworkArgumentsIntoQuery(GlobalDataModelNetworkArguments())
+        do {
+            let response = try await ApolloClient.shared.fetch(query: query, cachePolicy: .networkOnly)
+            if let data = response.data {
+                await globalSystemsStateObject.injectUpdate(.success(data))
+            }
+        } catch {
+            await globalSystemsStateObject.injectUpdate(.failure(error))
+        }
+    }
+
 }
 
 /// The content of the primary application, after the setup phase.
@@ -96,7 +117,7 @@ struct ContentViewWrapper: View {
     var body: some View {
         ContentView()
             .task {
-                await globalSystemsStateObject.refreshDataOnce(arguments: GlobalDataModelNetworkArguments())
+                await refreshGlobalSystemsOnce()
             }
             .onChange(of: globalSystemsStateObject.selectedSystem, initial: true) {
                 guard let systemId = globalSystemsStateObject.selectedSystem?.id else {
@@ -112,7 +133,7 @@ struct ContentViewWrapper: View {
                     let stopsNetworkArguments = GlobalStopsNetworkArguments(
                         systemId: systemId
                     )
-                    await globalStopsStateObject.refreshDataOnce(arguments: stopsNetworkArguments)
+                    await refreshGlobalStopsOnce(arguments: stopsNetworkArguments)
                     
                     automaticallySelectStop()
                     
@@ -182,6 +203,34 @@ struct ContentViewWrapper: View {
         ))
     }
     
+    /// One-off systems fetch, applied to the shared global systems model.
+    @MainActor
+    func refreshGlobalSystemsOnce() async {
+        let query = GlobalSystemsModel.convertNetworkArgumentsIntoQuery(GlobalDataModelNetworkArguments())
+        do {
+            let response = try await ApolloClient.shared.fetch(query: query, cachePolicy: .networkOnly)
+            if let data = response.data {
+                await globalSystemsStateObject.injectUpdate(.success(data))
+            }
+        } catch {
+            await globalSystemsStateObject.injectUpdate(.failure(error))
+        }
+    }
+
+    /// One-off stops fetch, applied to the shared global stops model.
+    @MainActor
+    func refreshGlobalStopsOnce(arguments: GlobalStopsNetworkArguments) async {
+        let query = GlobalStopsModel.convertNetworkArgumentsIntoQuery(arguments)
+        do {
+            let response = try await ApolloClient.shared.fetch(query: query, cachePolicy: .networkOnly)
+            if let data = response.data {
+                await globalStopsStateObject.injectUpdate(.success(data))
+            }
+        } catch {
+            await globalStopsStateObject.injectUpdate(.failure(error))
+        }
+    }
+
     func automaticallySelectStop() {
         if let location = locationManagerStateObject.lastUpdatedLocation {
             globalStopsStateObject.automaticallySelectStop(for: location)

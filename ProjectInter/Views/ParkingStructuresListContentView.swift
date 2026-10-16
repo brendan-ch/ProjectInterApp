@@ -11,9 +11,15 @@ import ProjectInterShared
 struct ParkingStructuresListContentView: NetworkView {
     typealias NetworkArguments = ParkingStructuresNetworkingArguments
     typealias ViewModelType = ViewModel
-    
+
     @State var viewModel = ViewModel()
-    
+
+    /// View-local loading state (see ``WithInitializationView``).
+    @State var dataInitState: InitializationState = .notInitialized
+
+    /// In-progress polling stream task.
+    @State var updateTask: Task<Void, Error>? = nil
+
     @Environment(GlobalSystemsModel.self) var globalSystemsModel: GlobalSystemsModel
     @Environment(GlobalIdSelectionModel.self) var globalIdSelectionModel: GlobalIdSelectionModel
 
@@ -26,7 +32,7 @@ struct ParkingStructuresListContentView: NetworkView {
     
     var body: some View {
         HeadingWrapperView(title: "Structures") {
-            WithInitializationView(dataInitState: viewModel.dataInitState) {
+            WithInitializationView(dataInitState: dataInitState) {
                 if !viewModel.structuresSupportedBySystem {
                     Spacer()
                     Text("Parking data is not supported for this system.")

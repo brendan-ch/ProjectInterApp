@@ -35,7 +35,13 @@ struct MapView: NetworkView {
     
     /// Backing view model.
     @State var viewModel = ViewModel()
-    
+
+    /// View-local loading state (see ``WithInitializationView``).
+    @State var dataInitState: InitializationState = .notInitialized
+
+    /// In-progress polling stream task.
+    @State var updateTask: Task<Void, Error>? = nil
+
     var tabSelection: Tabs
     
     var networkArguments: MapViewNetworkArguments? {

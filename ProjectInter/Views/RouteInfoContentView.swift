@@ -19,7 +19,13 @@ struct RouteInfoContentView<Content: View>: NetworkView {
     
     /// Backing ``RouteInfoContentView`` instance.
     @State var viewModel: ViewModel = ViewModel()
-    
+
+    /// View-local loading state (see ``WithInitializationView``).
+    @State var dataInitState: InitializationState = .notInitialized
+
+    /// In-progress polling stream task.
+    @State var updateTask: Task<Void, Error>? = nil
+
     @ViewBuilder let shuttleInfo: Content
     
     var networkArguments: RouteInfoNetworkArguments? {
@@ -50,7 +56,7 @@ struct RouteInfoContentView<Content: View>: NetworkView {
             .padding()
             .padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
         } content: {
-            WithInitializationView(dataInitState: viewModel.dataInitState) {
+            WithInitializationView(dataInitState: dataInitState) {
                 DataWrapperView(
                     shouldDisplayNoDataMessage: viewModel.shuttles.isEmpty,
                     noDataMessage: "No shuttles available"
@@ -90,8 +96,8 @@ struct RouteInfoContentView<Content: View>: NetworkView {
                 }
             }
         }
-        .onChange(of: viewModel.dataInitState) {
-            if viewModel.dataInitState == .succeeded {
+        .onChange(of: dataInitState) {
+            if dataInitState == .succeeded {
                 if !viewModel.shuttles.isEmpty && globalIdSelectionModel.selectedShuttleId == nil {
                     globalIdSelectionModel.selectShuttleIdIfRouteIdSelected(viewModel.shuttles[0].id)
                 }

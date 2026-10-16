@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import Apollo
+import ProjectInterOperations
 
 /// View which displays a list of stops for selection.
 struct StopSelectionView: View {
@@ -82,11 +84,25 @@ struct StopSelectionView: View {
         }
         .task {
             guard let systemId = globalSystemsModel.selectedSystem?.id else { return }
-            
+
             let stopsNetworkArguments = GlobalStopsNetworkArguments(
                 systemId: systemId
             )
-            await globalStopsModel.refreshDataOnce(arguments: stopsNetworkArguments)
+            await refreshGlobalStopsOnce(arguments: stopsNetworkArguments)
+        }
+    }
+
+    /// One-off stops fetch, applied to the shared global stops model.
+    @MainActor
+    func refreshGlobalStopsOnce(arguments: GlobalStopsNetworkArguments) async {
+        let query = GlobalStopsModel.convertNetworkArgumentsIntoQuery(arguments)
+        do {
+            let response = try await ApolloClient.shared.fetch(query: query, cachePolicy: .networkOnly)
+            if let data = response.data {
+                await globalStopsModel.injectUpdate(.success(data))
+            }
+        } catch {
+            await globalStopsModel.injectUpdate(.failure(error))
         }
     }
     

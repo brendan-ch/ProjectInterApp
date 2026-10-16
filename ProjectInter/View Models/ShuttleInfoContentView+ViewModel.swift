@@ -8,6 +8,7 @@
 import SwiftUI
 import Apollo
 import ProjectInterOperations
+import ProjectInterLogging
 
 /// Information to pass into the shuttle info network request.
 struct ShuttleInfoNetworkArguments {
@@ -31,7 +32,7 @@ struct ShuttleInfoEtaListItem {
 extension ShuttleInfoEtaListItem {
     init(_ eta: GetShuttleInfoDataQuery.Data.System.Shuttle.Eta) {
         self.secondsRemaining = ETASeconds(eta.secondsRemaining)
-        
+
         if let stop = eta.stop {
             self.stopName = stop.name
             self.stopId = stop.id
@@ -42,19 +43,15 @@ extension ShuttleInfoEtaListItem {
 // MARK: - View model implementation
 
 extension ShuttleInfoContentView {
-    typealias NetworkDataModelAlias = NetworkDataModel<ShuttleInfoNetworkArguments, GetShuttleInfoDataQuery>
-    
     /// Backing view model for ``ShuttleInfoContentView``.
     @Observable
-    class ViewModel: NetworkDataModelAlias, PlaceholderBuildable, Clearable {
+    class ViewModel: NetworkDataModel<GetShuttleInfoDataQuery>, PlaceholderBuildable, Clearable, GraphQLQueryConstructable {
         /// Name of the shuttle to display.
         private(set) var name: String? = nil
-        
+
         private(set) var etaSecondsRemaining: Double? = nil
         private(set) var nameOfStop: String? = nil
-        
-        private(set) var stopId: String? = nil
-        
+
         /// Text representing the ETA of the shuttle relative to the user's selected stop.
         var etaDisplay: String {
             if let nameOfStop = nameOfStop,
@@ -62,16 +59,21 @@ extension ShuttleInfoContentView {
                 return "\(ETASeconds(etaSecondsRemaining).asLongString()) to \(nameOfStop)"
             }
 
-            return dataInitState == .initializing ? "" : "ETA currently not available"
+            return "ETA currently not available"
         }
-        
+
         var dataAvailable: Bool {
             name != nil
         }
-        
+
         var etaListItems: [ShuttleInfoEtaListItem] = []
-        
+
         private(set) var secondsThresholdForNotification: Int? = nil
+
+        /// Stop matching the currently requested ETA; assigned by the view
+        /// before starting updates, since query construction is static.
+        var stopId: String? = nil
+
         var isNotificationScheduled: Bool {
             return secondsThresholdForNotification != nil
         }
@@ -83,42 +85,42 @@ extension ShuttleInfoContentView {
                 return "Notify me when nearby"
             }
         }
-        
+
         var availableNotificationOptions: [Int] {
             let allOptions = [2, 5, 10]
             guard let etaSecondsRemaining = etaSecondsRemaining else {
                 return allOptions
             }
-            
+
             let etaMinutes = etaSecondsRemaining / 60
             return allOptions.filter { minutes in
                 Double(minutes) < etaMinutes
             }
         }
-        
-        override func convertNetworkArgumentsIntoQuery(_ arguments: ShuttleInfoNetworkArguments) -> GetShuttleInfoDataQuery {
+
+        static func convertNetworkArgumentsIntoQuery(_ arguments: ShuttleInfoNetworkArguments) -> GetShuttleInfoDataQuery {
             let systemId = arguments.systemId
             let stopId = arguments.stopId
             let shuttleId = arguments.shuttleId
             let deviceId = arguments.deviceId ?? ""
-            
-            self.stopId = stopId
-            
+
             let notificationInput = NotificationInput(deviceId: deviceId, shuttleId: shuttleId, stopId: stopId)
-            
+
             return GetShuttleInfoDataQuery(systemId: systemId, shuttleId: shuttleId, notificationInput: notificationInput)
         }
-        
+
+        @MainActor
         override func processRefreshDataResult(_ result: Result<GetShuttleInfoDataQuery.Data, any Error>) {
             guard let data = try? result.get() else {
+                Loggers.shared.networkingLogger.warning("No data received for shuttle info query in \(type(of: self))")
                 return
             }
             guard let shuttle = data.system?.shuttle else {
                 return
             }
-            
+
             self.name = shuttle.name
-            
+
             if let etas = shuttle.etas {
                 self.etaListItems = []
                 for eta in etas {
@@ -127,38 +129,36 @@ extension ShuttleInfoContentView {
                         self.etaSecondsRemaining = eta.secondsRemaining
                         self.nameOfStop = stop.name
                     }
-                    
+
                     self.etaListItems.append(ShuttleInfoEtaListItem(eta))
                 }
                 self.etaListItems.sort {
                     $0.secondsRemaining < $1.secondsRemaining
                 }
             }
-            
+
             self.secondsThresholdForNotification = data.secondsThresholdForNotification
         }
-        
+
         func clearData() {
-            resetDataInitState()
             name = nil
             etaSecondsRemaining = nil
             nameOfStop = nil
-            stopId = nil
         }
 
         static func buildPlaceholder() -> Self {
-            let model = Self(dataInitState: .succeeded)
+            let model = Self()
             model.name = "Red Shuttle 17"
             model.nameOfStop = "Chapman Court"
             model.etaSecondsRemaining = 20
-            
+
             model.etaListItems = [
                 .init(stopName: "Chapman Court", secondsRemaining: 20, stopId: "0"),
                 .init(stopName: "Schmid Gate", secondsRemaining: 125, stopId: "1"),
                 .init(stopName: "Panther Village", secondsRemaining: 300, stopId: "2"),
                 .init(stopName: "Chapman Grand", secondsRemaining: 1430, stopId: "3")
             ]
-            
+
             return model
         }
     }

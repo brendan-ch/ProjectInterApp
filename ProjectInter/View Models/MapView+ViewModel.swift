@@ -127,7 +127,7 @@ struct MapViewNetworkArguments {
 extension MapView {
     /// Backing view model for ``MapView``.
     @Observable
-    class ViewModel: NetworkDataModel<MapViewNetworkArguments, GetMapDataQuery>, PlaceholderBuildable, Clearable {
+    class ViewModel: NetworkDataModel<GetMapDataQuery>, PlaceholderBuildable, Clearable, GraphQLQueryConstructable {
         /// Position of the map camera on the associated Map view.
         var position: MapCameraPosition = .automatic
 
@@ -140,10 +140,11 @@ extension MapView {
         var stops: [MapViewStop] = []
         var parkingStructures: [MapViewParkingStructure] = []
         
-        override func convertNetworkArgumentsIntoQuery(_ arguments: MapViewNetworkArguments) -> GetMapDataQuery {
+        static func convertNetworkArgumentsIntoQuery(_ arguments: MapViewNetworkArguments) -> GetMapDataQuery {
             return GetMapDataQuery(systemId: arguments.systemId)
         }
-        
+
+        @MainActor
         override func processRefreshDataResult(_ result: Result<GetMapDataQuery.Data, Error>) {
             guard let data = try? result.get() else {
                 Loggers.shared.networkingLogger.warning("No data received for map data query in \(type(of: self))")
@@ -162,16 +163,15 @@ extension MapView {
         }
         
         func clearData() {
-            resetDataInitState()
             routes = []
             shuttles = []
             stops = []
             parkingStructures = []
             hasReceivedInitialData = false
         }
-        
+
         static func buildPlaceholder() -> Self {
-            let newModel = Self(dataInitState: .succeeded)
+            let newModel = Self()
             newModel.routes = [
                 MapViewRoute(
                     id: "1",

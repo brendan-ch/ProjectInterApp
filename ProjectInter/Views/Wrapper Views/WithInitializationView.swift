@@ -7,6 +7,13 @@
 
 import SwiftUI
 
+enum InitializationState {
+    case notInitialized
+    case initializing
+    case succeeded
+    case failed
+}
+
 struct WithInitializationView<Content: View>: View {
     let dataInitState: InitializationState
     @ViewBuilder let content: Content

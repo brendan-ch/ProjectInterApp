@@ -10,12 +10,10 @@ import Apollo
 import ProjectInterShared
 import ProjectInterLogging
 
-/// Manages reading/writing the user-configured server URL
-/// and reconfiguring the Apollo client when it changes.
+/// Manages reading/writing the user-configured server URL.
 @Observable
 class ServerUrlConfigurationModel {
     let userDefaults: UserDefaults?
-    private let apolloNetworkModel: ApolloNetworkModel
 
     /// Incremented each time the server URL is changed, so views can react.
     private(set) var urlVersion: Int = 0
@@ -49,15 +47,11 @@ class ServerUrlConfigurationModel {
     }
 
     convenience init() {
-        self.init(
-            userDefaults: UserDefaults.group,
-            apolloNetworkModel: ApolloNetworkModel.shared
-        )
+        self.init(userDefaults: UserDefaults.group)
     }
 
-    init(userDefaults: UserDefaults?, apolloNetworkModel: ApolloNetworkModel) {
+    init(userDefaults: UserDefaults?) {
         self.userDefaults = userDefaults
-        self.apolloNetworkModel = apolloNetworkModel
     }
 
     /// Apply a new server URL. Returns true if the URL is valid and was applied.
@@ -77,7 +71,6 @@ class ServerUrlConfigurationModel {
         }
 
         customServerUrlString = trimmed
-        apolloNetworkModel.reconfigure(with: ApolloClient(url: .apiBaseUrl))
         urlVersion += 1
         Loggers.shared.networkingLogger.notice("Server URL changed to: \(trimmed)")
         return true
@@ -87,7 +80,6 @@ class ServerUrlConfigurationModel {
     @discardableResult
     func resetToDefault() -> Bool {
         customServerUrlString = nil
-        apolloNetworkModel.reconfigure(with: ApolloClient(url: .apiBaseUrl))
         urlVersion += 1
         Loggers.shared.networkingLogger.notice("Server URL reset to default")
         return true
