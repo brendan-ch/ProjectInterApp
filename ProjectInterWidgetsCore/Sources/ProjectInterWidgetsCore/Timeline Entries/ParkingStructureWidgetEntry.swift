@@ -27,7 +27,7 @@ public struct ParkingStructureWidgetEntry: ProjectInterTimelineEntry, GraphQLCon
     
     public static func create(
         _ query: GetParkingStructureInfoDataQuery,
-        client: ApolloClientProtocol = ApolloClient.shared
+        client: ApolloClient = ApolloClient.shared
     ) async throws -> ParkingStructureWidgetEntry {
         let systemId = query.systemId
         let result = try await getGraphQLResult(

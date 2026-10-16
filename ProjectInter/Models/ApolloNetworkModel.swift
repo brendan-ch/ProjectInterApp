@@ -11,14 +11,14 @@ import ApolloAPI
 import ProjectInterLogging
 
 class ApolloNetworkModel {
-    private(set) var client: ApolloClientProtocol
+    private(set) var client: ApolloClient
     
-    init(client: ApolloClientProtocol) {
+    init(client: ApolloClient) {
         self.client = client
     }
 
     /// Replace the underlying Apollo client, e.g. after the server URL changes.
-    func reconfigure(with newClient: ApolloClientProtocol) {
+    func reconfigure(with newClient: ApolloClient) {
         self.client = newClient
     }
     
@@ -53,7 +53,7 @@ class ApolloNetworkModel {
         return stream
     }
     
-    func fetchOnce<Query: GraphQLQuery>(_ query: Query) async throws -> GraphQLResult<Query.Data> {
+    func fetchOnce<Query: GraphQLQuery>(_ query: Query) async throws -> GraphQLResponse<Query> {
         return try await withCheckedThrowingContinuation { continuation in
             var continuationIsActive = true
 
@@ -72,7 +72,7 @@ class ApolloNetworkModel {
         }
     }
     
-    func mutateOnce<Mutation: GraphQLMutation>(_ mutation: Mutation) async throws -> GraphQLResult<Mutation.Data> {
+    func mutateOnce<Mutation: GraphQLMutation>(_ mutation: Mutation) async throws -> GraphQLResponse<Mutation> {
         return try await withCheckedThrowingContinuation { continuation in
             var continuationIsActive = true
             

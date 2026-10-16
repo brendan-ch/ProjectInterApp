@@ -8,6 +8,7 @@
 import Foundation
 import Apollo
 import ApolloAPI
+@_spi(Internal) import ApolloAPI
 import ProjectInterOperations
 import ApolloTestSupport
 import ProjectInterTestMocks
@@ -39,12 +40,13 @@ class MockServerClient {
         return components.url
     }
     
-    private func constructJsonSerializableDictionary<Query>(query: Query, response: Mock<ProjectInterTestMocks.Query>) -> [String: Any] where Query : ApolloAPI.GraphQLOperation {
+    private func constructJsonSerializableDictionary<Query>(query: Query, response: Mock<ProjectInterTestMocks.Query>) async -> [String: Any] where Query : ApolloAPI.GraphQLOperation {
         let requestBody = bodyCreator.requestBody(for: query, sendQueryDocument: true, autoPersistQuery: false)
         var jsonBodyObject = requestBody.compactMapValues { $0._jsonValue } as [String : Any]
-        
-        let result = GraphQLResult(
-            data: Query.Data.from(response),
+
+        let data = await Query.Data.from(response)
+        let result = GraphQLResponse<Query>(
+            data: data,
             extensions: nil,
             errors: nil,
             source: .server,
@@ -52,12 +54,12 @@ class MockServerClient {
         )
         let dict = result.asJSONDictionary()
         jsonBodyObject["response"] = dict
-        
+
         return jsonBodyObject
     }
     
     func mock<Query>(query: Query, response: Mock<ProjectInterTestMocks.Query>) async where Query : ApolloAPI.GraphQLOperation {
-        let jsonDictionary = constructJsonSerializableDictionary(query: query, response: response)
+        let jsonDictionary = await constructJsonSerializableDictionary(query: query, response: response)
         
         guard let jsonBody = try? JSONSerialization.data(withJSONObject: jsonDictionary) else {
             Loggers.shared.networkingLogger.error("Failed to construct JSON representation of data: \(jsonDictionary)")

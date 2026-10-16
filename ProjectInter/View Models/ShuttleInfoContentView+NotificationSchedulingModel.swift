@@ -30,9 +30,9 @@ extension ShuttleInfoContentView {
     /// be consumed by views related to shuttle notification scheduling.
     @Observable
     class NotificationSchedulingModel {
-        var apolloClient: ApolloClientProtocol?
+        var apolloClient: ApolloClient?
         
-        init(apolloClient: ApolloClientProtocol? = nil) {
+        init(apolloClient: ApolloClient? = nil) {
             self.apolloClient = apolloClient
         }
         
@@ -44,7 +44,7 @@ extension ShuttleInfoContentView {
             )
             
             if let secondsThreshold = arguments.secondsThreshold {
-                notificationInput.secondsThreshold = GraphQLNullable<Int>(integerLiteral: secondsThreshold)
+                notificationInput.secondsThreshold = GraphQLNullable<Int32>(integerLiteral: Int32(secondsThreshold))
             }
             
             return notificationInput

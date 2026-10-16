@@ -5,6 +5,7 @@
 //  Created by Brendan Chen on 2025.09.03.
 //
 
+import Apollo
 import ApolloAPI
 import ProjectInterLogging
 

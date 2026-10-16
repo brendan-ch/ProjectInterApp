@@ -17,12 +17,12 @@ public enum GraphQLConstructableError: Swift.Error {
 public protocol GraphQLConstructable {
     associatedtype Query where Query : GraphQLQuery
     
-    static func create(_ query: Query, client: ApolloClientProtocol) async throws -> Self
-    static func getGraphQLResult(_ query: Query, client: ApolloClientProtocol) async throws -> GraphQLResult<Query.Data>
+    static func create(_ query: Query, client: ApolloClient) async throws -> Self
+    static func getGraphQLResult(_ query: Query, client: ApolloClient) async throws -> GraphQLResponse<Query>
 }
 
 public extension GraphQLConstructable {
-    static func getGraphQLResult(_ query: Query, client: ApolloClientProtocol = ApolloClient.shared) async throws -> GraphQLResult<Query.Data> {
+    static func getGraphQLResult(_ query: Query, client: ApolloClient = ApolloClient.shared) async throws -> GraphQLResponse<Query> {
         // TODO: Resolve duplicate of same code within `ApolloNetworkModel`
         return try await withCheckedThrowingContinuation { continuation in
             var continuationIsActive = true

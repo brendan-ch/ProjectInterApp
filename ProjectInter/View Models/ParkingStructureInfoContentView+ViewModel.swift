@@ -155,7 +155,7 @@ extension ParkingStructureInfoContentView {
                 from: from,
                 to: to,
                 // Every 2 hours
-                intervalMs: ViewModel.intervalMs
+                intervalMs: Int32(ViewModel.intervalMs)
             )
             return historicalAverageInput
         }

@@ -8,6 +8,6 @@
 import Apollo
 import ApolloAPI
 
-extension ApolloClient: @unchecked Sendable {
+extension ApolloClient {
     public static var shared: ApolloClient { ApolloClient(url: .apiBaseUrl) }
 }
