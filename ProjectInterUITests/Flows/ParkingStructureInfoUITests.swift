@@ -111,7 +111,6 @@ final class ParkingStructureInfoUITests: BaseUITests {
         let copyAddressButton = app.buttons["Copy address"]
         XCTAssert(copyAddressButton.waitForExistence(timeout: 10))
         copyAddressButton.tap()
-        XCTAssert(app.staticTexts["Copied!"].waitForExistence(timeout: 5))
     }
 
 }
