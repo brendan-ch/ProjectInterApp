@@ -2,7 +2,7 @@
 // This file was automatically generated and should not be edited.
 
 import ApolloTestSupport
-@testable import ProjectInterOperations
+import ProjectInterOperations
 
 nonisolated public final class ParkingStructure: MockObject {
   public static let objectType: ApolloAPI.Object = ProjectInterOperations.Objects.ParkingStructure
