@@ -34,13 +34,16 @@ let package = Package(
             dependencies: [
                 .product(name: "Apollo", package: "apollo-ios"),
                 .product(name: "ApolloAPI", package: "apollo-ios"),
-                .product(name: "ProjectInterOperations", package: "ProjectInterOperations"),
-                .product(name: "ProjectInterTestMocks", package: "ProjectInterOperations")
+                .product(name: "ProjectInterOperations", package: "ProjectInterOperations")
             ]
         ),
         .testTarget(
             name: "ProjectInterSharedTests",
-            dependencies: ["ProjectInterShared"]
+            dependencies: [
+                "ProjectInterShared",
+                .product(name: "ApolloTestSupport", package: "apollo-ios"),
+                .product(name: "ProjectInterTestMocks", package: "ProjectInterOperations")
+            ]
         ),
     ]
 )

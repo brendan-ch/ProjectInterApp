@@ -2,7 +2,7 @@
 // This file was automatically generated and should not be edited.
 
 import ApolloTestSupport
-import ProjectInterOperations
+@testable import ProjectInterOperations
 
 nonisolated public final class Notification: MockObject {
   public static let objectType: ApolloAPI.Object = ProjectInterOperations.Objects.Notification
