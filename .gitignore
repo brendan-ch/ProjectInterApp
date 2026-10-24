@@ -75,3 +75,5 @@ test-output
 test-ui-output
 
 .playwright-mcp/
+.DS_Store
+ProjectInterOperations/.swiftpm/xcode/**/*
