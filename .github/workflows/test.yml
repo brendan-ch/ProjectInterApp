@@ -3,7 +3,6 @@ name: Run iOS tests
 on:
   pull_request:
     branches: [ "main" ]
-    types: [ opened ]
   workflow_dispatch:
 
 jobs:

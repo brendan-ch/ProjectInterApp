@@ -42,6 +42,7 @@ let package = Package(
             dependencies: [
                 "ProjectInterWidgetsCore",
                 .product(name: "ApolloTestSupport", package: "apollo-ios"),
+                .product(name: "ProjectInterTestMocks", package: "ProjectInterOperations")
             ],
         ),
     ]

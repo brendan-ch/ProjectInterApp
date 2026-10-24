@@ -16,10 +16,12 @@
 		2050766A2D1B46B5004CAA04 /* Apollo in Frameworks */ = {isa = PBXBuildFile; productRef = 205076692D1B46B5004CAA04 /* Apollo */; };
 		205077112D1B78EF004CAA04 /* apollo-codegen-config.json in Resources */ = {isa = PBXBuildFile; fileRef = 205077102D1B78EF004CAA04 /* apollo-codegen-config.json */; };
 		205077142D1B79FC004CAA04 /* ProjectInterOperations in Frameworks */ = {isa = PBXBuildFile; productRef = 205077132D1B79FC004CAA04 /* ProjectInterOperations */; };
-		205077162D1B79FC004CAA04 /* ProjectInterTestMocks in Frameworks */ = {isa = PBXBuildFile; productRef = 205077152D1B79FC004CAA04 /* ProjectInterTestMocks */; };
 		206A72562E94BB10000AD74D /* ProjectInterShared in Frameworks */ = {isa = PBXBuildFile; productRef = 206A72552E94BB10000AD74D /* ProjectInterShared */; };
 		207534352E8CA07200E164A5 /* ProjectInterLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 207534342E8CA07200E164A5 /* ProjectInterLogging */; };
 		20A216BC2EB2F0E300068381 /* ProjectInterWidgetsCore in Frameworks */ = {isa = PBXBuildFile; productRef = 20A216BB2EB2F0E300068381 /* ProjectInterWidgetsCore */; };
+		20A41D012E97000000000001 /* ProjectInterTestMocks in Frameworks */ = {isa = PBXBuildFile; productRef = 20A41D012E97000000000002 /* ProjectInterTestMocks */; };
+		20A41D012E97000000000003 /* ApolloTestSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 20A41D012E97000000000004 /* ApolloTestSupport */; };
+		20A41D012E97000000000005 /* ProjectInterOperations in Frameworks */ = {isa = PBXBuildFile; productRef = 20A41D012E97000000000006 /* ProjectInterOperations */; };
 		20C494252E90682A009B7031 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20C494242E906829009B7031 /* WidgetKit.framework */; };
 		20C494272E90682A009B7031 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20C494262E90682A009B7031 /* SwiftUI.framework */; };
 		20C494362E90682B009B7031 /* ProjectInterWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 20C494232E906829009B7031 /* ProjectInterWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -207,7 +209,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				20C9FEC32E908DBB001FCF55 /* ProjectInterShared in Frameworks */,
-				205077162D1B79FC004CAA04 /* ProjectInterTestMocks in Frameworks */,
 				2050766A2D1B46B5004CAA04 /* Apollo in Frameworks */,
 				205077142D1B79FC004CAA04 /* ProjectInterOperations in Frameworks */,
 				20F5D3372E8C9476002B25DE /* ProjectInterLogging in Frameworks */,
@@ -218,6 +219,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				20A41D012E97000000000001 /* ProjectInterTestMocks in Frameworks */,
+				20A41D012E97000000000003 /* ApolloTestSupport in Frameworks */,
+				20A41D012E97000000000005 /* ProjectInterOperations in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -337,7 +341,6 @@
 			packageProductDependencies = (
 				205076692D1B46B5004CAA04 /* Apollo */,
 				205077132D1B79FC004CAA04 /* ProjectInterOperations */,
-				205077152D1B79FC004CAA04 /* ProjectInterTestMocks */,
 				20F5D3362E8C9476002B25DE /* ProjectInterLogging */,
 				20C9FEC22E908DBB001FCF55 /* ProjectInterShared */,
 			);
@@ -363,6 +366,9 @@
 			);
 			name = ProjectInterTests;
 			packageProductDependencies = (
+				20A41D012E97000000000002 /* ProjectInterTestMocks */,
+				20A41D012E97000000000004 /* ApolloTestSupport */,
+				20A41D012E97000000000006 /* ProjectInterOperations */,
 			);
 			productName = InterMVP1Tests;
 			productReference = 20FA7B842D10E11F00D4EAD1 /* ProjectInterTests.xctest */;
@@ -991,10 +997,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = ProjectInterOperations;
 		};
-		205077152D1B79FC004CAA04 /* ProjectInterTestMocks */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = ProjectInterTestMocks;
-		};
 		206A72552E94BB10000AD74D /* ProjectInterShared */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 20C9FEC12E908DBB001FCF55 /* XCLocalSwiftPackageReference "ProjectInterShared" */;
@@ -1009,6 +1011,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2018F14A2EB2EF5A00108B91 /* XCLocalSwiftPackageReference "ProjectInterWidgetsCore" */;
 			productName = ProjectInterWidgetsCore;
+		};
+		20A41D012E97000000000002 /* ProjectInterTestMocks */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 205077122D1B79FC004CAA04 /* XCLocalSwiftPackageReference "ProjectInterOperations" */;
+			productName = ProjectInterTestMocks;
+		};
+		20A41D012E97000000000004 /* ApolloTestSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 205077122D1B79FC004CAA04 /* XCLocalSwiftPackageReference "ProjectInterOperations" */;
+			productName = ApolloTestSupport;
+		};
+		20A41D012E97000000000006 /* ProjectInterOperations */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 205077122D1B79FC004CAA04 /* XCLocalSwiftPackageReference "ProjectInterOperations" */;
+			productName = ProjectInterOperations;
 		};
 		20C4943C2E9068C8009B7031 /* Apollo */ = {
 			isa = XCSwiftPackageProductDependency;
